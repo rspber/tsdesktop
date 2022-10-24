@@ -1,0 +1,123 @@
+/*
+  TouchScreenDesktop
+
+  Copyright (c) 2022, rspber (https://github.com/rspber)
+
+*/
+
+/*
+----------------------------------------------------------------
+                        RadioButton Class
+----------------------------------------------------------------
+*/
+
+#include "TSDesktop.h"
+
+void RadioButton::setDotRadius(const int8_t aDotRadius)
+{
+  if (aDotRadius != dotRadius) {
+    hide();
+    dotRadius = aDotRadius;
+    setChanged();
+  }
+}
+
+void RadioButton::setCircleRadius(const int8_t aCircleRadius)
+{
+  if (aCircleRadius != circleRadius) {
+    hide();
+    circleRadius = aCircleRadius;
+    setChanged();
+  }
+}
+
+const int16_t RadioButton::getCenterX()
+{
+  switch (decorPosMode) {
+  case DECOR_POS_LEFT:
+    return decorMarginLeft + getCircleRadius();
+  case DECOR_POS_RIGHT:
+    return getTextWidth() + decorMarginLeft + getCircleRadius();
+  case DECOR_POS_CENTER:
+    return (getTextWidth() - decorMarginLeft - decorMarginRight) / 2;
+  default:
+    return 0;
+  }
+}
+
+const int16_t RadioButton::getCenterY()
+{
+  int16_t h = 0;
+  switch (decorAlign) {
+  case DECOR_ALIGN_NONE:
+  case DECOR_ALIGN_TOP:
+    h = getTextHeight() / 2;
+    break;
+  case DECOR_ALIGN_BOTTOM:
+    h = getTextHeight() + getTextHeight() / 2;
+    break;
+  }
+  return decorMarginTop + h;
+}
+
+void RadioButton::drawCircle(const uint16_t aCircleColor)
+{
+  if (screenEnabled) {
+    display.drawCircle(getAbsLeft(getCenterX()), getAbsTop(getCenterY()), getCircleRadius(), aCircleColor);
+  }
+}
+
+void RadioButton::drawCircle()
+{
+  drawCircle(state ? activeColor : inActiveColor);
+}
+
+void RadioButton::drawDot(const uint16_t aDotColor)
+{
+  if (screenEnabled) {
+    display.fillCircle(getAbsLeft(getCenterX()), getAbsTop(getCenterY()), getDotRadius(), aDotColor);
+  }
+}
+
+void RadioButton::drawDot()
+{
+  drawDot(state ? activeColor : getBackgroundColor());
+}
+
+void RadioButton::drawDecor()
+{
+  if (getAbsVisible()) {
+    drawCircle();
+    drawDot();
+  }
+}
+
+void RadioButton::hideDecor()
+{
+  if (getAbsVisible()) {
+    drawDot(getBackgroundColor());
+  }
+}
+
+const bool RadioButton::toggle()
+{
+  Container* parent = getParent();
+  FieldSet* fset = NULL;
+  while (parent) {
+    if (parent->getType() == TYPE_FIELDSET) {
+      fset = static_cast<FieldSet*>(parent);
+      if (!fset->markedSubFolder()) {
+        break;
+      }
+      fset = NULL;
+    }
+    parent = parent->getParent();
+  }
+  if (fset) {
+    fset->setActiveRadio(this);
+  }
+  else {
+    setState(!state);
+  }
+  return state;
+}

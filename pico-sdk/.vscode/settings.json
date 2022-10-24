@@ -1,0 +1,34 @@
+{
+  "cmake.configureOnOpen": false,
+  "cmake.statusbar.advanced": {
+    "debug" : {
+      "visibility": "hidden"
+    },
+    "launch" : {
+      "visibility": "hidden"
+    },
+    "build" : {
+      "visibility": "default"
+    },
+    "buildTarget" : {
+      "visibility": "hidden"
+    }
+  },
+  "cmake.buildBeforeRun": true,
+  "C_Cpp.enhancedColorization": "Enabled",
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "files.associations": {
+  "stdio.h": "c",
+  "stdlib.h": "c",
+  "pll.h": "c",
+  "clocks.h": "c",
+  "pico.h": "c",
+  "gpio.h": "c",
+  "time.h": "c",
+  "uart.h": "c",
+  "stdio_uart.h": "c",
+  "_ansi.h": "c",
+  "glcdfont.c": "cpp",
+  "limits": "cpp"
+}
+}

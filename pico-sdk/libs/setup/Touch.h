@@ -1,0 +1,72 @@
+/*
+  Touch Screen for TSDesktop
+  implemented on TSD_XPT2046
+
+  Copyright (c) 2022, rspber (https://github.com/rspber)
+
+*/
+
+#pragma once
+
+#include <Setup.h>
+
+#include <TSD_XPT2046.h>
+#include <Display.h>
+
+typedef struct {
+  int16_t x, y;
+} point_t;
+
+int16_t inline map(int16_t x, int16_t in_min, int16_t in_max, int16_t out_min, int16_t out_max)
+{
+  return (long)(x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+class Touch : public TSD_XPT2046 {
+public:
+  Touch() : TSD_XPT2046() {}
+
+  bool getTouch(point_t* p)
+  {
+    int16_t tx, ty;
+    if (TSD_XPT2046::getTouch(&tx, &ty)) {
+      tx = 4095 - tx;
+      int16_t minx = 0;
+      int16_t maxx = 4095;
+      int16_t miny = 0;
+      int16_t maxy = 4095;
+      switch (abs(getRotation())) {
+      case 1:
+        minx += TS_TOP;
+        maxx -= TS_BOTTOM;
+        miny += TS_RIGHT;
+        maxy -= TS_LEFT;
+        break;
+      case 3:
+        minx += TS_BOTTOM;
+        maxx -= TS_TOP;
+        miny += TS_LEFT;
+        maxy -= TS_RIGHT;
+        break;
+      case 0:
+        minx += TS_LEFT;
+        maxx -= TS_RIGHT;
+        miny += TS_BOTTOM;
+        maxy -= TS_TOP;
+        break;
+      case 2:
+        minx += TS_RIGHT;
+        maxx -= TS_LEFT;
+        miny += TS_TOP;
+        maxy -= TS_BOTTOM;
+        break;
+      }
+      p->x = map(tx, minx, maxx, 0, display.width());
+      p->y = map(ty, miny, maxy, 0, display.height());
+      return true;
+    }
+    return false;
+  }
+};
+
+extern Touch touch;

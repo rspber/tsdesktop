@@ -1,0 +1,58 @@
+/*
+  TouchScreenDesktop
+
+  Copyright (c) 2022, rspber (https://github.com/rspber)
+
+*/
+
+/*
+----------------------------------------------------------------
+                        CheckBox Class
+----------------------------------------------------------------
+*/
+
+#include "TSDesktop.h"
+
+void CheckBox::drawBox(const uint16_t aBoxColor)
+{
+  if (screenEnabled) {
+    display.drawRect(getAbsLeft(getDecorPosLeft()), getAbsTop(getDecorPosTop()), getDecorWidth(), getDecorHeight(), aBoxColor);
+  }
+}
+
+void CheckBox::drawBox()
+{
+  drawBox(checked ? activeColor : inActiveColor);
+}
+
+void CheckBox::drawCheck(const uint16_t aCheckColor)
+{
+  if (screenEnabled) {
+    int16_t x = getAbsLeft(getDecorPosLeft());
+    int16_t y = getAbsTop(getDecorPosTop());
+    display.drawLine(x + 1, y + 1, x + getDecorWidth() - 2, y + getDecorHeight() - 2, aCheckColor);
+    display.drawLine(x + 1, y + getDecorHeight() - 2, x + getDecorWidth() - 2, y + 1, aCheckColor);
+  }
+}
+
+void CheckBox::drawCheck()
+{
+  drawCheck(checked ? activeColor : getBackgroundColor());
+}
+
+void CheckBox::drawDecor()
+{
+  if (getAbsVisible()) {
+    drawBox();
+    drawCheck();
+  }
+}
+
+void CheckBox::hideDecor()
+{
+  if (getAbsVisible()) {
+    drawCheck(getBackgroundColor());
+    drawBox();
+  }
+}
+

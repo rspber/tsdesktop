@@ -1,0 +1,4 @@
+required libraries:
+
+https://github.com/adafruit/Adafruit_ILI9341
+https://github.com/PaulStoffregen/XPT2046_Touchscreen
