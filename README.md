@@ -1,5 +1,6 @@
 # TSDesktop
 Touch Screen Desktop for Raspberry pi pico
+https://www.youtube.com/watch?v=2_8hvvxUR1c
 
 ## pico-sdk
 
