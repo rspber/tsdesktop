@@ -24,7 +24,7 @@ https://www.youtube.com/watch?v=2_8hvvxUR1c
 
   * Install extensions: C/C++ Extension Pack, CMake Tools
 
-  * File / Open Folder ... select location of tsdesktop/pico-sdk
+  * File / Open Folder ... select location of /tsdesktop/pico-sdk
 
   * In the bottom panel:
 
