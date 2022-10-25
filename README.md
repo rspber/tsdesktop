@@ -12,7 +12,7 @@ https://www.youtube.com/watch?v=2_8hvvxUR1c
    ```
 3. Install pico-sdk:
 
-   * `download` or `git clone` https://github.com/raspberrypi/pico-sdk.git
+  * `download` or `git clone` https://github.com/raspberrypi/pico-sdk.git
 
   * Set `PICO_SDK_PATH` to the SDK location in your environment
 
