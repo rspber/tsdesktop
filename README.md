@@ -6,21 +6,21 @@ https://www.youtube.com/watch?v=2_8hvvxUR1c
 
 1. No other libraries are required,
 
-2. Install pico-sdk:
-
-  * Install CMake (at least version 3.13), and GCC cross compiler
+2. Install CMake (at least version 3.13), and GCC cross compiler
    ```
    sudo apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib
    ```
-  * `download` or `git clone` https://github.com/raspberrypi/pico-sdk.git
+3. Install pico-sdk:
+
+   * `download` or `git clone` https://github.com/raspberrypi/pico-sdk.git
 
   * Set `PICO_SDK_PATH` to the SDK location in your environment
 
-3. Install VS Code
+4. Install VS Code
 
-4. `download` or `git clone` this repository
+5. `download` or `git clone` this repository
 
-5. In VS Code:
+6. In VS Code:
 
   * Install extensions: C/C++ Extension Pack, CMake Tools
 
