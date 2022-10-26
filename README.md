@@ -32,7 +32,7 @@ https://www.youtube.com/watch?v=2_8hvvxUR1c
 
     - Build
 
-  * Use BOOTSEL to upload *.uf2 examples
+7. Use BOOTSEL to upload *.uf2 examples
 
 ## Arduino
 
