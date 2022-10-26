@@ -22,14 +22,14 @@
 #define MY_FLASH_FIRST_SECTOR (PICO_NOF_SECTORS - 1 - 16)           // my first sector is 512 - 1 - 16
 
 
-const int pico_offset(const int sector, const int page);
-const uint8_t* pico_ptr(const int sector, const int page, const int pos);
-void pico_read(const int sector, const int page, uint8_t* buffer, const int nofpages);
-void pico_read(const int sector, const int page, uint8_t* buffer);
-void pico_prog(const int sector, const int page, const uint8_t* buffer, const int nofpages);
-void pico_erase(const int sector, const int nofsect);
-void pico_write(const int sector, const int page, const uint8_t* buffer, const int nofpages);
-void pico_write(const int sector, const int page, const uint8_t* buffer);
+const int pico_flash_offset(const int sector, const int page);
+const uint8_t* pico_flash_ptr(const int sector, const int page, const int pos);
+void pico_flash_read(const int sector, const int page, uint8_t* buffer, const int nofpages);
+void pico_flash_read(const int sector, const int page, uint8_t* buffer);
+void pico_flash_prog(const int sector, const int page, const uint8_t* buffer, const int nofpages);
+void pico_flash_erase(const int sector, const int nofsect);
+void pico_flash_write(const int sector, const int page, const uint8_t* buffer, const int nofpages);
+void pico_flash_write(const int sector, const int page, const uint8_t* buffer);
 
 void pico_read_into_flash_buffer(const int sector, const int page);
 void pico_write_from_flash_buffer(const int sector, const int page);
