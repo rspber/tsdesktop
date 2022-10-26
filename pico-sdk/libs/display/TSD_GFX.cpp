@@ -948,7 +948,7 @@ void TSD_GFX::drawChar(cursor_t* cursor, font_t* font, const char c, const uint1
 // Draw text line
 /**************************************************************************/
 /*!
-   @brief   // Draw text line to then \r or \n character or to the end of text
+   @brief   // Draw text line to the \r or \n character or to the end of text
     @param    cursor top left corner x, y coordinate
     @param    font  gfxFont with fontSizeX and fontSizeY
     @param    text   text line to be drawn
