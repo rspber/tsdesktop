@@ -1,7 +1,7 @@
 /*
   Pixel's buffer for TSD_ILI9341
 
-  FreeBSD License.
+  Copyright (c) 2022, rspber (https://github.com/rspber)
 
 */
 
