@@ -9,6 +9,30 @@
 
 #include <stdint.h>
 
+#define ILI9341_VERSION 0    // no version old devices  - tested
+// TouchScreen
+// edges of the display
+#define TS_LEFT 150
+#define TS_TOP 150
+#define TS_RIGHT 150
+#define TS_BOTTOM 400
+
+//#define ILI9341_VERSION 1    // v1.0  ?
+//#define ILI9341_VERSION 2    // v1.1  ?
+//#define ILI9341_VERSION 3    // v1.2  ?
+//#define ILI9341_VERSION 4    // v1.3      - tested
+// TouchScreen
+// edges of the display
+//#define TS_LEFT 150
+//#define TS_TOP 150
+//#define TS_RIGHT 150
+//#define TS_BOTTOM 400
+
+#define ROTATION_VTB 0    // vertical top to bottom
+#define ROTATION_VBT 2    // vertical bottom to top
+#define ROTATION_HLR 1    // horizontal left to right
+#define ROTATION_HRL 3    // horizontal right to left
+
 //SPI0
 //#define TFT_MISO 16  // RX
 #define TFT_CS   17    // Chip select control pin
@@ -20,13 +44,6 @@
 
 #define TOUCH_CS 22     // Chip select pin (T_CS) of touch screen
 
-// TouchScreen
-// edges of the display
-#define TS_LEFT 150
-#define TS_TOP 150
-#define TS_RIGHT 150
-#define TS_BOTTOM 350
-
 void init_hardware();
 
-void media_begin(const int8_t rotation);
+void media_begin(int8_t rotation);

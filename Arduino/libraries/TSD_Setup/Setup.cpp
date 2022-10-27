@@ -32,10 +32,11 @@ void init_i2c1()
   Wire1.setClock(I2C1_SPEED);
 }
 
-void media_begin(const int8_t rotation)
+void media_begin(int8_t rotation)
 {
   display.begin();
   display.setRotation(rotation);
+//  display.invertDisplay(true);    // invert display colors  WHITE <-> BLACK
 
   touch.begin();
   touch.setRotation(rotation & 1 ? rotation : (2 - rotation) % 4);

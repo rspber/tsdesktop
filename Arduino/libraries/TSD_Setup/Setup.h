@@ -9,6 +9,18 @@
 
 #include <stdint.h>
 
+// TouchScreen
+// edges of the display
+#define TS_LEFT 150
+#define TS_TOP 150
+#define TS_RIGHT 150
+#define TS_BOTTOM 400
+
+#define ROTATION_VTB 2    // vertical top to bottom
+#define ROTATION_VBT 0    // vertical bottom to top
+#define ROTATION_HLR 1    // horizontal left to right
+#define ROTATION_HRL 3    // horizontal right to left
+
 //SPI0
 //#define TFT_MISO 16  // RX
 #define TFT_CS   17    // Chip select control pin
@@ -19,13 +31,6 @@
 //#define TFT_BL       // LED back-light
 
 #define TOUCH_CS 22     // Chip select pin (T_CS) of touch screen
-
-// TouchScreen
-// edges of the display
-#define TS_LEFT 150
-#define TS_TOP 150
-#define TS_RIGHT 150
-#define TS_BOTTOM 350
 
 void init_hardware();
 
@@ -45,4 +50,4 @@ void init_i2c0();
 
 void init_i2c1();
 
-void media_begin(const int8_t rotation);
+void media_begin(int8_t rotation);

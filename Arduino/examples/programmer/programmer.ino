@@ -22,7 +22,7 @@
 
 #define FONT &FreeSans9pt7b
 
-#define ROTATION 2
+#define ROTATION ROTATION_VTB
 
 Display display;
 bool screenEnabled = false;
@@ -316,13 +316,13 @@ void tpgm_btn(ValueButton* b, const int id)
   b->setValueFormat("%02d");
 }
 
-bool schedChanged = false;
+bool pgmsChanged = false;
 
 void enable_pgm(const bool enable)
 {
-  if (schedChanged) {
+  if (pgmsChanged) {
     storePgmsInEEProm(PGMS);
-    schedChanged = false;
+    pgmsChanged = false;
   }
   rpgmFSet.setActiveRadio(NULL);
   pgm_select_click(NULL);
@@ -343,7 +343,7 @@ void selected_pgm_up(const int up)
     RadioButton* r = rpgmFSet.getActiveRadio();
     if (r) {
       static_cast<ValueButton*>(selectedPgmBtn)->setValue(pgm_value_up(PGMS, r->getTag(), selectedPgmBtn->getId(), up));
-      schedChanged = true;
+      pgmsChanged = true;
     }
   }
 }

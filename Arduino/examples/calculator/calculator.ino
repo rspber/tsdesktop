@@ -21,7 +21,7 @@ bool screenEnabled = false;
 
 Touch touch;
 
-#define ROTATION 2
+#define ROTATION ROTATION_VTB
 
 Editable operBtn(80);
 TextButton sumBtn;

@@ -9,6 +9,7 @@ Arduino platforms, natively ported to pico-sdk
 differences:
 - Adafruit_SPITFT is missed, all spi functions are handled by Picoino
 - only hardware spi is supported
+- added support for ILI9341 devices v1.3
 
 Oryginaly Adafruit's licence bellow.
 */
@@ -97,20 +98,22 @@ SOFTWARE.
 #include "buf16.h"
 #include <Picoino.h>
 
+#include <Setup.h>
+
  //    # Command constants from ILI9341 datasheet
-#define ILI9341_NOP         0x00    // No-op register
+//#define ILI9341_NOP         0x00    // No-op register
 #define ILI9341_SWRESET     0x01    // Software reset register
-#define ILI9341_RDDID       0x04    // Read display identification information
-#define ILI9341_RDDST       0x09    // Read display status
-#define ILI9341_SLPIN       0x10    // Enter sleep mode
+//#define ILI9341_RDDIDINF    0x04    // Read display identification information, returns non standard SPI 3 bytes
+//#define ILI9341_RDDSTAT     0x09    // Read display status, returns non standard SPI 4 bytes
+//#define ILI9341_RDDPWMODE   0x0A    // Read display power mode
+//#define ILI9341_RDMADCTL    0x0B    // Read display MADCTL
+//#define ILI9341_RDPIXFMT    0x0C    // Read display pixel format
+//#define ILI9341_RDIMGFMT    0x0D    // Read display image format
+//#define ILI9341_RDSELFDIAG  0x0F    // Read display self-diagnostic
+//#define ILI9341_SLPIN       0x10    // Enter sleep mode
 #define ILI9341_SLPOUT      0x11    // Exit sleep mode
-#define ILI9341_PTLON       0x12    // Partial mode on
-#define ILI9341_NORON       0x13    // Normal display mode on
-#define ILI9341_RDMODE      0x0A    // Read display power mode
-#define ILI9341_RDMADCTL    0x0B    // Read display MADCTL
-#define ILI9341_RDPIXFMT    0x0C    // Read display pixel format
-#define ILI9341_RDIMGFMT    0x0D    // Read display image format
-#define ILI9341_RDSELFDIAG  0x0F    // Read display self-diagnostic
+//#define ILI9341_PTLON       0x12    // Partial mode on
+//#define ILI9341_NORON       0x13    // Normal display mode on
 #define ILI9341_INVOFF      0x20    // Display inversion off
 #define ILI9341_INVON       0x21    // Display inversion on
 #define ILI9341_GAMMASET    0x26    // Gamma set
@@ -119,46 +122,51 @@ SOFTWARE.
 #define ILI9341_CASET       0x2A    // Column address set
 #define ILI9341_PASET       0x2B    // Page address set
 #define ILI9341_RAMWR       0x2C    // Memory write
-#define ILI9341_RAMRD       0x2E    // Memory read
-#define ILI9341_PTLAR       0x30    // Partial area
+//#define ILI9341_RAMRD       0x2E    // Memory read
+//#define ILI9341_PTLAR       0x30    // Partial area
 #define ILI9341_VSCRDEF     0x33    // Vertical scrolling definition
 #define ILI9341_MADCTL      0x36    // Memory access control
 #define ILI9341_VSCRSADD    0x37    // Vertical scrolling start address
 #define ILI9341_PIXFMT      0x3A    // COLMOD: Pixel format set
-#define ILI9341_WRITE_DISPLAY_BRIGHTNESS 0x51    // Brightness hardware dependent!
-#define ILI9341_READ_DISPLAY_BRIGHTNESS  0x52
-#define ILI9341_WRITE_CTRL_DISPLAY       0x53
-#define ILI9341_READ_CTRL_DISPLAY        0x54
-#define ILI9341_WRITE_CABC  0x55    // Write Content Adaptive Brightness Control
-#define ILI9341_READ_CABC   0x56    // Read Content Adaptive Brightness Control
-#define ILI9341_WRITE_CABC_MINIMUM       0x5E    // Write CABC Minimum Brightness
-#define ILI9341_READ_CABC_MINIMUM        0x5F    // Read CABC Minimum Brightness
+//#define ILI9341_WRITE_DISPLAY_BRIGHTNESS 0x51    // Brightness hardware dependent!
+//#define ILI9341_READ_DISPLAY_BRIGHTNESS  0x52
+//#define ILI9341_WRITE_CTRL_DISPLAY       0x53
+//#define ILI9341_READ_CTRL_DISPLAY        0x54
+//#define ILI9341_WRITE_CABC  0x55    // Write Content Adaptive Brightness Control
+//#define ILI9341_READ_CABC   0x56    // Read Content Adaptive Brightness Control
+//#define ILI9341_WRITE_CABC_MINIMUM       0x5E    // Write CABC Minimum Brightness
+//#define ILI9341_READ_CABC_MINIMUM        0x5F    // Read CABC Minimum Brightness
 #define ILI9341_FRMCTR1     0xB1    // Frame rate control (In normal mode/full colors)
-#define ILI9341_FRMCTR2     0xB2    // Frame rate control (In idle mode/8 colors)
-#define ILI9341_FRMCTR3     0xB3    // Frame rate control (In partial mode/full colors)
-#define ILI9341_INVCTR      0xB4    // Display inversion control
+//#define ILI9341_FRMCTR2     0xB2    // Frame rate control (In idle mode/8 colors)
+//#define ILI9341_FRMCTR3     0xB3    // Frame rate control (In partial mode/full colors)
+//#define ILI9341_INVCTR      0xB4    // Display inversion control
+//#define ILI9341_BLPORCTL    0xB5    // Blanking Porch Controll : 0..255, from v.1.02  : 0..127
 #define ILI9341_DFUNCTR     0xB6    // Display function control
+//#define ILI9341_ENTMODSET   0xB7    // Entry Mode Set
 #define ILI9341_PWCTR1      0xC0    // Power control 1
 #define ILI9341_PWCTR2      0xC1    // Power control 2
-#define ILI9341_PWCTR3      0xC2    // Power Control 3
-#define ILI9341_PWCTR4      0xC3    // Power Control 4
-#define ILI9341_PWCTR5      0xC4    // Power Control 5
-#define ILI9341_VMCTR1      0xC5    // VCOM control 1
-#define ILI9341_VMCTR2      0xC7    // VCOM control 2
-#define ILI9341_PWCTRA      0xCB    // Power control A
-#define ILI9341_PWCTRB      0xCF    // Power control B
+//#define ILI9341_PWCTR3      0xC2    // Power Control 3
+//#define ILI9341_PWCTR4      0xC3    // Power Control 4
+//#define ILI9341_PWCTR5      0xC4    // Power Control 5
+#define ILI9341_VCOMCTR1      0xC5    // Set the VCOM(H/L) voltage
+#define ILI9341_VCOMCTR2      0xC7    // Set the VCOM offset voltage
 #define ILI9341_RDID1       0xDA    // Read ID 1
 #define ILI9341_RDID2       0xDB    // Read ID 2
 #define ILI9341_RDID3       0xDC    // Read ID 3
-#define ILI9341_RDID4       0xDD    // Read ID 4
 #define ILI9341_GMCTRP1     0xE0    // Positive gamma correction
 #define ILI9341_GMCTRN1     0xE1    // Negative gamma correction
+#define ILI9341_EF          0xEF    // unknown
+#define ILI9341_PUMPRC      0xF7    // Pump ratio control
+//#define ILI9341_PWCTR6      0xFC
+
+// retired in version v.1.02
+#define ILI9341_PWCTRA      0xCB    // Power control A
+#define ILI9341_PWCTRB      0xCF    // Power control B
 #define ILI9341_DTCA        0xE8    // Driver timing control A
+// E9
 #define ILI9341_DTCB        0xEA    // Driver timing control B
 #define ILI9341_POSC        0xED    // Power on sequence control
 #define ILI9341_ENABLE3G    0xF2    // Enable 3 gamma control
-#define ILI9341_PUMPRC      0xF7    // Pump ratio control
-//#define ILI9341_PWCTR6     0xFC
 
 #define MADCTL_MY 0x80  ///< Bottom to top
 #define MADCTL_MX 0x40  ///< Right to left
@@ -201,24 +209,24 @@ void TSD_ILI9341::reset()
 }
 
 static const uint8_t initcmd[] = {
-  0xEF, 3, 0x03, 0x80, 0x02,
-  ILI9341_PWCTRB,   3, 0x00, 0xC1, 0x30,
-  ILI9341_POSC,     4, 0x64, 0x03, 0x12, 0x81,
-  ILI9341_DTCA,     3, 0x85, 0x00, 0x78,
-  ILI9341_PWCTRA,   5, 0x39, 0x2C, 0x00, 0x34, 0x02,
+  ILI9341_EF,       3, 0x03, 0x80, 0x02,                    // unknown
+  ILI9341_PWCTRB,   3, 0x00, 0xC1, 0x30,                    // retired in v.1.02
+  ILI9341_POSC,     4, 0x64, 0x03, 0x12, 0x81,              // retired in v.1.02
+  ILI9341_DTCA,     3, 0x85, 0x00, 0x78,                    // retired in v.1.02
+  ILI9341_PWCTRA,   5, 0x39, 0x2C, 0x00, 0x34, 0x02,        // retired in v.1.02
   ILI9341_PUMPRC,   1, 0x20,
-  ILI9341_DTCB,     2, 0x00, 0x00,
-  ILI9341_PWCTR1  , 1, 0x23,             // Power control VRH[5:0]
-  ILI9341_PWCTR2  , 1, 0x10,             // Power control SAP[2:0];BT[3:0]
-  ILI9341_VMCTR1  , 2, 0x3e, 0x28,       // VCM control
-  ILI9341_VMCTR2  , 1, 0x86,             // VCM control2
+  ILI9341_DTCB,     2, 0x00, 0x00,                          // retired in v.1.02
+  ILI9341_PWCTR1,   1, 0x23,             // Power control VRH[5:0]
+  ILI9341_PWCTR2,   1, 0x10,             // Power control SAP[2:0];BT[3:0]
+  ILI9341_VCOMCTR1, 2, 0x3e, 0x28,       // VCM control
+  ILI9341_VCOMCTR2, 1, 0x86,             // VCM control2
   ILI9341_MADCTL  , 1, 0x48,             // Memory Access Control
   ILI9341_VSCRSADD, 1, 0x00,             // Vertical scroll zero
   ILI9341_PIXFMT  , 1, 0x55,
   ILI9341_FRMCTR1 , 2, 0x00, 0x18,
   ILI9341_DFUNCTR , 3, 0x08, 0x82, 0x27, // Display Function Control
-  ILI9341_ENABLE3G, 1, 0x00,                         // 3Gamma Function Disable
-  ILI9341_GAMMASET , 1, 0x01,             // Gamma curve selected
+  ILI9341_ENABLE3G, 1, 0x00,             // 3Gamma Function Disable   // retired in v.1.02
+  ILI9341_GAMMASET, 1, 0x01,            // Gamma curve selected
   ILI9341_GMCTRP1 , 15, 0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, // Set Gamma
     0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00,
   ILI9341_GMCTRN1 , 15, 0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, // Set Gamma
@@ -261,26 +269,43 @@ void TSD_ILI9341::begin(PicoSPI* spi, const int16_t RST)
     @param   m  The index for rotation, from 0-3 inclusive
 */
 /**************************************************************************/
-void TSD_ILI9341::setRotation(uint8_t m) {
-  rotation = m % 4; // can't be higher than 3
-  switch (rotation) {
+void TSD_ILI9341::setRotation(const int8_t rotation)
+{
+  int8_t r = rotation % 4; // can't be higher than 3
+  uint8_t m = 0;
+
+  uint8_t m0, m1, m2, m3;
+  if( ILI9341_VERSION < 3 ) {     // < v1.2
+    m0 = MADCTL_MX | MADCTL_BGR;
+    m2 = MADCTL_MY | MADCTL_BGR;
+    m1 = MADCTL_MV | MADCTL_BGR;
+    m3 = MADCTL_MX | MADCTL_MY | MADCTL_MV | MADCTL_BGR;
+  }
+  else {
+    m3 = MADCTL_MX;
+    m1 = MADCTL_MY;
+    m0 = MADCTL_MV;
+    m2 = MADCTL_MX | MADCTL_MY | MADCTL_MV;
+  }
+
+  switch (r) {
   case 0:
-    m = (MADCTL_MX | MADCTL_BGR);
+    m = m0;
     _width = ILI9341_TFTWIDTH;
     _height = ILI9341_TFTHEIGHT;
     break;
   case 1:
-    m = (MADCTL_MV | MADCTL_BGR);
+    m = m1;
     _width = ILI9341_TFTHEIGHT;
     _height = ILI9341_TFTWIDTH;
     break;
   case 2:
-    m = (MADCTL_MY | MADCTL_BGR);
+    m = m2;
     _width = ILI9341_TFTWIDTH;
     _height = ILI9341_TFTHEIGHT;
     break;
   case 3:
-    m = (MADCTL_MX | MADCTL_MY | MADCTL_MV | MADCTL_BGR);
+    m = m3;
     _width = ILI9341_TFTHEIGHT;
     _height = ILI9341_TFTWIDTH;
     break;

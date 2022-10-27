@@ -23,7 +23,7 @@ Touch touch;
 
 TSD_PCF8575 pcf8575(i2c1);
 
-#define ROTATION 1
+#define ROTATION ROTATION_HLR
 
 CheckBox box100;  // attached to pcf8575
 CheckBox box101;  // attached to pcf8575

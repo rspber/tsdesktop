@@ -30,31 +30,35 @@ public:
   {
     int16_t tx, ty;
     if (TSD_XPT2046::getTouch(&tx, &ty)) {
-      tx = 4095 - tx;
+      int8_t m = getRotation();
+      if( ILI9341_VERSION < 3 ) {   // < v1.2
+        tx = 4095 - tx;
+        m = m & 1 ? m : (2 + m) % 4;
+      }
       int16_t minx = 0;
       int16_t maxx = 4095;
       int16_t miny = 0;
       int16_t maxy = 4095;
-      switch (abs(getRotation())) {
+      switch (abs(m)) {
       case 1:
         minx += TS_TOP;
         maxx -= TS_BOTTOM;
-        miny += TS_RIGHT;
-        maxy -= TS_LEFT;
+        miny += TS_LEFT;
+        maxy -= TS_RIGHT;
         break;
       case 3:
         minx += TS_BOTTOM;
         maxx -= TS_TOP;
-        miny += TS_LEFT;
-        maxy -= TS_RIGHT;
+        miny += TS_RIGHT;
+        maxy -= TS_LEFT;
         break;
-      case 0:
+      case 2:
         minx += TS_LEFT;
         maxx -= TS_RIGHT;
         miny += TS_BOTTOM;
         maxy -= TS_TOP;
         break;
-      case 2:
+      case 0:
         minx += TS_RIGHT;
         maxx -= TS_LEFT;
         miny += TS_TOP;

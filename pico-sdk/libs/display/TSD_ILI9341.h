@@ -24,7 +24,7 @@ public:
 
   void begin(PicoSPI* spi, const int16_t RST = -1);
 
-  void setRotation(uint8_t m);
+  void setRotation(const int8_t rotation);
   void invertDisplay(bool invert);
 
   void fillScreen(const uint16_t color = BLACK);
@@ -56,5 +56,4 @@ protected:
 private:
   PicoSPI* _spi;
   int16_t _RST;
-  int8_t rotation;
 };

@@ -11,12 +11,12 @@
 #include "hardware/sync.h"
 
 /*
-#include "<Display.h>
+#include <Display.h>
 
 void debug(const char *buf)
 {
   if( screenEnabled ) {
-//    display.fillRect(0, 0, 240, 8, BLACK);
+    display.fillRect(0, 0, 240, 8, BLACK);
     display.drawText(0, 0, buf, 1, WHITE);
   }
 }
