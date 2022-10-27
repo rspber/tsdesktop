@@ -2,7 +2,7 @@
 Touch Screen Desktop for Raspberry pi pico
 https://www.youtube.com/watch?v=2_8hvvxUR1c
 
-Version 2.4 "TFT SPI 240x320 v1.3 (temporary) is only supported by pico-sdk (see pico-sdk/libs/setup/Setup.h).
+Version 2.4" TFT SPI 240x320 v1.3 is only (temporary) supported by pico-sdk (see pico-sdk/libs/setup/Setup.h).
 
 ## pico-sdk
 
