@@ -2,6 +2,8 @@
 Touch Screen Desktop for Raspberry pi pico
 https://www.youtube.com/watch?v=2_8hvvxUR1c
 
+Temporary it's not compatible with 2.4" TFT SPI 240x320 v1.2, v1.3
+
 ## pico-sdk
 
 1. No other libraries are required,
