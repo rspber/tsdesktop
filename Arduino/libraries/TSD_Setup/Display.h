@@ -57,31 +57,10 @@ class Display : public Adafruit_ILI9341 {
 public:
   Display() : Adafruit_ILI9341(TFT_CS, SPI0_DC, TFT_RST) {}
 
-  void drawText(const int16_t aLeft, const int16_t aTop, const char* aText, const int8_t aFontSize = 1, const uint16_t aTextColor = WHITE)
-  {
-    setCursor(aLeft, aTop);
-    setTextSize(aFontSize);
-    setTextColor(aTextColor);
-    print(aText);
-  }
-
-  void drawTextLine(cursor_t* cursor, font_t* font, const char* aText, const uint16_t aTextColor = WHITE)
-  {
-    GFXfont* oldfont = gfxFont;
-    setFont(font->gfxFont);
-    int16_t x = cursor->x, y = cursor->y;
-    font->cursorAdjust(&x, &y);
-    setCursor(x, y);
-    setTextSize(font->fontSizeX, font->fontSizeY);
-    setTextColor(aTextColor);
-    print(aText);
-    setFont(oldfont);
-  }
-
-  void clearDisplay()
-  {
-    fillScreen(BLACK);
-  }
+  void setRotation(const int8_t rotation);
+  void drawText(const int16_t aLeft, const int16_t aTop, const char* aText, const int8_t aFontSize = 1, const uint16_t aTextColor = WHITE);
+  void drawTextLine(cursor_t* cursor, font_t* font, const char* aText, const uint16_t aTextColor = WHITE);
+  void clearDisplay();
 };
 
 extern bool screenEnabled;

@@ -23,9 +23,9 @@
 //#define ILI9341_VERSION 4    // v1.3      - tested
 // TouchScreen
 // edges of the display
-//#define TS_LEFT 150
+//#define TS_LEFT 200
 //#define TS_TOP 150
-//#define TS_RIGHT 150
+//#define TS_RIGHT 200
 //#define TS_BOTTOM 400
 
 #define ROTATION_VTB 0    // vertical top to bottom

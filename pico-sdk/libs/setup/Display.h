@@ -49,17 +49,8 @@ class Display : public TSD_ILI9341 {
 public:
   Display() : TSD_ILI9341() {}
 
-  void drawText(const int16_t aLeft, const int16_t aTop, const char* aText, const int8_t aFontSize = 1, const uint16_t aTextColor = WHITE, const int8_t aSpacing = 0)
-  {
-    cursor_t cursor{ aLeft, aTop };
-    font_t font{ NULL, aFontSize, aFontSize };
-    drawTextLine(&cursor, &font, aText, aTextColor, aSpacing);
-  }
-
-  void clearDisplay()
-  {
-    fillScreen(BLACK);
-  }
+  void drawText(const int16_t aLeft, const int16_t aTop, const char* aText, const int8_t aFontSize = 1, const uint16_t aTextColor = WHITE, const int8_t aSpacing = 0);
+  void clearDisplay();
 };
 
 extern bool screenEnabled;
