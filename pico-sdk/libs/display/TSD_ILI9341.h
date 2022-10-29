@@ -45,8 +45,9 @@ public:
 
 protected:
   void sendCmd(const uint8_t cmd);
-  void sendData(const uint8_t* data, const int16_t size);
-  void sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size);
+  void sendData(const int16_t size, const uint8_t* data);
+  void sendCmdData(const uint8_t cmd, const int16_t size, const uint8_t* data);
+  void sendCmdData(const uint8_t cmd, const uint8_t data);
   void reset();
 
   void block(const int16_t x0, const int16_t y0, const int16_t x1, const int16_t y1, const uint16_t* data, int16_t size);

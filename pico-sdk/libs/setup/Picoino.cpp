@@ -117,11 +117,16 @@ void init_spi1(const uint8_t RX, const uint8_t SCK, const uint8_t TX, const uint
 
 // ---------------------------------- PicoSPI ---------------------------------
 
-void PicoSPI::beginTransaction(const uint Hz)
+void PicoSPI::softTransaction(const uint Hz)
 {
   cs(1);  // Just in case it has been left low
   saved_baudrate = spi_get_baudrate(_spi);
   spi_set_baudrate(_spi, Hz);
+}
+
+void PicoSPI::beginTransaction(const uint Hz)
+{
+  softTransaction(Hz);
   cs(0);
 }
 

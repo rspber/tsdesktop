@@ -100,7 +100,9 @@ SOFTWARE.
 
 #include <Setup.h>
 
- //    # Command constants from ILI9341 datasheet
+#define BGR 1
+
+//    # Command constants from ILI9341 datasheet
 //#define ILI9341_NOP         0x00    // No-op register
 #define ILI9341_SWRESET     0x01    // Software reset register
 //#define ILI9341_RDDIDINF    0x04    // Read display identification information, returns non standard SPI 3 bytes
@@ -144,15 +146,29 @@ SOFTWARE.
 #define ILI9341_DFUNCTR     0xB6    // Display function control
 //#define ILI9341_ENTMODSET   0xB7    // Entry Mode Set
 #define ILI9341_PWCTR1      0xC0    // Power control 1
+#define ILI9341_MADCTL13    0xC0    // v1.3 configuration xCRICxCC
+//  I - inverse colors,
+//  R - 0:BGR, 1:RGB,
+//  C__C_CC - rotation + reverse mode
+//  CxxCxCC             | CxxCxCC
+//  0..0.00    0  <--   | 1..0.00    0  -->
+//  0..0.01    0  -->   | 1..0.01    0  <--
+//  0..0.10   90  -->   | 1..0.10   90  <--
+//  0..0.11   90  <--   | 1..0.11   90  -->
+//  0..1.00  180  -->   | 1..1.00  180  <--
+//  0..1.01  180  <--   | 1..1.01  180  -->
+//  0..1.10  270  <--   | 1..1.10  270  -->
+//  0..1.11  270  -->   | 1..1.11  270  <--
 #define ILI9341_PWCTR2      0xC1    // Power control 2
 //#define ILI9341_PWCTR3      0xC2    // Power Control 3
 //#define ILI9341_PWCTR4      0xC3    // Power Control 4
 //#define ILI9341_PWCTR5      0xC4    // Power Control 5
 #define ILI9341_VCOMCTR1      0xC5    // Set the VCOM(H/L) voltage
 #define ILI9341_VCOMCTR2      0xC7    // Set the VCOM offset voltage
-#define ILI9341_RDID1       0xDA    // Read ID 1
-#define ILI9341_RDID2       0xDB    // Read ID 2
-#define ILI9341_RDID3       0xDC    // Read ID 3
+//#define ILI9341_RDID1       0xDA    // Read ID 1
+//#define ILI9341_RDID2       0xDB    // Read ID 2
+//#define ILI9341_RDID3       0xDC    // Read ID 3
+//#define ILI9341_RDID4       0xD3    // Read ID 4
 #define ILI9341_GMCTRP1     0xE0    // Positive gamma correction
 #define ILI9341_GMCTRN1     0xE1    // Negative gamma correction
 #define ILI9341_EF          0xEF    // unknown
@@ -168,30 +184,28 @@ SOFTWARE.
 #define ILI9341_POSC        0xED    // Power on sequence control
 #define ILI9341_ENABLE3G    0xF2    // Enable 3 gamma control
 
-#define MADCTL_MY 0x80  ///< Bottom to top
-#define MADCTL_MX 0x40  ///< Right to left
-#define MADCTL_MV 0x20  ///< Reverse Mode
-#define MADCTL_ML 0x10  ///< LCD refresh Bottom to top
-#define MADCTL_RGB 0x00 ///< Red-Green-Blue pixel order
-#define MADCTL_BGR 0x08 ///< Blue-Green-Red pixel order
-#define MADCTL_MH 0x04  ///< LCD refresh right to left
-
 void TSD_ILI9341::sendCmd(const uint8_t cmd)
 {
   _spi->writeCmd(cmd);
 }
 
-void TSD_ILI9341::sendData(const uint8_t* data, const int16_t size)
+void TSD_ILI9341::sendData(const int16_t size, const uint8_t* data)
 {
   _spi->writeData(data, size);
 }
 
-void TSD_ILI9341::sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size)
+void TSD_ILI9341::sendCmdData(const uint8_t cmd, const int16_t size, const uint8_t* data)
 {
   sendCmd(cmd);
   if (size > 0) {
-    sendData(data, size);
+    sendData(size, data);
   }
+}
+
+void TSD_ILI9341::sendCmdData(const uint8_t cmd, const uint8_t data)
+{
+  sendCmd(cmd);
+  sendData(1, &data);
 }
 
 void TSD_ILI9341::reset()
@@ -208,34 +222,6 @@ void TSD_ILI9341::reset()
   }
 }
 
-static const uint8_t initcmd[] = {
-  ILI9341_EF,       3, 0x03, 0x80, 0x02,                    // unknown
-  ILI9341_PWCTRB,   3, 0x00, 0xC1, 0x30,                    // retired in v.1.02
-  ILI9341_POSC,     4, 0x64, 0x03, 0x12, 0x81,              // retired in v.1.02
-  ILI9341_DTCA,     3, 0x85, 0x00, 0x78,                    // retired in v.1.02
-  ILI9341_PWCTRA,   5, 0x39, 0x2C, 0x00, 0x34, 0x02,        // retired in v.1.02
-  ILI9341_PUMPRC,   1, 0x20,
-  ILI9341_DTCB,     2, 0x00, 0x00,                          // retired in v.1.02
-  ILI9341_PWCTR1,   1, 0x23,             // Power control VRH[5:0]
-  ILI9341_PWCTR2,   1, 0x10,             // Power control SAP[2:0];BT[3:0]
-  ILI9341_VCOMCTR1, 2, 0x3e, 0x28,       // VCM control
-  ILI9341_VCOMCTR2, 1, 0x86,             // VCM control2
-  ILI9341_MADCTL  , 1, 0x48,             // Memory Access Control
-  ILI9341_VSCRSADD, 1, 0x00,             // Vertical scroll zero
-  ILI9341_PIXFMT  , 1, 0x55,
-  ILI9341_FRMCTR1 , 2, 0x00, 0x18,
-  ILI9341_DFUNCTR , 3, 0x08, 0x82, 0x27, // Display Function Control
-  ILI9341_ENABLE3G, 1, 0x00,             // 3Gamma Function Disable   // retired in v.1.02
-  ILI9341_GAMMASET, 1, 0x01,            // Gamma curve selected
-  ILI9341_GMCTRP1 , 15, 0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, // Set Gamma
-    0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00,
-  ILI9341_GMCTRN1 , 15, 0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, // Set Gamma
-    0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F,
-  ILI9341_SLPOUT  , 0x80,                // Exit Sleep
-  ILI9341_DISPON  , 0x80,                // Display on
-  0x00                                   // End of list
-};
-
 void TSD_ILI9341::begin(PicoSPI* spi, const int16_t RST)
 {
   _spi = spi;
@@ -244,20 +230,87 @@ void TSD_ILI9341::begin(PicoSPI* spi, const int16_t RST)
   if (RST >= 0) {
     pinMode(RST, OUTPUT);
   }
+  _spi->softTransaction(2 * 1000 * 1000);   // slow down
 
   reset();
   sendCmd(ILI9341_SWRESET); // Engage software reset
   sleep_ms(150);
-  uint8_t cmd, x, numArgs;
-  const uint8_t* addr = initcmd;
-  while ((cmd = *addr++) > 0) {
-    x = *addr++;
-    numArgs = x & 0x7F;
-    sendCmdData(cmd, addr, numArgs);
-    addr += numArgs;
-    if (x & 0x80)
-      delay(150);
+
+  if (ILI9341_VERSION < 3) {  // < v1.2
+    static uint8_t ILI9341_EF_DATA[] = {0x03, 0x80, 0x02};
+    sendCmdData(ILI9341_EF, 3, ILI9341_EF_DATA);              // unknown
+
+    static uint8_t ILI9341_PWCTRB_DATA[] = {0x00, 0xC1, 0x30};
+    sendCmdData(ILI9341_PWCTRB, 3, ILI9341_PWCTRB_DATA);      // retired in v.1.02
+
+    static uint8_t ILI9341_POSC_DATA[] = {0x64, 0x03, 0x12, 0x81};
+    sendCmdData(ILI9341_POSC, 4, ILI9341_POSC_DATA);          // retired in v.1.02
+
+    static uint8_t ILI9341_DTCA_DATA[] = {0x85, 0x00, 0x78};
+    sendCmdData(ILI9341_DTCA, 3, ILI9341_DTCA_DATA);          // retired in v.1.02
+
+    static uint8_t ILI9341_PWCTRA_DATA[] = {0x39, 0x2C, 0x00, 0x34, 0x02};
+    sendCmdData(ILI9341_PWCTRA, 5, ILI9341_PWCTRA_DATA);      // retired in v.1.02
   }
+
+  sendCmdData(ILI9341_PUMPRC,   0x20);
+
+  if (ILI9341_VERSION < 3) {  // < v1.2
+    static uint8_t ILI9341_DTCB_DATA[] = {0x00, 0x00};
+    sendCmdData(ILI9341_DTCB, 2, ILI9341_DTCB_DATA);          // retired in v.1.02
+  }
+
+  if (ILI9341_VERSION < 3) {  // < v1.2
+    sendCmdData(ILI9341_PWCTR1, 0x23);             // Power control VRH[5:0]
+  }
+  else {
+    sendCmdData(ILI9341_MADCTL13, 0x21);           // xCRICxCC
+  }
+
+  sendCmdData(ILI9341_PWCTR2,   0x10);             // Power control SAP[2:0];BT[3:0]
+
+  static uint8_t ILI9341_VCOMCTR_DATA[] = {0x31, 0x3c};
+  sendCmdData(ILI9341_VCOMCTR1, 2, ILI9341_VCOMCTR_DATA);       // VCM control 1
+
+  sendCmdData(ILI9341_VCOMCTR2, 0xC0);             // VCM control 2
+
+  if (ILI9341_VERSION < 3) {  // < v1.2
+    sendCmdData(ILI9341_MADCTL,   0x48);             // Memory Access Control
+  }
+
+  sendCmdData(ILI9341_VSCRSADD, 0x00);             // Vertical scroll zero
+
+  sendCmdData(ILI9341_PIXFMT,   0x55);
+
+  static uint8_t ILI9341_FRMCTR1_DATA[] = {0x00, 0x18};
+  sendCmdData(ILI9341_FRMCTR1, 2, ILI9341_FRMCTR1_DATA);
+
+  static uint8_t ILI9341_DFUNCTR_DATA[] = {0x08, 0x82, 0x27};
+  sendCmdData(ILI9341_DFUNCTR, 3, ILI9341_DFUNCTR_DATA);  // Display Function Control
+
+  sendCmdData(ILI9341_ENABLE3G, 0x00);             // 3Gamma Function Disable   // retired in v.1.02
+
+  sendCmdData(ILI9341_GAMMASET, 0x01);             // Gamma curve selected
+
+  if (ILI9341_VERSION < 3) {  // < v1.2
+    static uint8_t ILI9341_GMCTRP1_DATA_OLD[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};  // positive gamma correction
+    sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA_OLD);
+  }
+  else {
+    static uint8_t ILI9341_GMCTRP1_DATA_NEW[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x20, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};  // positive gamma correction v1.3
+    sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA_NEW);
+  }
+
+  static uint8_t ILI9341_GMCTRN1_DATA[] = {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F};  // negative gamma correction
+  sendCmdData(ILI9341_GMCTRN1, 15, ILI9341_GMCTRN1_DATA);
+
+  sendCmd(ILI9341_SLPOUT);   // Exit Sleep
+  delay(150);
+
+  sendCmd(ILI9341_DISPON);   // Display on
+  delay(150);
+
+  _spi->endTransaction();   // restore speed
 
   _width = ILI9341_TFTWIDTH;
   _height = ILI9341_TFTHEIGHT;
@@ -269,48 +322,41 @@ void TSD_ILI9341::begin(PicoSPI* spi, const int16_t RST)
     @param   m  The index for rotation, from 0-3 inclusive
 */
 /**************************************************************************/
-void TSD_ILI9341::setRotation(const int8_t rotation)
-{
-  int8_t r = rotation % 4; // can't be higher than 3
+void TSD_ILI9341::setRotation(const int8_t rotation) {
   uint8_t m = 0;
-
-  uint8_t m0, m1, m2, m3;
-  if( ILI9341_VERSION < 3 ) {     // < v1.2
-    m0 = MADCTL_MX | MADCTL_BGR;
-    m2 = MADCTL_MY | MADCTL_BGR;
-    m1 = MADCTL_MV | MADCTL_BGR;
-    m3 = MADCTL_MX | MADCTL_MY | MADCTL_MV | MADCTL_BGR;
-  }
-  else {
-    m3 = MADCTL_MX;
-    m1 = MADCTL_MY;
-    m0 = MADCTL_MV;
-    m2 = MADCTL_MX | MADCTL_MY | MADCTL_MV;
-  }
-
-  switch (r) {
+  uint8_t g = 0; // v1.3
+  switch (rotation % 4) { // can't be higher than 3
   case 0:
-    m = m0;
+    m = 0x40 | (BGR << 3); // MX
+    g = (REVERSE_MODE ? 0x00 : 0x01) | (BGR << 5);
     _width = ILI9341_TFTWIDTH;
     _height = ILI9341_TFTHEIGHT;
     break;
   case 1:
-    m = m1;
+    m = 0x20 | (BGR << 3); // MV
+    g = (REVERSE_MODE ? 0x03 : 0x02) | (BGR << 5);
     _width = ILI9341_TFTHEIGHT;
     _height = ILI9341_TFTWIDTH;
     break;
   case 2:
-    m = m2;
+    m = 0x80 | (BGR << 3); // MY
+    g = (REVERSE_MODE ? 0x09 : 0x08) | (BGR << 5);
     _width = ILI9341_TFTWIDTH;
     _height = ILI9341_TFTHEIGHT;
     break;
   case 3:
-    m = m3;
+    m = 0xe0 | (BGR << 3); // MX | MY | MV
+    g = (REVERSE_MODE ? 0x0a : 0x0b) | (BGR << 5);
     _width = ILI9341_TFTHEIGHT;
     _height = ILI9341_TFTWIDTH;
     break;
   }
-  sendCmdData(ILI9341_MADCTL, &m, 1);
+  if (ILI9341_VERSION < 3) { // < v1.2
+    sendCmdData(ILI9341_MADCTL, m);
+  }
+  else {
+    sendCmdData(ILI9341_MADCTL13, g);
+  }
 }
 
 /**************************************************************************/
@@ -334,7 +380,7 @@ void TSD_ILI9341::scrollTo(uint16_t y) {
   uint8_t data[2];
   data[0] = y >> 8;
   data[1] = y & 0xff;
-  sendCmdData(ILI9341_VSCRSADD, (uint8_t*)data, 2);
+  sendCmdData(ILI9341_VSCRSADD, 2, (uint8_t*)data);
 }
 
 /**************************************************************************/
@@ -355,7 +401,7 @@ void TSD_ILI9341::setScrollMargins(uint16_t top, uint16_t bottom) {
     data[3] = middle & 0xff;
     data[4] = bottom >> 8;
     data[5] = bottom & 0xff;
-    sendCmdData(ILI9341_VSCRDEF, (uint8_t*)data, 6);
+    sendCmdData(ILI9341_VSCRDEF, 6, (uint8_t*)data);
   }
 }
 
@@ -378,12 +424,12 @@ void TSD_ILI9341::block(const int16_t x0, const int16_t y0, const int16_t x1, co
     uint16_t buf[2];
     buf[0] = SWAP16(x0);
     buf[1] = SWAP16(x1);
-    sendCmdData(ILI9341_CASET, (const uint8_t*)buf, sizeof(buf));
+    sendCmdData(ILI9341_CASET, sizeof(buf), (const uint8_t*)buf);
     buf[0] = SWAP16(y0);
     buf[1] = SWAP16(y1);
-    sendCmdData(ILI9341_PASET, (const uint8_t*)buf, sizeof(buf));
+    sendCmdData(ILI9341_PASET, sizeof(buf), (const uint8_t*)buf);
     sendCmd(ILI9341_RAMWR);
-    sendData((uint8_t*)data, size * 2);
+    sendData(size * 2, (uint8_t*)data);
   }
 }
 

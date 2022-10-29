@@ -11,7 +11,7 @@
 
 #define ILI9341_VERSION 0    // no version old devices  - tested
 // TouchScreen
-// edges of the display
+// edges of the display for no version models
 #define TS_LEFT 150
 #define TS_TOP 150
 #define TS_RIGHT 150
@@ -19,19 +19,21 @@
 
 //#define ILI9341_VERSION 1    // v1.0  ?
 //#define ILI9341_VERSION 2    // v1.1  ?
-//#define ILI9341_VERSION 3    // v1.2  ?
+//#define ILI9341_VERSION 3    // v1.2  ?   - maybe has changes doing in v1.3, if not set to 2
 //#define ILI9341_VERSION 4    // v1.3      - tested
 // TouchScreen
-// edges of the display
+// edges of the display for v1.3
 //#define TS_LEFT 200
 //#define TS_TOP 150
 //#define TS_RIGHT 200
-//#define TS_BOTTOM 400
+//#define TS_BOTTOM 350
 
 #define ROTATION_VTB 0    // vertical top to bottom
 #define ROTATION_VBT 2    // vertical bottom to top
 #define ROTATION_HLR 1    // horizontal left to right
 #define ROTATION_HRL 3    // horizontal right to left
+
+#define REVERSE_MODE 0    // left to right, 1 = right to left : works only for ILI9341 v1.3
 
 //SPI0
 //#define TFT_MISO 16  // RX

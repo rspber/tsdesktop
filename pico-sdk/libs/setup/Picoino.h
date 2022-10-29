@@ -139,6 +139,7 @@ public:
     gpio_put(_DC, mode);
   }
 
+  void softTransaction(const uint Hz = DEF_SPI_HZ);
   void beginTransaction(const uint Hz = DEF_SPI_HZ);
   void endTransaction();
 
