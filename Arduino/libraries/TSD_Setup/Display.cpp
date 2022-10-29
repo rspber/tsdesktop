@@ -61,7 +61,7 @@
 #define ILI9341_PWCTR1      0xC0    // Power control 1
 #define ILI9341_MADCTL13    0xC0    // v1.3 configuration xCRICxCC
 //  I - inverse colors,
-//  R - 0:BGR, 1:RGB,
+//  R - 0:RGB, 1:BGR,
 //  C__C_CC - rotation + reverse mode
 //  CxxCxCC             | CxxCxCC
 //  0..0.00    0  <--   | 1..0.00    0  -->
@@ -203,8 +203,8 @@ void Display::begin(uint32_t freq)
     sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA_OLD);
   }
   else {
-    static uint8_t ILI9341_GMCTRP1_DATA_NEW[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x20, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};  // positive gamma correction v1.3
-    sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA_NEW);
+    static uint8_t ILI9341_GMCTRP1_DATA_V13[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x20, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};  // positive gamma correction v1.3
+    sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA_V13);
   }
 
   static uint8_t ILI9341_GMCTRN1_DATA[] = {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F};  // negative gamma correction

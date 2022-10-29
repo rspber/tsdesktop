@@ -148,7 +148,7 @@ SOFTWARE.
 #define ILI9341_PWCTR1      0xC0    // Power control 1
 #define ILI9341_MADCTL13    0xC0    // v1.3 configuration xCRICxCC
 //  I - inverse colors,
-//  R - 0:BGR, 1:RGB,
+//  R - 0:RGB, 1:BGR,
 //  C__C_CC - rotation + reverse mode
 //  CxxCxCC             | CxxCxCC
 //  0..0.00    0  <--   | 1..0.00    0  -->
