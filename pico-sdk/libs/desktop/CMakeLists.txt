@@ -12,5 +12,4 @@ target_sources(desktop INTERFACE
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/RadioButton.cpp
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/Editable.cpp
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/FieldSet.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/Debug.cpp
 )
