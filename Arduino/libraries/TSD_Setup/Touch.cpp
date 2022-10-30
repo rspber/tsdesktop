@@ -38,38 +38,26 @@ bool Touch::getTouch(point_t* p)
     int16_t maxx = 4095;
     int16_t miny = 0;
     int16_t maxy = 4095;
-    switch (abs((m + (REVERSE_MODE << 1)) % 4)) {
+    switch (abs(m)) {
       case 0:                 // VBT
-        if (REVERSE_MODE) {
-          tsp.y = 4095 - tsp.y;
-        }
         minx += TS_RIGHT;
         maxx -= TS_LEFT;
         miny += TS_TOP;
         maxy -= TS_BOTTOM;
         break;
       case 1:                 // HLR
-        if (REVERSE_MODE) {
-          tsp.x = 4095 - tsp.x;
-        }
         minx += TS_TOP;
         maxx -= TS_BOTTOM;
         miny += TS_LEFT;
         maxy -= TS_RIGHT;
         break;
       case 2:                 // VTB
-        if (REVERSE_MODE) {
-          tsp.y = 4095 - tsp.y;
-        }
         minx += TS_LEFT;
         maxx -= TS_RIGHT;
         miny += TS_BOTTOM;
         maxy -= TS_TOP;
         break;
       case 3:                 // HRL
-        if (REVERSE_MODE) {
-          tsp.x = 4095 - tsp.x;
-        }
         minx += TS_BOTTOM;
         maxx -= TS_TOP;
         miny += TS_RIGHT;

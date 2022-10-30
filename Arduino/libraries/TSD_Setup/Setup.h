@@ -36,8 +36,6 @@
 #define ROTATION_HLR 1    // horizontal left to right
 #define ROTATION_HRL 3    // horizontal right to left
 
-#define REVERSE_MODE 0    // left to right, 1 = right to left : works with ILI9341 v1.3 only
-
 //SPI0
 //#define TFT_MISO 16  // RX
 #define TFT_CS   17    // Chip select control pin
