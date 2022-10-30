@@ -29,13 +29,13 @@ public:
    void setCursor(const int aCursor);
    void setCursorToEnd();
    void moveCursor(const int8_t aDirection);
-   void setCursorColor(const uint16_t aCursorColor);
+   void setCursorColor(const rgb_t aCursorColor);
    void setCursorInsMode(const bool aCursorInsMode);
    void swapCursorInsMode() { setCursorInsMode(!cursorInsMode); }
 
    const bool getCursorAllow() { return cursorAllow; }
    const int getCursor() { return textCursor; }
-   const uint16_t getCursorColor() { return cursorColor; }
+   const rgb_t getCursorColor() { return cursorColor; }
    const bool getCursorInsMode() { return cursorInsMode; }
 
    void cmdInsChar(const char aChar);
@@ -52,7 +52,7 @@ protected:
 private:
    virtual void clickEffect(const int16_t posX, const int16_t posY);
 
-   void drawCursor(const uint16_t aCursorColor);
+   void drawCursor(const rgb_t aCursorColor);
    void drawCursor();
 
    void hideCursor();
@@ -63,6 +63,6 @@ private:
    int textCursor = 0;
    bool cursorAllow = true;
    bool cursorInsMode = true;   // insert chars vs overwrite
-   uint16_t cursorColor = RED;
+   rgb_t cursorColor = RED;
 };
 

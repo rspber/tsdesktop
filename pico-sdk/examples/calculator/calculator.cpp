@@ -9,7 +9,7 @@
 
 #define TX_COLOR  GREEN_YELLOW
 #define BG_COLOR  DODGER_BLUE
-#define CBG_COLOR  RGB(0x40, 0x40, 0xA0)
+#define CBG_COLOR  RGB(0x40, 0x40, 0xC0)
 
 #include <Display.h>
 #include <Touch.h>

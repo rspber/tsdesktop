@@ -180,7 +180,7 @@ const int16_t DecorTextButton::getDecorPosTop()
   return decorMarginTop + h;
 }
 
-void DecorTextButton::setDecorActiveColor(const uint16_t aActiveColor)
+void DecorTextButton::setDecorActiveColor(const rgb_t aActiveColor)
 {
   activeColor = aActiveColor;
   if (wasDrawn) {
@@ -188,7 +188,7 @@ void DecorTextButton::setDecorActiveColor(const uint16_t aActiveColor)
   }
 }
 
-void DecorTextButton::setDecorInActiveColor(const uint16_t aInActiveColor)
+void DecorTextButton::setDecorInActiveColor(const rgb_t aInActiveColor)
 {
   inActiveColor = aInActiveColor;
   if (wasDrawn) {

@@ -24,7 +24,7 @@ public:
   void setRotation(const int8_t rotation);
   void invertDisplay(bool invert);
 
-  void fillScreen(const uint16_t color = BLACK);
+  void fillScreen(const rgb_t color = BLACK);
 
   void scrollTo(uint16_t y);
   void setScrollMargins(uint16_t top, uint16_t bottom);
@@ -32,10 +32,10 @@ public:
   void displayOff();
   void displayOn();
 
-  virtual void drawPixel(const int16_t x, const int16_t y, const uint16_t color);
-  virtual void drawFastHLine(int16_t x, const int16_t y, int16_t w, const uint16_t color);
-  virtual void drawFastVLine(const int16_t x, int16_t y, int16_t h, const uint16_t color);
-  virtual void fillRect(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint16_t color);
+  virtual void drawPixel(const int16_t x, const int16_t y, const rgb_t color);
+  virtual void drawFastHLine(int16_t x, const int16_t y, int16_t w, const rgb_t color);
+  virtual void drawFastVLine(const int16_t x, int16_t y, int16_t h, const rgb_t color);
+  virtual void fillRect(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color);
 
   uint16_t width() { return _width; }
   uint16_t height() { return _height; }
@@ -47,9 +47,9 @@ protected:
   void sendCmdData(const uint8_t cmd, const uint8_t data);
   void reset();
 
-  void block(const int16_t x0, const int16_t y0, const int16_t x1, const int16_t y1, const uint16_t* data, int16_t size);
-  void fill_hrect(int16_t x, int16_t y, int16_t w, int16_t h, const uint16_t color);
-  void fill_vrect(int16_t x, int16_t y, int16_t w, int16_t h, const uint16_t color);
+  void block(const int16_t x0, const int16_t y0, const int16_t x1, const int16_t y1, const uint8_t* data, int16_t size);
+  void fill_hrect(int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color);
+  void fill_vrect(int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color);
 
 private:
   PicoSPI* _spi;

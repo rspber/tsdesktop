@@ -193,8 +193,8 @@ public:
   // default is 100
   void setClickHighlightDelay(const int16_t aClickHighlightDelay) { clickHighlightDelay = aClickHighlightDelay; }
 
-  const uint16_t getBackgroundColor();    // or NO_BACKGROUND_COLOR
-  const uint16_t getBackground() { return getBackgroundColor(); }
+  const rgb_t getBackgroundColor();    // or NO_BACKGROUND_COLOR
+  const rgb_t getBackground() { return getBackgroundColor(); }
 
   virtual Container* pressed(const int16_t xScreen, const int16_t yScreen);
 
@@ -265,8 +265,8 @@ public:
     const int16_t aTop,
     const int16_t aWidth,
     const int16_t aHeight,
-    uint16_t aBackgroundColor = BLACK,
-    uint16_t aBorderColor = WHITE)
+    rgb_t aBackgroundColor = BLACK,
+    rgb_t aBorderColor = WHITE)
     : Container(aType, aLeft, aTop, aWidth, aHeight), backgroundColor(aBackgroundColor), borderColor(aBorderColor)
   {
     marginLeft = 2;
@@ -286,8 +286,8 @@ public:
     const int16_t aTop,
     const int16_t aWidth,
     const int16_t aHeight,
-    uint16_t aBackgroundColor = BLACK,
-    uint16_t aBorderColor = WHITE)
+    rgb_t aBackgroundColor = BLACK,
+    rgb_t aBorderColor = WHITE)
     : Button(TYPE_BUTTON, aLeft, aTop, aWidth, aHeight, aBackgroundColor, aBorderColor)
   {
   }
@@ -295,19 +295,19 @@ public:
   void setRadius(const int8_t aRadius);
 
   void setTransparent(const bool aTransparent);
-  void setBackgroundColor(const uint16_t aBackgroundColor);
-  void setBackground(const uint16_t aBackgroundColor);
+  void setBackgroundColor(const rgb_t aBackgroundColor);
+  void setBackground(const rgb_t aBackgroundColor);
 
   void setBorderSize(const uint8_t aBorderSize) { borderSize = aBorderSize; }
-  void setBorderColor(const uint16_t aBorderColor);
+  void setBorderColor(const rgb_t aBorderColor);
 
-  void setClickHighlightColor(const uint16_t aClickHighlightColor) { clickHighlightColor = aClickHighlightColor; }
-  const uint16_t getClickHighlightColor() { return clickHighlightColor; }
+  void setClickHighlightColor(const rgb_t aClickHighlightColor) { clickHighlightColor = aClickHighlightColor; }
+  const rgb_t getClickHighlightColor() { return clickHighlightColor; }
 
   const int8_t getRadius() { return radius; }
   const bool getTransparent() { return transparent; }
 
-  const uint16_t getBorderColor() { return borderColor; }
+  const rgb_t getBorderColor() { return borderColor; }
   const uint8_t getBorderSize() { return borderSize; }
 
   virtual void draw(const bool redraw);
@@ -326,20 +326,20 @@ private:
   virtual void setNotWasDrawn() { wasDrawn = false; }
 
   void drawBackground();
-  void drawBackground(const uint16_t color);
+  void drawBackground(const rgb_t color);
 
   void drawBorder();
-  void drawBorder(const uint16_t color);
+  void drawBorder(const rgb_t color);
 
   virtual void clickEffect(const int16_t posX, const int16_t posY);
 
 private:
   int8_t radius = 0;
   bool transparent = false;
-  uint16_t backgroundColor = 0;
+  rgb_t backgroundColor = 0;
   uint8_t borderSize = 1;
-  uint16_t borderColor = 0;
-  uint16_t clickHighlightColor = RED;
+  rgb_t borderColor = 0;
+  rgb_t clickHighlightColor = RED;
 };
 
 
@@ -363,9 +363,9 @@ public:
     const int16_t aTop,
     const int16_t aWidth,
     const int16_t aHeight,
-    const uint16_t aTextColor = WHITE,
-    const uint16_t aBackgroundColor = BLACK,
-    const uint16_t aBorderColor = WHITE)
+    const rgb_t aTextColor = WHITE,
+    const rgb_t aBackgroundColor = BLACK,
+    const rgb_t aBorderColor = WHITE)
     : Button(TYPE_TEXTBUTTON, aLeft, aTop, aWidth, aHeight, aBackgroundColor, aBorderColor),
     textp(aText), textColor(aTextColor)
   {
@@ -393,9 +393,9 @@ private:
   TextButton(
     const CONTAINER_TYPE aType,
     const char* aText,
-    const uint16_t aTextColor = WHITE,
-    const uint16_t aBackgroundColor = BLACK,
-    const uint16_t aBorderColor = WHITE)
+    const rgb_t aTextColor = WHITE,
+    const rgb_t aBackgroundColor = BLACK,
+    const rgb_t aBorderColor = WHITE)
     : Button(aType, -1, -1, ALIGN_COMPACT, ALIGN_COMPACT, aBackgroundColor, aBorderColor),
     textp(aText), textColor(aTextColor)
   {
@@ -409,7 +409,7 @@ public:
   void setTextCoord(const int16_t aLeft, const int16_t aTop);
   void setFontSize(const int8_t aFontSize);
   void setFontSize(const int8_t aFontSizeX, const int8_t aFontSizeY);
-  void setTextColor(const uint16_t aTextColor);
+  void setTextColor(const rgb_t aTextColor);
   void setTextAlign(TEXT_ALIGN aTextAlign);
 
   virtual const char* getText() { return textp; }
@@ -419,7 +419,7 @@ public:
   const int16_t getTextHeight();
   const int8_t getFontSizeX() { return font.fontSizeX; }
   const int8_t getFontSizeY() { return font.fontSizeY; }
-  const uint16_t getTextColor() { return textColor; }
+  const rgb_t getTextColor() { return textColor; }
 
   virtual void draw(const bool redraw);
 
@@ -435,7 +435,7 @@ protected:
 
   virtual void clickEffect(const int16_t posX, const int16_t posY);
 
-  virtual void drawText(const uint16_t color);
+  virtual void drawText(const rgb_t color);
   virtual void drawText();
 
   virtual void hideText();
@@ -452,7 +452,7 @@ private:
   font_t font{ NULL, 1, 1 };
   const char* textp = "";
   int16_t textLeft, textTop = 0;
-  uint16_t textColor = 0;
+  rgb_t textColor = 0;
   TEXT_ALIGN textAlign = TEXT_ALIGN_LEFT;
 };
 
@@ -471,9 +471,9 @@ public:
     const int16_t aTop,
     const int16_t aWidth,
     const int16_t aHeight,
-    const uint16_t aTextColor = WHITE,
-    const uint16_t aBackgroundColor = BLACK,
-    const uint16_t aBorderColor = WHITE)
+    const rgb_t aTextColor = WHITE,
+    const rgb_t aBackgroundColor = BLACK,
+    const rgb_t aBorderColor = WHITE)
     : TextButton((const char*)buf, aLeft, aTop, aWidth, aHeight, aTextColor, aBackgroundColor, aBorderColor)
   {
   }
@@ -481,9 +481,9 @@ public:
   ValueButton(
     const int16_t aWidth,
     const int16_t aHeight,
-    const uint16_t aTextColor = WHITE,
-    const uint16_t aBackgroundColor = BLACK,
-    const uint16_t aBorderColor = WHITE)
+    const rgb_t aTextColor = WHITE,
+    const rgb_t aBackgroundColor = BLACK,
+    const rgb_t aBorderColor = WHITE)
     : ValueButton(-1, -1, aWidth, aHeight, aTextColor, aBackgroundColor, aBorderColor)
   {
   }
@@ -513,9 +513,9 @@ public:
   DecorTextButton(
     const CONTAINER_TYPE aType,
     const char* aText,
-    const uint16_t aTextColor = WHITE,
-    const uint16_t aBackgroundColor = BLACK,
-    const uint16_t aBorderColor = WHITE)
+    const rgb_t aTextColor = WHITE,
+    const rgb_t aBackgroundColor = BLACK,
+    const rgb_t aBorderColor = WHITE)
     : TextButton(aType, aText, aTextColor, aBackgroundColor, aBorderColor)
   {
     activeColor = aTextColor;
@@ -550,8 +550,8 @@ public:
   virtual const bool toggle() { return false; }
   void clickEffect(const int16_t posX, const int16_t posY);
 
-  void setDecorActiveColor(const uint16_t aActiveColor);
-  void setDecorInActiveColor(const uint16_t aInActiveColor);
+  void setDecorActiveColor(const rgb_t aActiveColor);
+  void setDecorInActiveColor(const rgb_t aInActiveColor);
 
   const DECOR_POS getDecorPos() { return decorPosMode; }
   const DECOR_ALIGN getDecorAlign() { return decorAlign; }
@@ -581,7 +581,7 @@ private:
   DECOR_ALIGN decorAlign = DECOR_ALIGN_NONE;
   uint8_t decorMarginLeft = 2, decorMarginRight = 10;
   uint8_t decorMarginTop, decorMarginBottom = 0;
-  uint16_t inActiveColor, activeColor;
+  rgb_t inActiveColor, activeColor;
 };
 
 
@@ -596,9 +596,9 @@ public:
 
   CheckBox(
     const char* aText,
-    const uint16_t aTextColor = WHITE,
-    const uint16_t aBackgroundColor = BLACK,
-    const uint16_t aBorderColor = WHITE)
+    const rgb_t aTextColor = WHITE,
+    const rgb_t aBackgroundColor = BLACK,
+    const rgb_t aBorderColor = WHITE)
     : DecorTextButton(TYPE_CHECKBOX, aText, aTextColor, aBackgroundColor, aBorderColor)
   {
     boxSize = getTextHeight();
@@ -619,10 +619,10 @@ public:
   virtual const int8_t getDecorHeight() { return boxSize; }
 
 protected:
-  void drawBox(const uint16_t aBoxColor);
+  void drawBox(const rgb_t aBoxColor);
   void drawBox();
 
-  void drawCheck(const uint16_t aCheckColor);
+  void drawCheck(const rgb_t aCheckColor);
   void drawCheck();
 
   virtual void drawDecor();
@@ -646,9 +646,9 @@ public:
   RadioButton(
     const int16_t aTag,
     const char* aText,
-    const uint16_t aTextColor = WHITE,
-    const uint16_t aBackgroundColor = BLACK,
-    const uint16_t aBorderColor = WHITE)
+    const rgb_t aTextColor = WHITE,
+    const rgb_t aBackgroundColor = BLACK,
+    const rgb_t aBorderColor = WHITE)
     : DecorTextButton(TYPE_RADIOBUTTON, aText, aTextColor, aBackgroundColor, aBorderColor)
   {
     setTag(aTag);
@@ -676,10 +676,10 @@ public:
   virtual const int8_t getDecorHeight() { return getCircleRadius() * 2; }
 
 protected:
-  void drawDot(const uint16_t aDotColor);
+  void drawDot(const rgb_t aDotColor);
   void drawDot();
 
-  void drawCircle(const uint16_t aCircleColor);
+  void drawCircle(const rgb_t aCircleColor);
   void drawCircle();
 
   virtual void drawDecor();
@@ -704,8 +704,8 @@ public:
     const int16_t aHeight,
     Container** aChildren,
     const int16_t aLen,
-    const uint16_t aBackgroundColor = BLACK,
-    const uint16_t aBorderColor = WHITE)
+    const rgb_t aBackgroundColor = BLACK,
+    const rgb_t aBorderColor = WHITE)
     : Button(TYPE_FIELDSET, aLeft, aTop, aWidth, aHeight, aBackgroundColor, aBorderColor),
     children(aChildren),
     len(aLen)
@@ -722,8 +722,8 @@ public:
     const int16_t aHeight,
     Container** aChildren,
     const int16_t aLen,
-    const uint16_t aBackgroundColor = BLACK,
-    const uint16_t aBorderColor = WHITE)
+    const rgb_t aBackgroundColor = BLACK,
+    const rgb_t aBorderColor = WHITE)
     : FieldSet(-1, -1, aWidth, aHeight, aChildren, aLen, aBackgroundColor, aBorderColor)
   {
   }
@@ -735,8 +735,8 @@ public:
     const int16_t aMarginHeight,
     Container** aChildren,
     const int16_t aLen,
-    const uint16_t aBackgroundColor = BLACK,
-    const uint16_t aBorderColor = 0xffff)
+    const rgb_t aBackgroundColor = BLACK,
+    const rgb_t aBorderColor = WHITE)
     : FieldSet(-1, -1, ALIGN_COMPACT, ALIGN_COMPACT, aChildren, aLen, aBackgroundColor, aBorderColor)
   {
     orientation = aOrientation;

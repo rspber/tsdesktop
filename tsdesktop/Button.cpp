@@ -26,21 +26,21 @@ void Button::setTransparent(const bool aTransparent)
   setChanged();
 }
 
-void Button::setBackgroundColor(const uint16_t aBackgroundColor)
+void Button::setBackgroundColor(const rgb_t aBackgroundColor)
 {
   hide();
   backgroundColor = aBackgroundColor;
   setChanged();
 }
 
-void Button::setBackground(const uint16_t aBackgroundColor)
+void Button::setBackground(const rgb_t aBackgroundColor)
 {
   hide();
   backgroundColor = aBackgroundColor;
   setChanged();
 }
 
-void Button::setBorderColor(const uint16_t aBorderColor)
+void Button::setBorderColor(const rgb_t aBorderColor)
 {
   if (aBorderColor != borderColor) {
     borderColor = aBorderColor;
@@ -52,7 +52,7 @@ void Button::setBorderColor(const uint16_t aBorderColor)
   }
 }
 
-void Button::drawBorder(const uint16_t aBorderColor)
+void Button::drawBorder(const rgb_t aBorderColor)
 {
   if (screenEnabled && aBorderColor != NO_BACKGROUND_COLOR) {
     int16_t bs = borderSize;
@@ -75,7 +75,7 @@ void Button::drawBorder()
   drawBorder(borderColor);
 }
 
-void Button::drawBackground(const uint16_t aBackgroundColor)
+void Button::drawBackground(const rgb_t aBackgroundColor)
 {
   if (screenEnabled && aBackgroundColor != NO_BACKGROUND_COLOR) {
     display.fillRoundRect(getAbsLeft(), getAbsTop(), updWidth, updHeight, radius, aBackgroundColor);
@@ -99,7 +99,7 @@ void Button::draw(const bool redraw)
   }
 }
 
-bool diffColor(const uint16_t oldColor, const uint16_t newColor)
+bool diffColor(const rgb_t oldColor, const rgb_t newColor)
 {
   return oldColor != newColor && newColor != NO_BACKGROUND_COLOR;
 }
@@ -107,7 +107,7 @@ bool diffColor(const uint16_t oldColor, const uint16_t newColor)
 void Button::hide()
 {
   if (wasDrawn) {
-    const uint16_t hideColor = parent ? parent->getBackgroundColor() : BLACK;
+    const rgb_t hideColor = parent ? parent->getBackgroundColor() : BLACK;
     if (diffColor(getBorderColor(), hideColor)) {
       drawBorder(hideColor);
     }

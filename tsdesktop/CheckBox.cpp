@@ -13,7 +13,7 @@
 
 #include "TSDesktop.h"
 
-void CheckBox::drawBox(const uint16_t aBoxColor)
+void CheckBox::drawBox(const rgb_t aBoxColor)
 {
   if (screenEnabled) {
     display.drawRect(getAbsLeft(getDecorPosLeft()), getAbsTop(getDecorPosTop()), getDecorWidth(), getDecorHeight(), aBoxColor);
@@ -25,7 +25,7 @@ void CheckBox::drawBox()
   drawBox(checked ? activeColor : inActiveColor);
 }
 
-void CheckBox::drawCheck(const uint16_t aCheckColor)
+void CheckBox::drawCheck(const rgb_t aCheckColor)
 {
   if (screenEnabled) {
     int16_t x = getAbsLeft(getDecorPosLeft());

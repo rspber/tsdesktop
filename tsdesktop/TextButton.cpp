@@ -47,7 +47,7 @@ void TextButton::setFontSize(const int8_t aFontSize)
   setFontSize(aFontSize, aFontSize);
 }
 
-void TextButton::setTextColor(const uint16_t aTextColor)
+void TextButton::setTextColor(const rgb_t aTextColor)
 {
   textColor = aTextColor;
   if (wasDrawn) {
@@ -174,7 +174,7 @@ void TextButton::updateCoord(const bool recalc)
   }
 }
 
-void TextButton::drawText(const uint16_t aTextColor)
+void TextButton::drawText(const rgb_t aTextColor)
 {
   if (getAbsVisible()) {
     if (screenEnabled) {

@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#define COLOR_565     // comment it for 666 colors, for pico-sdk only
+
 #define ILI9341_VERSION 0    // no version old devices  - tested
 // TouchScreen
 // edges of the display for no version models

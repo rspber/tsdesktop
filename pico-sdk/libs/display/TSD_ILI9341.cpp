@@ -95,7 +95,6 @@ SOFTWARE.
 */
 
 #include "TSD_ILI9341.h"
-#include "buf16.h"
 #include <Picoino.h>
 
 #include <Setup.h>
@@ -172,6 +171,7 @@ SOFTWARE.
 #define ILI9341_GMCTRP1     0xE0    // Positive gamma correction
 #define ILI9341_GMCTRN1     0xE1    // Negative gamma correction
 #define ILI9341_EF          0xEF    // unknown
+#define ILI9341_INTFCCTR    0xF6    // Interface control
 #define ILI9341_PUMPRC      0xF7    // Pump ratio control
 //#define ILI9341_PWCTR6      0xFC
 
@@ -280,7 +280,14 @@ void TSD_ILI9341::begin(PicoSPI* spi, const int16_t RST)
 
   sendCmdData(ILI9341_VSCRSADD, 0x00);             // Vertical scroll zero
 
+#ifdef COLOR_565
   sendCmdData(ILI9341_PIXFMT,   0x55);
+#else
+  sendCmdData(ILI9341_PIXFMT,   0x66);
+
+  static uint8_t ILI9341_INTFCCTR_DATA[] = {0x01, 0x01, 0x00};
+  sendCmdData(ILI9341_INTFCCTR, 3, ILI9341_INTFCCTR_DATA);
+#endif
 
   static uint8_t ILI9341_FRMCTR1_DATA[] = {0x00, 0x18};
   sendCmdData(ILI9341_FRMCTR1, 2, ILI9341_FRMCTR1_DATA);
@@ -293,16 +300,16 @@ void TSD_ILI9341::begin(PicoSPI* spi, const int16_t RST)
   sendCmdData(ILI9341_GAMMASET, 0x01);             // Gamma curve selected
 
   if (ILI9341_VERSION < 3) {  // < v1.2
-    static uint8_t ILI9341_GMCTRP1_DATA_OLD[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};  // positive gamma correction
-    sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA_OLD);
+    static uint8_t ILI9341_GMCTRP1_DATA_OLD[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E, 0xF1, 0x26, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};
+    sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA_OLD);  // positive gamma correction
   }
   else {
-    static uint8_t ILI9341_GMCTRP1_DATA_V13[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x20, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};  // positive gamma correction v1.3
-    sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA_V13);
+    static uint8_t ILI9341_GMCTRP1_DATA_V13[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x20, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};
+    sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA_V13);  // positive gamma correction v1.3
   }
 
-  static uint8_t ILI9341_GMCTRN1_DATA[] = {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F};  // negative gamma correction
-  sendCmdData(ILI9341_GMCTRN1, 15, ILI9341_GMCTRN1_DATA);
+  static uint8_t ILI9341_GMCTRN1_DATA[] = {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F};
+  sendCmdData(ILI9341_GMCTRN1, 15, ILI9341_GMCTRN1_DATA);  // negative gamma correction
 
   sendCmd(ILI9341_SLPOUT);   // Exit Sleep
   delay(150);
@@ -415,7 +422,9 @@ void TSD_ILI9341::displayOn()
   sendCmd(ILI9341_DISPON);
 }
 
-void TSD_ILI9341::block(const int16_t x0, const int16_t y0, const int16_t x1, const int16_t y1, const uint16_t* data, int16_t size)
+#define SWAP16(x) (x >> 8 | x << 8)
+
+void TSD_ILI9341::block(const int16_t x0, const int16_t y0, const int16_t x1, const int16_t y1, const uint8_t* data, int16_t size)
 {
   if (size > 0) {
     uint16_t buf[2];
@@ -426,46 +435,46 @@ void TSD_ILI9341::block(const int16_t x0, const int16_t y0, const int16_t x1, co
     buf[1] = SWAP16(y1);
     sendCmdData(ILI9341_PASET, sizeof(buf), (const uint8_t*)buf);
     sendCmd(ILI9341_RAMWR);
-    sendData(size * 2, (uint8_t*)data);
+    sendData(size * MDT_SIZE, data);
   }
 }
 
-void TSD_ILI9341::fillScreen(const uint16_t color)
+void TSD_ILI9341::fillScreen(const rgb_t color)
 {
   fillRect(0, 0, _width, _height, color);
 }
 
-void TSD_ILI9341::drawPixel(const int16_t x, const int16_t y, const uint16_t color)
+void TSD_ILI9341::drawPixel(const int16_t x, const int16_t y, const rgb_t color)
 {
-  uint16_t buf[1];
+  uint8_t buf[8];
   if (x >= 0 && y >= 0 && x < _width && y < _height) {
-    block(x, y, x, y, uint16_color(buf, color, 1), 1);
+    block(x, y, x, y, mdt_color(buf, color, 1), 1);
   }
 }
 
-void TSD_ILI9341::drawFastHLine(int16_t x, const int16_t y, int16_t w, const uint16_t color)
+void TSD_ILI9341::drawFastHLine(int16_t x, const int16_t y, int16_t w, const rgb_t color)
 {
   if (x < 0) {
     w += x;
     x = 0;
   }
   if (y >= 0 && y < _height && w > 0) {
-    block(x, y, x + w - 1, y, buffer_uint16_color(color, w), w);
+    block(x, y, x + w - 1, y, buffer_mdt_color(color, w), w);
   }
 }
 
-void TSD_ILI9341::drawFastVLine(const int16_t x, int16_t y, int16_t h, const uint16_t color)
+void TSD_ILI9341::drawFastVLine(const int16_t x, int16_t y, int16_t h, const rgb_t color)
 {
   if (y < 0) {
     h += y;
     y = 0;
   }
   if (x >= 0 && x < _width && h > 0) {
-    block(x, y, x, y + h - 1, buffer_uint16_color(color, h), h);
+    block(x, y, x, y + h - 1, buffer_mdt_color(color, h), h);
   }
 }
 
-void TSD_ILI9341::fill_hrect(int16_t x, int16_t y, int16_t w, int16_t h, const uint16_t color)
+void TSD_ILI9341::fill_hrect(int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color)
 {
   if (x < 0) {
     w += x;
@@ -482,20 +491,20 @@ void TSD_ILI9341::fill_hrect(int16_t x, int16_t y, int16_t w, int16_t h, const u
     int16_t chunk_size = chunk_height * w;
     int16_t chunk_y = y;
     if (chunk_count) {
-      const uint16_t* buf = buffer_uint16_color(color, chunk_size);
+      const uint8_t* buf = buffer_mdt_color(color, chunk_size);
       for (int16_t i = 0; i < chunk_count; ++i) {
         block(x, chunk_y, x + w - 1, chunk_y + chunk_height - 1, buf, chunk_size);
         chunk_y += chunk_height;
       }
     }
     if (remainder) {
-      const uint16_t* buf = buffer_uint16_color(color, remainder * w);
+      const uint8_t* buf = buffer_mdt_color(color, remainder * w);
       block(x, chunk_y, x + w - 1, chunk_y + remainder - 1, buf, remainder * w);
     }
   }
 }
 
-void TSD_ILI9341::fill_vrect(int16_t x, int16_t y, int16_t w, int16_t h, const uint16_t color)
+void TSD_ILI9341::fill_vrect(int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color)
 {
   if (x < 0) {
     w += x;
@@ -512,20 +521,20 @@ void TSD_ILI9341::fill_vrect(int16_t x, int16_t y, int16_t w, int16_t h, const u
     int16_t chunk_size = chunk_width * h;
     int16_t chunk_x = x;
     if (chunk_count) {
-      const uint16_t* buf = buffer_uint16_color(color, chunk_size);
+      const uint8_t* buf = buffer_mdt_color(color, chunk_size);
       for (int16_t i = 0; i < chunk_count; ++i) {
         block(chunk_x, y, chunk_x + chunk_width - 1, y + h - 1, buf, chunk_size);
         chunk_x += chunk_width;
       }
     }
     if (remainder) {
-      const uint16_t* buf = buffer_uint16_color(color, remainder * h);
+      const uint8_t* buf = buffer_mdt_color(color, remainder * h);
       block(chunk_x, y, chunk_x + remainder - 1, y + h - 1, buf, remainder * h);
     }
   }
 }
 
-void TSD_ILI9341::fillRect(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint16_t color)
+void TSD_ILI9341::fillRect(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
 {
   if (w > h) {
     fill_hrect(x, y, w, h, color);

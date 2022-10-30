@@ -14,6 +14,8 @@
 
 #define RGB(R,G,B)  (((R >> 3) << 11) | ((G >> 2) << 5) | (B >> 3))
 
+typedef uint16_t rgb_t;
+
 #define BLACK        RGB(    0,    0,    0)
 #define NAVY         RGB(    0,    0, 0x7B)
 #define BLUE         RGB(    0,    0, 0xFF)
@@ -65,8 +67,8 @@ public:
   void begin(uint32_t freq = 0);
 
   void setRotation(const int8_t rotation);
-  void drawText(const int16_t aLeft, const int16_t aTop, const char* aText, const int8_t aFontSize = 1, const uint16_t aTextColor = WHITE);
-  void drawTextLine(cursor_t* cursor, font_t* font, const char* aText, const uint16_t aTextColor = WHITE);
+  void drawText(const int16_t aLeft, const int16_t aTop, const char* aText, const int8_t aFontSize = 1, const rgb_t aTextColor = WHITE);
+  void drawTextLine(cursor_t* cursor, font_t* font, const char* aText, const rgb_t aTextColor = WHITE);
   void clearDisplay();
 
 private:

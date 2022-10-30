@@ -60,7 +60,7 @@ const int16_t RadioButton::getCenterY()
   return decorMarginTop + h;
 }
 
-void RadioButton::drawCircle(const uint16_t aCircleColor)
+void RadioButton::drawCircle(const rgb_t aCircleColor)
 {
   if (screenEnabled) {
     display.drawCircle(getAbsLeft(getCenterX()), getAbsTop(getCenterY()), getCircleRadius(), aCircleColor);
@@ -72,7 +72,7 @@ void RadioButton::drawCircle()
   drawCircle(state ? activeColor : inActiveColor);
 }
 
-void RadioButton::drawDot(const uint16_t aDotColor)
+void RadioButton::drawDot(const rgb_t aDotColor)
 {
   if (screenEnabled) {
     display.fillCircle(getAbsLeft(getCenterX()), getAbsTop(getCenterY()), getDotRadius(), aDotColor);

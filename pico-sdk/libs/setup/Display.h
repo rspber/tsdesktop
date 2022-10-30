@@ -50,7 +50,7 @@ class Display : public TSD_ILI9341 {
 public:
   Display() : TSD_ILI9341(DISPLAY_WIDTH, DISPLAY_HEIGHT) {}
 
-  void drawText(const int16_t aLeft, const int16_t aTop, const char* aText, const int8_t aFontSize = 1, const uint16_t aTextColor = WHITE, const int8_t aSpacing = 0);
+  void drawText(const int16_t aLeft, const int16_t aTop, const char* aText, const int8_t aFontSize = 1, const rgb_t aTextColor = WHITE, const int8_t aSpacing = 0);
   void clearDisplay();
 };
 

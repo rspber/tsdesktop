@@ -344,7 +344,7 @@ void Container::setChanged()
   }
 }
 
-const uint16_t Container::getBackgroundColor()
+const rgb_t Container::getBackgroundColor()
 {
   if (type > 0) {   // Button
     Button* my = static_cast<Button*>(this);

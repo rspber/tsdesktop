@@ -199,16 +199,16 @@ void Display::begin(uint32_t freq)
   sendCmdData(ILI9341_GAMMASET, 0x01);             // Gamma curve selected
 
   if (ILI9341_VERSION < 3) {  // < v1.2
-    static uint8_t ILI9341_GMCTRP1_DATA_OLD[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};  // positive gamma correction
-    sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA_OLD);
+    static uint8_t ILI9341_GMCTRP1_DATA_OLD[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E, 0xF1, 0x26, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};
+    sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA_OLD);  // positive gamma correction
   }
   else {
-    static uint8_t ILI9341_GMCTRP1_DATA_V13[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x20, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};  // positive gamma correction v1.3
-    sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA_V13);
+    static uint8_t ILI9341_GMCTRP1_DATA_V13[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x20, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};
+    sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA_V13);  // positive gamma correction v1.3
   }
 
-  static uint8_t ILI9341_GMCTRN1_DATA[] = {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F};  // negative gamma correction
-  sendCmdData(ILI9341_GMCTRN1, 15, ILI9341_GMCTRN1_DATA);
+  static uint8_t ILI9341_GMCTRN1_DATA[] = {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F};
+  sendCmdData(ILI9341_GMCTRN1, 15, ILI9341_GMCTRN1_DATA);  // negative gamma correction
 
   sendCmd(ILI9341_SLPOUT);   // Exit Sleep
   delay(150);
@@ -262,7 +262,7 @@ void Display::setRotation(const int8_t rotation) {
   }
 }
 
-void Display::drawText(const int16_t aLeft, const int16_t aTop, const char* aText, const int8_t aFontSize, const uint16_t aTextColor)
+void Display::drawText(const int16_t aLeft, const int16_t aTop, const char* aText, const int8_t aFontSize, const rgb_t aTextColor)
 {
   setCursor(aLeft, aTop);
   setTextSize(aFontSize);
@@ -270,7 +270,7 @@ void Display::drawText(const int16_t aLeft, const int16_t aTop, const char* aTex
   print(aText);
 }
 
-void Display::drawTextLine(cursor_t* cursor, font_t* font, const char* aText, const uint16_t aTextColor)
+void Display::drawTextLine(cursor_t* cursor, font_t* font, const char* aText, const rgb_t aTextColor)
 {
   GFXfont* oldfont = gfxFont;
   setFont(font->gfxFont);

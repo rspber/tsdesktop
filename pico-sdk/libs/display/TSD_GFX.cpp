@@ -101,8 +101,7 @@ TSD_GFX::TSD_GFX(int16_t w, int16_t h) {
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-void TSD_GFX::writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
-  uint16_t color) {
+void TSD_GFX::writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color) {
 #if defined(ESP8266)
   yield();
 #endif
@@ -161,7 +160,7 @@ void TSD_GFX::startWrite() {}
    @param    color 16-bit 5-6-5 Color to fill with
 */
 /**************************************************************************/
-void TSD_GFX::writePixel(int16_t x, int16_t y, uint16_t color) {
+void TSD_GFX::writePixel(int16_t x, int16_t y, rgb_t color) {
   drawPixel(x, y, color);
 }
 
@@ -175,8 +174,7 @@ void TSD_GFX::writePixel(int16_t x, int16_t y, uint16_t color) {
    @param    color 16-bit 5-6-5 Color to fill with
 */
 /**************************************************************************/
-void TSD_GFX::writeFastVLine(int16_t x, int16_t y, int16_t h,
-  uint16_t color) {
+void TSD_GFX::writeFastVLine(int16_t x, int16_t y, int16_t h, rgb_t color) {
   // Overwrite in subclasses if startWrite is defined!
   // Can be just writeLine(x, y, x, y+h-1, color);
   // or writeFillRect(x, y, 1, h, color);
@@ -193,8 +191,7 @@ void TSD_GFX::writeFastVLine(int16_t x, int16_t y, int16_t h,
    @param    color 16-bit 5-6-5 Color to fill with
 */
 /**************************************************************************/
-void TSD_GFX::writeFastHLine(int16_t x, int16_t y, int16_t w,
-  uint16_t color) {
+void TSD_GFX::writeFastHLine(int16_t x, int16_t y, int16_t w, rgb_t color) {
   // Overwrite in subclasses if startWrite is defined!
   // Example: writeLine(x, y, x+w-1, y, color);
   // or writeFillRect(x, y, w, 1, color);
@@ -212,8 +209,7 @@ void TSD_GFX::writeFastHLine(int16_t x, int16_t y, int16_t w,
    @param    color 16-bit 5-6-5 Color to fill with
 */
 /**************************************************************************/
-void TSD_GFX::writeFillRect(int16_t x, int16_t y, int16_t w, int16_t h,
-  uint16_t color) {
+void TSD_GFX::writeFillRect(int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color) {
   // Overwrite in subclasses if desired!
   fillRect(x, y, w, h, color);
 }
@@ -236,8 +232,7 @@ void TSD_GFX::endWrite() {}
    @param    color 16-bit 5-6-5 Color to fill with
 */
 /**************************************************************************/
-void TSD_GFX::drawFastVLine(int16_t x, int16_t y, int16_t h,
-  uint16_t color) {
+void TSD_GFX::drawFastVLine(int16_t x, int16_t y, int16_t h, rgb_t color) {
   startWrite();
   writeLine(x, y, x, y + h - 1, color);
   endWrite();
@@ -253,8 +248,7 @@ void TSD_GFX::drawFastVLine(int16_t x, int16_t y, int16_t h,
    @param    color 16-bit 5-6-5 Color to fill with
 */
 /**************************************************************************/
-void TSD_GFX::drawFastHLine(int16_t x, int16_t y, int16_t w,
-  uint16_t color) {
+void TSD_GFX::drawFastHLine(int16_t x, int16_t y, int16_t w, rgb_t color) {
   startWrite();
   writeLine(x, y, x + w - 1, y, color);
   endWrite();
@@ -271,8 +265,7 @@ void TSD_GFX::drawFastHLine(int16_t x, int16_t y, int16_t w,
    @param    color 16-bit 5-6-5 Color to fill with
 */
 /**************************************************************************/
-void TSD_GFX::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
-  uint16_t color) {
+void TSD_GFX::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color) {
   startWrite();
   for (int16_t i = x; i < x + w; i++) {
     writeFastVLine(i, y, h, color);
@@ -287,7 +280,7 @@ void TSD_GFX::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
     @param    color 16-bit 5-6-5 Color to fill with
 */
 /**************************************************************************/
-void TSD_GFX::fillScreen(uint16_t color) {
+void TSD_GFX::fillScreen(rgb_t color) {
   fillRect(0, 0, _width, _height, color);
 }
 
@@ -301,8 +294,7 @@ void TSD_GFX::fillScreen(uint16_t color) {
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-void TSD_GFX::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
-  uint16_t color) {
+void TSD_GFX::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color) {
   // Update in subclasses if desired!
   if (x0 == x1) {
     if (y0 > y1)
@@ -330,8 +322,7 @@ void TSD_GFX::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-void TSD_GFX::drawCircle(int16_t x0, int16_t y0, int16_t r,
-  uint16_t color) {
+void TSD_GFX::drawCircle(int16_t x0, int16_t y0, int16_t r, rgb_t color) {
 #if defined(ESP8266)
   yield();
 #endif
@@ -380,8 +371,7 @@ void TSD_GFX::drawCircle(int16_t x0, int16_t y0, int16_t r,
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-void TSD_GFX::drawCircleHelper(int16_t x0, int16_t y0, int16_t r,
-  uint8_t cornername, uint16_t color) {
+void TSD_GFX::drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, rgb_t color) {
   int16_t f = 1 - r;
   int16_t ddF_x = 1;
   int16_t ddF_y = -2 * r;
@@ -425,8 +415,7 @@ void TSD_GFX::drawCircleHelper(int16_t x0, int16_t y0, int16_t r,
     @param    color 16-bit 5-6-5 Color to fill with
 */
 /**************************************************************************/
-void TSD_GFX::fillCircle(int16_t x0, int16_t y0, int16_t r,
-  uint16_t color) {
+void TSD_GFX::fillCircle(int16_t x0, int16_t y0, int16_t r, rgb_t color) {
   startWrite();
   writeFastVLine(x0, y0 - r, 2 * r + 1, color);
   fillCircleHelper(x0, y0, r, 3, 0, color);
@@ -444,9 +433,7 @@ void TSD_GFX::fillCircle(int16_t x0, int16_t y0, int16_t r,
     @param  color    16-bit 5-6-5 Color to fill with
 */
 /**************************************************************************/
-void TSD_GFX::fillCircleHelper(int16_t x0, int16_t y0, int16_t r,
-  uint8_t corners, int16_t delta,
-  uint16_t color) {
+void TSD_GFX::fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, rgb_t color) {
 
   int16_t f = 1 - r;
   int16_t ddF_x = 1;
@@ -496,8 +483,7 @@ void TSD_GFX::fillCircleHelper(int16_t x0, int16_t y0, int16_t r,
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-void TSD_GFX::drawRect(int16_t x, int16_t y, int16_t w, int16_t h,
-  uint16_t color) {
+void TSD_GFX::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color) {
   startWrite();
   writeFastHLine(x, y, w, color);
   writeFastHLine(x, y + h - 1, w, color);
@@ -517,8 +503,7 @@ void TSD_GFX::drawRect(int16_t x, int16_t y, int16_t w, int16_t h,
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-void TSD_GFX::drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h,
-  int16_t r, uint16_t color) {
+void TSD_GFX::drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, rgb_t color) {
   int16_t max_radius = ((w < h) ? w : h) / 2; // 1/2 minor axis
   if (r > max_radius)
     r = max_radius;
@@ -547,8 +532,7 @@ void TSD_GFX::drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h,
     @param    color 16-bit 5-6-5 Color to draw/fill with
 */
 /**************************************************************************/
-void TSD_GFX::fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h,
-  int16_t r, uint16_t color) {
+void TSD_GFX::fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, rgb_t color) {
   int16_t max_radius = ((w < h) ? w : h) / 2; // 1/2 minor axis
   if (r > max_radius)
     r = max_radius;
@@ -573,8 +557,7 @@ void TSD_GFX::fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h,
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-void TSD_GFX::drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
-  int16_t x2, int16_t y2, uint16_t color) {
+void TSD_GFX::drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color) {
   drawLine(x0, y0, x1, y1, color);
   drawLine(x1, y1, x2, y2, color);
   drawLine(x2, y2, x0, y0, color);
@@ -592,8 +575,7 @@ void TSD_GFX::drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
     @param    color 16-bit 5-6-5 Color to fill/draw with
 */
 /**************************************************************************/
-void TSD_GFX::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
-  int16_t x2, int16_t y2, uint16_t color) {
+void TSD_GFX::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color) {
 
   int16_t a, b, y, last;
 
@@ -690,8 +672,7 @@ void TSD_GFX::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
     @param    color 16-bit 5-6-5 Color to draw with
 */
 /**************************************************************************/
-void TSD_GFX::drawBitmap(int16_t x, int16_t y, uint8_t* bitmap, int16_t w,
-  int16_t h, uint16_t color) {
+void TSD_GFX::drawBitmap(int16_t x, int16_t y, uint8_t* bitmap, int16_t w, int16_t h, rgb_t color) {
 
   int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
   uint8_t b = 0;
@@ -724,8 +705,7 @@ void TSD_GFX::drawBitmap(int16_t x, int16_t y, uint8_t* bitmap, int16_t w,
     @param    bg 16-bit 5-6-5 Color to draw background with
 */
 /**************************************************************************/
-void TSD_GFX::drawBitmap(int16_t x, int16_t y, uint8_t* bitmap, int16_t w,
-  int16_t h, uint16_t color, uint16_t bg) {
+void TSD_GFX::drawBitmap(int16_t x, int16_t y, uint8_t* bitmap, int16_t w, int16_t h, rgb_t color, rgb_t bg) {
 
   int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
   uint8_t b = 0;
@@ -811,8 +791,7 @@ void TSD_GFX::drawGrayscaleBitmap(int16_t x, int16_t y, uint8_t* bitmap,
     @param    h   Height of bitmap in pixels
 */
 /**************************************************************************/
-void TSD_GFX::drawRGBBitmap(int16_t x, int16_t y, uint16_t* bitmap,
-  int16_t w, int16_t h) {
+void TSD_GFX::drawRGBBitmap(int16_t x, int16_t y, rgb_t* bitmap, int16_t w, int16_t h) {
   startWrite();
   for (int16_t j = 0; j < h; j++, y++) {
     for (int16_t i = 0; i < w; i++) {
@@ -836,8 +815,7 @@ void TSD_GFX::drawRGBBitmap(int16_t x, int16_t y, uint16_t* bitmap,
     @param    h   Height of bitmap in pixels
 */
 /**************************************************************************/
-void TSD_GFX::drawRGBBitmap(int16_t x, int16_t y, uint16_t* bitmap,
-  uint8_t* mask, int16_t w, int16_t h) {
+void TSD_GFX::drawRGBBitmap(int16_t x, int16_t y, rgb_t* bitmap, uint8_t* mask, int16_t w, int16_t h) {
   int16_t bw = (w + 7) / 8; // Bitmask scanline pad = whole byte
   uint8_t b = 0;
   startWrite();
@@ -867,7 +845,7 @@ void TSD_GFX::drawRGBBitmap(int16_t x, int16_t y, uint16_t* bitmap,
     @param    color 16-bit 5-6-5 Color to draw chraracter with
 */
 /**************************************************************************/
-void TSD_GFX::drawChar(cursor_t* cursor, font_t* font, const char c, const uint16_t color)
+void TSD_GFX::drawChar(cursor_t* cursor, font_t* font, const char c, const rgb_t color)
 {
   GFXfont* gfxFont = font->gfxFont;
   uint8_t size_x = font->fontSizeX;
@@ -956,7 +934,7 @@ void TSD_GFX::drawChar(cursor_t* cursor, font_t* font, const char c, const uint1
   @param    spacing extra horizontal spacing for letters
 */
 /**************************************************************************/
-void TSD_GFX::drawTextLine(cursor_t* cursor, font_t* font, const char* text, const uint16_t color, const int8_t spacing)
+void TSD_GFX::drawTextLine(cursor_t* cursor, font_t* font, const char* text, const rgb_t color, const int8_t spacing)
 {
   const char* p = text;
   char c;

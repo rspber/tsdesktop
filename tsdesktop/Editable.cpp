@@ -56,7 +56,7 @@ void Editable::moveCursor(const int8_t aDirection)
   setCursor(textCursor + aDirection);
 }
 
-void Editable::setCursorColor(const uint16_t aCursorColor)
+void Editable::setCursorColor(const rgb_t aCursorColor)
 {
   if (cursorColor != aCursorColor) {
     hideCursor();
@@ -65,7 +65,7 @@ void Editable::setCursorColor(const uint16_t aCursorColor)
   }
 }
 
-void Editable::drawCursor(const uint16_t aCursorColor)
+void Editable::drawCursor(const rgb_t aCursorColor)
 {
   if (cursorAllow) {
     int16_t absLeft = getAbsLeft(getTextMarginLeft() + getTextLeft());
