@@ -99,6 +99,7 @@ public:
 
   friend class TSD_ILI9341;
  private:
+  int16_t WIDTH, HEIGHT;
   int16_t _width;       ///< Display width as modified by rotation
   int16_t _height;      ///< Display height as modified by rotation
 };

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "TSD_ILI9341.h"
+#include <Setup.h>
 
 //#define BLACK        RGB(    0,    0,    0)
 #define NAVY         RGB(    0,    0, 0x7B)
@@ -47,7 +48,7 @@
 
 class Display : public TSD_ILI9341 {
 public:
-  Display() : TSD_ILI9341() {}
+  Display() : TSD_ILI9341(DISPLAY_WIDTH, DISPLAY_HEIGHT) {}
 
   void drawText(const int16_t aLeft, const int16_t aTop, const char* aText, const int8_t aFontSize = 1, const uint16_t aTextColor = WHITE, const int8_t aSpacing = 0);
   void clearDisplay();

@@ -12,12 +12,9 @@
 #include "TSD_GFX.h"
 #include <Picoino.h>
 
-#define ILI9341_TFTWIDTH 240  ///< ILI9341 max TFT width
-#define ILI9341_TFTHEIGHT 320 ///< ILI9341 max TFT height
-
 class TSD_ILI9341 : public TSD_GFX {
 public:
-  TSD_ILI9341(const int16_t w = ILI9341_TFTWIDTH, const int16_t h = ILI9341_TFTHEIGHT)
+  TSD_ILI9341(const int16_t w, const int16_t h)
     : TSD_GFX(w, h)
   {
   }

@@ -217,9 +217,6 @@ void Display::begin(uint32_t freq)
   delay(150);
 
   setSPISpeed(freq);   // restore speed
-
-  _width = ILI9341_TFTWIDTH;
-  _height = ILI9341_TFTHEIGHT;
 }
 
 /**************************************************************************/
@@ -235,26 +232,26 @@ void Display::setRotation(const int8_t rotation) {
   case 0:
     m = 0x40 | (BGR << 3); // MX
     g = (REVERSE_MODE ? 0x00 : 0x01) | (BGR << 5);
-    _width = ILI9341_TFTWIDTH;
-    _height = ILI9341_TFTHEIGHT;
+    _width = WIDTH;
+    _height = HEIGHT;
     break;
   case 1:
     m = 0x20 | (BGR << 3); // MV
     g = (REVERSE_MODE ? 0x03 : 0x02) | (BGR << 5);
-    _width = ILI9341_TFTHEIGHT;
-    _height = ILI9341_TFTWIDTH;
+    _width = HEIGHT;
+    _height = WIDTH;
     break;
   case 2:
     m = 0x80 | (BGR << 3); // MY
     g = (REVERSE_MODE ? 0x09 : 0x08) | (BGR << 5);
-    _width = ILI9341_TFTWIDTH;
-    _height = ILI9341_TFTHEIGHT;
+    _width = WIDTH;
+    _height = HEIGHT;
     break;
   case 3:
     m = 0xe0 | (BGR << 3); // MX | MY | MV
     g = (REVERSE_MODE ? 0x0a : 0x0b) | (BGR << 5);
-    _width = ILI9341_TFTHEIGHT;
-    _height = ILI9341_TFTWIDTH;
+    _width = HEIGHT;
+    _height = WIDTH;
     break;
   }
   if (ILI9341_VERSION < 3) { // < v1.2

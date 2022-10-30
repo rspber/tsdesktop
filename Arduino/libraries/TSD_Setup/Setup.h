@@ -28,6 +28,9 @@
 //#define TS_RIGHT 200
 //#define TS_BOTTOM 350
 
+#define DISPLAY_WIDTH 240
+#define DISPLAY_HEIGHT 320
+
 #define ROTATION_VTB 0    // vertical top to bottom
 #define ROTATION_VBT 2    // vertical bottom to top
 #define ROTATION_HLR 1    // horizontal left to right

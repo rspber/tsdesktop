@@ -55,7 +55,12 @@ typedef struct {
 
 class Display : public Adafruit_ILI9341 {
 public:
-  Display() : Adafruit_ILI9341(TFT_CS, SPI0_DC, TFT_RST) {}
+  Display(const int16_t w = DISPLAY_WIDTH, const int16_t h = DISPLAY_HEIGHT)
+    : Adafruit_ILI9341(TFT_CS, SPI0_DC, TFT_RST)
+  {
+    _width = WIDTH = w >= 0 ? w : 0;
+    _height = HEIGHT = h >= 0 ? h : 0;
+  }
 
   void begin(uint32_t freq = 0);
 
@@ -68,6 +73,8 @@ private:
   void sendCmd(const uint8_t cmd);
   void sendCmdData(const uint8_t cmd, const int16_t size, const uint8_t* data);
   void sendCmdData(const uint8_t cmd, const uint8_t data);
+
+  int16_t WIDTH, HEIGHT;
 };
 
 extern bool screenEnabled;
