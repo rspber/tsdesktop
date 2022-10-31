@@ -48,11 +48,11 @@ Touch Screen Desktop for Raspberry pi pico
 
     Additional boards manager URLs: https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
 
-    - and select "OK"
+    - Hit OK to close the dialog.
 
   * Tools / Boards / Board Manager
 
-    - type "pico" in the search box, you should see: Raspberry Pi Pico/RP2040, and select "Add"
+    - Type "pico" in the search box, you should see: Raspberry Pi Pico/RP2040, and select "Add"
 
 3. `download` or `git clone` this repository
 
