@@ -1,6 +1,6 @@
 /*
   Touch Screen for TSDesktop
-  implemented on XPT2046_Touchscreen
+  implemented on TSD_XPT2046
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
