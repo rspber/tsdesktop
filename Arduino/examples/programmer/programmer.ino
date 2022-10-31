@@ -8,6 +8,7 @@
 #include <Setup.h>
 
 #define GRAY_88  RGB( 0x88, 0x88, 0x88)
+#define BG_COLOR OLIVE
 
 #include <Display.h>
 #include <Touch.h>
@@ -169,8 +170,8 @@ Container* DESKTOPT[]{
   &d2FSet
 };
 
-//FieldSet desktop(0, 10, display.width(), display.height() - 10, DESKTOPT, 2, OLIVE);
-FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, DESKTOPT, 2, OLIVE);
+//FieldSet desktop(0, 10, display.width(), display.height() - 10, DESKTOPT, 2, BG_COLOR);
+FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, DESKTOPT, 2, BG_COLOR);
 
 // ------------------------- ^^^^^^ ---end of objects-----------------
 
