@@ -29,9 +29,9 @@ void font_t::cursorAdjust(int16_t* x, int16_t* y)
   }
 }
 
-const int8_t font_t::charSize(const char c, int8_t* letterHeight)
+const int16_t font_t::charSize(const char c, int16_t* letterHeight)
 {
-  int8_t w, h;
+  int16_t w, h;
   if (!gfxFont) {  // Default font
     w = 6;
     h = 8 * fontSizeY;
@@ -52,11 +52,11 @@ const int8_t font_t::charSize(const char c, int8_t* letterHeight)
   return w * fontSizeX;
 }
 
-const int16_t font_t::textLineSize(const char* text, int8_t* textHeight)
+const int16_t font_t::textLineSize(const char* text, int16_t* textHeight)
 {
   int16_t w = 0;
-  int8_t h = 0;
-  int8_t lh;
+  int16_t h = 0;
+  int16_t lh;
 
   const char* p = text;
   char c;
@@ -79,7 +79,7 @@ const int16_t font_t::textSize(const char* text, int16_t* textHeight)
   int16_t w = 0;
   int16_t h = 0;
   int16_t lw = 0;
-  int8_t lh = 0;
+  int16_t lh = 0;
   char c = 1;
   while (c) {
     c = *p++;
@@ -96,7 +96,7 @@ const int16_t font_t::textSize(const char* text, int16_t* textHeight)
         lh = 0;
       }
       else {
-        int8_t lh1;
+        int16_t lh1;
         lw += charSize(c, &lh1);
         if (lh1 > lh) {
           lh = lh1;
@@ -114,19 +114,19 @@ const int16_t font_t::textSize(const char* text, int16_t* textHeight)
 
 const int16_t font_t::textLineWidth(int16_t len)
 {
-  int8_t h;
+  int16_t h;
   return charSize('A', &h) * len;
 }
 
 const int16_t font_t::textLineWidth(const char* text)
 {
-  int8_t h;
+  int16_t h;
   return textLineSize(text, &h);
 }
 
 const int16_t font_t::textLineHeight()
 {
-  int8_t h;
+  int16_t h;
   charSize('A', &h);
   return h;
 }

@@ -22,14 +22,14 @@ typedef struct {
   //   c - character
   //   *letterHeight - returns character height
   // returns character width,
-  const int8_t charSize(const char c, int8_t* letterHeight);
+  const int16_t charSize(const char c, int16_t* letterHeight);
 
   // text line size to \n or eol
   // parameters:
   //   text - begin of text line in text
   //   *textHeight - returns text line height
   // returns text line width,
-  const int16_t textLineSize(const char* text, int8_t* textHeight);
+  const int16_t textLineSize(const char* text, int16_t* textHeight);
 
   // approximately len chars line size
   // parameters:

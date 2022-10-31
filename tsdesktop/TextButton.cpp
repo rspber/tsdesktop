@@ -189,7 +189,7 @@ void TextButton::drawText(const rgb_t aTextColor)
       while (c) {
         c = *p++;
         if (c == 0 || c == '\n') {
-          int8_t h0;
+          int16_t h0;
           int16_t w0;
           switch (textAlign) {
           case TEXT_ALIGN_RIGHT:
