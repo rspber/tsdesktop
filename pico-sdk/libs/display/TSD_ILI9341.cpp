@@ -3,8 +3,8 @@
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
-1. This software is modification of Adafruit's ILI9341 driver for the
-Arduino platforms, natively ported to pico-sdk
+1. This is modified Adafruit's ILI9341 driver: Adafruit_ILI9341
+natively ported to pico-sdk
 
 differences:
 - Adafruit_SPITFT is missed, all spi functions are handled by Picoino
@@ -63,7 +63,7 @@ Oryginaly Adafruit's licence bellow.
  */
 
 /*
-2. TFT implementation for drawPixel and other draws comes from
+2. SPI TFT implementation for drawPixel and other draws comes from
 https://github.com/rdagger/micropython-ili9341/ili9341.py,
 partially rewriten from python to c,
 
@@ -327,7 +327,7 @@ void TSD_ILI9341::begin(PicoSPI* spi, const int16_t RST)
 
 /**************************************************************************/
 /*!
-   @brief   Set origin of (0,0) and orientation of TFT display
+  @brief   Set origin of (0,0) and orientation of TFT display
     @param   m  The index for rotation, from 0-3 inclusive
 */
 /**************************************************************************/
@@ -381,6 +381,19 @@ void TSD_ILI9341::invertDisplay(bool invert)
 
 /**************************************************************************/
 /*!
+   @brief    Fill the screen completely with one color. Update in subclasses if
+   desired!
+    @param    color 16-bit 5-6-5 Color to fill with
+*/
+/**************************************************************************/
+void TSD_ILI9341::fillScreen(const rgb_t color)
+{
+  clip_t clip{0, 0, _width, _height};
+  fillRect(&clip, 0, 0, _width, _height, color);
+}
+
+/**************************************************************************/
+/*!
    @brief   Scroll display memory
     @param   y How many pixels to scroll display by
 */
@@ -415,6 +428,7 @@ void TSD_ILI9341::setScrollMargins(uint16_t top, uint16_t bottom) {
 }
 
 
+
 // from MicroPython_ILI9341
 
 void TSD_ILI9341::displayOff()
@@ -444,50 +458,57 @@ void TSD_ILI9341::block(const int16_t x0, const int16_t y0, const int16_t x1, co
   }
 }
 
-void TSD_ILI9341::fillScreen(const rgb_t color)
-{
-  fillRect(0, 0, _width, _height, color);
-}
-
-void TSD_ILI9341::drawPixel(const int16_t x, const int16_t y, const rgb_t color)
+void TSD_ILI9341::drawPixel(clip_t* clip, const int16_t x, const int16_t y, const rgb_t color)
 {
   uint8_t buf[8];
-  if (x >= 0 && y >= 0 && x < _width && y < _height) {
+  if (x >= clip->x1 && y >= clip->y1 && x < clip->x2 && y < clip->y2) {
     block(x, y, x, y, mdt_color(buf, color, 1), 1);
   }
 }
 
-void TSD_ILI9341::drawFastHLine(int16_t x, const int16_t y, int16_t w, const rgb_t color)
+void TSD_ILI9341::drawFastHLine(clip_t* clip, int16_t x, const int16_t y, int16_t w, const rgb_t color)
 {
-  if (x < 0) {
-    w += x;
-    x = 0;
+  if (x < clip->x1) {
+    w -= clip->x1 - x;
+    x = clip->x1;
   }
-  if (y >= 0 && y < _height && w > 0) {
+  if (x + w > clip->x2) {
+    w = clip->x2 - x;
+  }
+  if (y >= clip->y1 && y < clip->y2 && w > 0) {
     block(x, y, x + w - 1, y, buffer_mdt_color(color, w), w);
   }
 }
 
-void TSD_ILI9341::drawFastVLine(const int16_t x, int16_t y, int16_t h, const rgb_t color)
+void TSD_ILI9341::drawFastVLine(clip_t* clip, const int16_t x, int16_t y, int16_t h, const rgb_t color)
 {
-  if (y < 0) {
-    h += y;
-    y = 0;
+  if (y < clip->y1) {
+    h -= clip->y1 - y;
+    y = clip->y1;
   }
-  if (x >= 0 && x < _width && h > 0) {
+  if (y + h > clip->y2) {
+    h = clip->y2 - y;
+  }
+  if (x >= clip->x1 && x < clip->x2 && h > 0) {
     block(x, y, x, y + h - 1, buffer_mdt_color(color, h), h);
   }
 }
 
-void TSD_ILI9341::fill_hrect(int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color)
+void TSD_ILI9341::fill_hrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color)
 {
-  if (x < 0) {
-    w += x;
-    x = 0;
+  if (x < clip->x1) {
+    w -= clip->x1 - x;
+    x = clip->x1;
   }
-  if (y < 0) {
-    h += y;
-    y = 0;
+  if (x + w > clip->x2) {
+    w = clip->x2 - x;
+  }
+  if (y < clip->y1) {
+    h -= clip->y1 - y;
+    y = clip->y1;
+  }
+  if (y + h > clip->y2) {
+    h = clip->y2 - y;
   }
   if (w > 0 && h > 0) {
     int16_t chunk_height = 2048 / w;
@@ -509,15 +530,21 @@ void TSD_ILI9341::fill_hrect(int16_t x, int16_t y, int16_t w, int16_t h, const r
   }
 }
 
-void TSD_ILI9341::fill_vrect(int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color)
+void TSD_ILI9341::fill_vrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color)
 {
-  if (x < 0) {
-    w += x;
-    x = 0;
+  if (x < clip->x1) {
+    w -= clip->x1 - x;
+    x = clip->x1;
   }
-  if (y < 0) {
-    h += y;
-    y = 0;
+  if (x + w > clip->x2) {
+    w = clip->x2 - x;
+  }
+  if (y < clip->y1) {
+    h -= clip->y1 - y;
+    y = clip->y1;
+  }
+  if (y + h > clip->y2) {
+    h = clip->y2 - y;
   }
   if (w > 0 && h > 0) {
     int16_t chunk_width = 2048 / h;
@@ -539,12 +566,12 @@ void TSD_ILI9341::fill_vrect(int16_t x, int16_t y, int16_t w, int16_t h, const r
   }
 }
 
-void TSD_ILI9341::fillRect(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
+void TSD_ILI9341::fillRect(clip_t* clip, const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
 {
   if (w > h) {
-    fill_hrect(x, y, w, h, color);
+    fill_hrect(clip, x, y, w, h, color);
   }
   else {
-    fill_vrect(x, y, w, h, color);
+    fill_vrect(clip, x, y, w, h, color);
   }
 }

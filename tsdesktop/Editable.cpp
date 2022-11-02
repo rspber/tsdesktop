@@ -73,7 +73,8 @@ void Editable::drawCursor(const rgb_t aCursorColor)
     int16_t cpos = font.textLineWidth(textCursor);
     int16_t cursor_width = (cursorInsMode || textCursor >= (int)strlen(getText())) ? 1 : font.textLineWidth(1) + 2;
     int16_t cursor_height = getTextHeight() + 2;
-    display.drawRect(absLeft + (cpos ? cpos + 1 : -1), absTop - 1, cursor_width, cursor_height, aCursorColor);
+    clip_t clip;
+    display.drawRect(getClip(clip), absLeft + (cpos ? cpos + 1 : -1), absTop - 1, cursor_width, cursor_height, aCursorColor);
   }
 }
 

@@ -63,7 +63,8 @@ const int16_t RadioButton::getCenterY()
 void RadioButton::drawCircle(const rgb_t aCircleColor)
 {
   if (screenEnabled) {
-    display.drawCircle(getAbsLeft(getCenterX()), getAbsTop(getCenterY()), getCircleRadius(), aCircleColor);
+    clip_t clip;
+    display.drawCircle(getClip(clip), getAbsLeft(getCenterX()), getAbsTop(getCenterY()), getCircleRadius(), aCircleColor);
   }
 }
 
@@ -75,7 +76,8 @@ void RadioButton::drawCircle()
 void RadioButton::drawDot(const rgb_t aDotColor)
 {
   if (screenEnabled) {
-    display.fillCircle(getAbsLeft(getCenterX()), getAbsTop(getCenterY()), getDotRadius(), aDotColor);
+    clip_t clip;
+    display.fillCircle(getClip(clip), getAbsLeft(getCenterX()), getAbsTop(getCenterY()), getDotRadius(), aDotColor);
   }
 }
 

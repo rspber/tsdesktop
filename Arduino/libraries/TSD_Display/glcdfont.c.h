@@ -6,8 +6,6 @@
   More information in TSD_GFX.cpp
 */
 
-#pragma once
-
 // code page CP437
 
 static const uint8_t default_font[] = {

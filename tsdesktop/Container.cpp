@@ -261,19 +261,23 @@ void Container::setAlignCompactVert()
 
 void Container::setUpdLeft(const int16_t aLeft)
 {
-  int16_t i = aLeft > 0 ? aLeft : 0;
-  if (i != updLeft) {
-    hide();
-    updLeft = i;
+  if (orgLeft < 0 ) {
+    int16_t i = aLeft > 0 ? aLeft : 0;
+    if (i != updLeft) {
+      hide();
+      updLeft = i;
+    }
   }
 }
 
 void Container::setUpdTop(const int16_t aTop)
 {
-  int16_t i = aTop > 0 ? aTop : 0;
-  if (i != updTop) {
-    hide();
-    updTop = i;
+  if (orgTop < 0 ) { 
+    int16_t i = aTop > 0 ? aTop : 0;
+    if (i != updTop) {
+      hide();
+      updTop = i;
+    }
   }
 }
 
@@ -285,22 +289,46 @@ void Container::setUpdPos(const int16_t aLeft, const int16_t aTop)
 
 bool Container::setUpdWidth(const int16_t aWidth)
 {
-  int16_t i = aWidth > 0 ? aWidth : 0;
-  if (i != updWidth) {
-    hide();
-    updWidth = i;
-    return true;
+  if (orgWidth < 0 ) {
+    int16_t w = aWidth > 0 ? aWidth : 0;
+    if (w != updWidth) {
+      if (deep == 0 ) {
+        if (orgWidth == ALIGN_COMPACT) {
+          if (w > display.width()) {
+            w = display.width();
+          }
+        }
+        else {
+          return false;
+        }
+      }
+      hide();
+      updWidth = w;
+      return true;
+    }
   }
   return false;
 }
 
 bool Container::setUpdHeight(const int16_t aHeight)
 {
-  int16_t i = aHeight > 0 ? aHeight : 0;
-  if (i != updHeight) {
-    hide();
-    updHeight = i;
-    return true;
+  if (orgHeight < 0 ) {
+    int16_t h = aHeight > 0 ? aHeight : 0;
+    if (h != updHeight) {
+      if (deep == 0 ) {
+        if (orgHeight == ALIGN_COMPACT) {
+          if (h > display.height()) {
+            h = display.height();
+          }
+        }
+        else {
+          return false;
+        }
+      }
+      hide();
+      updHeight = h;
+      return true;
+    }
   }
   return false;
 }
@@ -312,7 +340,7 @@ const int16_t Container::getAbsLeft()
 
 const int16_t Container::getAbsLeft(const int16_t pos)
 {
-  return getAbsLeft() + marginLeft + pos;
+  return getAbsLeft() + marginLeft - offsetLeft + pos;
 }
 
 const int16_t Container::getAbsTop()
@@ -322,7 +350,62 @@ const int16_t Container::getAbsTop()
 
 const int16_t Container::getAbsTop(const int16_t pos)
 {
-  return getAbsTop() + marginTop + pos;
+  return getAbsTop() + marginTop - offsetTop + pos;
+}
+
+const int16_t Container::getAbsRight(int16_t r, int16_t m2)
+{
+  int16_t m1 = marginLeft + marginRight;
+  int16_t i = updWidth - m1 - m2 - offsetLeft;
+  if( r > i ) {
+     r = i;
+  }
+  return updLeft + marginLeft + (parent ? parent->getAbsRight(r, m1) : r);
+}
+
+const int16_t Container::getAbsBottom(int16_t b, int16_t m2)
+{
+  int16_t m1 = marginTop + marginBottom;
+  int16_t i = updHeight - m1 - m2 - offsetTop;
+  if( b > i ) {
+    b = i;
+  }
+  return updTop + marginTop + (parent ? parent->getAbsBottom(b, m1) : b);
+}
+
+clip_t* Container::getInnerClip(clip_t& clip)
+{
+  clip.x1 = getAbsLeft(offsetLeft);
+  clip.y1 = getAbsTop(offsetTop);
+  int i = getAbsRight(0x7fff, 0);
+  clip.x2 = i >= 0 ? i : 0;
+      i = getAbsBottom(0x7fff, 0);
+  clip.y2 = i >= 0 ? i : 0;
+  return &clip;
+}
+
+clip_t* Container::getClip(clip_t& clip)
+{
+  if (parent) {
+    return parent->getInnerClip(clip);
+  }
+  else {
+    clip.x1 = 0;
+    clip.y1 = 0;
+    clip.x2 = updWidth;
+    clip.y2 = updHeight;
+    return &clip;
+  }
+}
+
+clip_t* Container::getOuterClip(clip_t& clip)
+{
+  getInnerClip(clip);
+  clip.x1 -= marginLeft;
+  clip.y1 -= marginTop;
+  clip.x2 += marginRight;
+  clip.y2 += marginBottom;
+  return &clip;
 }
 
 const bool Container::getAbsVisible()
@@ -381,3 +464,97 @@ Container* Container::pressed(const int16_t xScreen, const int16_t yScreen)
   }
 }
 
+void Container::updHorizScroll(const uint8_t tp, const bool up)
+{
+  clip_t clip;
+  getClip(clip);
+  switch (tp) {
+    case SCROLL_BTN_STEP:
+      if(up) {
+        offsetLeft -= 16;
+        if(offsetLeft < 0) {
+          offsetLeft = 0;
+        }
+      }
+      else {
+        offsetLeft += 16;
+      }
+      break;
+    case SCROLL_BTN_PAGE:
+      if(up) {
+        offsetLeft -= (clip.x2 - clip.x1);
+        if(offsetLeft < 0) {
+          offsetLeft = 0;
+        }
+      }
+      else {
+        offsetLeft += (clip.x2 - clip.x1);
+      }
+      break;
+    case SCROLL_BTN_HOME:
+      offsetLeft = up ? 0 : 0x7fff;
+      break;
+  }
+  int maxoffs = updWidth - (clip.x2 - clip.x1);
+  if(offsetLeft > maxoffs) {
+    offsetLeft = maxoffs;
+  }
+  if(offsetLeft < 0) {
+    offsetLeft = 0;
+  }
+}
+
+void Container::updVertScroll(const uint8_t tp, const bool up)
+{
+  clip_t clip;
+  getClip(clip);
+  switch (tp) {
+    case SCROLL_BTN_STEP:
+      if(up) {
+        offsetTop -= 16;
+        if( offsetTop < 0 ) {
+          offsetTop = 0;
+        }
+      }
+      else {
+        offsetTop += 16;
+      }
+      break;
+    case SCROLL_BTN_PAGE:
+      if(up) {
+        offsetTop -= (clip.y2 - clip.y1);
+        if( offsetTop < 0 ) {
+          offsetTop = 0;
+        }
+      }
+      else {
+        offsetTop += (clip.y2 - clip.y1);
+      }
+      break;
+    case SCROLL_BTN_HOME:
+      offsetTop = up ? 0 : 0x7fff;
+      break;
+  }
+  int maxoffs = updHeight - (clip.y2 - clip.y1);
+  if( offsetTop > maxoffs ) {
+    offsetTop = maxoffs;
+  }
+  if(offsetTop < 0) {
+    offsetTop = 0;
+  }
+}
+
+void Container::scrollerPressed(const uint8_t which)
+{
+  hide();
+  uint8_t tp = which & 0x03;
+  bool up = (which & 0x04) == 0;
+  bool vert = (which & 0x08) != 0;
+  if( vert) {
+    updVertScroll(tp, up);
+  }
+  else {
+    updHorizScroll(tp, up);
+  }
+  setChanged();
+}

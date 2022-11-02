@@ -181,6 +181,8 @@ void TextButton::drawText(const rgb_t aTextColor)
       int16_t absLeft = getAbsLeft(getTextMarginLeft() + textLeft);
       int16_t absTop = getAbsTop(getTextMarginTop() + textTop);
       cursor_t cursor{ absLeft, absTop };
+      clip_t clip;
+      getClip(clip);
       const char* p = getText();
       int16_t h;
       int16_t w = font.textSize(p, &h);
@@ -202,7 +204,7 @@ void TextButton::drawText(const rgb_t aTextColor)
             break;
           default:;
           }
-          display.drawTextLine(&cursor, &font, p0, aTextColor);
+          display.drawTextLine(&clip, &cursor, &font, p0, aTextColor);
           p0 = p;
           cursor.x = absLeft;
           cursor.y += font.textLineHeight();

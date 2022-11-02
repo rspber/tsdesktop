@@ -12,7 +12,8 @@ void Display::drawText(const int16_t aLeft, const int16_t aTop, const char* aTex
 {
   cursor_t cursor{ aLeft, aTop };
   font_t font{ NULL, aFontSize, aFontSize };
-  drawTextLine(&cursor, &font, aText, aTextColor, aSpacing);
+  clip_t clip{0, 0, width(), height()};
+  drawTextLine(&clip, &cursor, &font, aText, aTextColor, aSpacing);
 }
 
 void Display::clearDisplay()

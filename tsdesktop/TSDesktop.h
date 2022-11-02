@@ -49,6 +49,15 @@ typedef struct {
 #define  HORIZONTAL orient_t{false}
 #define  VERTICAL orient_t{true}
 
+// which scroller
+#define SCROLL_BTN_STEP 0x00
+#define SCROLL_BTN_PAGE 0x01
+#define SCROLL_BTN_HOME 0x02
+#define SCROLL_UP 0x00
+#define SCROLL_DN 0x04
+#define SCROLL_HORIZ 0x00
+#define SCROLL_VERT 0x08
+
 /// @Container
 
 class Container {
@@ -198,12 +207,21 @@ public:
 
   virtual Container* pressed(const int16_t xScreen, const int16_t yScreen);
 
+  virtual void clickEffect(const int16_t posX, const int16_t posY) {}
+
+  void scrollerPressed(const uint8_t which);
+
+  const int16_t getAbsRight(int16_t r, int16_t m2);
+  const int16_t getAbsBottom(int16_t b, int16_t m2);
+
+  clip_t* getInnerClip(clip_t& clip);
+  clip_t* getOuterClip(clip_t& clip);
+
+  clip_t* getClip(clip_t& clip);
+
   friend class Button;
   friend class TextButton;
   friend class FieldSet;
-
-protected:
-  virtual void clickEffect(const int16_t posX, const int16_t posY) {}
 
 private:
   void setParent(const Container* aParent);
@@ -225,6 +243,9 @@ private:
 
   virtual void setNotWasDrawn() {}
 
+  void updHorizScroll(const uint8_t tp, const bool up);
+  void updVertScroll(const uint8_t tp, const bool up);
+
 protected:
   void setChanged();
 
@@ -243,6 +264,9 @@ private:
   bool hidden = false;
   bool disabled = true;
   //    bool absolutePos = false;
+
+  int16_t offsetLeft = 0;
+  int16_t offsetTop = 0;
 
   uint8_t clickEffect_ = 1;
   int16_t clickHighlightDelay = 100;
@@ -692,6 +716,47 @@ private:
 };
 
 
+/// @ScrollButton
+
+class Scroller;
+class FieldSet;
+
+class ScrollBtn {
+public:
+  void init(const uint8_t which, const uint8_t* icon, const int16_t l, const int16_t t, const int16_t r, const int16_t b);
+  bool isSet();
+  void draw(Scroller* scroller);
+  void clickEffect();
+  bool pressed(FieldSet* view, const int16_t xScreen, const int16_t yScreen);
+
+  friend class Scroller;
+private:
+  const uint8_t *bmp;
+  int16_t x1, y1, x2, y2;
+  uint8_t which;
+};
+
+/// @Scroller
+
+typedef struct {
+  ScrollBtn home, page, step;
+} scrollpack_t;
+
+class Scroller {
+public:
+  bool init(FieldSet* view, const int8_t mgr);
+  void draw(FieldSet* view, Scroller* hScr);
+  ScrollBtn* pressed(FieldSet* view, const int16_t xScreen, const int16_t yScreen);
+  const int8_t width();
+
+  friend class FieldSet;
+private:
+  orient_t orient;
+  bool active;
+  scrollpack_t up, dn;
+};
+
+
 /// @FieldSet
 // dafault is horizontal
 
@@ -715,6 +780,9 @@ public:
     }
     setDeep(0);
     disabled = true;
+
+    wScroller.orient = HORIZONTAL;
+    hScroller.orient = VERTICAL;
   }
 
   FieldSet(
@@ -767,6 +835,10 @@ public:
   virtual Container* pressed(const int16_t xScreen, const int16_t yScreen);
 
   friend class Container;
+
+public:
+  Scroller wScroller;
+  Scroller hScroller;
 
 private:
   Container** children;

@@ -60,12 +60,32 @@ void Button::drawBorder(const rgb_t aBorderColor)
     int16_t t = getAbsTop();
     int16_t w = updWidth;
     int16_t h = updHeight;
+    clip_t clip;
+    getClip(clip);
+    if( l + w > clip.x2 ) {
+      w = clip.x2 - l;
+    }
+    if( t + h > clip.y2 ) {
+      h = clip.y2 - t;
+    }
     while (--bs >= 0) {
       --l;
       --t;
       w += 2;
       h += 2;
-      display.drawRoundRect(l, t, w, h, radius, aBorderColor);
+      if (clip.x1 > 0) {
+        --clip.x1;
+      }
+      if (clip.y1 > 0) {
+        --clip.y1;
+      }
+      if( clip.x2 < display.width() ) {
+        ++clip.x2;
+      }
+      if( clip.y2 < display.height() ) {
+        ++ clip.y2;
+      }
+      display.drawRoundRect(&clip, l, t, w, h, radius, aBorderColor);
     }
   }
 }
@@ -78,7 +98,8 @@ void Button::drawBorder()
 void Button::drawBackground(const rgb_t aBackgroundColor)
 {
   if (screenEnabled && aBackgroundColor != NO_BACKGROUND_COLOR) {
-    display.fillRoundRect(getAbsLeft(), getAbsTop(), updWidth, updHeight, radius, aBackgroundColor);
+    clip_t clip;
+    display.fillRoundRect(getClip(clip), getAbsLeft(), getAbsTop(), updWidth, updHeight, radius, aBackgroundColor);
   }
 }
 

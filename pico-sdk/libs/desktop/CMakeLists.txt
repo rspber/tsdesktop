@@ -11,5 +11,6 @@ target_sources(desktop INTERFACE
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/CheckBox.cpp
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/RadioButton.cpp
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/Editable.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/Scroller.cpp
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/FieldSet.cpp
 )

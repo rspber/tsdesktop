@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#define COLOR_565	// don't comment it
+
 #define ILI9341_VERSION 0    // no version old devices  - tested
 // TouchScreen
 // edges of the display for no version models

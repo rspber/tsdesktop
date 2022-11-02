@@ -1,6 +1,6 @@
 /*
   Graphics display adapter for TSDesktop
-       implemented on Adafruit_ILI9341
+       implemented on TSD_ILI9341
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
@@ -8,15 +8,10 @@
 
 #pragma once
 
-#include <Adafruit_ILI9341.h>
-#include "font.h"
+#include <TSD_ILI9341.h>
 #include "Setup.h"
 
-#define RGB(R,G,B)  (((R >> 3) << 11) | ((G >> 2) << 5) | (B >> 3))
-
-typedef uint16_t rgb_t;
-
-#define BLACK        RGB(    0,    0,    0)
+//#define BLACK        RGB(    0,    0,    0)
 #define NAVY         RGB(    0,    0, 0x7B)
 #define BLUE         RGB(    0,    0, 0xFF)
 #define DARK_GREEN   RGB(    0, 0x7D,    0)
@@ -49,34 +44,14 @@ typedef uint16_t rgb_t;
 #define GOLDEN       RGB( 0xFF, 0xD7,    0)
 #define YELLOW       RGB( 0xFF, 0xFF,    0)
 #define LIGHT_YELLOW RGB( 0xFF, 0xFF, 0xE0)
-#define WHITE        RGB( 0xFF, 0xFF, 0xFF)
+//#define WHITE        RGB( 0xFF, 0xFF, 0xFF)
 
-typedef struct {
-  int16_t x, y;
-} cursor_t;
-
-class Display : public Adafruit_ILI9341 {
+class Display : public TSD_ILI9341 {
 public:
-  Display(const int16_t w = DISPLAY_WIDTH, const int16_t h = DISPLAY_HEIGHT)
-    : Adafruit_ILI9341(TFT_CS, SPI0_DC, TFT_RST)
-  {
-    _width = WIDTH = w >= 0 ? w : 0;
-    _height = HEIGHT = h >= 0 ? h : 0;
-  }
+  Display() : TSD_ILI9341(DISPLAY_WIDTH, DISPLAY_HEIGHT, TFT_CS, SPI0_DC, TFT_RST) {}
 
-  void begin(uint32_t freq = 0);
-
-  void setRotation(const int8_t rotation);
-  void drawText(const int16_t aLeft, const int16_t aTop, const char* aText, const int8_t aFontSize = 1, const rgb_t aTextColor = WHITE);
-  void drawTextLine(cursor_t* cursor, font_t* font, const char* aText, const rgb_t aTextColor = WHITE);
+  void drawText(const int16_t aLeft, const int16_t aTop, const char* aText, const int8_t aFontSize = 1, const rgb_t aTextColor = WHITE, const int8_t aSpacing = 0);
   void clearDisplay();
-
-private:
-  void sendCmd(const uint8_t cmd);
-  void sendCmdData(const uint8_t cmd, const int16_t size, const uint8_t* data);
-  void sendCmdData(const uint8_t cmd, const uint8_t data);
-
-  int16_t WIDTH, HEIGHT;
 };
 
 extern bool screenEnabled;

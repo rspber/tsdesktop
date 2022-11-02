@@ -8,6 +8,7 @@
 #include "Setup.h"
 #include "Display.h"
 #include "Touch.h"
+#include "Wire.h"
 
 void init_hardware()
 {

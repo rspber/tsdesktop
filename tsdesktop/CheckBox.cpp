@@ -16,7 +16,8 @@
 void CheckBox::drawBox(const rgb_t aBoxColor)
 {
   if (screenEnabled) {
-    display.drawRect(getAbsLeft(getDecorPosLeft()), getAbsTop(getDecorPosTop()), getDecorWidth(), getDecorHeight(), aBoxColor);
+    clip_t clip;
+    display.drawRect(getClip(clip), getAbsLeft(getDecorPosLeft()), getAbsTop(getDecorPosTop()), getDecorWidth(), getDecorHeight(), aBoxColor);
   }
 }
 
@@ -30,8 +31,9 @@ void CheckBox::drawCheck(const rgb_t aCheckColor)
   if (screenEnabled) {
     int16_t x = getAbsLeft(getDecorPosLeft());
     int16_t y = getAbsTop(getDecorPosTop());
-    display.drawLine(x + 1, y + 1, x + getDecorWidth() - 2, y + getDecorHeight() - 2, aCheckColor);
-    display.drawLine(x + 1, y + getDecorHeight() - 2, x + getDecorWidth() - 2, y + 1, aCheckColor);
+    clip_t clip;
+    display.drawLine(getClip(clip), x + 1, y + 1, x + getDecorWidth() - 2, y + getDecorHeight() - 2, aCheckColor);
+    display.drawLine(&clip, x + 1, y + getDecorHeight() - 2, x + getDecorWidth() - 2, y + 1, aCheckColor);
   }
 }
 
