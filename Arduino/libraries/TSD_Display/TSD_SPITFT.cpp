@@ -10,7 +10,7 @@
 
   changes:
   - release from screen coordinates
-  - added clip do draw functions
+  - added clip to draw functions
 */
 
 /*!
