@@ -381,10 +381,10 @@ void FieldSet::setNotWasDrawn()
 
 Container* FieldSet::pressed(const int16_t xScreen, const int16_t yScreen)
 {
-  if( wScroller.pressed(this, xScreen, yScreen) ) {
+  if (wScroller.pressed(this, xScreen, yScreen)) {
     return NULL;
   }
-  if( hScroller.pressed(this, xScreen, yScreen) ) {
+  if (hScroller.pressed(this, xScreen, yScreen)) {
     return NULL;
   }
   for (int16_t i = 0; i < len; ++i) {

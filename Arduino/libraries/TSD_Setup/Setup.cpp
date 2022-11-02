@@ -36,7 +36,7 @@ void init_i2c1()
 
 void media_begin(int8_t rotation)
 {
-  if( ILI9341_VERSION < 3 ) {     // < v1.2
+  if (ILI9341_VERSION < 3) {     // < v1.2
     rotation = rotation & 1 ? rotation : (rotation + 2) % 4;
   }
   display.begin();

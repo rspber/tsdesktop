@@ -272,7 +272,7 @@ void Container::setUpdLeft(const int16_t aLeft)
 
 void Container::setUpdTop(const int16_t aTop)
 {
-  if (orgTop < 0 ) { 
+  if (orgTop < 0 ) {
     int16_t i = aTop > 0 ? aTop : 0;
     if (i != updTop) {
       hide();
@@ -470,9 +470,9 @@ void Container::updHorizScroll(const uint8_t tp, const bool up)
   getClip(clip);
   switch (tp) {
     case SCROLL_BTN_STEP:
-      if(up) {
+      if (up) {
         offsetLeft -= 16;
-        if(offsetLeft < 0) {
+        if (offsetLeft < 0) {
           offsetLeft = 0;
         }
       }
@@ -481,9 +481,9 @@ void Container::updHorizScroll(const uint8_t tp, const bool up)
       }
       break;
     case SCROLL_BTN_PAGE:
-      if(up) {
+      if (up) {
         offsetLeft -= (clip.x2 - clip.x1);
-        if(offsetLeft < 0) {
+        if (offsetLeft < 0) {
           offsetLeft = 0;
         }
       }
@@ -496,10 +496,10 @@ void Container::updHorizScroll(const uint8_t tp, const bool up)
       break;
   }
   int maxoffs = updWidth - (clip.x2 - clip.x1);
-  if(offsetLeft > maxoffs) {
+  if (offsetLeft > maxoffs) {
     offsetLeft = maxoffs;
   }
-  if(offsetLeft < 0) {
+  if (offsetLeft < 0) {
     offsetLeft = 0;
   }
 }
@@ -510,9 +510,9 @@ void Container::updVertScroll(const uint8_t tp, const bool up)
   getClip(clip);
   switch (tp) {
     case SCROLL_BTN_STEP:
-      if(up) {
+      if (up) {
         offsetTop -= 16;
-        if( offsetTop < 0 ) {
+        if (offsetTop < 0) {
           offsetTop = 0;
         }
       }
@@ -521,9 +521,9 @@ void Container::updVertScroll(const uint8_t tp, const bool up)
       }
       break;
     case SCROLL_BTN_PAGE:
-      if(up) {
+      if (up) {
         offsetTop -= (clip.y2 - clip.y1);
-        if( offsetTop < 0 ) {
+        if (offsetTop < 0) {
           offsetTop = 0;
         }
       }
@@ -536,10 +536,10 @@ void Container::updVertScroll(const uint8_t tp, const bool up)
       break;
   }
   int maxoffs = updHeight - (clip.y2 - clip.y1);
-  if( offsetTop > maxoffs ) {
+  if (offsetTop > maxoffs) {
     offsetTop = maxoffs;
   }
-  if(offsetTop < 0) {
+  if (offsetTop < 0) {
     offsetTop = 0;
   }
 }
@@ -550,7 +550,7 @@ void Container::scrollerPressed(const uint8_t which)
   uint8_t tp = which & 0x03;
   bool up = (which & 0x04) == 0;
   bool vert = (which & 0x08) != 0;
-  if( vert) {
+  if (vert) {
     updVertScroll(tp, up);
   }
   else {
