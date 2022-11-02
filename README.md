@@ -3,7 +3,6 @@ Touch Screen Desktop for Raspberry pi pico
 
 - https://www.youtube.com/watch?v=2_8hvvxUR1c
 - https://youtu.be/W1wCEIwkDYY
-- https://youtu.be/-1KUD51RNFs
 
 2.4" TFT SPI 240X320 v1.3 is supported (see Setup.h)
 
