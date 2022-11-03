@@ -27,9 +27,9 @@ changes:
 - overflow: clip was implemented in all functions,
 
 notes:
-- oryginaly gfxfont.h and Fonts directory from Adafruit's library are included,
+- original gfxfont.h and Fonts directory from Adafruit's library are included,
 
-Oryginaly Adafruit's licence bellow
+Original Adafruit's licence bellow
 */
 
 /*

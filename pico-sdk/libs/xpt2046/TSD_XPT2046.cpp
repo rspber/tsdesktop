@@ -12,7 +12,7 @@ Code comes from https://github.com/Bodmer/TFT_eSPI/Extensions:
 notes:
 - only hardware spi is supported
 
-Oryginaly notes bellow
+Original notes bellow
 vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvStartvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 // The following touch screen support code by maxpautsch was merged 1/10/17
 // https://github.com/maxpautsch
