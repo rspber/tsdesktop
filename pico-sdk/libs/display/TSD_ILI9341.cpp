@@ -69,6 +69,7 @@ partially rewriten from python to c,
 
 changes:
 - added overflow: clip
+- setAddrWindow was used
 
 that software is under the MIT license, attached below.
 */
@@ -330,7 +331,7 @@ void TSD_ILI9341::begin(PicoSPI* spi, const int16_t RST)
 
 /**************************************************************************/
 /*!
-  @brief   Set origin of (0,0) and orientation of TFT display
+   @brief   Set origin of (0,0) and orientation of TFT display
     @param   m  The index for rotation, from 0-3 inclusive
 */
 /**************************************************************************/
@@ -401,7 +402,7 @@ void TSD_ILI9341::fillScreen(const rgb_t color)
     @param   y How many pixels to scroll display by
 */
 /**************************************************************************/
-void TSD_ILI9341::scrollTo(uint16_t y) {
+void TSD_ILI9341::scrollTo(int16_t y) {
   uint8_t data[2];
   data[0] = y >> 8;
   data[1] = y & 0xff;
@@ -415,7 +416,7 @@ void TSD_ILI9341::scrollTo(uint16_t y) {
     @param   bottom The height of the Bottom scroll margin
  */
  /**************************************************************************/
-void TSD_ILI9341::setScrollMargins(uint16_t top, uint16_t bottom) {
+void TSD_ILI9341::setScrollMargins(int16_t top, int16_t bottom) {
   // TFA+VSA+BFA must equal 320
   if (top + bottom <= HEIGHT) {
     uint16_t middle = HEIGHT - (top + bottom);
@@ -430,9 +431,53 @@ void TSD_ILI9341::setScrollMargins(uint16_t top, uint16_t bottom) {
   }
 }
 
+/**************************************************************************/
+/*!
+    @brief   Set the "address window" - the rectangle we will write to RAM with
+   the next chunk of      SPI data writes. The ILI9341 will automatically wrap
+   the data as each row is filled
+    @param   x1  TFT memory 'x' origin
+    @param   y1  TFT memory 'y' origin
+    @param   w   Width of rectangle
+    @param   h   Height of rectangle
+*/
+/**************************************************************************/
+void TSD_ILI9341::setAddrWindow(int16_t x1, int16_t y1, int16_t w, int16_t h) {
+  static int16_t old_x1 = 0x7fff, old_x2 = 0x7fff;
+  static int16_t old_y1 = 0x7fff, old_y2 = 0x7fff;
+
+  #define SWAP16(x) (x >> 8 | x << 8)
+
+  int16_t x2 = (x1 + w - 1), y2 = (y1 + h - 1);
+  if (x1 != old_x1 || x2 != old_x2) {
+    sendCmd(ILI9341_CASET);
+    uint16_t buf[2];
+    buf[0] = SWAP16(x1);
+    buf[1] = SWAP16(x2);
+    sendData(sizeof(buf), (const uint8_t*)buf);
+    old_x1 = x1;
+    old_x2 = x2;
+  }
+  if (y1 != old_y1 || y2 != old_y2) {
+    sendCmd(ILI9341_PASET);
+    uint16_t buf[2];
+    buf[0] = SWAP16(y1);
+    buf[1] = SWAP16(y2);
+    sendData(sizeof(buf), (const uint8_t*)buf);
+    old_y1 = y1;
+    old_y2 = y2;
+  }
+  sendCmd(ILI9341_RAMWR);
+}
+
+void TSD_ILI9341::sendMDTData(int16_t size, const uint8_t* data)
+{
+  sendData(size * MDT_SIZE, data);
+}
 
 
-// from MicroPython_ILI9341
+
+// from MicroPython_ILI9341, mostly modified
 
 void TSD_ILI9341::displayOff()
 {
@@ -444,28 +489,12 @@ void TSD_ILI9341::displayOn()
   sendCmd(ILI9341_DISPON);
 }
 
-#define SWAP16(x) (x >> 8 | x << 8)
-
-void TSD_ILI9341::block(const int16_t x0, const int16_t y0, const int16_t x1, const int16_t y1, const uint8_t* data, int16_t size)
-{
-  if (size > 0) {
-    uint16_t buf[2];
-    buf[0] = SWAP16(x0);
-    buf[1] = SWAP16(x1);
-    sendCmdData(ILI9341_CASET, sizeof(buf), (const uint8_t*)buf);
-    buf[0] = SWAP16(y0);
-    buf[1] = SWAP16(y1);
-    sendCmdData(ILI9341_PASET, sizeof(buf), (const uint8_t*)buf);
-    sendCmd(ILI9341_RAMWR);
-    sendData(size * MDT_SIZE, data);
-  }
-}
-
 void TSD_ILI9341::drawPixel(clip_t* clip, const int16_t x, const int16_t y, const rgb_t color)
 {
-  uint8_t buf[8];
   if (x >= clip->x1 && y >= clip->y1 && x < clip->x2 && y < clip->y2) {
-    block(x, y, x, y, mdt_color(buf, color, 1), 1);
+    setAddrWindow(x, y, 1, 1);
+    uint8_t buf[8];
+    sendMDTData(1, mdt_color(buf, color, 1));
   }
 }
 
@@ -479,7 +508,8 @@ void TSD_ILI9341::drawFastHLine(clip_t* clip, int16_t x, const int16_t y, int16_
     w = clip->x2 - x;
   }
   if (y >= clip->y1 && y < clip->y2 && w > 0) {
-    block(x, y, x + w - 1, y, buffer_mdt_color(color, w), w);
+    setAddrWindow(x, y, w, 1);
+    sendMDTData(w, buffer_mdt_color(color, w));
   }
 }
 
@@ -493,7 +523,8 @@ void TSD_ILI9341::drawFastVLine(clip_t* clip, const int16_t x, int16_t y, int16_
     h = clip->y2 - y;
   }
   if (x >= clip->x1 && x < clip->x2 && h > 0) {
-    block(x, y, x, y + h - 1, buffer_mdt_color(color, h), h);
+    setAddrWindow(x, y, 1, h);
+    sendMDTData(h, buffer_mdt_color(color, h));
   }
 }
 
@@ -522,13 +553,14 @@ void TSD_ILI9341::fill_hrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int1
     if (chunk_count) {
       const uint8_t* buf = buffer_mdt_color(color, chunk_size);
       for (int16_t i = 0; i < chunk_count; ++i) {
-        block(x, chunk_y, x + w - 1, chunk_y + chunk_height - 1, buf, chunk_size);
+        setAddrWindow(x, chunk_y, w, chunk_height);
+        sendMDTData(chunk_size, buf);
         chunk_y += chunk_height;
       }
     }
     if (remainder) {
-      const uint8_t* buf = buffer_mdt_color(color, remainder * w);
-      block(x, chunk_y, x + w - 1, chunk_y + remainder - 1, buf, remainder * w);
+      setAddrWindow(x, chunk_y, w, remainder);
+      sendMDTData(remainder * w, buffer_mdt_color(color, remainder * w));
     }
   }
 }
@@ -558,13 +590,14 @@ void TSD_ILI9341::fill_vrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int1
     if (chunk_count) {
       const uint8_t* buf = buffer_mdt_color(color, chunk_size);
       for (int16_t i = 0; i < chunk_count; ++i) {
-        block(chunk_x, y, chunk_x + chunk_width - 1, y + h - 1, buf, chunk_size);
+        setAddrWindow(chunk_x, y, chunk_width, h);
+        sendMDTData(chunk_size, buf);
         chunk_x += chunk_width;
       }
     }
     if (remainder) {
-      const uint8_t* buf = buffer_mdt_color(color, remainder * h);
-      block(chunk_x, y, chunk_x + remainder - 1, y + h - 1, buf, remainder * h);
+      setAddrWindow(chunk_x, y, remainder, h);
+      sendMDTData(remainder * h, buffer_mdt_color(color, remainder * h));
     }
   }
 }

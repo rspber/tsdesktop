@@ -30,8 +30,12 @@ public:
 
   void fillScreen(const rgb_t color = BLACK);
 
-  void scrollTo(uint16_t y);
-  void setScrollMargins(uint16_t top, uint16_t bottom);
+  void scrollTo(int16_t y);
+  void setScrollMargins(int16_t top, int16_t bottom);
+
+  void setAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h);
+
+//  uint8_t readcommand8(uint8_t reg, uint8_t index = 0);
 
   void displayOff();
   void displayOn();
@@ -46,13 +50,11 @@ protected:
   void sendData(const int16_t size, const uint8_t* data);
   void sendCmdData(const uint8_t cmd, const int16_t size, const uint8_t* data);
   void sendCmdData(const uint8_t cmd, const uint8_t data);
+  void sendMDTData(const int16_t size, const uint8_t* data);
   void reset();
 
   void fill_hrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color);
   void fill_vrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color);
-
-private:
-  void block(const int16_t x0, const int16_t y0, const int16_t x1, const int16_t y1, const uint8_t* data, int16_t size);
 
 private:
   int16_t WIDTH, HEIGHT;
