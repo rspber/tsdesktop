@@ -3,7 +3,7 @@
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
-This is modified Adafruit's ILI9341 driver: Adafruit_ILI9341
+This is a modified Adafruit's ILI9341 driver: Adafruit_ILI9341
 
 differences:
 - Adafruit_SPITFT was changed to TSD_SPITFT
