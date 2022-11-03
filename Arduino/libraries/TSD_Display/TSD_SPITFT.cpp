@@ -14,7 +14,7 @@
 */
 
 /*!
- * @file TSD_SPITFT.cpp
+ * @file Adafruit_SPITFT.cpp
  *
  * @mainpage Adafruit SPI TFT Displays (and some others)
  *
