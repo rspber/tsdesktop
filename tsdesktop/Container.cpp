@@ -546,7 +546,6 @@ void Container::updVertScroll(const uint8_t tp, const bool up)
 
 void Container::scrollerPressed(const uint8_t which)
 {
-  hide();
   uint8_t tp = which & 0x03;
   bool up = (which & 0x04) == 0;
   bool vert = (which & 0x08) != 0;

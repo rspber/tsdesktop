@@ -77,8 +77,9 @@ bool ScrollBtn::pressed(FieldSet* view, const int16_t xScreen, const int16_t ySc
   bool pressed = xScreen > x1 - 1 && xScreen < x2 + 1 && yScreen > y1 - 1 && yScreen < y2 + 1;
   if (pressed) {
     clickEffect();
-    view->scrollerPressed(which);
-    view->draw();
+//	view->hide();
+	view->scrollerPressed(which);
+    view->draw(true);
   }
   return pressed;
 }
