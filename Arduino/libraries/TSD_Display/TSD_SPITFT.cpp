@@ -130,7 +130,7 @@ static const struct {
              this library's initSPI() function to initialize pins.
 */
 TSD_SPITFT::TSD_SPITFT(int8_t cs, int8_t dc, int8_t mosi, int8_t sck,
-					   int8_t rst, int8_t miso)
+                       int8_t rst, int8_t miso)
     : connection(TFT_SOFT_SPI), _rst(rst), _cs(cs), _dc(dc) {
   swspi._sck = sck;
   swspi._mosi = mosi;
@@ -383,7 +383,7 @@ TSD_SPITFT::TSD_SPITFT(SPIClass *spiClass, int8_t cs, int8_t dc, int8_t rst)
              wanting to break existing code).
 */
 TSD_SPITFT::TSD_SPITFT(tftBusWidth busWidth, int8_t d0, int8_t wr, int8_t dc,
-					   int8_t cs, int8_t rst, int8_t rd)
+                       int8_t cs, int8_t rst, int8_t rd)
     : connection(TFT_PARALLEL), _rst(rst), _cs(cs), _dc(dc) {
   tft8._d0 = d0;
   tft8._wr = wr;
@@ -999,7 +999,7 @@ void TSD_SPITFT::swapBytes(uint16_t *src, uint32_t len, uint16_t *dest) {
                        using this function's non-blocking DMA mode.
 */
 void TSD_SPITFT::writePixels(const rgb_t *colors, uint32_t len, bool block,
-							 bool bigEndian) {
+                             bool bigEndian) {
 
   if (!len)
     return; // Avoid 0-byte transfers
@@ -1493,7 +1493,7 @@ void TSD_SPITFT::writeColor(rgb_t color, uint32_t len) {
             and rejects clipped rectangles at the least-work possibility.
 */
 void TSD_SPITFT::writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w,
-							   int16_t h, const rgb_t color) {
+                               int16_t h, const rgb_t color) {
   if (w && h) {   // Nonzero width and height?
     if (w < 0) {  // If negative width...
       x += w + 1; //   Move X to left edge
@@ -1545,7 +1545,7 @@ void TSD_SPITFT::writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w,
     @param  color  16-bit line color in '565' RGB format.
 */
 void inline TSD_SPITFT::writeFastHLine(clip_t* clip, int16_t x, int16_t y,
-									   int16_t w, const rgb_t color) {
+                                       int16_t w, const rgb_t color) {
   if ((y >= clip->y1) && (y < clip->y2) && w) { // Y on screen, nonzero width
     if (w < 0) {                        // If negative width...
       x += w + 1;                       //   Move X to left edge
@@ -1581,7 +1581,7 @@ void inline TSD_SPITFT::writeFastHLine(clip_t* clip, int16_t x, int16_t y,
     @param  color  16-bit line color in '565' RGB format.
 */
 void inline TSD_SPITFT::writeFastVLine(clip_t* clip, int16_t x, int16_t y,
-									   int16_t h, const rgb_t color) {
+                                       int16_t h, const rgb_t color) {
   if ((x >= clip->x1) && (x < clip->x2) && h) { // X on screen, nonzero height
     if (h < 0) {                       // If negative height...
       y += h + 1;                      //   Move Y to top edge
@@ -1625,7 +1625,7 @@ void inline TSD_SPITFT::writeFastVLine(clip_t* clip, int16_t x, int16_t y,
             and horizontal/vertical lines are written to best use this yet.
 */
 inline void TSD_SPITFT::writeFillRectPreclipped(int16_t x, int16_t y, int16_t w,
-												int16_t h, const rgb_t color) {
+                                                int16_t h, const rgb_t color) {
   setAddrWindow(x, y, w, h);
   writeColor(color, (uint32_t)w * h);
 }
@@ -1648,7 +1648,7 @@ inline void TSD_SPITFT::writeFillRectPreclipped(int16_t x, int16_t y, int16_t w,
     @param  color  16-bit pixel color in '565' RGB format.
 */
 void TSD_SPITFT::drawPixel(clip_t* clip, int16_t x, int16_t y,
-						   const rgb_t color) {
+                           const rgb_t color) {
   // Clip first...
   if ((x >= clip->x1) && (x < clip->x2) && (y >= clip->y1) && (y < clip->y2)) {
     // THEN set up transaction (if needed) and draw...
@@ -1679,7 +1679,7 @@ void TSD_SPITFT::drawPixel(clip_t* clip, int16_t x, int16_t y,
             that much code.
 */
 void TSD_SPITFT::fillRect(clip_t* clip, int16_t x, int16_t y, int16_t w,
-						  int16_t h, const rgb_t color) {
+                          int16_t h, const rgb_t color) {
   if (w && h) {   // Nonzero width and height?
     if (w < 0) {  // If negative width...
       x += w + 1; //   Move X to left edge
@@ -1737,7 +1737,7 @@ void TSD_SPITFT::fillRect(clip_t* clip, int16_t x, int16_t y, int16_t w,
             transaction isn't performed at all if the line is rejected.
 */
 void TSD_SPITFT::drawFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w,
-							   const rgb_t color) {
+                               const rgb_t color) {
   if ((y >= clip->y1) && (y < clip->y2) && w) { // Y on screen, nonzero width
     if (w < 0) {                        // If negative width...
       x += w + 1;                       //   Move X to left edge
@@ -1832,7 +1832,7 @@ void TSD_SPITFT::pushColor(const rgb_t color) {
     @param  h        Height of bitmap in pixels.
 */
 void TSD_SPITFT::drawRGBBitmap(clip_t *clip, int16_t x, int16_t y,
-							   const rgb_t *pcolors, int16_t w, int16_t h) {
+                               const rgb_t *pcolors, int16_t w, int16_t h) {
 
   int16_t x2 = x + w - 1;
   int16_t y2 = y + h - 1;
