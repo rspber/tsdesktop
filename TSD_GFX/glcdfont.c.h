@@ -1,5 +1,5 @@
 /*
-  It's modified version of Adafruit's glcdfont.c
+  It's a modified version of Adafruit's glcdfont.c
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
