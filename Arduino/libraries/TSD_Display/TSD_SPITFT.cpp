@@ -1777,7 +1777,8 @@ void TSD_SPITFT::drawFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w,
             writeFastVLine() to handle clipping and so forth) so that the
             transaction isn't performed at all if the line is rejected.
 */
-void TSD_SPITFT::drawFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, const rgb_t color) {
+void TSD_SPITFT::drawFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h,
+                               const rgb_t color) {
   if ((x >= clip->x1) && (x < clip->x2) && h) { // X on screen, nonzero height
     if (h < 0) {                       // If negative height...
       y += h + 1;                      //   Move Y to top edge
