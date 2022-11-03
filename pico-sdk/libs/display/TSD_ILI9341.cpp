@@ -3,7 +3,7 @@
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
-1. This is modified Adafruit's ILI9341 driver: Adafruit_ILI9341
+1. This is a modified Adafruit's ILI9341 driver: Adafruit_ILI9341
 natively ported to pico-sdk
 
 differences:
