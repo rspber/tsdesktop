@@ -10,7 +10,7 @@
 */
 
 /*!
- * @file TSD_SPITFT.h
+ * @file Adafruit_SPITFT.h
  *
  * Part of Adafruit's GFX graphics library. Originally this class was
  * written to handle a range of color TFT displays connected via SPI,
