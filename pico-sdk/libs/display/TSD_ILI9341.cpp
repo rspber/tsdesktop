@@ -67,6 +67,9 @@ Original Adafruit's licence bellow.
 https://github.com/rdagger/micropython-ili9341/ili9341.py,
 partially rewriten from python to c,
 
+changes:
+- added overflow: clip
+
 that software is under the MIT license, attached below.
 */
 
