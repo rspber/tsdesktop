@@ -10,7 +10,7 @@
 #include <Display.h>
 #include <Touch.h>
 #include <TSDesktop.h>
-#include <FreeSerif24pt7b.h>
+#include <Fonts/FreeSerif24pt7b.h>
 
 #define ROTATION ROTATION_HLR
 

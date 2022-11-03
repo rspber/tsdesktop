@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "TSD_GFX.h"
+#include <TSD_GFX.h>
 #include <Picoino.h>
 
 class TSD_ILI9341 : public TSD_GFX {

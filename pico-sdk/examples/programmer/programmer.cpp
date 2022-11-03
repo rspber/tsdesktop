@@ -19,7 +19,7 @@
 #include <PicoFlash.h>
 #include "Pgms.h"
 
-#include <FreeSans9pt7b.h>
+#include <Fonts/FreeSans9pt7b.h>
 
 #define FONT &FreeSans9pt7b
 

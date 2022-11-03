@@ -12,7 +12,7 @@
 #include <Display.h>
 #include <Touch.h>
 #include <TSDesktop.h>
-#include <FreeSerif18pt7b.h>
+#include <Fonts/FreeSerif18pt7b.h>
 
 #include <TSD_PCF8575.h>
 

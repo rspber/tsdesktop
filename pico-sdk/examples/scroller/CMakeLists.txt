@@ -5,6 +5,7 @@ add_executable(scroller
 target_link_libraries(scroller
   setup
   display
+  gfx
   desktop
   xpt2046
 )

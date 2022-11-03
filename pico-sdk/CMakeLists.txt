@@ -22,6 +22,7 @@ add_compile_options(-Wall
 
 add_subdirectory(libs/setup)
 add_subdirectory(libs/display)
+add_subdirectory(libs/gfx)
 add_subdirectory(libs/desktop)
 add_subdirectory(libs/xpt2046)
 add_subdirectory(libs/flash)

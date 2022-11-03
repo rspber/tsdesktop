@@ -5,6 +5,7 @@ add_executable(checkboxes
 target_link_libraries(checkboxes
   setup
   display
+  gfx
   desktop
   xpt2046
   pcf8575
