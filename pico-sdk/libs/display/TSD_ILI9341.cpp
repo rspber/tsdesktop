@@ -450,7 +450,7 @@ void TSD_ILI9341::setAddrWindow(int16_t x1, int16_t y1, int16_t w, int16_t h) {
 
   int16_t x2 = (x1 + w - 1), y2 = (y1 + h - 1);
   if (x1 != old_x1 || x2 != old_x2) {
-    sendCmd(ILI9341_CASET);
+    sendCmd(ILI9341_CASET); // Column address set
     uint16_t buf[2];
     buf[0] = SWAP16(x1);
     buf[1] = SWAP16(x2);
@@ -459,7 +459,7 @@ void TSD_ILI9341::setAddrWindow(int16_t x1, int16_t y1, int16_t w, int16_t h) {
     old_x2 = x2;
   }
   if (y1 != old_y1 || y2 != old_y2) {
-    sendCmd(ILI9341_PASET);
+    sendCmd(ILI9341_PASET); // Row address set
     uint16_t buf[2];
     buf[0] = SWAP16(y1);
     buf[1] = SWAP16(y2);
@@ -467,7 +467,7 @@ void TSD_ILI9341::setAddrWindow(int16_t x1, int16_t y1, int16_t w, int16_t h) {
     old_y1 = y1;
     old_y2 = y2;
   }
-  sendCmd(ILI9341_RAMWR);
+  sendCmd(ILI9341_RAMWR); // Write to RAM
 }
 
 void TSD_ILI9341::sendMDTData(int16_t size, const uint8_t* data)
