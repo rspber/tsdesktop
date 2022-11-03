@@ -251,7 +251,7 @@ protected:
 
 private:
   int16_t id = 0, groupId = 0;   // user defined
-  int16_t tag = 0;  // used by DecorButton
+  int16_t tag = 0;  // used by RadioButton
   const char* name = NULL;   // user defined
   Container* parent = NULL;
   const CONTAINER_TYPE type = TYPE_CONTAINER;
