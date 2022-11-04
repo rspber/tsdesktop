@@ -1,5 +1,5 @@
 /*
-  Menu 1 on TSDesktop
+  2 on TSDesktop
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
@@ -125,56 +125,56 @@ void setup()   {
 
   pinMode(LED_PIN, OUTPUT);
 
-  tx_btn(&tx01,  1, " 01. menu item");
-  tx_btn(&tx02,  2, " 02. menu item");
-  tx_btn(&tx03,  3, " 03. menu item");
-  tx_btn(&tx04,  4, " 04. menu item");
-  tx_btn(&tx05,  5, " 05. menu item");
-  tx_btn(&tx06,  6, " 06. menu item");
-  tx_btn(&tx07,  7, " 07. menu item");
-  tx_btn(&tx08,  8, " 08. menu item");
-  tx_btn(&tx09,  9, " 09. menu item");
-  tx_btn(&tx10, 10, " 10. menu item");
-  tx_btn(&tx11, 11, " 11. menu item");
-  tx_btn(&tx12, 12, " 12. menu item");
-  tx_btn(&tx13, 13, " 13. menu item");
-  tx_btn(&tx14, 14, " 14. menu item");
-  tx_btn(&tx15, 15, " 15. menu item");
-  tx_btn(&tx16, 16, " 16. menu item");
-  tx_btn(&tx17, 17, " 17. menu item");
-  tx_btn(&tx18, 18, " 18. menu item");
-  tx_btn(&tx19, 19, " 19. menu item");
-  tx_btn(&tx20, 20, " 20. menu item");
-  tx_btn(&tx21, 21, " 21. menu item");
-  tx_btn(&tx22, 22, " 22. menu item");
-  tx_btn(&tx23, 23, " 23. menu item");
-  tx_btn(&tx24, 24, " 24. menu item");
-  tx_btn(&tx25, 25, " 25. menu item");
-  tx_btn(&tx26, 26, " 26. menu item");
-  tx_btn(&tx27, 27, " 27. menu item");
-  tx_btn(&tx28, 28, " 28. menu item");
-  tx_btn(&tx29, 29, " 29. menu item");
-  tx_btn(&tx30, 30, " 30. menu item");
-  tx_btn(&tx31, 31, " 31. menu item");
-  tx_btn(&tx32, 32, " 32. menu item");
-  tx_btn(&tx33, 33, " 33. menu item");
-  tx_btn(&tx34, 34, " 34. menu item");
-  tx_btn(&tx35, 35, " 35. menu item");
-  tx_btn(&tx36, 36, " 36. menu item");
-  tx_btn(&tx37, 37, " 37. menu item");
-  tx_btn(&tx38, 38, " 38. menu item");
-  tx_btn(&tx39, 39, " 39. menu item");
-  tx_btn(&tx40, 40, " 40. menu item");
-  tx_btn(&tx41, 41, " 41. menu item");
-  tx_btn(&tx42, 42, " 42. menu item");
-  tx_btn(&tx43, 43, " 43. menu item");
-  tx_btn(&tx44, 44, " 44. menu item");
-  tx_btn(&tx45, 45, " 45. menu item");
-  tx_btn(&tx46, 46, " 46. menu item");
-  tx_btn(&tx47, 47, " 47. menu item");
-  tx_btn(&tx48, 48, " 48. menu item");
-  tx_btn(&tx49, 49, " 49. menu item");
-  tx_btn(&tx50, 50, " 50. menu item");
+  tx_btn(&tx01,  1, " 01. item  ");
+  tx_btn(&tx02,  2, " 02. item");
+  tx_btn(&tx03,  3, " 03. item");
+  tx_btn(&tx04,  4, " 04. item");
+  tx_btn(&tx05,  5, " 05. item");
+  tx_btn(&tx06,  6, " 06. item");
+  tx_btn(&tx07,  7, " 07. item");
+  tx_btn(&tx08,  8, " 08. item");
+  tx_btn(&tx09,  9, " 09. item");
+  tx_btn(&tx10, 10, " 10. item");
+  tx_btn(&tx11, 11, " 11. item");
+  tx_btn(&tx12, 12, " 12. item");
+  tx_btn(&tx13, 13, " 13. item");
+  tx_btn(&tx14, 14, " 14. item");
+  tx_btn(&tx15, 15, " 15. item");
+  tx_btn(&tx16, 16, " 16. item");
+  tx_btn(&tx17, 17, " 17. item");
+  tx_btn(&tx18, 18, " 18. item");
+  tx_btn(&tx19, 19, " 19. item");
+  tx_btn(&tx20, 20, " 20. item");
+  tx_btn(&tx21, 21, " 21. item");
+  tx_btn(&tx22, 22, " 22. item");
+  tx_btn(&tx23, 23, " 23. item");
+  tx_btn(&tx24, 24, " 24. item");
+  tx_btn(&tx25, 25, " 25. item");
+  tx_btn(&tx26, 26, " 26. item");
+  tx_btn(&tx27, 27, " 27. item");
+  tx_btn(&tx28, 28, " 28. item");
+  tx_btn(&tx29, 29, " 29. item");
+  tx_btn(&tx30, 30, " 30. item");
+  tx_btn(&tx31, 31, " 31. item");
+  tx_btn(&tx32, 32, " 32. item");
+  tx_btn(&tx33, 33, " 33. item");
+  tx_btn(&tx34, 34, " 34. item");
+  tx_btn(&tx35, 35, " 35. item");
+  tx_btn(&tx36, 36, " 36. item");
+  tx_btn(&tx37, 37, " 37. item");
+  tx_btn(&tx38, 38, " 38. item");
+  tx_btn(&tx39, 39, " 39. item");
+  tx_btn(&tx40, 40, " 40. item");
+  tx_btn(&tx41, 41, " 41. item");
+  tx_btn(&tx42, 42, " 42. item");
+  tx_btn(&tx43, 43, " 43. item");
+  tx_btn(&tx44, 44, " 44. item");
+  tx_btn(&tx45, 45, " 45. item");
+  tx_btn(&tx46, 46, " 46. item");
+  tx_btn(&tx47, 47, " 47. item");
+  tx_btn(&tx48, 48, " 48. item");
+  tx_btn(&tx49, 49, " 49. item");
+  tx_btn(&tx50, 50, " 50. item");
 
   sel01.setAlignClientHoriz();
   sel01.setFontSize(2);
@@ -182,6 +182,8 @@ void setup()   {
   board.setAlignClient();
   board.setAlignTop(true);
 
+  menu.setAlignLeft(true);
+  
   desktop.setMargin(10);
   desktop.setOrientation(HORIZONTAL, 10);
 

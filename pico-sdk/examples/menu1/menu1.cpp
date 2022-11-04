@@ -1,5 +1,5 @@
 /*
-  Scroller on TSDesktop
+  Menu 1 on TSDesktop
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
