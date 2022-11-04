@@ -1,5 +1,5 @@
 /*
-  Scroll1 on TSDesktop
+  Scroll 1 on TSDesktop
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
@@ -45,11 +45,11 @@ void setup()   {
 
   pinMode(LED_PIN, OUTPUT);
 
-  btn01.setSize(1400, 150);
+  btn01.setSize(ALIGN_COMPACT, 400);
   btn01.setBackground(BROWN);
   btn01.setText("Abcdefghijklmnopqrstuvwxyz");
   btn01.setFont(&FreeSerif24pt7b);
-  btn01.setFontSize(2);
+  btn01.setFontSize(5);
   btn01.setTextColor(WHITE);
 
   desktop.setMargin(10);
