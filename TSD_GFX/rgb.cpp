@@ -13,9 +13,6 @@ uint8_t buffer[MAXLEN * MDT_SIZE + 4];
 
 uint8_t* mdt_color(uint8_t* buf, const rgb_t color, int size)
 {
-  if (size > MAXLEN) {
-    size = MAXLEN;
-  }
   uint8_t b[4];
   *(uint32_t *)b = color;
   uint8_t* p = buf;
@@ -30,5 +27,5 @@ uint8_t* mdt_color(uint8_t* buf, const rgb_t color, int size)
 
 uint8_t* buffer_mdt_color(const rgb_t color, const int size)
 {
-  return mdt_color(buffer, color, size);
+  return mdt_color(buffer, color, size > MAXLEN ? MAXLEN : size);
 }
