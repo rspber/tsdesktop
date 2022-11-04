@@ -544,7 +544,7 @@ void Container::updVertScroll(const uint8_t tp, const bool up)
   }
 }
 
-void Container::scrollerPressed(const uint8_t which)
+void Container::scroll(const uint8_t which)
 {
   uint8_t tp = which & 0x03;
   bool up = (which & 0x04) == 0;

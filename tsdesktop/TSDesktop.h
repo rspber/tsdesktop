@@ -209,7 +209,7 @@ public:
 
   virtual void clickEffect(const int16_t posX, const int16_t posY) {}
 
-  void scrollerPressed(const uint8_t which);
+  void scroll(const uint8_t which);
 
   const int16_t getAbsRight(int16_t r, int16_t m2);
   const int16_t getAbsBottom(int16_t b, int16_t m2);
