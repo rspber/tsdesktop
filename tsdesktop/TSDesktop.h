@@ -205,8 +205,11 @@ public:
 
   virtual void clickEffect(const int16_t posX, const int16_t posY) {}
 
-  const bool horizScroll(const uint8_t tp, const bool up);
-  const bool vertScroll(const uint8_t tp, const bool up);
+  const bool horizScroll(const uint8_t tp, const bool up, int8_t* percent);
+  const bool vertScroll(const uint8_t tp, const bool up, int8_t* percent);
+  void disableScrollerProgress() { scroll_progress = false; }
+  void enableScrollerProgress() { scroll_progress = true; }
+  const bool getShowScrollerProgress() { return scroll_progress; }
 
   const int16_t getAbsRight(int16_t r, int16_t m2);
   const int16_t getAbsBottom(int16_t b, int16_t m2);
@@ -265,6 +268,8 @@ private:
   uint8_t clickEffect_ = 1;
   int16_t clickHighlightDelay = 100;
   void (*funcOnClick)(Container* aContainer) = NULL;
+
+  bool scroll_progress = false;
 };
 
 
@@ -712,6 +717,17 @@ private:
 
 /// @ScrollButton
 
+class ProgressBtn {
+public:
+  void init(const bool vert, const uint8_t* icon, const int16_t l, int16_t t, const int16_t size);
+  void set(int8_t percent);
+  void draw();
+private:
+  const uint8_t *bmp;
+  int16_t x0, y0, x1, y1, size;
+  bool vert;
+};
+
 // which scroller
 #define SCROLL_UP 0x00
 #define SCROLL_DN 0x04
@@ -725,10 +741,10 @@ class ScrollBtn {
 public:
   void init(const uint8_t which, const uint8_t* icon, const int16_t l, const int16_t t, const int16_t r, const int16_t b);
   bool isSet();
-  void draw(Scroller* scroller);
-  const bool scroll(FieldSet* view);
+  void draw();
+  const bool scroll(FieldSet* view, int8_t* percent);
   void clickEffect();
-  bool pressed(FieldSet* view, const int16_t xScreen, const int16_t yScreen);
+  bool pressed(FieldSet* view, const int16_t xScreen, const int16_t yScreen, ProgressBtn* progress);
 
   friend class Scroller;
 private:
@@ -741,6 +757,7 @@ private:
 
 typedef struct {
   ScrollBtn home, page, step;
+  ProgressBtn progress;
 } scrollpack_t;
 
 class Scroller {
@@ -748,7 +765,6 @@ public:
   bool init(FieldSet* view, const int8_t mgr);
   void draw(FieldSet* view, Scroller* hScr);
   ScrollBtn* pressed(FieldSet* view, const int16_t xScreen, const int16_t yScreen);
-  const int8_t width();
 
   friend class FieldSet;
 private:
