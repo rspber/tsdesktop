@@ -72,16 +72,16 @@ void ScrollBtn::clickEffect()
   }
 }
 
-void ScrollBtn::scroll(FieldSet* view)
+const bool ScrollBtn::scroll(FieldSet* view)
 {
   uint8_t tp = which & 0x03;
   bool up = (which & 0x04) == 0;
   bool vert = (which & 0x08) != 0;
   if (vert) {
-    view->vertScroll(tp, up);
+    return view->vertScroll(tp, up);
   }
   else {
-    view->horizScroll(tp, up);
+    return view->horizScroll(tp, up);
   }
 }
 
@@ -91,8 +91,9 @@ bool ScrollBtn::pressed(FieldSet* view, const int16_t xScreen, const int16_t ySc
   if (pressed) {
     clickEffect();
 //	view->hide();
-    scroll(view);
-    view->draw(true);
+    if (scroll(view)) {
+      view->draw(true);
+    }
   }
   return pressed;
 }

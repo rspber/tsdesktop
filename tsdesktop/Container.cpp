@@ -464,84 +464,67 @@ Container* Container::pressed(const int16_t xScreen, const int16_t yScreen)
   }
 }
 
-void Container::horizScroll(const uint8_t tp, const bool up)
+const int16_t doScroll(const uint8_t tp, const bool up, int16_t offs, const int16_t size, const int16_t page)
 {
-  clip_t clip;
-  getClip(clip);
   switch (tp) {
     case SCROLL_BTN_STEP:
       if (up) {
-        offsetLeft -= 16;
-        if (offsetLeft < 0) {
-          offsetLeft = 0;
+        offs -= 16;
+        if (offs < 0) {
+          offs = 0;
         }
       }
       else {
-        offsetLeft += 16;
+        offs += 16;
       }
       break;
     case SCROLL_BTN_PAGE:
       if (up) {
-        offsetLeft -= (clip.x2 - clip.x1);
-        if (offsetLeft < 0) {
-          offsetLeft = 0;
+        offs -= page;
+        if (offs < 0) {
+          offs = 0;
         }
       }
       else {
-        offsetLeft += (clip.x2 - clip.x1);
+        offs += page;
       }
       break;
     case SCROLL_BTN_HOME:
-      offsetLeft = up ? 0 : 0x7fff;
+      offs = up ? 0 : 0x7fff;
       break;
   }
-  int maxoffs = updWidth - (clip.x2 - clip.x1);
-  if (offsetLeft > maxoffs) {
-    offsetLeft = maxoffs;
+  int maxoffs = size - page;
+  if (offs > maxoffs) {
+    offs = maxoffs;
   }
-  if (offsetLeft < 0) {
-    offsetLeft = 0;
+  if (offs < 0) {
+    offs = 0;
   }
-  setChanged();
+  return offs;
 }
 
-void Container::vertScroll(const uint8_t tp, const bool up)
+const bool Container::horizScroll(const uint8_t tp, const bool up)
 {
   clip_t clip;
   getClip(clip);
-  switch (tp) {
-    case SCROLL_BTN_STEP:
-      if (up) {
-        offsetTop -= 16;
-        if (offsetTop < 0) {
-          offsetTop = 0;
-        }
-      }
-      else {
-        offsetTop += 16;
-      }
-      break;
-    case SCROLL_BTN_PAGE:
-      if (up) {
-        offsetTop -= (clip.y2 - clip.y1);
-        if (offsetTop < 0) {
-          offsetTop = 0;
-        }
-      }
-      else {
-        offsetTop += (clip.y2 - clip.y1);
-      }
-      break;
-    case SCROLL_BTN_HOME:
-      offsetTop = up ? 0 : 0x7fff;
-      break;
+  int16_t offs = doScroll(tp, up, offsetLeft, updWidth, clip.x2 - clip.x1);
+  if (offs != offsetLeft) {
+    offsetLeft = offs;
+    setChanged();
+    return true;
   }
-  int maxoffs = updHeight - (clip.y2 - clip.y1);
-  if (offsetTop > maxoffs) {
-    offsetTop = maxoffs;
+  return false;
+}
+
+const bool Container::vertScroll(const uint8_t tp, const bool up)
+{
+  clip_t clip;
+  getClip(clip);
+  int16_t offs = doScroll(tp, up, offsetTop, updHeight, clip.y2 - clip.y1);
+  if (offs != offsetTop) {
+    offsetTop = offs;
+    setChanged();
+    return true;
   }
-  if (offsetTop < 0) {
-    offsetTop = 0;
-  }
-  setChanged();
+  return false;
 }

@@ -205,8 +205,8 @@ public:
 
   virtual void clickEffect(const int16_t posX, const int16_t posY) {}
 
-  void horizScroll(const uint8_t tp, const bool up);
-  void vertScroll(const uint8_t tp, const bool up);
+  const bool horizScroll(const uint8_t tp, const bool up);
+  const bool vertScroll(const uint8_t tp, const bool up);
 
   const int16_t getAbsRight(int16_t r, int16_t m2);
   const int16_t getAbsBottom(int16_t b, int16_t m2);
@@ -726,7 +726,7 @@ public:
   void init(const uint8_t which, const uint8_t* icon, const int16_t l, const int16_t t, const int16_t r, const int16_t b);
   bool isSet();
   void draw(Scroller* scroller);
-  void scroll(FieldSet* view);
+  const bool scroll(FieldSet* view);
   void clickEffect();
   bool pressed(FieldSet* view, const int16_t xScreen, const int16_t yScreen);
 
