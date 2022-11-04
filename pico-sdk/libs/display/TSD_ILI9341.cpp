@@ -175,7 +175,7 @@ SOFTWARE.
 #define ILI9341_GMCTRP1     0xE0    // Positive gamma correction
 #define ILI9341_GMCTRN1     0xE1    // Negative gamma correction
 #define ILI9341_EF          0xEF    // unknown
-#define ILI9341_INTFCCTR    0xF6    // Interface control
+//#define ILI9341_INTFCCTR    0xF6    // Interface control
 #define ILI9341_PUMPRC      0xF7    // Pump ratio control
 //#define ILI9341_PWCTR6      0xFC
 
@@ -288,9 +288,6 @@ void TSD_ILI9341::begin(PicoSPI* spi, const int16_t RST)
   sendCmdData(ILI9341_PIXFMT,   0x55);
 #else
   sendCmdData(ILI9341_PIXFMT,   0x66);
-
-  static uint8_t ILI9341_INTFCCTR_DATA[] = {0x01, 0x01, 0x00};
-  sendCmdData(ILI9341_INTFCCTR, 3, ILI9341_INTFCCTR_DATA);
 #endif
 
   static uint8_t ILI9341_FRMCTR1_DATA[] = {0x00, 0x18};
