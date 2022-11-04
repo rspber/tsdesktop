@@ -464,7 +464,7 @@ Container* Container::pressed(const int16_t xScreen, const int16_t yScreen)
   }
 }
 
-void Container::updHorizScroll(const uint8_t tp, const bool up)
+void Container::horizScroll(const uint8_t tp, const bool up)
 {
   clip_t clip;
   getClip(clip);
@@ -504,7 +504,7 @@ void Container::updHorizScroll(const uint8_t tp, const bool up)
   }
 }
 
-void Container::updVertScroll(const uint8_t tp, const bool up)
+void Container::vertScroll(const uint8_t tp, const bool up)
 {
   clip_t clip;
   getClip(clip);
@@ -550,10 +550,10 @@ void Container::scroll(const uint8_t which)
   bool up = (which & 0x04) == 0;
   bool vert = (which & 0x08) != 0;
   if (vert) {
-    updVertScroll(tp, up);
+    vertScroll(tp, up);
   }
   else {
-    updHorizScroll(tp, up);
+    horizScroll(tp, up);
   }
   setChanged();
 }

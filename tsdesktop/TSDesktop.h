@@ -209,6 +209,8 @@ public:
 
   virtual void clickEffect(const int16_t posX, const int16_t posY) {}
 
+  void horizScroll(const uint8_t tp, const bool up);
+  void vertScroll(const uint8_t tp, const bool up);
   void scroll(const uint8_t which);
 
   const int16_t getAbsRight(int16_t r, int16_t m2);
@@ -242,9 +244,6 @@ private:
   bool updated = false;
 
   virtual void setNotWasDrawn() {}
-
-  void updHorizScroll(const uint8_t tp, const bool up);
-  void updVertScroll(const uint8_t tp, const bool up);
 
 protected:
   void setChanged();
