@@ -7,6 +7,12 @@
 
 /*
   It's a Adafruit's Adafruit_SPITFT customized to TSDesktop
+
+  changes:
+  - release from screen coordinates
+  - added clip to draw functions
+
+Original Adafruit's licence bellow.
 */
 
 /*!

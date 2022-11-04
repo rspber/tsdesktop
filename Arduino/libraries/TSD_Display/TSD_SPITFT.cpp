@@ -11,6 +11,8 @@
   changes:
   - release from screen coordinates
   - added clip to draw functions
+
+Original Adafruit's licence bellow.
 */
 
 /*!
