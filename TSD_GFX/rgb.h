@@ -24,7 +24,5 @@
 #define BLACK RGB(0x00, 0x00, 0x00)
 
 uint8_t* mdt_color(uint8_t* buf, const rgb_t color, int size);
-uint8_t* mdt_array(uint8_t* buf, const int size);
 
 uint8_t* buffer_mdt_color(const rgb_t color, int size);
-uint8_t* buffer_mdt_array(const int size);
