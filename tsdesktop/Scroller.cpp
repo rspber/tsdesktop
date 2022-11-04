@@ -72,13 +72,26 @@ void ScrollBtn::clickEffect()
   }
 }
 
+void ScrollBtn::scroll(FieldSet* view)
+{
+  uint8_t tp = which & 0x03;
+  bool up = (which & 0x04) == 0;
+  bool vert = (which & 0x08) != 0;
+  if (vert) {
+    view->vertScroll(tp, up);
+  }
+  else {
+    view->horizScroll(tp, up);
+  }
+}
+
 bool ScrollBtn::pressed(FieldSet* view, const int16_t xScreen, const int16_t yScreen)
 {
   bool pressed = xScreen > x1 - 1 && xScreen < x2 + 1 && yScreen > y1 - 1 && yScreen < y2 + 1;
   if (pressed) {
     clickEffect();
 //	view->hide();
-	view->scroll(which);
+    scroll(view);
     view->draw(true);
   }
   return pressed;

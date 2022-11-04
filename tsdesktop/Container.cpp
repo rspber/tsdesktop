@@ -502,6 +502,7 @@ void Container::horizScroll(const uint8_t tp, const bool up)
   if (offsetLeft < 0) {
     offsetLeft = 0;
   }
+  setChanged();
 }
 
 void Container::vertScroll(const uint8_t tp, const bool up)
@@ -541,19 +542,6 @@ void Container::vertScroll(const uint8_t tp, const bool up)
   }
   if (offsetTop < 0) {
     offsetTop = 0;
-  }
-}
-
-void Container::scroll(const uint8_t which)
-{
-  uint8_t tp = which & 0x03;
-  bool up = (which & 0x04) == 0;
-  bool vert = (which & 0x08) != 0;
-  if (vert) {
-    vertScroll(tp, up);
-  }
-  else {
-    horizScroll(tp, up);
   }
   setChanged();
 }

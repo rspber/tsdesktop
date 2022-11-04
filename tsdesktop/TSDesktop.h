@@ -53,10 +53,6 @@ typedef struct {
 #define SCROLL_BTN_STEP 0x00
 #define SCROLL_BTN_PAGE 0x01
 #define SCROLL_BTN_HOME 0x02
-#define SCROLL_UP 0x00
-#define SCROLL_DN 0x04
-#define SCROLL_HORIZ 0x00
-#define SCROLL_VERT 0x08
 
 /// @Container
 
@@ -211,7 +207,6 @@ public:
 
   void horizScroll(const uint8_t tp, const bool up);
   void vertScroll(const uint8_t tp, const bool up);
-  void scroll(const uint8_t which);
 
   const int16_t getAbsRight(int16_t r, int16_t m2);
   const int16_t getAbsBottom(int16_t b, int16_t m2);
@@ -717,6 +712,12 @@ private:
 
 /// @ScrollButton
 
+// which scroller
+#define SCROLL_UP 0x00
+#define SCROLL_DN 0x04
+#define SCROLL_HORIZ 0x00
+#define SCROLL_VERT 0x08
+
 class Scroller;
 class FieldSet;
 
@@ -725,6 +726,7 @@ public:
   void init(const uint8_t which, const uint8_t* icon, const int16_t l, const int16_t t, const int16_t r, const int16_t b);
   bool isSet();
   void draw(Scroller* scroller);
+  void scroll(FieldSet* view);
   void clickEffect();
   bool pressed(FieldSet* view, const int16_t xScreen, const int16_t yScreen);
 
