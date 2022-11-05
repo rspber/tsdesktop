@@ -68,8 +68,8 @@ void Editable::setCursorColor(const rgb_t aCursorColor)
 void Editable::drawCursor(const rgb_t aCursorColor)
 {
   if (cursorAllow) {
-    int16_t absLeft = getAbsLeft(getTextMarginLeft() + getTextLeft());
-    int16_t absTop = getAbsTop(getTextMarginTop() + getTextTop());
+    int16_t absLeft = getAbsInnerLeft(getTextMarginLeft() + getTextLeft());
+    int16_t absTop = getAbsInnerTop(getTextMarginTop() + getTextTop());
     int16_t cpos = font.textLineWidth(textCursor);
     int16_t cursor_width = (cursorInsMode || textCursor >= (int)strlen(getText())) ? 1 : font.textLineWidth(1) + 2;
     int16_t cursor_height = getTextHeight() + 2;

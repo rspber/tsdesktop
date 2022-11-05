@@ -333,53 +333,53 @@ bool Container::setUpdHeight(const int16_t aHeight)
   return false;
 }
 
-const int16_t Container::getAbsLeft()
+const int16_t Container::getAbsOuterLeft()
 {
-  return (parent ? parent->getAbsLeft(0) : 0) + updLeft;
+  return (parent ? parent->getAbsInnerLeft(0) : 0) + updLeft;
 }
 
-const int16_t Container::getAbsLeft(const int16_t pos)
+const int16_t Container::getAbsInnerLeft(const int16_t pos)
 {
-  return getAbsLeft() + marginLeft - offsetLeft + pos;
+  return getAbsOuterLeft() + marginLeft - offsetLeft + pos;
 }
 
-const int16_t Container::getAbsTop()
+const int16_t Container::getAbsOuterTop()
 {
-  return (parent ? parent->getAbsTop(0) : 0) + updTop;
+  return (parent ? parent->getAbsInnerTop(0) : 0) + updTop;
 }
 
-const int16_t Container::getAbsTop(const int16_t pos)
+const int16_t Container::getAbsInnerTop(const int16_t pos)
 {
-  return getAbsTop() + marginTop - offsetTop + pos;
+  return getAbsOuterTop() + marginTop - offsetTop + pos;
 }
 
-const int16_t Container::getAbsRight(int16_t r, int16_t m2)
+const int16_t Container::getAbsInnerRight(int16_t r, int16_t m2)
 {
   int16_t m1 = marginLeft + marginRight;
   int16_t i = updWidth - m1 - m2 - offsetLeft;
   if( r > i ) {
      r = i;
   }
-  return updLeft + marginLeft + (parent ? parent->getAbsRight(r, m1) : r);
+  return updLeft + marginLeft + (parent ? parent->getAbsInnerRight(r, m1) : r);
 }
 
-const int16_t Container::getAbsBottom(int16_t b, int16_t m2)
+const int16_t Container::getAbsInnerBottom(int16_t b, int16_t m2)
 {
   int16_t m1 = marginTop + marginBottom;
   int16_t i = updHeight - m1 - m2 - offsetTop;
   if( b > i ) {
     b = i;
   }
-  return updTop + marginTop + (parent ? parent->getAbsBottom(b, m1) : b);
+  return updTop + marginTop + (parent ? parent->getAbsInnerBottom(b, m1) : b);
 }
 
 clip_t* Container::getInnerClip(clip_t& clip)
 {
-  clip.x1 = getAbsLeft(offsetLeft);
-  clip.y1 = getAbsTop(offsetTop);
-  int i = getAbsRight(0x7fff, 0);
+  clip.x1 = getAbsInnerLeft(offsetLeft);
+  clip.y1 = getAbsInnerTop(offsetTop);
+  int i = getAbsInnerRight(0x7fff, 0);
   clip.x2 = i >= 0 ? i : 0;
-      i = getAbsBottom(0x7fff, 0);
+      i = getAbsInnerBottom(0x7fff, 0);
   clip.y2 = i >= 0 ? i : 0;
   return &clip;
 }
@@ -444,8 +444,8 @@ const rgb_t Container::getBackgroundColor()
 Container* Container::pressed(const int16_t xScreen, const int16_t yScreen)
 {
   if (!disabled && getAbsVisible()) {
-    int16_t absLeft = getAbsLeft();
-    int16_t absTop = getAbsTop();
+    int16_t absLeft = getAbsOuterLeft();
+    int16_t absTop = getAbsOuterTop();
     bool pressed = (xScreen > absLeft && xScreen < absLeft + updWidth) && (yScreen > absTop && yScreen < absTop + updHeight);
     if (pressed) {
       int16_t posX = xScreen - absLeft;

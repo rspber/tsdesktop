@@ -56,8 +56,8 @@ void Button::drawBorder(const rgb_t aBorderColor)
 {
   if (screenEnabled && aBorderColor != NO_BACKGROUND_COLOR) {
     int16_t bs = borderSize;
-    int16_t l = getAbsLeft();
-    int16_t t = getAbsTop();
+    int16_t l = getAbsOuterLeft();
+    int16_t t = getAbsOuterTop();
     int16_t w = updWidth;
     int16_t h = updHeight;
     clip_t clip;
@@ -99,7 +99,7 @@ void Button::drawBackground(const rgb_t aBackgroundColor)
 {
   if (screenEnabled && aBackgroundColor != NO_BACKGROUND_COLOR) {
     clip_t clip;
-    display.fillRoundRect(getClip(clip), getAbsLeft(), getAbsTop(), updWidth, updHeight, radius, aBackgroundColor);
+    display.fillRoundRect(getClip(clip), getAbsOuterLeft(), getAbsOuterTop(), updWidth, updHeight, radius, aBackgroundColor);
   }
 }
 

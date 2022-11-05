@@ -41,7 +41,7 @@ static const uint8_t SCRLBMPT[13][32]{
 
 void ProgressBtn::init(const bool ver, const uint8_t* icon, const int16_t l, int16_t t, const int16_t siz)
 {
-  vert = ver;  
+  vert = ver;
   bmp = icon;
   x0 = l;
   y0 = t;
@@ -142,8 +142,8 @@ bool ScrollBtn::pressed(FieldSet* view, const int16_t xScreen, const int16_t ySc
 
 bool Scroller::init(FieldSet* view, int8_t mgr)
 {
-  int16_t l = view->getAbsLeft();
-  int16_t t = view->getAbsTop();
+  int16_t l = view->getAbsOuterLeft();
+  int16_t t = view->getAbsOuterTop();
   int16_t w = view->getUpdWidth();
   int16_t h = view->getUpdHeight();
   int8_t width = 16;

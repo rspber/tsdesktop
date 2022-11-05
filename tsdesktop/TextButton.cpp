@@ -178,8 +178,8 @@ void TextButton::drawText(const rgb_t aTextColor)
 {
   if (getAbsVisible()) {
     if (screenEnabled) {
-      int16_t absLeft = getAbsLeft(getTextMarginLeft() + textLeft);
-      int16_t absTop = getAbsTop(getTextMarginTop() + textTop);
+      int16_t absLeft = getAbsInnerLeft(getTextMarginLeft() + textLeft);
+      int16_t absTop = getAbsInnerTop(getTextMarginTop() + textTop);
       cursor_t cursor{ absLeft, absTop };
       clip_t clip;
       getClip(clip);

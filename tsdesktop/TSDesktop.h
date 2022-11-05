@@ -174,11 +174,14 @@ public:
   const int16_t getUpdWidth() { return updWidth; }
   const int16_t getUpdHeight() { return updHeight; }
 
-  const int16_t getAbsLeft();   // absolute position of container
-  const int16_t getAbsTop();   // absolute position of container
+  const int16_t getAbsOuterLeft();   // absolute position of container
+  const int16_t getAbsOuterTop();   // absolute position of container
 
-  const int16_t getAbsLeft(const int16_t pos);   // absolute position in container with margins
-  const int16_t getAbsTop(const int16_t pos);   // absolute position in container with margins
+  // absolute position in container + marginLeft - offsetLeft
+  virtual const int16_t getAbsInnerLeft(const int16_t pos);
+
+  // absolute position in container + marginTop - offsetTop
+  virtual const int16_t getAbsInnerTop(const int16_t pos);
 
   const bool getAbsVisible();     // is container finally visible
 
@@ -211,8 +214,8 @@ public:
   void enableScrollerProgress() { scroll_progress = true; }
   const bool getShowScrollerProgress() { return scroll_progress; }
 
-  const int16_t getAbsRight(int16_t r, int16_t m2);
-  const int16_t getAbsBottom(int16_t b, int16_t m2);
+  const int16_t getAbsInnerRight(int16_t r, int16_t m2);
+  const int16_t getAbsInnerBottom(int16_t b, int16_t m2);
 
   clip_t* getInnerClip(clip_t& clip);
   clip_t* getOuterClip(clip_t& clip);
