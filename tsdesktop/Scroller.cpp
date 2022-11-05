@@ -8,7 +8,7 @@
 #include "TSDesktop.h"
 
 
-/// @ScrollBtn
+/// @Scroller
 
 static const uint8_t SCRLBMPT[13][32]{
   {0x00, 0x00, 0x30, 0x18, 0x30, 0x38, 0x30, 0x68, 0x30, 0xc8, 0x31, 0x88, 0x33, 0x08, 0x36, 0x08,
@@ -39,196 +39,233 @@ static const uint8_t SCRLBMPT[13][32]{
    0x07, 0xe0, 0x03, 0xc0, 0x01, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}   // o
 };
 
-void ProgressBtn::init(const bool ver, const uint8_t* icon, const int16_t l, int16_t t, const int16_t siz)
+const int16_t doScroll(const uint8_t tp, const bool up, int16_t offs, const int16_t size, const int16_t page)
 {
-  vert = ver;
-  bmp = icon;
-  x0 = l;
-  y0 = t;
-  x1 = x0;
-  y1 = y0;
+  switch (tp) {
+    case SCROLL_STEP:
+      if (up) {
+        offs -= 16;
+        if (offs < 0) {
+          offs = 0;
+        }
+      }
+      else {
+        offs += 16;
+      }
+      break;
+    case SCROLL_PAGE:
+      if (up) {
+        offs -= page;
+        if (offs < 0) {
+          offs = 0;
+        }
+      }
+      else {
+        offs += page;
+      }
+      break;
+    case SCROLL_HOME:
+      offs = up ? 0 : 0x7fff;
+      break;
+  }
+  int maxoffs = size - page;
+  if (offs > maxoffs) {
+    offs = maxoffs;
+  }
+  if (offs < 0) {
+    offs = 0;
+  }
+  return offs;
+}
+
+void Container::scroll(const uint8_t tp, const bool up, const bool vert)
+{
+  clip_t clip;
+  getClip(clip);
+  bool ok = false;
   if (vert) {
-    y1 -= 4;
-  }
-  else {
-    x1 -= 4;
-  }
-  size = siz;
-}
-
-void ProgressBtn::set(int8_t percent)
-{
-  if (vert) {
-    y1 = y0 + (size * percent / 100) - 4;
-  }
-  else {
-    x1 = x0 + (size * percent / 100) - 4;
-  }
-}
-
-void ProgressBtn::draw()
-{
-  if (bmp) {
-    clip_t clip{x1, y1, (int16_t)(x1+16), (int16_t)(y1+16)};
-    display.drawBitmap(&clip, x1, y1, bmp, 16, 16, SILVER);
-  }
-}
-
-void ScrollBtn::init(const uint8_t whch, const uint8_t* icon, const int16_t l, const int16_t t, const int16_t w, const int16_t h)
-{
-  which = whch;
-  bmp = icon;
-  x1 = l;
-  y1 = t;
-  x2 = l + w;
-  y2 = t + h;
-}
-
-bool ScrollBtn::isSet()
-{
-  return x2 > x1 && y2 > y1;
-}
-
-void ScrollBtn::draw()
-{
-  if (isSet()) {
-    clip_t clip{(int16_t)(x1-1), (int16_t)(y1-1), (int16_t)(x2+1), (int16_t)(y2+1)};
-    display.fillRect(&clip, x1, y1, x2-x1, y2-y1, SILVER);
-    display.drawBitmap(&clip, x1, y1, bmp, 16, 16, BLUE);
-    display.drawRect(&clip, x1-1, y1-1, x2-x1+2, y2-y1+2, WHITE);
-  }
-}
-
-void ScrollBtn::clickEffect()
-{
-  if (isSet()) {
-    clip_t clip{(int16_t)(x1-1), (int16_t)(y1-1), (int16_t)(x2+1), (int16_t)(y2+1)};
-    display.drawRect(&clip, x1-1, y1-1, x2-x1+2, y2-y1+2, RED);
-    sleep_ms(50);
-    display.drawRect(&clip, x1-1, y1-1, x2-x1+2, y2-y1+2, WHITE);
-  }
-}
-
-const bool ScrollBtn::scroll(FieldSet* view, int8_t* percent)
-{
-  uint8_t tp = which & 0x03;
-  bool up = (which & 0x04) == 0;
-  bool vert = (which & 0x08) != 0;
-  if (vert) {
-    return view->vertScroll(tp, up, percent);
-  }
-  else {
-    return view->horizScroll(tp, up, percent);
-  }
-}
-
-bool ScrollBtn::pressed(FieldSet* view, const int16_t xScreen, const int16_t yScreen, ProgressBtn* progress)
-{
-  bool pressed = xScreen > x1 - 1 && xScreen < x2 + 1 && yScreen > y1 - 1 && yScreen < y2 + 1;
-  if (pressed) {
-    clickEffect();
-//	view->hide();
-    int8_t percent;
-    if (scroll(view, &percent)) {
-      progress->set(percent);
-      view->draw(true);
+    int16_t offs = doScroll(tp, up, offsetTop, updHeight, clip.y2 - clip.y1);
+    if (offs != offsetTop) {
+      offsetTop = offs;
+      ok = true;
     }
+  }
+  else {
+    int16_t offs = doScroll(tp, up, offsetLeft, updWidth, clip.x2 - clip.x1);
+    if (offs != offsetLeft) {
+      offsetLeft = offs;
+      ok = true;
+    }
+  }
+  if (ok) {
+    setChanged(); // mayby it is not needed
+    draw(true);
+  }
+}
+
+void draw_progress(const int16_t x1, const int16_t y1, const uint8_t* bmp)
+{
+  clip_t clip{x1, y1, (int16_t)(x1+16), (int16_t)(y1+16)};
+  display.drawBitmap(&clip, x1, y1, bmp, 16, 16, SILVER);
+}
+
+void draw_btn(const int16_t x1, const int16_t y1, const uint8_t* bmp)
+{
+  int16_t w = 16;
+  int16_t h = 16;
+  clip_t clip{(int16_t)(x1-1), (int16_t)(y1-1), (int16_t)(x1+w+1), (int16_t)(y1+h+1)};
+  display.fillRect(&clip, x1, y1, w, h, SILVER);
+  display.drawBitmap(&clip, x1, y1, bmp, 16, 16, BLUE);
+  display.drawRect(&clip, x1-1, y1-1, w+2, h+2, WHITE);
+}
+
+void click_effect(const int16_t x1, const int16_t y1)
+{
+  int16_t w = 16;
+  int16_t h = 16;
+  clip_t clip{(int16_t)(x1-1), (int16_t)(y1-1), (int16_t)(x1+w+1), (int16_t)(y1+h+1)};
+  display.drawRect(&clip, x1-1, y1-1, w+2, h+2, RED);
+  sleep_ms(50);
+  display.drawRect(&clip, x1-1, y1-1, w+2, h+2, WHITE);
+}
+
+void Container::drawScroller()
+{
+  int16_t x = getAbsOuterLeft();
+  int16_t y = getAbsOuterTop();
+  int8_t ws = 16;
+  int8_t hs = 16;
+  clip_t clip;
+  getOuterClip(clip);
+  int16_t w = clip.x2 - clip.x1;
+  int16_t h = clip.y2 - clip.y1;
+  int8_t mgr = 0;
+  if (clip.y2 < y + updHeight) {
+    int16_t x1 = x + w - ws;
+    int16_t y1 = y;
+    draw_btn(x1, y1 += 0, SCRLBMPT[6]);
+    draw_btn(x1, y1 += hs + 2, SCRLBMPT[7]);
+    draw_btn(x1, y1 += hs + 2, SCRLBMPT[8]);
+    y1 += hs + 2;
+
+    int16_t yt = y1;
+
+    y1 = y + h;
+    draw_btn(x1, y1 -= hs, SCRLBMPT[11]);
+    draw_btn(x1, y1 -= hs + 2, SCRLBMPT[10]);
+    draw_btn(x1, y1 -= hs + 2, SCRLBMPT[ 9]);
+
+    if (getShowScrollerProgress()) {
+      int8_t percent = offsetTop * 100 / (updHeight - h);
+      draw_progress(x1, yt + (percent * (y1 - yt - 10) / 100 ) - 4, SCRLBMPT[12] );
+    }
+
+    mgr = 1;
+  }
+  if (clip.x2 < x + updWidth) {
+    int16_t y1 = y + h - hs;
+    int16_t x1 = x;
+    draw_btn(x1 += 0, y1, SCRLBMPT[0]);
+    draw_btn(x1 += ws + 2, y1, SCRLBMPT[1]);
+    draw_btn(x1 += ws + 2, y1, SCRLBMPT[2]);
+    x1 += ws + 2;
+
+    int16_t xl = x1;
+
+    x1 = x + w;
+    draw_btn(x1 -= ws + mgr * (16 + 2), y1, SCRLBMPT[5]);
+    draw_btn(x1 -= ws + 2, y1, SCRLBMPT[4]);
+    draw_btn(x1 -= ws + 2, y1, SCRLBMPT[3]);
+
+    if (getShowScrollerProgress()) {
+      int8_t percent = offsetLeft * 100 / (updWidth - w);
+      draw_progress(xl + (percent * (x1 - xl - 10) / 100) - 4, y1, SCRLBMPT[12]);
+    }
+  }
+}
+
+bool btn_pressed(const int16_t x1, const int16_t y1, const int16_t xScreen, const int16_t yScreen)
+{
+  int16_t w = 16;
+  int16_t h = 16;
+  bool pressed = xScreen > x1 - 1 && xScreen < x1 + w + 1 && yScreen > y1 - 1 && yScreen < y1 + h + 1;
+  if (pressed) {
+    click_effect(x1, y1);
   }
   return pressed;
 }
 
-
-/// @Scroller
-
-bool Scroller::init(FieldSet* view, int8_t mgr)
+const bool Container::scrollerPressed(const int16_t xScreen, const int16_t yScreen)
 {
-  int16_t l = view->getAbsOuterLeft();
-  int16_t t = view->getAbsOuterTop();
-  int16_t w = view->getUpdWidth();
-  int16_t h = view->getUpdHeight();
-  int8_t width = 16;
-  int8_t height = 16;
+  int16_t x = getAbsOuterLeft();
+  int16_t y = getAbsOuterTop();
+  int8_t ws = 16;
+  int8_t hs = 16;
   clip_t clip;
-  view->getOuterClip(clip);
-  if (orient.vertical) {
-    if (clip.y2 < t + h) {
-      int16_t left = clip.x2 - width;
-      int16_t top = clip.y1;
-      up.home.init(SCROLL_BTN_HOME | SCROLL_UP | SCROLL_VERT, SCRLBMPT[6], left, top, width, height); top += height + 2;
-      up.page.init(SCROLL_BTN_PAGE | SCROLL_UP | SCROLL_VERT, SCRLBMPT[7], left, top, width, height); top += height + 2;
-      up.step.init(SCROLL_BTN_STEP | SCROLL_UP | SCROLL_VERT, SCRLBMPT[8], left, top, width, height); top += height + 2;
+  getOuterClip(clip);
+  int16_t w = clip.x2 - clip.x1;
+  int16_t h = clip.y2 - clip.y1;
+  int8_t mgr = 0;
+  if (clip.y2 < y + updHeight) {
+    int16_t x1 = x + w - ws;
+    int16_t y1 = y;
+    if (btn_pressed(x1, y1 += 0, xScreen, yScreen)) {
+      scroll(SCROLL_HOME, true, true);
+      return true;
+    }
+    if (btn_pressed(x1, y1 += hs + 2, xScreen, yScreen)) {
+      scroll(SCROLL_PAGE, true, true);
+      return true;
+    }
+    if (btn_pressed(x1, y1 += hs + 2, xScreen, yScreen)) {
+      scroll(SCROLL_STEP, true, true);
+      return true;
+    }
 
-      up.progress.init(true, SCRLBMPT[12], left, top, clip.y2 - (height + 2)*7);
+    y1 = y + h;
+    if (btn_pressed(x1, y1 -= hs, xScreen, yScreen)) {
+      scroll(SCROLL_HOME, false, true);
+      return true;
+    }
+    if (btn_pressed(x1, y1 -= hs + 2, xScreen, yScreen)) {
+      scroll(SCROLL_PAGE, false, true);
+      return true;
+    }
+    if (btn_pressed(x1, y1 -= hs + 2, xScreen, yScreen)) {
+      scroll(SCROLL_STEP, false, true);
+      return true;
+    }
+    mgr = 1;
+  }
+  if (clip.x2 < x + updWidth) {
+    int16_t y1 = y + h - hs;
+    int16_t x1 = x;
+    if (btn_pressed(x1 += 0, y1, xScreen, yScreen)) {
+      scroll(SCROLL_HOME, true, false);
+      return true;
+    }
+    if (btn_pressed(x1 += ws + 2, y1, xScreen, yScreen)) {
+      scroll(SCROLL_PAGE, true, false);
+      return true;
+    }
+    if (btn_pressed(x1 += ws + 2, y1, xScreen, yScreen)) {
+      scroll(SCROLL_STEP, true, false);
+      return true;
+    }
 
-      top = clip.y2; top -= height;
-      dn.home.init(SCROLL_BTN_HOME | SCROLL_DN | SCROLL_VERT, SCRLBMPT[11], left, top, width, height); top -= height + 2;
-      dn.page.init(SCROLL_BTN_PAGE | SCROLL_DN | SCROLL_VERT, SCRLBMPT[10], left, top, width, height); top -= height + 2;
-      dn.step.init(SCROLL_BTN_STEP | SCROLL_DN | SCROLL_VERT, SCRLBMPT[ 9], left, top, width, height); top -= height + 2;
-      active = true;
+    x1 = x + w;
+    if (btn_pressed(x1 -= ws + mgr * (16 + 2), y1, xScreen, yScreen)) {
+      scroll(SCROLL_HOME, false, false);
+      return true;
+    }
+    if (btn_pressed(x1 -= ws + 2, y1, xScreen, yScreen)) {
+      scroll(SCROLL_PAGE, false, false);
+      return true;
+    }
+    if (btn_pressed(x1 -= ws + 2, y1, xScreen, yScreen)) {
+      scroll(SCROLL_STEP, false, false);
       return true;
     }
   }
-  else {
-    if (clip.x2 < l + w) {
-      int16_t top = clip.y2 - height;
-      int16_t left = clip.x1;
-      up.home.init(SCROLL_BTN_HOME | SCROLL_UP | SCROLL_HORIZ, SCRLBMPT[0], left, top, width, height); left += width + 2;
-      up.page.init(SCROLL_BTN_PAGE | SCROLL_UP | SCROLL_HORIZ, SCRLBMPT[1], left, top, width, height); left += width + 2;
-      up.step.init(SCROLL_BTN_STEP | SCROLL_UP | SCROLL_HORIZ, SCRLBMPT[2], left, top, width, height); left += width + 2;
-
-      up.progress.init(false, SCRLBMPT[12], left, top, clip.x2 - (width + 2)*(7 + mgr));
-
-      left = clip.x2 - width - (mgr * 18);
-      dn.home.init(SCROLL_BTN_HOME | SCROLL_DN | SCROLL_HORIZ, SCRLBMPT[5], left, top, width, height); left -= width + 2;
-      dn.page.init(SCROLL_BTN_PAGE | SCROLL_DN | SCROLL_HORIZ, SCRLBMPT[4], left, top, width, height); left -= width + 2;
-      dn.step.init(SCROLL_BTN_STEP | SCROLL_DN | SCROLL_HORIZ, SCRLBMPT[3], left, top, width, height); left -= width + 2;
-      active = true;
-      return true;
-    }
-  }
-  active = false;
   return false;
-}
-
-void Scroller::draw(FieldSet* view, Scroller* hScr)
-{
-  if (!active) {
-    init(view, hScr ? hScr->active : 0);
-  }
-  if (active) {
-    up.home.draw();
-    up.page.draw();
-    up.step.draw();
-    if (view->getShowScrollerProgress()) {
-      up.progress.draw();
-    }
-    dn.home.draw();
-    dn.page.draw();
-    dn.step.draw();
-  }
-}
-
-ScrollBtn* Scroller::pressed(FieldSet* view, const int16_t xScreen, const int16_t yScreen)
-{
-  if (active) {
-    if (up.home.pressed(view, xScreen, yScreen, &up.progress)) {
-        return &up.home;
-    }
-    if (up.page.pressed(view, xScreen, yScreen, &up.progress)) {
-        return &up.page;
-    }
-    if (up.step.pressed(view, xScreen, yScreen, &up.progress)) {
-        return &up.step;
-    }
-    if (dn.home.pressed(view, xScreen, yScreen, &up.progress)) {
-        return &dn.home;
-    }
-    if (dn.page.pressed(view, xScreen, yScreen, &up.progress)) {
-        return &dn.page;
-    }
-    if (dn.step.pressed(view, xScreen, yScreen, &up.progress)) {
-        return &dn.step;
-    }
-  }
-  return NULL;
 }

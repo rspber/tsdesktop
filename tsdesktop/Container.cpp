@@ -418,7 +418,6 @@ const bool Container::getAbsVisible()
   }
 }
 
-
 void Container::setChanged()
 {
   updated = false;
@@ -462,70 +461,4 @@ Container* Container::pressed(const int16_t xScreen, const int16_t yScreen)
   else {
     return 0;
   }
-}
-
-const int16_t doScroll(const uint8_t tp, const bool up, int16_t offs, const int16_t size, const int16_t page, int8_t* percent)
-{
-  switch (tp) {
-    case SCROLL_BTN_STEP:
-      if (up) {
-        offs -= 16;
-        if (offs < 0) {
-          offs = 0;
-        }
-      }
-      else {
-        offs += 16;
-      }
-      break;
-    case SCROLL_BTN_PAGE:
-      if (up) {
-        offs -= page;
-        if (offs < 0) {
-          offs = 0;
-        }
-      }
-      else {
-        offs += page;
-      }
-      break;
-    case SCROLL_BTN_HOME:
-      offs = up ? 0 : 0x7fff;
-      break;
-  }
-  int maxoffs = size - page;
-  if (offs > maxoffs) {
-    offs = maxoffs;
-  }
-  if (offs < 0) {
-    offs = 0;
-  }
-  *percent = offs * 100 / maxoffs;
-  return offs;
-}
-
-const bool Container::horizScroll(const uint8_t tp, const bool up, int8_t* percent)
-{
-  clip_t clip;
-  getClip(clip);
-  int16_t offs = doScroll(tp, up, offsetLeft, updWidth, clip.x2 - clip.x1, percent);
-  if (offs != offsetLeft) {
-    offsetLeft = offs;
-    setChanged();
-    return true;
-  }
-  return false;
-}
-
-const bool Container::vertScroll(const uint8_t tp, const bool up, int8_t* percent)
-{
-  clip_t clip;
-  getClip(clip);
-  int16_t offs = doScroll(tp, up, offsetTop, updHeight, clip.y2 - clip.y1, percent);
-  if (offs != offsetTop) {
-    offsetTop = offs;
-    setChanged();
-    return true;
-  }
-  return false;
 }

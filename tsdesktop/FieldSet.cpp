@@ -365,8 +365,7 @@ void FieldSet::draw(const bool redraw)
       Container* b = children[i];
       b->draw(redraw);
     }
-    hScroller.draw(this, NULL);
-    wScroller.draw(this, &hScroller);
+    drawScroller();
   }
 }
 
@@ -381,10 +380,7 @@ void FieldSet::setNotWasDrawn()
 
 Container* FieldSet::pressed(const int16_t xScreen, const int16_t yScreen)
 {
-  if (wScroller.pressed(this, xScreen, yScreen)) {
-    return NULL;
-  }
-  if (hScroller.pressed(this, xScreen, yScreen)) {
+  if (scrollerPressed(xScreen, yScreen)) {
     return NULL;
   }
   for (int16_t i = 0; i < len; ++i) {
