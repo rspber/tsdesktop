@@ -198,7 +198,7 @@ void Container::scroll(const uint8_t tp, const bool up, const bool vert)
     }
   }
   if (ok) {
-    setChanged(); // mayby it is not needed
+    setChanged(); // maybe it is not needed
     draw(true);
   }
 }
