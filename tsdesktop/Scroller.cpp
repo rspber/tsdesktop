@@ -91,7 +91,7 @@ void Container::drawScroller()
     draw_btn(x1, y1 -= hs + 2, SCRLBMPT[10]);
     draw_btn(x1, y1 -= hs + 2, SCRLBMPT[ 9]);
 
-    if (getShowScrollerProgress()) {
+    if (scroll_progress) {
       int8_t percent = offsetTop * 100 / (updHeight - h);
       draw_progress(x1, yt + (percent * (y1 - yt - 10) / 100 ) - 4, SCRLBMPT[12] );
     }
@@ -113,12 +113,15 @@ void Container::drawScroller()
     draw_btn(x1 -= ws + 2, y1, SCRLBMPT[4]);
     draw_btn(x1 -= ws + 2, y1, SCRLBMPT[3]);
 
-    if (getShowScrollerProgress()) {
+    if (scroll_progress) {
       int8_t percent = offsetLeft * 100 / (updWidth - w);
       draw_progress(xl + (percent * (x1 - xl - 10) / 100) - 4, y1, SCRLBMPT[12]);
     }
   }
 }
+
+
+/// ScrollerPressed
 
 bool btn_pressed(const int16_t x1, const int16_t y1, const int16_t xScreen, const int16_t yScreen)
 {
@@ -130,8 +133,6 @@ bool btn_pressed(const int16_t x1, const int16_t y1, const int16_t xScreen, cons
   }
   return pressed;
 }
-
-/// ScrollerPressed
 
 // which scroller
 #define SCROLL_STEP 0x00

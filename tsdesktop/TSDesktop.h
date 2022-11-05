@@ -209,7 +209,6 @@ public:
 
   void disableScrollerProgress() { scroll_progress = false; }
   void enableScrollerProgress() { scroll_progress = true; }
-  const bool getShowScrollerProgress() { return scroll_progress; }
 
   const int16_t getAbsInnerRight(int16_t r, int16_t m2);
   const int16_t getAbsInnerBottom(int16_t b, int16_t m2);
