@@ -49,11 +49,6 @@ typedef struct {
 #define  HORIZONTAL orient_t{false}
 #define  VERTICAL orient_t{true}
 
-// which scroller
-#define SCROLL_STEP 0x00
-#define SCROLL_PAGE 0x01
-#define SCROLL_HOME 0x02
-
 /// @Container
 
 class Container {

@@ -39,70 +39,6 @@ static const uint8_t SCRLBMPT[13][32]{
    0x07, 0xe0, 0x03, 0xc0, 0x01, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}   // o
 };
 
-const int16_t doScroll(const uint8_t tp, const bool up, int16_t offs, const int16_t size, const int16_t page)
-{
-  switch (tp) {
-    case SCROLL_STEP:
-      if (up) {
-        offs -= 16;
-        if (offs < 0) {
-          offs = 0;
-        }
-      }
-      else {
-        offs += 16;
-      }
-      break;
-    case SCROLL_PAGE:
-      if (up) {
-        offs -= page;
-        if (offs < 0) {
-          offs = 0;
-        }
-      }
-      else {
-        offs += page;
-      }
-      break;
-    case SCROLL_HOME:
-      offs = up ? 0 : 0x7fff;
-      break;
-  }
-  int maxoffs = size - page;
-  if (offs > maxoffs) {
-    offs = maxoffs;
-  }
-  if (offs < 0) {
-    offs = 0;
-  }
-  return offs;
-}
-
-void Container::scroll(const uint8_t tp, const bool up, const bool vert)
-{
-  clip_t clip;
-  getClip(clip);
-  bool ok = false;
-  if (vert) {
-    int16_t offs = doScroll(tp, up, offsetTop, updHeight, clip.y2 - clip.y1);
-    if (offs != offsetTop) {
-      offsetTop = offs;
-      ok = true;
-    }
-  }
-  else {
-    int16_t offs = doScroll(tp, up, offsetLeft, updWidth, clip.x2 - clip.x1);
-    if (offs != offsetLeft) {
-      offsetLeft = offs;
-      ok = true;
-    }
-  }
-  if (ok) {
-    setChanged(); // mayby it is not needed
-    draw(true);
-  }
-}
-
 void draw_progress(const int16_t x1, const int16_t y1, const uint8_t* bmp)
 {
   clip_t clip{x1, y1, (int16_t)(x1+16), (int16_t)(y1+16)};
@@ -193,6 +129,77 @@ bool btn_pressed(const int16_t x1, const int16_t y1, const int16_t xScreen, cons
     click_effect(x1, y1);
   }
   return pressed;
+}
+
+/// ScrollerPressed
+
+// which scroller
+#define SCROLL_STEP 0x00
+#define SCROLL_PAGE 0x01
+#define SCROLL_HOME 0x02
+
+const int16_t doScroll(const uint8_t tp, const bool up, int16_t offs, const int16_t size, const int16_t page)
+{
+  switch (tp) {
+    case SCROLL_STEP:
+      if (up) {
+        offs -= 16;
+        if (offs < 0) {
+          offs = 0;
+        }
+      }
+      else {
+        offs += 16;
+      }
+      break;
+    case SCROLL_PAGE:
+      if (up) {
+        offs -= page;
+        if (offs < 0) {
+          offs = 0;
+        }
+      }
+      else {
+        offs += page;
+      }
+      break;
+    case SCROLL_HOME:
+      offs = up ? 0 : 0x7fff;
+      break;
+  }
+  int maxoffs = size - page;
+  if (offs > maxoffs) {
+    offs = maxoffs;
+  }
+  if (offs < 0) {
+    offs = 0;
+  }
+  return offs;
+}
+
+void Container::scroll(const uint8_t tp, const bool up, const bool vert)
+{
+  clip_t clip;
+  getClip(clip);
+  bool ok = false;
+  if (vert) {
+    int16_t offs = doScroll(tp, up, offsetTop, updHeight, clip.y2 - clip.y1);
+    if (offs != offsetTop) {
+      offsetTop = offs;
+      ok = true;
+    }
+  }
+  else {
+    int16_t offs = doScroll(tp, up, offsetLeft, updWidth, clip.x2 - clip.x1);
+    if (offs != offsetLeft) {
+      offsetLeft = offs;
+      ok = true;
+    }
+  }
+  if (ok) {
+    setChanged(); // mayby it is not needed
+    draw(true);
+  }
 }
 
 const bool Container::scrollerPressed(const int16_t xScreen, const int16_t yScreen)
