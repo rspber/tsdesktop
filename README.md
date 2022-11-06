@@ -57,7 +57,7 @@ Touch Screen Desktop for Raspberry pi pico
 
 3. `download` or `git clone` this repository
 
-4. Copy Arduino/libraries to Arduino's libraries, pay attention on TSDesktop, TSD_GFX and TDS_ILI9341 folders and dependenciens:
+4. Copy Arduino/libraries to Arduino's libraries, pay attention on TSDesktop, TSD_GFX and TSD_ILI9341 folders and dependenciens:
 
   * https://github.com/PaulStoffregen/XPT2046_Touchscreen
 
