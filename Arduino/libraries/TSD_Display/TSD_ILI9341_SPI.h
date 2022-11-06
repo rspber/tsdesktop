@@ -85,7 +85,8 @@ public:
 
   void beginTransaction(const uint32_t Hz)
   {
-    _spi->beginTransaction(settings);
+    SPISettings tmp(Hz, MSBFIRST, spiMode);
+    _spi->beginTransaction(tmp);
   }
 
   void endTransaction()
