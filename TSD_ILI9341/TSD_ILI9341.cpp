@@ -1,14 +1,12 @@
 /*
-  ILI9341 driver for TSDesktop on pico-sdk
+  ILI9341 driver for TSDesktop
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
 1. This is a modified Adafruit's ILI9341 driver: Adafruit_ILI9341
-natively ported to pico-sdk
 
 differences:
-- Adafruit_SPITFT is missed, all spi functions are handled by Picoino
-- only hardware spi is supported
+- Adafruit_SPITFT is missed, all spi functions are abstract
 - added support for ILI9341 devices v1.3
 
 Original Adafruit's licence bellow.
@@ -63,7 +61,7 @@ Original Adafruit's licence bellow.
  */
 
 /*
-2. SPI TFT implementation for drawPixel and other draws comes from
+2. Implementations for drawPixel and other draws comes from
 https://github.com/rdagger/micropython-ili9341/ili9341.py,
 partially rewriten from python to c,
 
@@ -99,7 +97,6 @@ SOFTWARE.
 */
 
 #include "TSD_ILI9341.h"
-#include <Picoino.h>
 
 #include <Setup.h>
 
@@ -188,31 +185,9 @@ SOFTWARE.
 #define ILI9341_POSC        0xED    // Power on sequence control
 #define ILI9341_ENABLE3G    0xF2    // Enable 3 gamma control
 
-void TSD_ILI9341::sendCmd(const uint8_t cmd)
-{
-  _spi->writeCmd(cmd);
-}
+#define SETUP_SPEED 2 * 1000 * 1000   // 2 MHz
 
-void TSD_ILI9341::sendData(const int16_t size, const uint8_t* data)
-{
-  _spi->writeData(data, size);
-}
-
-void TSD_ILI9341::sendCmdData(const uint8_t cmd, const int16_t size, const uint8_t* data)
-{
-  sendCmd(cmd);
-  if (size > 0) {
-    sendData(size, data);
-  }
-}
-
-void TSD_ILI9341::sendCmdData(const uint8_t cmd, const uint8_t data)
-{
-  sendCmd(cmd);
-  sendData(1, &data);
-}
-
-void TSD_ILI9341::reset()
+void TSD_ILI9341::hardReset()
 {
   if (_RST >= 0) {
     digitalWrite(_RST, LOW);
@@ -220,23 +195,28 @@ void TSD_ILI9341::reset()
     digitalWrite(_RST, HIGH);
     sleep_ms(50);
   }
-  else {                 // If no hardware reset pin...
-    sendCmd(ILI9341_SWRESET); // Engage software reset
-    sleep_ms(150);
-  }
 }
 
-void TSD_ILI9341::begin(PicoSPI* spi, const int16_t RST)
+void TSD_ILI9341::reset()
 {
-  _spi = spi;
+  hardReset();
+  beginTransaction(SETUP_SPEED);   // slow down
+  sendCmd(ILI9341_SWRESET); // Engage software reset
+  sleep_ms(150);
+  endTransaction();
+}
+
+void TSD_ILI9341::begin(const int16_t RST)
+{
   _RST = RST;
 
   if (RST >= 0) {
     pinMode(RST, OUTPUT);
   }
-  _spi->softTransaction(2 * 1000 * 1000);   // slow down
 
-  reset();
+  beginTransaction(SETUP_SPEED);
+
+  hardReset();
   sendCmd(ILI9341_SWRESET); // Engage software reset
   sleep_ms(150);
 
@@ -323,7 +303,7 @@ void TSD_ILI9341::begin(PicoSPI* spi, const int16_t RST)
   sendCmd(ILI9341_DISPON);   // Display on
   delay(150);
 
-  _spi->endTransaction();   // restore speed
+  endTransaction();
 }
 
 /**************************************************************************/
@@ -361,12 +341,14 @@ void TSD_ILI9341::setRotation(const int8_t rotation) {
     _height = WIDTH;
     break;
   }
+  beginTransaction(SETUP_SPEED);
   if (ILI9341_VERSION < 3) { // < v1.2
     sendCmdData(ILI9341_MADCTL, m);
   }
   else {
     sendCmdData(ILI9341_MADCTL13, g);
   }
+  endTransaction();
 }
 
 /**************************************************************************/
@@ -377,7 +359,9 @@ void TSD_ILI9341::setRotation(const int8_t rotation) {
 /**************************************************************************/
 void TSD_ILI9341::invertDisplay(bool invert)
 {
+  beginTransaction(SETUP_SPEED);
   sendCmd(invert ? ILI9341_INVON : ILI9341_INVOFF);
+  endTransaction();
 }
 
 /**************************************************************************/
@@ -403,7 +387,9 @@ void TSD_ILI9341::scrollTo(int16_t y) {
   uint8_t data[2];
   data[0] = y >> 8;
   data[1] = y & 0xff;
+  beginTransaction(SETUP_SPEED);
   sendCmdData(ILI9341_VSCRSADD, 2, (uint8_t*)data);
+  endTransaction();
 }
 
 /**************************************************************************/
@@ -424,7 +410,9 @@ void TSD_ILI9341::setScrollMargins(int16_t top, int16_t bottom) {
     data[3] = middle & 0xff;
     data[4] = bottom >> 8;
     data[5] = bottom & 0xff;
+    beginTransaction(SETUP_SPEED);
     sendCmdData(ILI9341_VSCRDEF, 6, (uint8_t*)data);
+    endTransaction();
   }
 }
 
@@ -467,23 +455,21 @@ void TSD_ILI9341::setAddrWindow(int16_t x1, int16_t y1, int16_t w, int16_t h) {
   sendCmd(ILI9341_RAMWR); // Write to RAM
 }
 
-void TSD_ILI9341::sendMDTData(int16_t size, const uint8_t* data)
-{
-  sendData(size * MDT_SIZE, data);
-}
-
-
 
 // from MicroPython_ILI9341, mostly modified
 
 void TSD_ILI9341::displayOff()
 {
+  beginTransaction(SETUP_SPEED);
   sendCmd(ILI9341_DISPOFF);
+  endTransaction();
 }
 
 void TSD_ILI9341::displayOn()
 {
+  beginTransaction(SETUP_SPEED);
   sendCmd(ILI9341_DISPON);
+  endTransaction();
 }
 
 void TSD_ILI9341::drawPixel(clip_t* clip, const int16_t x, const int16_t y, const rgb_t color)
@@ -601,10 +587,12 @@ void TSD_ILI9341::fill_vrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int1
 
 void TSD_ILI9341::fillRect(clip_t* clip, const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
 {
+  startWrite();
   if (w > h) {
     fill_hrect(clip, x, y, w, h, color);
   }
   else {
     fill_vrect(clip, x, y, w, h, color);
   }
+  endWrite();
 }

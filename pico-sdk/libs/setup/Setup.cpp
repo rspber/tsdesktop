@@ -16,8 +16,8 @@ void init_hardware()
   stdio_init_all();
 }
 
-PicoSPI displaySPI(TFT_CS, SPI0_DC);
-PicoSPI touchSPI(TOUCH_CS, SPI0_DC);
+PicoSPI displaySPI(TFT_CS, SPI0_DC, TFT_SPI_SPEED);
+PicoSPI touchSPI(TOUCH_CS, SPI0_DC, TOUCH_SPEED);
 
 void media_begin(int8_t rotation)
 {

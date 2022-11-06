@@ -78,10 +78,10 @@ void delay(const int ms);
 
 // ----------------------------------- SPI ------------------------------------
 
-#define DEF_SPI_HZ 40 * 1000 * 1000
+#define IDLE_SPI_SPEED 40 * 1000 * 1000   // 40 MHz
 
-void init_spi(const uint8_t RX, const uint8_t SCK, const uint8_t TX, spi_inst_t* spi = spi0, const uint Hz = DEF_SPI_HZ);
-void init_spi1(const uint8_t RX, const uint8_t SCK, const uint8_t TX, const uint Hz = DEF_SPI_HZ);
+void init_spi(const uint8_t RX, const uint8_t SCK, const uint8_t TX, spi_inst_t* spi = spi0, const uint Hz = IDLE_SPI_SPEED);
+void init_spi1(const uint8_t RX, const uint8_t SCK, const uint8_t TX, const uint Hz = IDLE_SPI_SPEED);
 
 void inline cs_select(const uint8_t CS, const uint8_t mode)
 {
@@ -112,13 +112,15 @@ typedef struct {
 #define SPI0_SECT SPI_SECT_4        // spi0 pico-sdk & picoino default
 #define SPI1_SECT SPI_SECT_3        // spi1 picoino default
 
-void init_spi(spi_section_t section = SPI0_SECT, const uint Hz = DEF_SPI_HZ);
+void init_spi(spi_section_t section = SPI0_SECT, const uint Hz = IDLE_SPI_SPEED);
 
 // --------------------------------- PicoSPI ----------------------------------
 
+#define SPI_SPEED 40 * 1000 * 1000
+
 class PicoSPI {
 public:
-  PicoSPI(const int16_t CS, const int16_t DC, spi_inst_t* spi = spi0)
+  PicoSPI(const int16_t CS, const int16_t DC, const uint Hz = SPI_SPEED, spi_inst_t* spi = spi0)
   {
     _CS = CS;
     pinMode(CS, OUTPUT);
@@ -127,6 +129,7 @@ public:
       pinMode(DC, OUTPUT);
     }
     _spi = spi;
+    default_baudrate = Hz;
   }
 
   void inline cs(const uint8_t mode)
@@ -136,14 +139,34 @@ public:
 
   void inline dc(const uint8_t mode)
   {
-    gpio_put(_DC, mode);
+    if (_DC >= 0) {
+      gpio_put(_DC, mode);
+    }
   }
 
-  void softTransaction(const uint Hz = DEF_SPI_HZ);
-  void beginTransaction(const uint Hz = DEF_SPI_HZ);
-  void endTransaction();
+  void beginTransaction(const uint Hz)
+  {
+    cs(1);  // Just in case it has been left low
+    if (idle_baudrate == 0) {
+      idle_baudrate = spi_get_baudrate(_spi);
+    }
+    spi_set_baudrate(_spi, Hz);
+  }
 
-  // SPI write
+  // default speed transaction
+  void beginTransaction()
+  {
+    beginTransaction(default_baudrate);
+  }
+
+  void endTransaction()
+  {
+    cs(1);
+    if (idle_baudrate > 0) {
+      spi_set_baudrate(_spi, idle_baudrate);
+      idle_baudrate = 0;
+    }
+  }
 /*
   void inline write(const uint8_t *data, const int16_t size)
   {
@@ -165,14 +188,20 @@ public:
     cs(0);
     spi_write_blocking(_spi, data, size);
     cs(1);
-  }
+    dc(1);
+   }
 
   void writeCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size)
   {
-    writeCmd(cmd);
+    dc(0);
+    cs(0);
+    spi_write_blocking(_spi, &cmd, 1);
     if (size > 0) {
-      writeData(data, size);
+      dc(1);
+      spi_write_blocking(_spi, data, size);
     }
+    cs(1);
+    dc(1);
   }
 
   // SPI read
@@ -194,7 +223,8 @@ public:
 private:
   int16_t _CS, _DC;
   spi_inst_t* _spi;
-  uint saved_baudrate;
+  uint default_baudrate;
+  uint idle_baudrate;
 };
 
 // ----------------------------------- I2C ------------------------------------

@@ -1,6 +1,6 @@
 /*
   Graphics display adapter for TSDesktop
-       implemented on TSD_ILI9341
+       implemented on TSD_GFX
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 

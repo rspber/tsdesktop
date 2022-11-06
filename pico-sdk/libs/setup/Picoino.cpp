@@ -39,19 +39,17 @@ void interrupts(uint32_t ints)
 void pinMode(const int16_t pin, const uint8_t mode)
 {
   gpio_init(pin);
+  gpio_put(pin, HIGH);
   if (mode == INPUT) {
     gpio_set_dir(pin, GPIO_IN);
-    gpio_put(pin, 1);
   }
   else {
     if (mode == INPUT_PULLUP) {
       gpio_set_dir(pin, GPIO_IN);
-      gpio_put(pin, 1);
       gpio_pull_up(pin);
     }
     else {
       gpio_set_dir(pin, GPIO_OUT);
-      gpio_put(pin, 1);
     }
   }
 }
@@ -114,28 +112,6 @@ void init_spi1(const uint8_t RX, const uint8_t SCK, const uint8_t TX, const uint
 {
   init_spi(RX, SCK, TX, spi1, Hz);
 }
-
-// ---------------------------------- PicoSPI ---------------------------------
-
-void PicoSPI::softTransaction(const uint Hz)
-{
-  cs(1);  // Just in case it has been left low
-  saved_baudrate = spi_get_baudrate(_spi);
-  spi_set_baudrate(_spi, Hz);
-}
-
-void PicoSPI::beginTransaction(const uint Hz)
-{
-  softTransaction(Hz);
-  cs(0);
-}
-
-void PicoSPI::endTransaction()
-{
-  cs(1);
-  spi_set_baudrate(_spi, saved_baudrate);  // restore speed
-}
-
 
 // ----------------------------------- I2C ------------------------------------
 

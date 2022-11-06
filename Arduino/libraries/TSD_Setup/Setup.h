@@ -8,8 +8,9 @@
 #pragma once
 
 #include <stdint.h>
+#include "Arduino.h"
 
-#define COLOR_565	// don't comment it
+#define COLOR_565     // comment it for 666 colors, for pico-sdk only
 
 #define ILI9341_VERSION 0    // no version old devices  - tested
 // TouchScreen
@@ -48,6 +49,8 @@
 //#define TFT_BL       // LED back-light
 
 #define TOUCH_CS 22     // Chip select pin (T_CS) of touch screen
+
+#define TFT_SPI_SPEED 40 * 1000 * 1000          // 40 MHz
 
 void init_hardware();
 

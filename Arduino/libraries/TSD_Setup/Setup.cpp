@@ -39,7 +39,7 @@ void media_begin(int8_t rotation)
   if (ILI9341_VERSION < 3) {     // < v1.2
     rotation = rotation & 1 ? rotation : (rotation + 2) % 4;
   }
-  display.begin();
+  display.begin(TFT_SPI_SPEED);
   display.setRotation(rotation);
 //  display.invertDisplay(true);    // invert display colors  WHITE <-> BLACK
 

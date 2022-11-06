@@ -85,7 +85,8 @@ bool TSD_XPT2046::begin(PicoSPI* spi, const int16_t tirq)
 bool TSD_XPT2046::getTouchRaw(int16_t* x, int16_t* y) {
   int16_t tmp;
 
-  _spi->beginTransaction(2 * 1000 * 1000);  // 2 MHz
+  _spi->beginTransaction();
+  _spi->cs(0);
 
   // Start YP sample request for y position, read 4 times and keep last sample
   _spi->transfer(0xd0);                    // Start new YP conversion
@@ -116,6 +117,7 @@ bool TSD_XPT2046::getTouchRaw(int16_t* x, int16_t* y) {
 
   *x = tmp;
 
+  _spi->cs(1);
   _spi->endTransaction();
 
   return true;
@@ -126,7 +128,8 @@ bool TSD_XPT2046::getTouchRaw(int16_t* x, int16_t* y) {
 ** Description:             read raw pressure on touchpad and return Z value.
 ***************************************************************************************/
 int16_t TSD_XPT2046::getTouchRawZ(void) {
-  _spi->beginTransaction(2 * 1000 * 1000);  // 2 MHz
+  _spi->beginTransaction();
+  _spi->cs(0);
 
   // Z sample request
   int16_t tz = 0xFFF;
@@ -134,6 +137,7 @@ int16_t TSD_XPT2046::getTouchRawZ(void) {
   tz += _spi->transfer16(0xc0) >> 3;  // Read Z1 and start Z2 conversion
   tz -= _spi->transfer16(0x00) >> 3;  // Read Z2
 
+  _spi->cs(1);
   _spi->endTransaction();
 
   if (tz == 4095) tz = 0;

@@ -8,6 +8,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "Picoino.h"
 
 #define COLOR_565     // comment it for 666 colors, for pico-sdk only
 
@@ -48,6 +49,9 @@
 //#define TFT_BL       // LED back-light
 
 #define TOUCH_CS 22     // Chip select pin (T_CS) of touch screen
+
+#define TFT_SPI_SPEED 40 * 1000 * 1000          // 40 MHz
+#define TOUCH_SPEED    2 * 1000 * 1000          // 2 MHz
 
 void init_hardware();
 

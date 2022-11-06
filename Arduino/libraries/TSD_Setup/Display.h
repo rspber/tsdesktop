@@ -1,6 +1,6 @@
 /*
   Graphics display adapter for TSDesktop
-       implemented on TSD_ILI9341
+     implemented on TSD_ILI9341_SPI
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <TSD_ILI9341.h>
-#include "Setup.h"
+#include "TSD_ILI9341_SPI.h"
+#include <Setup.h>
 
 //#define BLACK        RGB(    0,    0,    0)
 #define NAVY         RGB(    0,    0, 0x7B)
@@ -46,9 +46,9 @@
 #define LIGHT_YELLOW RGB( 0xFF, 0xFF, 0xE0)
 //#define WHITE        RGB( 0xFF, 0xFF, 0xFF)
 
-class Display : public TSD_ILI9341 {
+class Display : public TSD_ILI9341_SPI {
 public:
-  Display() : TSD_ILI9341(DISPLAY_WIDTH, DISPLAY_HEIGHT, TFT_CS, SPI0_DC, TFT_RST) {}
+  Display() : TSD_ILI9341_SPI(DISPLAY_WIDTH, DISPLAY_HEIGHT, TFT_CS, SPI0_DC, TFT_RST) {}
 
   void drawText(const int16_t aLeft, const int16_t aTop, const char* aText, const int8_t aFontSize = 1, const rgb_t aTextColor = WHITE, const int8_t aSpacing = 0);
   void clearDisplay();
