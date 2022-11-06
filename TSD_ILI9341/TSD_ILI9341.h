@@ -3,7 +3,7 @@
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
-  ILI9341 abstract driver, SPI free
+  TSD_ILI9341 abstract driver, SPI free
 
   More information in TSD_ILI9341.cpp
 
