@@ -14,3 +14,7 @@ target_sources(desktop INTERFACE
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/Scroller.cpp
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/FieldSet.cpp
 )
+
+target_link_libraries(desktop INTERFACE
+  display
+)

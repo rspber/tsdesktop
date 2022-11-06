@@ -4,8 +4,6 @@ add_executable(calculator
 
 target_link_libraries(calculator
   setup
-  display
-  gfx
   desktop
   xpt2046
 )

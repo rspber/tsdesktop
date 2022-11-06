@@ -6,8 +6,6 @@ add_executable(programmer
 
 target_link_libraries(programmer
   setup
-  display
-  gfx
   desktop
   xpt2046
   ds3231

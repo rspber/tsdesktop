@@ -4,8 +4,6 @@ add_executable(scroll1
 
 target_link_libraries(scroll1
   setup
-  display
-  gfx
   desktop
   xpt2046
 )

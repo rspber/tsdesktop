@@ -4,8 +4,6 @@ add_executable(menu1
 
 target_link_libraries(menu1
   setup
-  display
-  gfx
   desktop
   xpt2046
 )
