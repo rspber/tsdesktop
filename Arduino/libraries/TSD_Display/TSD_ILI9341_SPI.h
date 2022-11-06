@@ -65,22 +65,22 @@ public:
     pinMode(_dc, OUTPUT);
 
     settings = SPISettings(freq, MSBFIRST, spiMode);
-	spi->begin();
-	TSD_ILI9341::begin(_rst);
+    spi->begin();
+    TSD_ILI9341::begin(_rst);
   }
 
   void CS(bool state)
   {
     if (_cs >= 0) {
       digitalWrite(_cs, state);
-	}
+    }
   }
 
   void DC(bool state)
   {
     if (_dc >= 0) {
       digitalWrite(_dc, state);
-	}
+    }
   }
 
   void beginTransaction(const uint32_t Hz)
@@ -109,9 +109,9 @@ public:
     spi_inst_t *pi_spi = _spi == &SPI ? spi0 : spi1;
     spi_write_blocking(pi_spi, &b, 1);
 #elif defined(ESP8266) || defined(ESP32)
-   _spi->wri te(b);
+    _spi->wri te(b);
 #else
-   _spi->tran sfer(b);
+    _spi->tran sfer(b);
 #endif
   }
 
@@ -132,12 +132,12 @@ public:
     spi_inst_t *pi_spi = _spi == &SPI ? spi0 : spi1;
     spi_write_blocking(pi_spi, data, size);
 #else
-	uint8_t* p = (uint8_t*)data;
+    uint8_t* p = (uint8_t*)data;
     for (int i = 0; i < size; ++i) {
       spiWrite(*p++);
     }
 #endif
-	CS(HIGH);
+    CS(HIGH);
     DC(HIGH);
   }
 
@@ -152,23 +152,23 @@ public:
     spi_inst_t *pi_spi = _spi == &SPI ? spi0 : spi1;
     spi_write_blocking(pi_spi, data, size);
 #else
-	uint8_t* p = (uint8_t*)data;
+    uint8_t* p = (uint8_t*)data;
     for (int i = 0; i < size; ++i) {
       spiWrite(*p++);
     }
 #endif
-	CS(HIGH);
+    CS(HIGH);
     DC(HIGH);
   }
 
 protected:
   inline void BEGIN_TRANSACTION(void)
   {
-     _spi->beginTransaction(settings);
+    _spi->beginTransaction(settings);
   }
   inline void END_TRANSACTION(void)
   {
-     _spi->endTransaction();
+    _spi->endTransaction();
   }
 
 private:
