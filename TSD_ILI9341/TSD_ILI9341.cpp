@@ -1,5 +1,5 @@
 /*
-  TSD_ILI9341 driver for TSDesktop
+  ILI9341 driver for TSDesktop
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
