@@ -83,6 +83,8 @@ void delay(const int ms)
 
 // ----------------------------------- SPI ------------------------------------
 
+#define INIT_SPI_SPEED 40 * 1000 * 1000
+
 uint current_spi0_speed;
 uint current_spi1_speed;
 
@@ -91,9 +93,9 @@ uint current_spi1_speed;
 #define SCK_OFFSET 2
 #define TX_OFFSET 3
 
-void init_spi(const uint8_t RX, const uint8_t SCK, const uint8_t TX, spi_inst_t* spi, const uint Hz)
+void init_spi(const uint8_t RX, const uint8_t SCK, const uint8_t TX, spi_inst_t* spi)
 {
-  spi_init(spi, Hz);
+  spi_init(spi, INIT_SPI_SPEED);
   //    spi_set_format(spi, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);  - default
   //    spi_set_format(spi, 16, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);  - problematic
   gpio_set_function(RX, GPIO_FUNC_SPI);    // MISO
@@ -102,20 +104,20 @@ void init_spi(const uint8_t RX, const uint8_t SCK, const uint8_t TX, spi_inst_t*
   // Make the SPI pins available to picotool
   bi_decl(bi_3pins_with_func(RX, TX, SCK, GPIO_FUNC_SPI));
 
-  (spi == spi0 ? current_spi0_speed : current_spi1_speed) = Hz;
+  (spi == spi0 ? current_spi0_speed : current_spi1_speed) = INIT_SPI_SPEED;
 }
 
-void init_spi(spi_section_t section, const uint Hz)
+void init_spi(spi_section_t section)
 {
   int8_t n = section.section;
   if (n >= 0) {
-    init_spi(n * 4 + RX_OFFSET, n * 4 + SCK_OFFSET, n * 4 + TX_OFFSET, n & 0x2 ? spi1 : spi0, Hz);
+    init_spi(n * 4 + RX_OFFSET, n * 4 + SCK_OFFSET, n * 4 + TX_OFFSET, n & 0x2 ? spi1 : spi0);
   }
 }
 
-void init_spi1(const uint8_t RX, const uint8_t SCK, const uint8_t TX, const uint Hz)
+void init_spi1(const uint8_t RX, const uint8_t SCK, const uint8_t TX)
 {
-  init_spi(RX, SCK, TX, spi1, Hz);
+  init_spi(RX, SCK, TX, spi1);
 }
 
 void set_spi_speed(spi_inst_t* spi, const uint Hz)

@@ -78,10 +78,8 @@ void delay(const int ms);
 
 // ----------------------------------- SPI ------------------------------------
 
-#define IDLE_SPI_SPEED 40 * 1000 * 1000   // 40 MHz
-
-void init_spi(const uint8_t RX, const uint8_t SCK, const uint8_t TX, spi_inst_t* spi = spi0, const uint Hz = IDLE_SPI_SPEED);
-void init_spi1(const uint8_t RX, const uint8_t SCK, const uint8_t TX, const uint Hz = IDLE_SPI_SPEED);
+void init_spi(const uint8_t RX, const uint8_t SCK, const uint8_t TX, spi_inst_t* spi = spi0);
+void init_spi1(const uint8_t RX, const uint8_t SCK, const uint8_t TX);
 
 void inline cs_select(const uint8_t CS, const uint8_t mode)
 {
@@ -112,17 +110,17 @@ typedef struct {
 #define SPI0_SECT SPI_SECT_4        // spi0 pico-sdk & picoino default
 #define SPI1_SECT SPI_SECT_3        // spi1 picoino default
 
-void init_spi(spi_section_t section = SPI0_SECT, const uint Hz = IDLE_SPI_SPEED);
+void init_spi(spi_section_t section = SPI0_SECT);
 
 void set_spi_speed(spi_inst_t* spi, const uint Hz);
 
 // --------------------------------- PicoSPI ----------------------------------
 
-#define SPI_SPEED 40 * 1000 * 1000
+#define DEFAULT_SPI_SPEED 40 * 1000 * 1000
 
 class PicoSPI {
 public:
-  PicoSPI(const int16_t CS, const int16_t DC, const uint Hz = SPI_SPEED, spi_inst_t* spi = spi0)
+  PicoSPI(const int16_t CS, const int16_t DC, const uint Hz = DEFAULT_SPI_SPEED, spi_inst_t* spi = spi0)
   {
     _CS = CS;
     pinMode(CS, OUTPUT);
