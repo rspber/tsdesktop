@@ -52,7 +52,7 @@ void setup()   {
   btn01.setFontSize(5);
   btn01.setTextColor(WHITE);
 
-  div01.enableScrollerProgress();
+  div01.enableScroll(SCROLL_PROGRESS);
 
   desktop.setMargin(10);
   desktop.setOrientation(HORIZONTAL, 10);

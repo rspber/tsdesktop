@@ -185,6 +185,9 @@ void setup()   {
   desktop.setMargin(10);
   desktop.setOrientation(HORIZONTAL, 10);
 
+//  menu.disableScroll(SCROLL_PAGE | SCROLL_HOME);
+  menu.disableScroll(SCROLL_HOME);
+
   screenEnabled = true;
   desktop.draw();
 }

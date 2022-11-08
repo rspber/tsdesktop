@@ -78,42 +78,64 @@ void Container::drawScroller()
   int8_t mgr = 0;
   if (clip.y2 < y + updHeight) {
     int16_t x1 = x + page_width - ws;
-    int16_t y1 = y;
-    draw_btn(x1, y1 += 0, SCRLBMPT[6]);
-    draw_btn(x1, y1 += hs + 2, SCRLBMPT[7]);
-    draw_btn(x1, y1 += hs + 2, SCRLBMPT[8]);
-    y1 += hs + 2;
+    int16_t y1 = y - (hs + 2);;
 
-    int16_t y_progress_top = y1;
+    if (scroll_btns & SCROLL_HOME) {
+      draw_btn(x1, y1 += hs + 2, SCRLBMPT[6]);
+    }
+    if (scroll_btns & SCROLL_PAGE) {
+      draw_btn(x1, y1 += hs + 2, SCRLBMPT[7]);
+    }
+    if (scroll_btns & SCROLL_STEP) {
+      draw_btn(x1, y1 += hs + 2, SCRLBMPT[8]);
+    }
 
-    y1 = y + page_height;
-    draw_btn(x1, y1 -= hs, SCRLBMPT[11]);
-    draw_btn(x1, y1 -= hs + 2, SCRLBMPT[10]);
-    draw_btn(x1, y1 -= hs + 2, SCRLBMPT[ 9]);
+    int16_t y_progress_top = y1 + (hs + 2);
 
-    if (scroll_progress) {
+    y1 = y + page_height + 2;
+    if (scroll_btns & SCROLL_HOME) {
+      draw_btn(x1, y1 -= hs + 2, SCRLBMPT[11]);
+    }
+    if (scroll_btns & SCROLL_PAGE) {
+      draw_btn(x1, y1 -= hs + 2, SCRLBMPT[10]);
+    }
+    if (scroll_btns & SCROLL_STEP) {
+      draw_btn(x1, y1 -= hs + 2, SCRLBMPT[ 9]);
+    }
+
+    if (scroll_btns & SCROLL_PROGRESS) {
       int8_t percent = offsetTop * 100 / (updHeight - page_height);
       draw_progress(x1, y_progress_top + (percent * (y1 - y_progress_top - 10) / 100 ) - 4, SCRLBMPT[12] );
     }
-
     mgr = 1;
   }
   if (clip.x2 < x + updWidth) {
     int16_t y1 = y + page_height - hs;
-    int16_t x1 = x;
-    draw_btn(x1 += 0, y1, SCRLBMPT[0]);
-    draw_btn(x1 += ws + 2, y1, SCRLBMPT[1]);
-    draw_btn(x1 += ws + 2, y1, SCRLBMPT[2]);
-    x1 += ws + 2;
+    int16_t x1 = x - (ws + 2);
+    if (scroll_btns & SCROLL_HOME) {
+      draw_btn(x1 += ws + 2, y1, SCRLBMPT[0]);
+    }
+    if (scroll_btns & SCROLL_PAGE) {
+      draw_btn(x1 += ws + 2, y1, SCRLBMPT[1]);
+    }
+    if (scroll_btns & SCROLL_STEP) {
+      draw_btn(x1 += ws + 2, y1, SCRLBMPT[2]);
+    }
 
-    int16_t x_progress_left = x1;
+    int16_t x_progress_left = x1 + (ws + 2);
 
-    x1 = x + page_width;
-    draw_btn(x1 -= ws + mgr * (16 + 2), y1, SCRLBMPT[5]);
-    draw_btn(x1 -= ws + 2, y1, SCRLBMPT[4]);
-    draw_btn(x1 -= ws + 2, y1, SCRLBMPT[3]);
+    x1 = x + page_width + 2 - mgr * (ws + 2);
+    if (scroll_btns & SCROLL_HOME) {
+      draw_btn(x1 -= ws + 2, y1, SCRLBMPT[5]);
+    }
+    if (scroll_btns & SCROLL_PAGE) {
+      draw_btn(x1 -= ws + 2, y1, SCRLBMPT[4]);
+    }
+    if (scroll_btns & SCROLL_STEP) {
+      draw_btn(x1 -= ws + 2, y1, SCRLBMPT[3]);
+    }
 
-    if (scroll_progress) {
+    if (scroll_btns & SCROLL_PROGRESS) {
       int8_t percent = offsetLeft * 100 / (updWidth - page_width);
       draw_progress(x_progress_left + (percent * (x1 - x_progress_left - 10) / 100) - 4, y1, SCRLBMPT[12]);
     }
@@ -133,11 +155,6 @@ bool btn_pressed(const int16_t x1, const int16_t y1, const int16_t xScreen, cons
   }
   return pressed;
 }
-
-// which scroller
-#define SCROLL_STEP 0x00
-#define SCROLL_PAGE 0x01
-#define SCROLL_HOME 0x02
 
 const int16_t doScroll(const uint8_t tp, const bool up, int16_t offs, const int16_t size, const int16_t page)
 {
@@ -216,30 +233,30 @@ const bool Container::scrollerPressed(const int16_t xScreen, const int16_t yScre
   int8_t mgr = 0;
   if (clip.y2 < y + updHeight) {
     int16_t x1 = x + page_width - ws;
-    int16_t y1 = y;
-    if (btn_pressed(x1, y1 += 0, xScreen, yScreen)) {
+    int16_t y1 = y - (hs + 2);
+    if (scroll_btns & SCROLL_HOME && btn_pressed(x1, y1 += hs + 2, xScreen, yScreen)) {
       scroll(SCROLL_HOME, true, true);
       return true;
     }
-    if (btn_pressed(x1, y1 += hs + 2, xScreen, yScreen)) {
+    if (scroll_btns & SCROLL_PAGE && btn_pressed(x1, y1 += hs + 2, xScreen, yScreen)) {
       scroll(SCROLL_PAGE, true, true);
       return true;
     }
-    if (btn_pressed(x1, y1 += hs + 2, xScreen, yScreen)) {
+    if (scroll_btns & SCROLL_STEP && btn_pressed(x1, y1 += hs + 2, xScreen, yScreen)) {
       scroll(SCROLL_STEP, true, true);
       return true;
     }
 
-    y1 = y + page_height;
-    if (btn_pressed(x1, y1 -= hs, xScreen, yScreen)) {
+    y1 = y + page_height + 2;
+    if (scroll_btns & SCROLL_HOME && btn_pressed(x1, y1 -= hs + 2, xScreen, yScreen)) {
       scroll(SCROLL_HOME, false, true);
       return true;
     }
-    if (btn_pressed(x1, y1 -= hs + 2, xScreen, yScreen)) {
+    if (scroll_btns & SCROLL_PAGE && btn_pressed(x1, y1 -= hs + 2, xScreen, yScreen)) {
       scroll(SCROLL_PAGE, false, true);
       return true;
     }
-    if (btn_pressed(x1, y1 -= hs + 2, xScreen, yScreen)) {
+    if (scroll_btns & SCROLL_STEP && btn_pressed(x1, y1 -= hs + 2, xScreen, yScreen)) {
       scroll(SCROLL_STEP, false, true);
       return true;
     }
@@ -247,30 +264,30 @@ const bool Container::scrollerPressed(const int16_t xScreen, const int16_t yScre
   }
   if (clip.x2 < x + updWidth) {
     int16_t y1 = y + page_height - hs;
-    int16_t x1 = x;
-    if (btn_pressed(x1 += 0, y1, xScreen, yScreen)) {
+    int16_t x1 = x - (ws + 2);
+    if (scroll_btns & SCROLL_HOME && btn_pressed(x1 += ws + 2, y1, xScreen, yScreen)) {
       scroll(SCROLL_HOME, true, false);
       return true;
     }
-    if (btn_pressed(x1 += ws + 2, y1, xScreen, yScreen)) {
+    if (scroll_btns & SCROLL_PAGE && btn_pressed(x1 += ws + 2, y1, xScreen, yScreen)) {
       scroll(SCROLL_PAGE, true, false);
       return true;
     }
-    if (btn_pressed(x1 += ws + 2, y1, xScreen, yScreen)) {
+    if (scroll_btns & SCROLL_STEP && btn_pressed(x1 += ws + 2, y1, xScreen, yScreen)) {
       scroll(SCROLL_STEP, true, false);
       return true;
     }
 
-    x1 = x + page_width;
-    if (btn_pressed(x1 -= ws + mgr * (16 + 2), y1, xScreen, yScreen)) {
+    x1 = x + page_width + 2 - mgr * (ws + 2);
+    if (scroll_btns & SCROLL_HOME && btn_pressed(x1 -= ws + 2, y1, xScreen, yScreen)) {
       scroll(SCROLL_HOME, false, false);
       return true;
     }
-    if (btn_pressed(x1 -= ws + 2, y1, xScreen, yScreen)) {
+    if (scroll_btns & SCROLL_PAGE && btn_pressed(x1 -= ws + 2, y1, xScreen, yScreen)) {
       scroll(SCROLL_PAGE, false, false);
       return true;
     }
-    if (btn_pressed(x1 -= ws + 2, y1, xScreen, yScreen)) {
+    if (scroll_btns & SCROLL_STEP && btn_pressed(x1 -= ws + 2, y1, xScreen, yScreen)) {
       scroll(SCROLL_STEP, false, false);
       return true;
     }

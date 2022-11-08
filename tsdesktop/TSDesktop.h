@@ -49,6 +49,12 @@ typedef struct {
 #define  HORIZONTAL orient_t{false}
 #define  VERTICAL orient_t{true}
 
+// which scroller
+#define SCROLL_STEP 0x01
+#define SCROLL_PAGE 0x02
+#define SCROLL_HOME 0x04
+#define SCROLL_PROGRESS 0x08
+
 /// @Container
 
 class Container {
@@ -207,8 +213,8 @@ public:
   void drawScroller();
   const bool scrollerPressed(const int16_t xScreen, const int16_t yScreen);
 
-  void disableScrollerProgress() { scroll_progress = false; }
-  void enableScrollerProgress() { scroll_progress = true; }
+  void disableScroll(const uint8_t scrollBtn) { scroll_btns &= ~scrollBtn; }
+  void enableScroll(const uint8_t scrollBtn) { scroll_btns |= scrollBtn; }
 
   const int16_t getAbsInnerRight(int16_t r, int16_t m2);
   const int16_t getAbsInnerBottom(int16_t b, int16_t m2);
@@ -268,7 +274,7 @@ private:
   int16_t clickHighlightDelay = 100;
   void (*funcOnClick)(Container* aContainer) = NULL;
 
-  bool scroll_progress = false;
+  uint8_t scroll_btns = SCROLL_STEP | SCROLL_PAGE | SCROLL_HOME;	// | SCROLL_PROGRESS;
 };
 
 
