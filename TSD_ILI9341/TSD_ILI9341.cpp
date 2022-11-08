@@ -9,7 +9,17 @@ differences:
 - Adafruit_SPITFT is missed, all spi functions are abstract
 - added support for ILI9341 devices v1.3
 
-Original Adafruit's licence bellow.
+Original Adafruit's licence attached further.
+
+2. Implementations for drawPixel and other draws comes from
+https://github.com/rdagger/micropython-ili9341/ili9341.py,
+partially rewriten from python to c,
+
+changes:
+- added overflow: clip
+- setAddrWindow was used
+
+that software is under the MIT license, attached further.
 */
 
 /*!
@@ -59,18 +69,6 @@ Original Adafruit's licence bellow.
  * BSD license, all text here must be included in any redistribution.
  *
  */
-
-/*
-2. Implementations for drawPixel and other draws comes from
-https://github.com/rdagger/micropython-ili9341/ili9341.py,
-partially rewriten from python to c,
-
-changes:
-- added overflow: clip
-- setAddrWindow was used
-
-that software is under the MIT license, attached below.
-*/
 
 /*
 MIT License
