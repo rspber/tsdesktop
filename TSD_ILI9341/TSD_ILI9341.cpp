@@ -214,9 +214,10 @@ void TSD_ILI9341::begin(const int16_t RST)
     pinMode(RST, OUTPUT);
   }
 
+  hardReset();
+
   beginTransaction(SETUP_SPEED);
 
-  hardReset();
   sendCmd(ILI9341_SWRESET); // Engage software reset
   sleep_ms(150);
 
