@@ -123,7 +123,9 @@ public:
   PicoSPI(const int16_t CS, const int16_t DC, const uint Hz = DEFAULT_SPI_SPEED, spi_inst_t* spi = spi0)
   {
     _CS = CS;
-    pinMode(CS, OUTPUT);
+    if (CS >= 0) {
+      pinMode(CS, OUTPUT);
+    }
     _DC = DC;
     if (DC >= 0) {
       pinMode(DC, OUTPUT);
@@ -134,7 +136,9 @@ public:
 
   void inline cs(const uint8_t mode)
   {
-    cs_select(_CS, mode);
+    if (_CS >= 0) {
+      cs_select(_CS, mode);
+    }
   }
 
   void inline dc(const uint8_t mode)
