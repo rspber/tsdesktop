@@ -114,6 +114,8 @@ typedef struct {
 
 void init_spi(spi_section_t section = SPI0_SECT, const uint Hz = IDLE_SPI_SPEED);
 
+void set_spi_speed(spi_inst_t* spi, const uint Hz);
+
 // --------------------------------- PicoSPI ----------------------------------
 
 #define SPI_SPEED 40 * 1000 * 1000
@@ -129,7 +131,7 @@ public:
       pinMode(DC, OUTPUT);
     }
     _spi = spi;
-    default_baudrate = Hz;
+    spi_speed = Hz;
   }
 
   void inline cs(const uint8_t mode)
@@ -147,25 +149,18 @@ public:
   void beginTransaction(const uint Hz)
   {
     cs(1);  // Just in case it has been left low
-    if (idle_baudrate == 0) {
-      idle_baudrate = spi_get_baudrate(_spi);
-    }
-    spi_set_baudrate(_spi, Hz);
+    set_spi_speed(_spi, Hz);
   }
 
   // default speed transaction
   void beginTransaction()
   {
-    beginTransaction(default_baudrate);
+    beginTransaction(spi_speed);
   }
 
   void endTransaction()
   {
     cs(1);
-    if (idle_baudrate > 0) {
-      spi_set_baudrate(_spi, idle_baudrate);
-      idle_baudrate = 0;
-    }
   }
 /*
   void inline write(const uint8_t *data, const int16_t size)
@@ -223,8 +218,7 @@ public:
 private:
   int16_t _CS, _DC;
   spi_inst_t* _spi;
-  uint default_baudrate;
-  uint idle_baudrate;
+  uint spi_speed;
 };
 
 // ----------------------------------- I2C ------------------------------------

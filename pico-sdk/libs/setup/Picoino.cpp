@@ -83,6 +83,9 @@ void delay(const int ms)
 
 // ----------------------------------- SPI ------------------------------------
 
+uint current_spi0_speed;
+uint current_spi1_speed;
+
 #define RX_OFFSET 0
 #define CS_OFFSET 1
 #define SCK_OFFSET 2
@@ -98,6 +101,8 @@ void init_spi(const uint8_t RX, const uint8_t SCK, const uint8_t TX, spi_inst_t*
   gpio_set_function(TX, GPIO_FUNC_SPI);    // MOSI
   // Make the SPI pins available to picotool
   bi_decl(bi_3pins_with_func(RX, TX, SCK, GPIO_FUNC_SPI));
+
+  (spi == spi0 ? current_spi0_speed : current_spi1_speed) = Hz;
 }
 
 void init_spi(spi_section_t section, const uint Hz)
@@ -111,6 +116,22 @@ void init_spi(spi_section_t section, const uint Hz)
 void init_spi1(const uint8_t RX, const uint8_t SCK, const uint8_t TX, const uint Hz)
 {
   init_spi(RX, SCK, TX, spi1, Hz);
+}
+
+void set_spi_speed(spi_inst_t* spi, const uint Hz)
+{
+  if (spi == spi0) {
+    if( current_spi0_speed != Hz ) {
+      spi_set_baudrate(spi, Hz);
+      current_spi0_speed = Hz;
+    }
+  }   
+  else {
+    if (current_spi1_speed != Hz ) {
+      spi_set_baudrate(spi, Hz);
+      current_spi1_speed = Hz;
+    }
+  }
 }
 
 // ----------------------------------- I2C ------------------------------------

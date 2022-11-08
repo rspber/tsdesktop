@@ -36,12 +36,12 @@ public:
 
   void startWrite()
   {
-  //  _spi->beginTransaction();
+    _spi->beginTransaction();
   }
 
   void endWrite()
   {
-  //  _spi->endTransaction();
+    _spi->endTransaction();
   }
 
   void sendCmd(const uint8_t cmd)
