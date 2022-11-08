@@ -29,7 +29,7 @@ changes:
 notes:
 - original gfxfont.h and Fonts directory from Adafruit's library are included,
 
-Original Adafruit's licence bellow
+Original Adafruit's license bellow
 */
 
 /*
