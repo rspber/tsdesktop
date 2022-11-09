@@ -13,7 +13,7 @@ Original Adafruit's license attached further.
 
 2. Implementations for drawPixel and other draws comes from
 https://github.com/rdagger/micropython-ili9341/ili9341.py,
-partially rewriten from python to c,
+partially rewritten from python to c,
 
 changes:
 - added overflow: clip
