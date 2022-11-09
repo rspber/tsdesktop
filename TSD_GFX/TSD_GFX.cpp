@@ -21,7 +21,7 @@ changes:
 - no integrated gfxFont, textSizes, textColor, bakcgroundColor:
   they are parameters too and are handled by TSDesktop,
 - drawChar was modified to the new solution,
-- integrated fixed font in file glcdfont.c was reformated and renamed to
+- integrated fixed font in file glcdfont.c was reformatted and renamed to
   dafault_font,
 - color type was changed from uint16_t to rgb_t to allow 666 colors
 - overflow: clip was implemented in all functions,
