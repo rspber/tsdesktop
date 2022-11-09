@@ -22,7 +22,7 @@
 
 //#define ILI9341_VERSION 1    // v1.0  ?
 //#define ILI9341_VERSION 2    // v1.1  ?
-//#define ILI9341_VERSION 3    // v1.2  ?   - maybe has changes doing in v1.3, if not set to 2
+//#define ILI9341_VERSION 3    // v1.2  ?   - maybe, it has changes made in v1.3, if not set to 2
 //#define ILI9341_VERSION 4    // v1.3      - tested
 // TouchScreen
 // edges of the display for v1.3
