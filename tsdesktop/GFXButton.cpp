@@ -176,7 +176,7 @@ void GFXButton::drawAll(bool redraw)
       for( int16_t i = 0; i < len; ++i) {
         GFXObject* g = list[i];
         if (g->getVisible()) {
-          g->dodraw(&clip, x, y, redraw);
+          g->doDraw(&clip, x, y, redraw);
         }
       }
     }

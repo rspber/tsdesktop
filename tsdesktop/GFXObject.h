@@ -21,7 +21,10 @@ public:
   void draw();
 
   virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color) = 0;
-  void dodraw(clip_t* clip, int16_t x, int16_t y, const bool redraw);
+  void doDraw(clip_t* clip, int16_t x, int16_t y, const bool redraw);
+
+private:
+  bool doDraw(rgb_t color);
 
 private:
   Button* parent;

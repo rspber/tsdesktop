@@ -9,23 +9,7 @@
 
 /// @GFXObject
 
-void GFXObject::hide()
-{
-  if (wasDrawn) {
-    if (screenEnabled) {
-      if (parent->getAbsVisible()) {
-        clip_t clip;
-        parent->getClip(clip);
-        int16_t x = parent->getAbsInnerLeft(0);
-        int16_t y = parent->getAbsInnerTop(0);
-        dodraw(&clip, x, y, parent->getBackgroundColor());
-      }
-    }
-    wasDrawn = false;
-  }
-}
-
-void GFXObject::draw()
+bool GFXObject::doDraw(rgb_t color)
 {
   if (screenEnabled) {
     if (parent->getAbsVisible()) {
@@ -34,12 +18,28 @@ void GFXObject::draw()
       int16_t x = parent->getAbsInnerLeft(0);
       int16_t y = parent->getAbsInnerTop(0);
       dodraw(&clip, x, y, color);
-      wasDrawn = true;
+      return true;
     }
+  }
+  return false;
+}
+
+void GFXObject::hide()
+{
+  if (wasDrawn) {
+    doDraw(parent->getBackgroundColor());
+    wasDrawn = false;
   }
 }
 
-void GFXObject::dodraw(clip_t* clip, int16_t x, int16_t y, const bool redraw)
+void GFXObject::draw()
+{
+  if (doDraw(color)) {
+    wasDrawn = true;
+  }
+}
+
+void GFXObject::doDraw(clip_t* clip, int16_t x, int16_t y, const bool redraw)
 {
   if (! wasDrawn || redraw) {
       dodraw(clip, x, y, color);
