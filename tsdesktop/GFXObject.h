@@ -17,6 +17,9 @@ public:
   void setVisible(const bool aVisible) { visible = aVisible; }
   const bool getVisible() { return visible; }
 
+  void setColor(rgb_t acolor) { color = acolor; }
+  rgb_t getColor() { return color; }
+
   void hide();
   void draw();
 
