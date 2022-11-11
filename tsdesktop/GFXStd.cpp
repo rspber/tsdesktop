@@ -35,7 +35,7 @@ void drawLine(clip_t* clip, int16_t x, int16_t y, int16_t x1, int16_t y1, int16_
       return;
     }
     switch (mode) {
-      case 1:		// arrow
+      case 1:		// cut
       {
         ts = ts * 5 / 4;
         u = ts / 2;
@@ -50,7 +50,7 @@ void drawLine(clip_t* clip, int16_t x, int16_t y, int16_t x1, int16_t y1, int16_
         break;
       }
       default:    // flat
-      { 
+      {
         int16_t d = u - ts;
         if (abs(x2 - x1) > abs(y2 - y1)) {
           while (++d <= u) {

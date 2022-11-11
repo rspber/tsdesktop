@@ -54,7 +54,7 @@ void setup()   {
   line = canvas.line(0, 0, 100, 100, BLACK, 3);
   canvas.fillCircle(60, 10, 30, BLUE);
   canvas.circleFragment(140, 180, 20, 0x06, BROWN, 5);
-  canvas.line(200, 30, 250, 160, AQUA, 10)->mode=1; // arrow
+  canvas.line(200, 30, 250, 160, AQUA, 10)->mode=1; // cut
   canvas.line(50, 160, 150, 190, AQUA, 10);
   canvas.line(160, 100, 250, 200, AQUA, 10);
   canvas.line(280, 20, 280, 200, AQUA, 3);
@@ -97,7 +97,7 @@ void loop() {
     line->y1 = 0;
   }
   desktop.draw();
-  
+
   delay(50);
 
   pin13state = 1 - pin13state;
