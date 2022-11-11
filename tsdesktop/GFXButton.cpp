@@ -165,9 +165,8 @@ GFXTextLine* GFXButton::textLine(int16_t x1, int16_t y1, const char* text, rgb_t
 
 ///
 
-void GFXButton::draw(bool redraw)
+void GFXButton::drawAll(bool redraw)
 {
-  Button::draw(redraw);
   if (screenEnabled) {
     if (getAbsVisible()) {
       clip_t clip;
@@ -182,5 +181,11 @@ void GFXButton::draw(bool redraw)
       }
     }
   }
+}
+
+void GFXButton::draw(bool redraw)
+{
+  Button::draw(redraw);
+  drawAll(redraw);
 }
 
