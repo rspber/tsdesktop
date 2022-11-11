@@ -18,7 +18,7 @@ void GFXPixel::dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
 
 /// @GFXLine
 
-void drawLine(clip_t* clip, int16_t x, int16_t y, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts)
+void drawLine(clip_t* clip, int16_t x, int16_t y, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts, uint8_t mode)
 {
   x1 += x;
   y1 += y;
@@ -34,16 +34,34 @@ void drawLine(clip_t* clip, int16_t x, int16_t y, int16_t x1, int16_t y1, int16_
       display.fillRect(clip, x1, y1 - u, x2 - x1, ts, color);
       return;
     }
-    if (abs(x2 - x1) > abs(y2 - y1)) {
-      int16_t d = u - ts;
-      while (++d <= u) {
-        display.drawLine(clip, x1, y1 + d, x2, y2 + d, color);
+    switch (mode) {
+      case 1:		// arrow
+      {
+        ts = ts * 5 / 4;
+        u = ts / 2;
+        int16_t d = u - ts;
+        while (++d <= 0) {
+          display.drawLine(clip, x1, y1 - d, x2 + d, y2, color);
+        }
+        --d;
+        while (++d <= u) {
+          display.drawLine(clip, x1 + d, y1, x2, y2 - d, color);
+        }
+        break;
       }
-    }
-    else {
-      int16_t d = u - ts;
-      while (++d <= u) {
-        display.drawLine(clip, x1 + d, y1, x2 + d, y2, color);
+      default:    // flat
+      { 
+        int16_t d = u - ts;
+        if (abs(x2 - x1) > abs(y2 - y1)) {
+          while (++d <= u) {
+            display.drawLine(clip, x1, y1 + d, x2, y2 + d, color);
+          }
+        }
+        else {
+          while (++d <= u) {
+            display.drawLine(clip, x1 + d, y1, x2 + d, y2, color);
+          }
+        }
       }
     }
   }
@@ -54,7 +72,7 @@ void drawLine(clip_t* clip, int16_t x, int16_t y, int16_t x1, int16_t y1, int16_
 
 void GFXLine::dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
 {
-  drawLine(clip, x, y, x1, y1, x2, y2, color, ts);
+  drawLine(clip, x, y, x1, y1, x2, y2, color, ts, mode);
 }
 
 
@@ -185,9 +203,9 @@ void GFXFillCircleFragment::dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t col
 
 void GFXTriangle::dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
 {
-  drawLine(clip, x, y, x1, y1, x2, y2, color, ts);
-  drawLine(clip, x, y, x2, y2, x3, y3, color, ts);
-  drawLine(clip, x, y, x3, y3, x1, y1, color, ts);
+  drawLine(clip, x, y, x1, y1, x2, y2, color, ts, mode);
+  drawLine(clip, x, y, x2, y2, x3, y3, color, ts, mode);
+  drawLine(clip, x, y, x3, y3, x1, y1, color, ts, mode);
 }
 
 

@@ -54,8 +54,9 @@ void setup()   {
   line = canvas.line(0, 0, 100, 100, BLACK, 3);
   canvas.fillCircle(60, 10, 30, BLUE);
   canvas.circleFragment(140, 180, 20, 0x06, BROWN, 5);
-  canvas.line(200, 30, 250, 160, AQUA, 10);
+  canvas.line(200, 30, 250, 160, AQUA, 10)->mode=1; // arrow
   canvas.line(50, 160, 150, 190, AQUA, 10);
+  canvas.line(160, 100, 250, 200, AQUA, 10);
   canvas.line(280, 20, 280, 200, AQUA, 3);
   canvas.rect(180, 50, 80, 60, DARK_GREEN, 10);
   canvas.fillRect(140, 10, 40, 20, GREEN);

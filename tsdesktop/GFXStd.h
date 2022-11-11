@@ -32,6 +32,7 @@ public:
   virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
 
   int16_t x1, y1, x2, y2, ts;
+  uint8_t mode = 0;   // 0 flat, 1 arrow
 };
 
 
