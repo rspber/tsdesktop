@@ -12,7 +12,6 @@ missed:
 - missed button, buttons and more gui objects are handled by TSDesktop,
 - missed PROGMEM routines due to no need to use on modern hardware,
 - missed handle _cp437 mistake for chars greather then 176,
-- missed canvas
 - missed relationship to screen coordinates
 
 changes:
@@ -25,6 +24,7 @@ changes:
   dafault_font,
 - color type was changed from uint16_t to rgb_t to allow 666 colors
 - overflow: clip was implemented in all functions,
+- canvas was implemented in TSDesktop in GFXButton
 
 notes:
 - original gfxfont.h and Fonts directory from Adafruit's library are included,
@@ -793,7 +793,7 @@ void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bit
     @param    h   Height of bitmap in pixels
 */
 /**************************************************************************/
-void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bitmap, uint8_t* mask, int16_t w, int16_t h) {
+void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bitmap, const uint8_t* mask, int16_t w, int16_t h) {
   int16_t bw = (w + 7) / 8; // Bitmask scanline pad = whole byte
   uint8_t b = 0;
   startWrite();

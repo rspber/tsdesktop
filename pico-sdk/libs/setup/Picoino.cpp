@@ -16,7 +16,8 @@
 void debug(const char *buf)
 {
   if( screenEnabled ) {
-    display.fillRect(0, 0, 240, 8, BLACK);
+    clip_t clip{0, 0, display.width(), display.height()};
+    display.fillRect(&clip, 0, 0, display.width(), 8, BLACK);
     display.drawText(0, 0, buf, 1, WHITE);
   }
 }

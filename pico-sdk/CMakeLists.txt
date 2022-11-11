@@ -36,3 +36,5 @@ add_subdirectory(examples/programmer)
 add_subdirectory(examples/scroll1)
 add_subdirectory(examples/menu1)
 add_subdirectory(examples/menu2)
+add_subdirectory(examples/canvas1)
+
