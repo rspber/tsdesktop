@@ -16,9 +16,9 @@
 // TouchScreen
 // edges of the display for no version models
 #define TS_LEFT 150
-#define TS_TOP 150
+#define TS_TOP 400
 #define TS_RIGHT 150
-#define TS_BOTTOM 400
+#define TS_BOTTOM 150
 
 //#define ILI9341_VERSION 1    // v1.0  ?
 //#define ILI9341_VERSION 2    // v1.1  ?
@@ -27,9 +27,9 @@
 // TouchScreen
 // edges of the display for v1.3
 //#define TS_LEFT 200
-//#define TS_TOP 150
+//#define TS_TOP 350
 //#define TS_RIGHT 200
-//#define TS_BOTTOM 350
+//#define TS_BOTTOM 150
 
 #define DISPLAY_WIDTH 240
 #define DISPLAY_HEIGHT 320

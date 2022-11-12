@@ -42,24 +42,24 @@ bool Touch::getTouch(point_t* p)
       case 0:                 // VBT
         minx += TS_RIGHT;
         maxx -= TS_LEFT;
-        miny += TS_TOP;
-        maxy -= TS_BOTTOM;
+        miny += TS_BOTTOM;
+        maxy -= TS_TOP;
         break;
       case 1:                 // HLR
-        minx += TS_TOP;
-        maxx -= TS_BOTTOM;
+        minx += TS_BOTTOM;
+        maxx -= TS_TOP;
         miny += TS_LEFT;
         maxy -= TS_RIGHT;
         break;
       case 2:                 // VTB
         minx += TS_LEFT;
         maxx -= TS_RIGHT;
-        miny += TS_BOTTOM;
-        maxy -= TS_TOP;
+        miny += TS_TOP;
+        maxy -= TS_BOTTOM;
         break;
       case 3:                 // HRL
-        minx += TS_BOTTOM;
-        maxx -= TS_TOP;
+        minx += TS_TOP;
+        maxx -= TS_BOTTOM;
         miny += TS_RIGHT;
         maxy -= TS_LEFT;
         break;
