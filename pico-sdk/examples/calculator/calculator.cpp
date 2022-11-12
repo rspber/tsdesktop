@@ -87,7 +87,13 @@ Container* CT[]{
   &operBtn, &sumBtn, &r4FSet, &r3FSet, &r2FSet, &r1FSet, &r0FSet
 };
 
-FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, CT, 7);
+FieldSet div01(VERTICAL, BTN_DIST, 0, 0, CT, 7);
+
+Container* CTT[]{
+  &div01
+};
+
+FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, CTT, 1);
 
 // ----------------------------------------------------------------
 
@@ -202,8 +208,11 @@ void setup() {
   calc_row(&r1FSet);
   calc_row(&r0FSet);
 
+  div01.setAlignClientHoriz();
+  div01.setAlignClientVert();   // comment to scroll on 320x240
+  div01.setTransparent(true);
   desktop.setBackground(CBG_COLOR);
-  desktop.setOrientation(VERTICAL, BTN_DIST);
+//  desktop.setOrientation(VERTICAL, BTN_DIST);
 
   screenEnabled = true;
 
