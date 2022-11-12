@@ -455,7 +455,7 @@ Container* FieldSet::pressed(const int16_t xScreen, const int16_t yScreen)
   if (scrollerPressed(xScreen, yScreen)) {
     return NULL;
   }
-  for (int16_t i = 0; i < len; ++i) {
+  for (int16_t i = len; --i >= 0; ) {
     Container* b = children[i];
     b = b->pressed(xScreen, yScreen);
     if (b) {
