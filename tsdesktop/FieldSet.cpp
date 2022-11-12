@@ -321,20 +321,6 @@ void FieldSet::updateCoordVertical()
 
 void FieldSet::updateCoord(const bool recalc)
 {
-  if (!updated || recalc) {
-    updated = true;
-
-    if (orientation.vertical) {
-      updateCoordVertical();
-    }
-    else {
-      updateCoordHorizontal();
-    }
-  }
-}
-
-void FieldSet::draw(const bool redraw)
-{
   if (getDeep() == 0) {
     if (getOrgWidth() == ALIGN_CLIENT) {
       if (updWidth != display.width()) {
@@ -351,21 +337,20 @@ void FieldSet::draw(const bool redraw)
       }
     }
   }
-  if (!updated) {
+  if (!updated || recalc) {
+    updated = true;
     if (getOrgWidth() == ALIGN_COMPACT) {
       updCompactWidth(false);
     }
     if (getOrgHeight() == ALIGN_COMPACT) {
       updCompactHeight(false);
     }
-  }
-  Button::draw(redraw);
-  if (getAbsVisible()) {
-    for (int16_t i = 0; i < len; i++) {
-      Container* b = children[i];
-      b->draw(redraw);
+    if (orientation.vertical) {
+      updateCoordVertical();
     }
-    drawScroller();
+    else {
+      updateCoordHorizontal();
+    }
   }
 }
 
@@ -378,15 +363,103 @@ void FieldSet::setNotWasDrawn()
   }
 }
 
+void FieldSet::drawBackground()
+{
+  backgroundDrawn = false;
+  if (radius > 0) {
+    backgroundDrawn = true;
+  }
+  int32_t area = 0;
+  for (int16_t i = len; --i >= 0; ) {
+    Container* b = children[i];
+    if (b->getAbsVisible()) {
+      if (b->getRadius() > 0) {
+        backgroundDrawn = true;
+        break;
+      }
+      int16_t a = b->getUpdWidth() * b->getUpdHeight();
+      area += a;
+    }
+  }
+  if (area * 2 < updWidth * updHeight) {
+    backgroundDrawn = true;
+  }
+  if (backgroundDrawn) {
+    Button::drawBackground();
+  }
+}
+
+const int16_t FieldSet::innerCovers(const int16_t posX, const int16_t posY)
+{
+  for (int16_t i = len; --i >= 0; ) {
+    Container* b = children[i];
+    int16_t t = b->covers(posX, posY);
+    if (t) {
+      return t;
+    }
+  }
+  return 0;
+}
+
+void FieldSet::drawVisibleBackground()
+{
+  rgb_t bg = getBackgroundColor();
+  clip_t clip;
+  getOuterClip(clip);
+  int16_t x = clip.x1;
+  int16_t y = clip.y1;
+  int16_t w = (clip.x2 - clip.x1);
+  int16_t iw = w < updWidth ? w - marginRight : w;
+  int16_t h = (clip.y2 - clip.y1);
+  int16_t ih = h < updHeight ? h - marginBottom : h;
+
+  for (int16_t j = 0; j < h; ++j ) {
+    int16_t i0 = 0;
+    int16_t i = 0;
+    while (i < w) {
+      if (i < iw && j < ih) {
+        int16_t t = innerCovers(i - marginLeft + offsetLeft, j - marginTop + offsetTop);
+        if (t) {
+          if (i > i0) {
+            display.drawFastHLine(&clip, x + i0, y, i - i0, bg);
+          }
+          i += t;
+          i0 = i;
+          continue;
+        }
+      }
+      ++i;
+    }
+    if (i > i0) {
+      display.drawFastHLine(&clip, x + i0, y, i - i0, bg);
+    }
+    ++y;
+  }
+
+}
+
+void FieldSet::innerDraw(const bool redraw)
+{
+  for (int16_t i = 0; i < len; i++) {
+    Container* b = children[i];
+    b->draw(redraw);
+  }
+  if (!backgroundDrawn) {
+    drawVisibleBackground();
+  }
+  drawScroller();
+}
+
 Container* FieldSet::pressed(const int16_t xScreen, const int16_t yScreen)
 {
   if (scrollerPressed(xScreen, yScreen)) {
     return NULL;
   }
   for (int16_t i = 0; i < len; ++i) {
-    Container* p = children[i]->pressed(xScreen, yScreen);
-    if (p) {
-      return p;
+    Container* b = children[i];
+    b = b->pressed(xScreen, yScreen);
+    if (b) {
+      return b;
     }
   }
   return Button::pressed(xScreen, yScreen);

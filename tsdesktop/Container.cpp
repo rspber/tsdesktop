@@ -440,6 +440,18 @@ const rgb_t Container::getBackgroundColor()
   return NO_BACKGROUND_COLOR;
 }
 
+const int16_t Container::covers(const int16_t posX, const int16_t posY)
+{
+  if (getAbsVisible()) {
+    if (posX >= updLeft - borderSize && posX < updLeft + updWidth + borderSize &&
+        posY >= updTop - borderSize && posY < updTop + updHeight + borderSize)
+    {
+      return updLeft + updWidth + borderSize - posX;
+    }
+  }
+  return 0;
+}
+
 Container* Container::pressed(const int16_t xScreen, const int16_t yScreen)
 {
   if (!disabled && getAbsVisible()) {

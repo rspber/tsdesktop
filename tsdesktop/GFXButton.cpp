@@ -165,27 +165,25 @@ GFXTextLine* GFXButton::textLine(int16_t x1, int16_t y1, const char* text, rgb_t
 
 ///
 
-void GFXButton::drawAll(bool redraw)
+void GFXButton::innerDraw(bool redraw)
 {
-  if (screenEnabled) {
-    if (getAbsVisible()) {
-      clip_t clip;
-      getClip(clip);
-      int16_t x = getAbsInnerLeft(0);
-      int16_t y = getAbsInnerTop(0);
-      for( int16_t i = 0; i < len; ++i) {
-        GFXObject* g = list[i];
-        if (g->getVisible()) {
-          g->doDraw(&clip, x, y, redraw);
-        }
-      }
+  clip_t clip;
+  getClip(clip);
+  int16_t x = getAbsInnerLeft(0);
+  int16_t y = getAbsInnerTop(0);
+  for( int16_t i = 0; i < len; ++i) {
+    GFXObject* g = list[i];
+    if (g->getVisible()) {
+      g->doDraw(&clip, x, y, redraw);
     }
   }
 }
 
-void GFXButton::draw(bool redraw)
+void GFXButton::drawAll(bool redraw)
 {
-  Button::draw(redraw);
-  drawAll(redraw);
+  if (screenEnabled) {
+    if (getAbsVisible()) {
+      innerDraw(redraw);
+    }
+  }
 }
-

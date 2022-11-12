@@ -187,7 +187,7 @@ public:
 
   const bool getAbsVisible();     // is container finally visible
 
-  virtual void draw(const bool redraw){}
+  virtual void draw(const bool redraw) = 0;
 
   virtual void hide() { setNotWasDrawn(); }
 
@@ -205,6 +205,11 @@ public:
 
   const rgb_t getBackgroundColor();    // or NO_BACKGROUND_COLOR
   const rgb_t getBackground() { return getBackgroundColor(); }
+
+  const int8_t getRadius() { return radius; }
+  const uint8_t getBorderSize() { return borderSize; }
+
+  const int16_t covers(const int16_t posX, const int16_t posY);
 
   virtual Container* pressed(const int16_t xScreen, const int16_t yScreen);
 
@@ -267,6 +272,8 @@ private:
   bool hidden = false;
   bool disabled = true;
   //    bool absolutePos = false;
+  uint8_t borderSize = 1;
+  int8_t radius = 0;
 
   int16_t offsetLeft = 0;
   int16_t offsetTop = 0;
@@ -333,17 +340,15 @@ public:
   void setClickHighlightColor(const rgb_t aClickHighlightColor) { clickHighlightColor = aClickHighlightColor; }
   const rgb_t getClickHighlightColor() { return clickHighlightColor; }
 
-  const int8_t getRadius() { return radius; }
   const bool getTransparent() { return transparent; }
 
   const rgb_t getBorderColor() { return borderColor; }
-  const uint8_t getBorderSize() { return borderSize; }
 
+  virtual void innerDraw(const bool redraw) = 0;
   virtual void draw(const bool redraw);
+  void draw() { draw(false); }
 
   virtual void hide();
-
-  const bool getWasDrawn() { return wasDrawn; }
 
   friend class Container;
   friend class TextButton;
@@ -354,7 +359,7 @@ private:
   bool wasDrawn = false;
   virtual void setNotWasDrawn() { wasDrawn = false; }
 
-  void drawBackground();
+  virtual void drawBackground();
   void drawBackground(const rgb_t color);
 
   void drawBorder();
@@ -363,10 +368,8 @@ private:
   virtual void clickEffect(const int16_t posX, const int16_t posY);
 
 private:
-  int8_t radius = 0;
   bool transparent = false;
   rgb_t backgroundColor = 0;
-  uint8_t borderSize = 1;
   rgb_t borderColor = 0;
   rgb_t clickHighlightColor = RED;
 };
@@ -450,7 +453,7 @@ public:
   const int8_t getFontSizeY() { return font.fontSizeY; }
   const rgb_t getTextColor() { return textColor; }
 
-  virtual void draw(const bool redraw);
+  virtual void innerDraw(const bool redraw);
 
   friend class Editable;
 
@@ -600,7 +603,7 @@ public:
 
   virtual void hideDecor() = 0;
 
-  virtual void draw(const bool redraw);
+  virtual void innerDraw(const bool redraw);
 
   friend class CheckBox;
   friend class RadioButton;
@@ -790,8 +793,9 @@ public:
     return aIndex >= 0 && aIndex < len ? children[aIndex] : NULL;
   }
 
-  virtual void draw(const bool redraw);
-  void draw() { draw(false); }
+  virtual void drawBackground();
+
+  virtual void innerDraw(const bool redraw);
 
   virtual Container* pressed(const int16_t xScreen, const int16_t yScreen);
 
@@ -802,6 +806,10 @@ private:
   const int16_t len = 0;
   orient_t orientation = HORIZONTAL;
   int8_t distance = 0;
+  bool backgroundDrawn;
+
+  void drawVisibleBackground();
+  const int16_t innerCovers(const int16_t posX, const int16_t posY);
 
   virtual void setDeep(const uint8_t aDeep);
 

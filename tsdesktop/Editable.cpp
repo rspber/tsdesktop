@@ -91,17 +91,13 @@ void Editable::hideCursor()
 void Editable::hideText()
 {
   TextButton::hideText();
-  if (getAbsVisible()) {
-    hideCursor();
-  }
+  hideCursor();
 }
 
 void Editable::drawText()
 {
   TextButton::drawText();
-  if (getAbsVisible()) {
-    drawCursor();
-  }
+  drawCursor();
 }
 
 void Editable::clickEffect(const int16_t posX, const int16_t posY)

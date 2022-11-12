@@ -176,40 +176,36 @@ void TextButton::updateCoord(const bool recalc)
 
 void TextButton::drawText(const rgb_t aTextColor)
 {
-  if (getAbsVisible()) {
-    if (screenEnabled) {
-      int16_t absLeft = getAbsInnerLeft(getTextMarginLeft() + textLeft);
-      int16_t absTop = getAbsInnerTop(getTextMarginTop() + textTop);
-      cursor_t cursor{ absLeft, absTop };
-      clip_t clip;
-      getClip(clip);
-      const char* p = getText();
-      int16_t h;
-      int16_t w = font.textSize(p, &h);
-      const char* p0 = p;
-      char c = 1;
-      while (c) {
-        c = *p++;
-        if (c == 0 || c == '\n') {
-          int16_t h0;
-          int16_t w0;
-          switch (textAlign) {
-          case TEXT_ALIGN_RIGHT:
-            w0 = font.textLineSize(p0, &h0);
-            cursor.x += w - w0;
-            break;
-          case TEXT_ALIGN_CENTER:
-            w0 = font.textLineSize(p0, &h0);
-            cursor.x += (w - w0) / 2;
-            break;
-          default:;
-          }
-          display.drawTextLine(&clip, &cursor, &font, p0, aTextColor);
-          p0 = p;
-          cursor.x = absLeft;
-          cursor.y += font.textLineHeight();
-        }
+  int16_t absLeft = getAbsInnerLeft(getTextMarginLeft() + textLeft);
+  int16_t absTop = getAbsInnerTop(getTextMarginTop() + textTop);
+  cursor_t cursor{ absLeft, absTop };
+  clip_t clip;
+  getClip(clip);
+  const char* p = getText();
+  int16_t h;
+  int16_t w = font.textSize(p, &h);
+  const char* p0 = p;
+  char c = 1;
+  while (c) {
+    c = *p++;
+    if (c == 0 || c == '\n') {
+      int16_t h0;
+      int16_t w0;
+      switch (textAlign) {
+      case TEXT_ALIGN_RIGHT:
+        w0 = font.textLineSize(p0, &h0);
+        cursor.x += w - w0;
+        break;
+      case TEXT_ALIGN_CENTER:
+        w0 = font.textLineSize(p0, &h0);
+        cursor.x += (w - w0) / 2;
+        break;
+      default:;
       }
+      display.drawTextLine(&clip, &cursor, &font, p0, aTextColor);
+      p0 = p;
+      cursor.x = absLeft;
+      cursor.y += font.textLineHeight();
     }
   }
 }
@@ -224,9 +220,8 @@ void TextButton::hideText()
   drawText(getBackgroundColor());
 }
 
-void TextButton::draw(const bool redraw)
+void TextButton::innerDraw(const bool redraw)
 {
-  Button::draw(redraw);
   drawText();
 }
 

@@ -11,7 +11,7 @@
 
 #include <Picoino.h>
 
-#define Z_THRESHOLD 600 // Touch pressure threshold for validating touches
+#define Z_THRESHOLD 350 // Touch pressure threshold for validating touches
 
 class TSD_XPT2046 {
 public:

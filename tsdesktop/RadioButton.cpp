@@ -62,10 +62,8 @@ const int16_t RadioButton::getCenterY()
 
 void RadioButton::drawCircle(const rgb_t aCircleColor)
 {
-  if (screenEnabled) {
-    clip_t clip;
-    display.drawCircle(getClip(clip), getAbsInnerLeft(getCenterX()), getAbsInnerTop(getCenterY()), getCircleRadius(), aCircleColor);
-  }
+  clip_t clip;
+  display.drawCircle(getClip(clip), getAbsInnerLeft(getCenterX()), getAbsInnerTop(getCenterY()), getCircleRadius(), aCircleColor);
 }
 
 void RadioButton::drawCircle()
@@ -75,10 +73,8 @@ void RadioButton::drawCircle()
 
 void RadioButton::drawDot(const rgb_t aDotColor)
 {
-  if (screenEnabled) {
-    clip_t clip;
-    display.fillCircle(getClip(clip), getAbsInnerLeft(getCenterX()), getAbsInnerTop(getCenterY()), getDotRadius(), aDotColor);
-  }
+  clip_t clip;
+  display.fillCircle(getClip(clip), getAbsInnerLeft(getCenterX()), getAbsInnerTop(getCenterY()), getDotRadius(), aDotColor);
 }
 
 void RadioButton::drawDot()
@@ -88,17 +84,13 @@ void RadioButton::drawDot()
 
 void RadioButton::drawDecor()
 {
-  if (getAbsVisible()) {
-    drawCircle();
-    drawDot();
-  }
+  drawCircle();
+  drawDot();
 }
 
 void RadioButton::hideDecor()
 {
-  if (getAbsVisible()) {
-    drawDot(getBackgroundColor());
-  }
+  drawDot(getBackgroundColor());
 }
 
 const bool RadioButton::toggle()

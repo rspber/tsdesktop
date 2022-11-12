@@ -56,8 +56,9 @@ public:
   GFXChar* character(int16_t x1, int16_t y1, char c, rgb_t color = WHITE);
   GFXTextLine* textLine(int16_t x1, int16_t y1, const char* text, rgb_t color = WHITE);
 
+  virtual void innerDraw(const bool redraw);
+
   void drawAll(bool redraw = true);
-  virtual void draw(const bool redraw);
 
 private:
   GFXObject** list = NULL;

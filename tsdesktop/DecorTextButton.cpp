@@ -196,9 +196,9 @@ void DecorTextButton::setDecorInActiveColor(const rgb_t aInActiveColor)
   }
 }
 
-void DecorTextButton::draw(const bool redraw)
+void DecorTextButton::innerDraw(const bool redraw)
 {
-  TextButton::draw(redraw);
+  TextButton::innerDraw(redraw);
   drawDecor();
 }
 
