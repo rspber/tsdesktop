@@ -209,7 +209,7 @@ void setup() {
   calc_row(&r0FSet);
 
   div01.setAlignClientHoriz();
-  div01.setAlignClientVert();   // comment to scroll on 320x240
+  div01.setAlignClientVert();   // comment it to scroll on 320x240
   div01.setTransparent(true);
   desktop.setBackground(CBG_COLOR);
 //  desktop.setOrientation(VERTICAL, BTN_DIST);
