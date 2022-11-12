@@ -305,11 +305,6 @@ public:
     rgb_t aBorderColor = WHITE)
     : Container(aType, aLeft, aTop, aWidth, aHeight), backgroundColor(aBackgroundColor), borderColor(aBorderColor)
   {
-    marginLeft = 2;
-    marginTop = 2;
-    marginRight = 2;
-    marginBottom = 2;
-
     alignCenterHoriz = true;
     alignCenterVert = true;
     alignLeft = true;
@@ -401,7 +396,12 @@ public:
     : Button(TYPE_TEXTBUTTON, aLeft, aTop, aWidth, aHeight, aBackgroundColor, aBorderColor),
     textp(aText), textColor(aTextColor)
   {
-    disabled = true;
+    marginLeft = 2;
+    marginTop = 2;
+    marginRight = 2;
+    marginBottom = 2;
+
+	disabled = true;
   }
 
   TextButton(
@@ -431,6 +431,10 @@ private:
     : Button(aType, -1, -1, ALIGN_COMPACT, ALIGN_COMPACT, aBackgroundColor, aBorderColor),
     textp(aText), textColor(aTextColor)
   {
+    marginLeft = 2;
+    marginTop = 2;
+    marginRight = 2;
+    marginBottom = 2;
   }
 
 public:
