@@ -10,6 +10,7 @@
 #include <Display.h>
 #include <Touch.h>
 #include <TSDesktop.h>
+#include <GFXButton.h>
 #include <Fonts/FreeSans9pt7b.h>
 
 #define ROTATION ROTATION_HLR
@@ -20,12 +21,14 @@ bool screenEnabled = false;
 Touch touch;
 
 TextButton sel01;
+GFXButton btn01;
 
 Container* SELT[]{
-  &sel01
+  &sel01,
+  &btn01
 };
 
-FieldSet board(VERTICAL, 3, 7, 7, SELT, 1, BLUE);
+FieldSet board(VERTICAL, 3, 7, 7, SELT, 2, BLUE);
 
 TextButton tx01;
 TextButton tx02;
@@ -86,11 +89,20 @@ Container* TBT[]{
   &tx41, &tx42, &tx43, &tx44, &tx45, &tx46, &tx47, &tx48, &tx49, &tx50
 };
 
-FieldSet menu(VERTICAL, 3, 7, 7, TBT, 50, BLUE);
+FieldSet menu(VERTICAL, 3, 7, 7, TBT, 50, ORANGE);
+
+TextButton gap01;
+
+Container* T2T[]{
+  &gap01,
+  &menu
+};
+
+FieldSet gmenu(VERTICAL, 3, 7, 7, T2T, 2, GREEN);
 
 Container* TMT[]{
   &board,
-  &menu
+  &gmenu
 };
 
 FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, TMT, 2, AQUA);
@@ -179,8 +191,14 @@ void setup()   {
   sel01.setAlignClientHoriz();
   sel01.setFontSize(2);
 
+  btn01.setSize(200, 300);
+  btn01.setBackground(BROWN);
+
   board.setAlignClient();
   board.setAlignTop(true);
+
+  gap01.setText("Menu");
+  gmenu.setAlignClientVert();
 
   desktop.setMargin(10);
   desktop.setOrientation(HORIZONTAL, 10);

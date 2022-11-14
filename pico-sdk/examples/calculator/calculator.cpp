@@ -83,17 +83,17 @@ Container* R0T[]{
 
 FieldSet r0FSet(HORIZONTAL, BTN_DIST, 0, 0, R0T, 5);
 
+Container* VCT[]{
+  &r4FSet, &r3FSet, &r2FSet, &r1FSet, &r0FSet
+};
+
+FieldSet div01(VERTICAL, BTN_DIST, 0, 0, VCT, 5);
+
 Container* CT[]{
-  &operBtn, &sumBtn, &r4FSet, &r3FSet, &r2FSet, &r1FSet, &r0FSet
+  &operBtn, &sumBtn, &div01
 };
 
-FieldSet div01(VERTICAL, BTN_DIST, 0, 0, CT, 7);
-
-Container* CTT[]{
-  &div01
-};
-
-FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, CTT, 1);
+FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, CT, 3);
 
 // ----------------------------------------------------------------
 
@@ -208,11 +208,23 @@ void setup() {
   calc_row(&r1FSet);
   calc_row(&r0FSet);
 
-  div01.setAlignClientHoriz();
-  div01.setAlignClientVert();   // comment it to scroll on 320x240
+//  r4FSet.setAlignClientHoriz();
+//  r3FSet.setAlignClientHoriz();
+//  r2FSet.setAlignClientHoriz();
+//  r1FSet.setAlignClientHoriz();
+//  r0FSet.setAlignClientHoriz();
+
+  r4FSet.setBorderSize(0);
+  r3FSet.setBorderSize(0);
+  r2FSet.setBorderSize(0);
+  r1FSet.setBorderSize(0);
+  r0FSet.setBorderSize(0);
+
+//  div01.setAlignClient();
   div01.setTransparent(true);
+  div01.setBorderSize(0);
   desktop.setBackground(CBG_COLOR);
-//  desktop.setOrientation(VERTICAL, BTN_DIST);
+  desktop.setOrientation(VERTICAL, 4);
 
   screenEnabled = true;
 

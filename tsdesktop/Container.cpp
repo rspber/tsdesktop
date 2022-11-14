@@ -335,7 +335,7 @@ bool Container::setUpdHeight(const int16_t aHeight)
 
 const int16_t Container::getAbsOuterLeft()
 {
-  return (parent ? parent->getAbsInnerLeft(0) : 0) + updLeft;
+  return updLeft + (parent ? parent->getAbsInnerLeft(0) : 0);
 }
 
 const int16_t Container::getAbsInnerLeft(const int16_t pos)
@@ -345,7 +345,7 @@ const int16_t Container::getAbsInnerLeft(const int16_t pos)
 
 const int16_t Container::getAbsOuterTop()
 {
-  return (parent ? parent->getAbsInnerTop(0) : 0) + updTop;
+  return updTop + (parent ? parent->getAbsInnerTop(0) : 0);
 }
 
 const int16_t Container::getAbsInnerTop(const int16_t pos)
@@ -353,33 +353,43 @@ const int16_t Container::getAbsInnerTop(const int16_t pos)
   return getAbsOuterTop() + marginTop - offsetTop + pos;
 }
 
-const int16_t Container::getAbsInnerRight(int16_t r, int16_t m2)
+const int16_t Container::getClipLeft(int16_t l)
+{
+  return (parent ? parent->getClipLeft(updLeft) : 0) + ((l -= offsetLeft) > 0 ? l : 0) + marginLeft;
+}
+
+const int16_t Container::getClipTop(int16_t t)
+{
+  return (parent ? parent->getClipTop(updTop) : 0) + ((t -= offsetTop) > 0 ? t : 0) + marginTop ;
+}
+
+const int16_t Container::getClipRight(int16_t r, int16_t m2)
 {
   int16_t m1 = marginLeft + marginRight;
   int16_t i = updWidth - m1 - m2 - offsetLeft;
   if( r > i ) {
      r = i;
   }
-  return updLeft + marginLeft + (parent ? parent->getAbsInnerRight(r, m1) : r);
+  return updLeft + marginLeft + (parent ? parent->getClipRight(r, updLeft + m1 + m2) : r);
 }
 
-const int16_t Container::getAbsInnerBottom(int16_t b, int16_t m2)
+const int16_t Container::getClipBottom(int16_t b, int16_t m2)
 {
   int16_t m1 = marginTop + marginBottom;
   int16_t i = updHeight - m1 - m2 - offsetTop;
   if( b > i ) {
     b = i;
   }
-  return updTop + marginTop + (parent ? parent->getAbsInnerBottom(b, m1) : b);
+  return updTop + marginTop + (parent ? parent->getClipBottom(b, updTop + m1 + m2) : b);
 }
 
 clip_t* Container::getInnerClip(clip_t& clip)
 {
-  clip.x1 = getAbsInnerLeft(offsetLeft);
-  clip.y1 = getAbsInnerTop(offsetTop);
-  int i = getAbsInnerRight(0x7fff, 0);
+  clip.x1 = getClipLeft(0);
+  clip.y1 = getClipTop(0);
+  int i = getClipRight(0x7fff, 0);
   clip.x2 = i >= 0 ? i : 0;
-      i = getAbsInnerBottom(0x7fff, 0);
+      i = getClipBottom(0x7fff, 0);
   clip.y2 = i >= 0 ? i : 0;
   return &clip;
 }
@@ -405,6 +415,8 @@ clip_t* Container::getOuterClip(clip_t& clip)
   clip.y1 -= marginTop;
   clip.x2 += marginRight;
   clip.y2 += marginBottom;
+  pageWidth = clip.x2 - clip.x1;
+  pageHeight = clip.y2 - clip.y1;
   return &clip;
 }
 
@@ -428,12 +440,6 @@ void Container::setChanged()
 
 const rgb_t Container::getBackgroundColor()
 {
-  if (type > 0) {   // Button
-    Button* my = static_cast<Button*>(this);
-    if (!my->transparent && my->backgroundColor != NO_BACKGROUND_COLOR) {
-      return my->backgroundColor;
-    }
-  }
   if (parent) {
     return parent->getBackgroundColor();
   }
@@ -443,10 +449,12 @@ const rgb_t Container::getBackgroundColor()
 const int16_t Container::covers(const int16_t posX, const int16_t posY)
 {
   if (getAbsVisible()) {
-    if (posX >= updLeft - borderSize && posX < updLeft + updWidth + borderSize &&
-        posY >= updTop - borderSize && posY < updTop + updHeight + borderSize)
+    int16_t w = pageWidth > 0 ? pageWidth : updWidth;
+    int16_t h = pageHeight > 0 ? pageHeight : updHeight;
+    if (posX >= updLeft - borderSize && posX < updLeft + w + borderSize &&
+        posY >= updTop - borderSize && posY < updTop + h + borderSize)
     {
-      return updLeft + updWidth + borderSize - posX;
+      return updLeft + w + borderSize - posX;
     }
   }
   return 0;
@@ -457,7 +465,9 @@ Container* Container::pressed(const int16_t xScreen, const int16_t yScreen)
   if (!disabled && getAbsVisible()) {
     int16_t absLeft = getAbsOuterLeft();
     int16_t absTop = getAbsOuterTop();
-    bool pressed = (xScreen > absLeft && xScreen < absLeft + updWidth) && (yScreen > absTop && yScreen < absTop + updHeight);
+    int16_t absRight = getClipRight(0x7fff, 0) + marginRight;
+    int16_t absBottom = getClipBottom(0x7fff, 0) + marginBottom;
+    bool pressed = (xScreen >= absLeft && xScreen < absRight) && (yScreen >= absTop && yScreen < absBottom);
     if (pressed) {
       int16_t posX = xScreen - absLeft;
       int16_t posY = yScreen - absTop;

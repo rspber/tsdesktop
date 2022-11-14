@@ -176,8 +176,10 @@ public:
   const int16_t getUpdWidth() { return updWidth; }
   const int16_t getUpdHeight() { return updHeight; }
 
-  const int16_t getAbsOuterLeft();   // absolute position of container
-  const int16_t getAbsOuterTop();   // absolute position of container
+  // absolute position of container - offsetLeft
+  const int16_t getAbsOuterLeft();
+  // absolute position of container - offsetTop
+  const int16_t getAbsOuterTop();
 
   // absolute position in container + marginLeft - offsetLeft
   virtual const int16_t getAbsInnerLeft(const int16_t pos);
@@ -203,10 +205,10 @@ public:
   // default is 100
   void setClickHighlightDelay(const int16_t aClickHighlightDelay) { clickHighlightDelay = aClickHighlightDelay; }
 
-  const rgb_t getBackgroundColor();    // or NO_BACKGROUND_COLOR
+  virtual const rgb_t getBackgroundColor();    // or NO_BACKGROUND_COLOR
   const rgb_t getBackground() { return getBackgroundColor(); }
 
-  const int8_t getRadius() { return radius; }
+  virtual const bool isRadius() { return false; }
   const uint8_t getBorderSize() { return borderSize; }
 
   const int16_t covers(const int16_t posX, const int16_t posY);
@@ -222,8 +224,16 @@ public:
   void disableScroll(const uint8_t scrollBtn) { scroll_btns &= ~scrollBtn; }
   void enableScroll(const uint8_t scrollBtn) { scroll_btns |= scrollBtn; }
 
-  const int16_t getAbsInnerRight(int16_t r, int16_t m2);
-  const int16_t getAbsInnerBottom(int16_t b, int16_t m2);
+  const int16_t getClipLeft(int16_t l);
+  const int16_t getClipTop(int16_t t);
+  const int16_t getClipRight(int16_t r, int16_t m2);
+  const int16_t getClipBottom(int16_t b, int16_t m2);
+
+  const int16_t getOffsetLeft() { return offsetLeft; }
+  const int16_t getOffsetTop() { return offsetTop; }
+
+  const int16_t getPageWidth() { return pageWidth; }
+  const int16_t getPageHeight() { return pageHeight; }
 
   clip_t* getInnerClip(clip_t& clip);
   clip_t* getOuterClip(clip_t& clip);
@@ -249,6 +259,8 @@ private:
   bool setUpdWidth(const int16_t aWidth);
   bool setUpdHeight(const int16_t aHeight);
 
+  int16_t pageWidth, pageHeight;  // set by getOuterClip
+
   int16_t updLeft, updTop, updWidth, updHeight;
   bool updated = false;
 
@@ -273,7 +285,6 @@ private:
   bool disabled = true;
   //    bool absolutePos = false;
   uint8_t borderSize = 1;
-  int8_t radius = 0;
 
   int16_t offsetLeft = 0;
   int16_t offsetTop = 0;
@@ -337,7 +348,11 @@ public:
 
   const bool getTransparent() { return transparent; }
 
+  const int8_t getRadius() { return radius; }
   const rgb_t getBorderColor() { return borderColor; }
+  virtual const bool isRadius() { return radius > 0; }
+
+  virtual const rgb_t getBackgroundColor();    // or NO_BACKGROUND_COLOR
 
   virtual void innerDraw(const bool redraw) = 0;
   virtual void draw(const bool redraw);
@@ -364,6 +379,7 @@ private:
 
 private:
   bool transparent = false;
+  int8_t radius = 0;
   rgb_t backgroundColor = 0;
   rgb_t borderColor = 0;
   rgb_t clickHighlightColor = RED;
@@ -799,6 +815,7 @@ public:
 
   virtual void drawBackground();
 
+  virtual const bool isRadius();
   virtual void innerDraw(const bool redraw);
 
   virtual Container* pressed(const int16_t xScreen, const int16_t yScreen);

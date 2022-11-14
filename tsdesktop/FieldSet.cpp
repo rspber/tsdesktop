@@ -363,6 +363,29 @@ void FieldSet::setNotWasDrawn()
   }
 }
 
+const bool FieldSet::isRadius()
+{
+  if (Button::isRadius()) {
+    return true;
+  }
+  for (int16_t i = len; --i >= 0; ) {
+    Container* b = children[i];
+    if (b->getAbsVisible()) {
+      if (b->isRadius()) {
+        if (
+          b->getUpdLeft() - b->getBorderSize() < 0 ||
+          b->getUpdTop() - b->getBorderSize() < 0 ||
+          b->getUpdLeft() + b->getUpdWidth() + b->getBorderSize() >= updWidth ||
+          b->getUpdTop() + b->getUpdHeight() + b->getBorderSize() >= updHeight)
+        {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
 void FieldSet::drawBackground()
 {
   backgroundDrawn = false;
@@ -373,11 +396,11 @@ void FieldSet::drawBackground()
   for (int16_t i = len; --i >= 0; ) {
     Container* b = children[i];
     if (b->getAbsVisible()) {
-      if (b->getRadius() > 0) {
+      if (b->isRadius()) {
         backgroundDrawn = true;
         break;
       }
-      int16_t a = b->getUpdWidth() * b->getUpdHeight();
+      int32_t a = b->getUpdWidth() * b->getUpdHeight();
       area += a;
     }
   }

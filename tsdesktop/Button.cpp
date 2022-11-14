@@ -95,6 +95,15 @@ void Button::drawBorder()
   drawBorder(borderColor);
 }
 
+const rgb_t Button::getBackgroundColor()
+{
+  if (!transparent && backgroundColor != NO_BACKGROUND_COLOR) {
+    return backgroundColor;
+  }
+  return Container::getBackgroundColor();
+}
+
+
 void Button::drawBackground(const rgb_t aBackgroundColor)
 {
   if (aBackgroundColor != NO_BACKGROUND_COLOR) {
