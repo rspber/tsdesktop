@@ -474,9 +474,11 @@ void TSD_ILI9341::displayOn()
 void TSD_ILI9341::drawPixel(clip_t* clip, const int16_t x, const int16_t y, const rgb_t color)
 {
   if (x >= clip->x1 && y >= clip->y1 && x < clip->x2 && y < clip->y2) {
+    startWrite();
     setAddrWindow(x, y, 1, 1);
     uint8_t buf[8];
     sendMDTData(1, mdt_color(buf, color, 1));
+    endWrite();
   }
 }
 
@@ -490,8 +492,10 @@ void TSD_ILI9341::drawFastHLine(clip_t* clip, int16_t x, const int16_t y, int16_
     w = clip->x2 - x;
   }
   if (y >= clip->y1 && y < clip->y2 && w > 0) {
+    startWrite();
     setAddrWindow(x, y, w, 1);
     sendMDTData(w, buffer_mdt_color(color, w));
+    endWrite();
   }
 }
 
@@ -505,8 +509,10 @@ void TSD_ILI9341::drawFastVLine(clip_t* clip, const int16_t x, int16_t y, int16_
     h = clip->y2 - y;
   }
   if (x >= clip->x1 && x < clip->x2 && h > 0) {
+    startWrite();
     setAddrWindow(x, y, 1, h);
     sendMDTData(h, buffer_mdt_color(color, h));
+    endWrite();
   }
 }
 
