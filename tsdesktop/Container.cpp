@@ -331,12 +331,12 @@ const int16_t Container::getAbsInnerTop(const int16_t pos)
 
 const int16_t Container::getClipLeft(int16_t l)
 {
-  return (parent ? parent->getClipLeft(updLeft) : 0) + ((l -= offsetLeft) > 0 ? l : 0) + marginLeft;
+  return (parent ? parent->getClipLeft(updLeft) : updLeft) + ((l -= offsetLeft) > 0 ? l : 0) + marginLeft;
 }
 
 const int16_t Container::getClipTop(int16_t t)
 {
-  return (parent ? parent->getClipTop(updTop) : 0) + ((t -= offsetTop) > 0 ? t : 0) + marginTop ;
+  return (parent ? parent->getClipTop(updTop) : updTop) + ((t -= offsetTop) > 0 ? t : 0) + marginTop ;
 }
 
 const int16_t Container::getClipRight(int16_t r, int16_t m2)
@@ -376,10 +376,10 @@ clip_t* Container::getClip(clip_t& clip)
     return parent->getInnerClip(clip);
   }
   else {
-    clip.x1 = 0;
-    clip.y1 = 0;
-    clip.x2 = updWidth;
-    clip.y2 = updHeight;
+    clip.x1 = updLeft;
+    clip.y1 = updTop;
+    clip.x2 = updLeft + updWidth;
+    clip.y2 = updTop + updHeight;
     return &clip;
   }
 }

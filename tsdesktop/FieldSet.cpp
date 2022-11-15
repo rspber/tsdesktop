@@ -315,11 +315,12 @@ void FieldSet::updateCoordVertical()
 void FieldSet::updateCoord(const bool recalc)
 {
   if (!getParent()) {
+    int16_t maxw = display.width() - updLeft;
     switch (getOrgWidth()) {
       case ALIGN_CLIENT:
-        if (updWidth != display.width()) {
+        if (updWidth != maxw) {
           hide();
-          updWidth = display.width();
+          updWidth = maxw;
           setChanged();
         }
         break;
@@ -327,18 +328,18 @@ void FieldSet::updateCoord(const bool recalc)
           // it should be placed on transparent client align desktop
         break;
       default:
-        int16_t maxw = display.width() - updLeft;
         if (updWidth > maxw) {
           hide();
           updWidth = maxw;
           setChanged();
         }
     }
+    int16_t maxh = display.height() - updTop;
     switch (getOrgHeight()) {
       case ALIGN_CLIENT:
-        if (updHeight != display.height()) {
+        if (updHeight != maxh) {
           hide();
-          updHeight = display.height();
+          updHeight = maxh;
           setChanged();
         }
         break;
@@ -346,7 +347,6 @@ void FieldSet::updateCoord(const bool recalc)
           // it should be placed on transparent client align desktop
         break;
       default:
-        int16_t maxh = display.height() - updTop;
         if (updHeight > maxh) {
           hide();
           updHeight = maxh;
