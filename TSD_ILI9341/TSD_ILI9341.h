@@ -11,19 +11,13 @@
 
 #pragma once
 
-#include <TSD_GFX.h>
+#include <TSD_SCREEN.h>
 #include <Setup.h>
 
-class TSD_ILI9341 : public TSD_GFX {
+class TSD_ILI9341 : public TSD_SCREEN {
 public:
   TSD_ILI9341(const int16_t w, const int16_t h)
-  {
-    _width = WIDTH = w >= 0 ? w : 0;
-    _height = HEIGHT = h >= 0 ? h : 0;
-  }
-
-  const int16_t width() { return _width; }
-  const int16_t height() { return _height; }
+   : TSD_SCREEN(w, h) {}
 
   void begin(const int16_t RST = -1);
 
@@ -32,8 +26,6 @@ public:
 
   void hardReset();
   void reset();
-
-  void fillScreen(const rgb_t color = BLACK);
 
   void scrollTo(int16_t y);
   void setScrollMargins(int16_t top, int16_t bottom);
@@ -72,9 +64,5 @@ protected:
   void fill_vrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color);
 
 private:
-  int16_t WIDTH, HEIGHT;
-  int16_t _width;       ///< Display width as modified by rotation
-  int16_t _height;      ///< Display height as modified by rotation
-
   int16_t _RST;
 };

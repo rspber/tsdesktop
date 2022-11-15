@@ -257,7 +257,7 @@ void Container::setAlignCompactVert()
 
 void Container::setUpdLeft(const int16_t aLeft)
 {
-  if (orgLeft < 0 ) {
+  if (parent && orgLeft < 0 ) {
     int16_t i = aLeft > 0 ? aLeft : 0;
     if (i != updLeft) {
       hide();
@@ -268,7 +268,7 @@ void Container::setUpdLeft(const int16_t aLeft)
 
 void Container::setUpdTop(const int16_t aTop)
 {
-  if (orgTop < 0 ) {
+  if (parent && orgTop < 0 ) {
     int16_t i = aTop > 0 ? aTop : 0;
     if (i != updTop) {
       hide();
@@ -285,7 +285,7 @@ void Container::setUpdPos(const int16_t aLeft, const int16_t aTop)
 
 bool Container::setUpdWidth(const int16_t aWidth)
 {
-  if (orgWidth < 0 ) {
+  if (parent && orgWidth < 0 ) {
     int16_t w = aWidth > 0 ? aWidth : 0;
     if (w != updWidth) {
       hide();
@@ -298,7 +298,7 @@ bool Container::setUpdWidth(const int16_t aWidth)
 
 bool Container::setUpdHeight(const int16_t aHeight)
 {
-  if (orgHeight < 0 ) {
+  if (parent && orgHeight < 0 ) {
     int16_t h = aHeight > 0 ? aHeight : 0;
     if (h != updHeight) {
       hide();

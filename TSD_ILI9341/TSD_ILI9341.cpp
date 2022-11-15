@@ -318,26 +318,22 @@ void TSD_ILI9341::setRotation(const int8_t rotation) {
   case 0:
     m = 0x40 | (BGR << 3); // MX
     g = 0x01 | (BGR << 5);
-    _width = WIDTH;
-    _height = HEIGHT;
+    setSize(getWIDTH(), getHEIGHT());
     break;
   case 1:
     m = 0x20 | (BGR << 3); // MV
     g = 0x02 | (BGR << 5);
-    _width = HEIGHT;
-    _height = WIDTH;
+    setSize(getHEIGHT(), getWIDTH());
     break;
   case 2:
     m = 0x80 | (BGR << 3); // MY
     g = 0x08 | (BGR << 5);
-    _width = WIDTH;
-    _height = HEIGHT;
+    setSize(getWIDTH(), getHEIGHT());
     break;
   case 3:
     m = 0xe0 | (BGR << 3); // MX | MY | MV
     g = 0x0b | (BGR << 5);
-    _width = HEIGHT;
-    _height = WIDTH;
+    setSize(getHEIGHT(), getWIDTH());
     break;
   }
   beginTransaction(SETUP_SPEED);
@@ -365,19 +361,6 @@ void TSD_ILI9341::invertDisplay(bool invert)
 
 /**************************************************************************/
 /*!
-   @brief    Fill the screen completely with one color. Update in subclasses if
-   desired!
-    @param    color 16-bit 5-6-5 Color to fill with
-*/
-/**************************************************************************/
-void TSD_ILI9341::fillScreen(const rgb_t color)
-{
-  clip_t clip{0, 0, _width, _height};
-  fillRect(&clip, 0, 0, _width, _height, color);
-}
-
-/**************************************************************************/
-/*!
    @brief   Scroll display memory
     @param   y How many pixels to scroll display by
 */
@@ -400,8 +383,8 @@ void TSD_ILI9341::scrollTo(int16_t y) {
  /**************************************************************************/
 void TSD_ILI9341::setScrollMargins(int16_t top, int16_t bottom) {
   // TFA+VSA+BFA must equal 320
-  if (top + bottom <= HEIGHT) {
-    uint16_t middle = HEIGHT - (top + bottom);
+  if (top + bottom <= getHEIGHT()) {
+    uint16_t middle = getHEIGHT() - (top + bottom);
     uint8_t data[6];
     data[0] = top >> 8;
     data[1] = top & 0xff;

@@ -14,7 +14,6 @@ target_sources(desktop INTERFACE
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/Scroller.cpp
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/FieldSet.cpp
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/GFXObject.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/GFXStd.cpp
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/GFXButton.cpp
 )
 

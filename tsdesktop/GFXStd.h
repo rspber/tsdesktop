@@ -8,6 +8,7 @@
 #pragma once
 
 #include "GFXObject.h"
+#include "Display.h"
 
 /// @GFXPixel
 
@@ -16,7 +17,10 @@ public:
   GFXPixel(Button* parent, int16_t ax1, int16_t ay1, rgb_t color)
    : GFXObject(parent, color), x1(ax1), y1(ay1)  {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    display.drawPixel(clip, x + x1, y + y1, color);
+  }
 
   int16_t x1, y1;
 };
@@ -29,7 +33,10 @@ public:
   GFXLine(Button* parent, int16_t ax1, int16_t ay1, int16_t ax2, int16_t ay2, rgb_t color, int16_t ats)
    : GFXObject(parent, color), x1(ax1), y1(ay1), x2(ax2), y2(ay2), ts(ats)  {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    display.drawLine(clip, x + x1, y + y1, x + x2, y + y2, color, ts, mode);
+  }
 
   int16_t x1, y1, x2, y2, ts;
   uint8_t mode = 0;   // 0 flat, 1 cut
@@ -43,7 +50,10 @@ public:
   GFXRect(Button* parent, int16_t ax1, int16_t ay1, int16_t aw, int16_t ah, rgb_t color, int16_t ats)
    : GFXObject(parent, color), x1(ax1), y1(ay1), w(aw), h(ah), ts(ats)  {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    display.drawRect(clip, x + x1, y + y1, w, h, color, ts);
+  }
 
   int16_t x1, y1, w, h, ts;
 };
@@ -56,7 +66,10 @@ public:
   GFXRoundRect(Button* parent, int16_t x1, int16_t y1, int16_t w, int16_t h, int16_t aradius, rgb_t color, int16_t ts)
    : GFXRect(parent, x1, y1, w, h, color, ts), radius(aradius)  {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    display.drawRoundRect(clip, x + x1, y + y1, w, h, radius, color, ts);
+  }
 
   int16_t radius;
 };
@@ -69,7 +82,10 @@ public:
   GFXFillRect(Button* parent, int16_t x1, int16_t y1, int16_t w, int16_t h, rgb_t color)
    : GFXRect(parent, x1, y1, w, h, color, 0)  {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    display.fillRect(clip, x + x1, y + y1, w, h, color);
+  }
 };
 
 
@@ -80,7 +96,10 @@ public:
   GFXFillRoundRect(Button* parent, int16_t x1, int16_t y1, int16_t w, int16_t h, int16_t radius, rgb_t color)
    : GFXRoundRect(parent, x1, y1, w, h, radius, color, 0)  {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    display.fillRoundRect(clip, x + x1, y + y1, w, h, radius, color);
+  }
 };
 
 
@@ -91,7 +110,10 @@ public:
   GFXCircle(Button* parent, int16_t ax0, int16_t ay0, int16_t ar, rgb_t color, int16_t ats)
    : GFXObject(parent, color), x0(ax0), y0(ay0), r(ar), ts(ats)  {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    display.drawCircle(clip, x + x0, y + y0, r, color, ts);
+  }
 
   int16_t x0, y0, r, ts;
 };
@@ -104,7 +126,10 @@ public:
   GFXCircleFragment(Button* parent, int16_t x0, int16_t y0, int16_t r, uint8_t afragment, rgb_t color, int16_t ts)
    : GFXCircle(parent, x0, y0, r, color, ts), fragment(afragment) {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    display.drawCircleFragment(clip, x + x0, y + y0, r, fragment, color, ts);
+  }
 
   int8_t fragment;
 };
@@ -117,7 +142,10 @@ public:
   GFXFillCircle(Button* parent, int16_t x0, int16_t y0, int16_t r, rgb_t color)
    : GFXCircle(parent, x0, y0, r, color, 0)  {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    display.fillCircle(clip, x + x0, y + y0, r, color);
+  }
 };
 
 
@@ -128,7 +156,10 @@ public:
   GFXFillCircleFragment(Button* parent, int16_t x0, int16_t y0, int16_t r, uint8_t fragment, int16_t adelta, rgb_t color)
    : GFXCircleFragment(parent, x0, y0, r, fragment, color, 0), delta(adelta) {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    display.fillCircleFragment(clip, x + x0, y + y0, r, fragment, delta, color);
+  }
 
   int16_t delta;
 };
@@ -141,7 +172,10 @@ public:
   GFXTriangle(Button* parent, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t ax3, int16_t ay3, rgb_t color, int16_t ts)
    : GFXLine(parent, x1, y1, x2, y2, color, ts), x3(ax3), y3(ay3)  {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    display.drawTriangle(clip, x + x1, y + y1, x + x2, y + y2, x + x3, y + y3, color, ts, mode);
+  }
 
   int16_t x3, y3;
 };
@@ -154,7 +188,11 @@ public:
   GFXFillTriangle(Button* parent, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t x3, int16_t y3, rgb_t color)
    : GFXTriangle(parent, x1, y1, x2, y2, x3, y3, color, 0)  {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    display.fillTriangle(clip, x + x1, y + y1, x + x2, y + y2, x + x3, y + y3, color);
+  }
+
 };
 
 
@@ -179,7 +217,15 @@ public:
   GFXGrayscaleBitmap(Button* parent, int16_t x1, int16_t y1, const uint8_t* bitmap, int16_t w, int16_t h)
    : GFXGrayscaleBitmap(parent, x1, y1, bitmap, NULL, w, h) {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    if (mask) {
+      display.drawGrayscaleBitmap(clip, x + x1, y + y1, bitmap, mask, w, h);
+    }
+    else {
+      display.drawGrayscaleBitmap(clip, x + x1, y + y1, bitmap, w, h);
+    }
+  }
 
   const uint8_t* bitmap;
   const uint8_t* mask;
@@ -196,7 +242,15 @@ public:
   GFXBitmap(Button* parent, int16_t x1, int16_t y1, const uint8_t* bitmap, int16_t w, int16_t h, rgb_t color)
    : GFXBitmap(parent, x1, y1, bitmap, w, h, color, 1)  {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    if (bg != 1) {
+      display.drawBitmap(clip, x + x1, y + y1, bitmap, w, h, color, bg);
+    }
+    else {
+      display.drawBitmap(clip, x + x1, y + y1, bitmap, w, h, color);
+    }
+  }
 
   const uint8_t* bitmap;
   rgb_t color, bg;
@@ -213,7 +267,15 @@ public:
   GFXRGBBitmap(Button* parent, int16_t x1, int16_t y1, const rgb_t* bitmap, int16_t w, int16_t h)
    : GFXRGBBitmap(parent, x1, y1, bitmap, NULL, w, h) {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    if (mask) {
+      display.drawRGBBitmap(clip, x + x1, y + y1, bitmap, mask, w, h);
+    }
+    else {
+      display.drawRGBBitmap(clip, x + x1, y + y1, bitmap, w, h);
+    }
+  }
 
   const rgb_t* bitmap;
   const uint8_t* mask;
@@ -268,7 +330,11 @@ public:
   GFXChar(Button* parent, int16_t x1, int16_t y1, char ac, rgb_t color = WHITE)
    : GFXCursorFontColor(parent, x1, y1, color), c(ac) {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    cursor_t cursor{(int16_t)(x + x1), (int16_t)(y + y1)};
+    display.drawChar(clip, &cursor, &font, c, color);
+  }
 
   char c;
 };
@@ -281,7 +347,11 @@ public:
   GFXTextLine(Button* parent, int16_t x1, int16_t y1, const char* atext, rgb_t color = WHITE)
    : GFXCursorFontColor(parent, x1, y1, color), text(atext) {}
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    cursor_t cursor{(int16_t)(x + x1), (int16_t)(y + y1)};
+    display.drawTextLine(clip, &cursor, &font, text, color);
+  }
 
   const char* text;
 };
