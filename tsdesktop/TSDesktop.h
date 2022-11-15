@@ -87,7 +87,6 @@ public:
   //
   Container* getParent() { return parent; }
 
-  const uint8_t getDeep() { return deep; }
   const CONTAINER_TYPE getType() { return type; }
 
   void setVisible(const bool aVisible);
@@ -247,8 +246,6 @@ public:
 private:
   void setParent(const Container* aParent);
 
-  virtual void setDeep(const uint8_t aDeep) { deep = aDeep; }
-
   virtual void updCompactWidth(const bool recalc) {}
   virtual void updCompactHeight(const bool recalc) {}
   virtual void updateCoord(const bool recalc) { updated = true; }
@@ -275,7 +272,6 @@ private:
   const char* name = NULL;   // user defined
   Container* parent = NULL;
   const CONTAINER_TYPE type = TYPE_CONTAINER;
-  uint8_t deep = 0;
   int16_t orgLeft = 0, orgTop = 0;
   int16_t orgWidth = 0, orgHeight = 0;    // if < 0 : ALIGN_CLIENT, ALIGN_COMPACT
   uint8_t marginLeft = 0, marginTop = 0, marginRight = 0, marginBottom = 0;
@@ -765,7 +761,6 @@ public:
     for (int16_t i = len; --i >= 0; ) {
       children[i]->setParent(this);
     }
-    setDeep(0);
     disabled = true;
   }
 
@@ -831,8 +826,6 @@ private:
 
   void drawVisibleBackground();
   const int16_t innerCovers(const int16_t posX, const int16_t posY);
-
-  virtual void setDeep(const uint8_t aDeep);
 
   virtual void updCompactWidth(const bool recalc);
   virtual void updCompactHeight(const bool recalc);

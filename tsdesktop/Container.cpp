@@ -15,11 +15,7 @@
 
 void Container::setParent(const Container* aParent)
 {
-  if (aParent != parent) {
-    hide();
-    parent = (Container*)aParent;
-    setChanged();
-  }
+  parent = (Container*)aParent;
 }
 
 void Container::setVisible(const bool aVisible)
@@ -292,16 +288,6 @@ bool Container::setUpdWidth(const int16_t aWidth)
   if (orgWidth < 0 ) {
     int16_t w = aWidth > 0 ? aWidth : 0;
     if (w != updWidth) {
-      if (deep == 0 ) {
-        if (orgWidth == ALIGN_COMPACT) {
-          if (w > display.width()) {
-            w = display.width();
-          }
-        }
-        else {
-          return false;
-        }
-      }
       hide();
       updWidth = w;
       return true;
@@ -315,16 +301,6 @@ bool Container::setUpdHeight(const int16_t aHeight)
   if (orgHeight < 0 ) {
     int16_t h = aHeight > 0 ? aHeight : 0;
     if (h != updHeight) {
-      if (deep == 0 ) {
-        if (orgHeight == ALIGN_COMPACT) {
-          if (h > display.height()) {
-            h = display.height();
-          }
-        }
-        else {
-          return false;
-        }
-      }
       hide();
       updHeight = h;
       return true;

@@ -21,13 +21,6 @@ void FieldSet::setOrientation(const orient_t aOrientation, const int8_t aDistanc
   setChanged();
 }
 
-void FieldSet::setDeep(const uint8_t aDeep)
-{
-  deep = aDeep;
-  for (int16_t i = len; --i >= 0; ) {
-    children[i]->setDeep(aDeep + 1);
-  }
-}
 
 // updateCoordHorizontal
 
@@ -321,30 +314,48 @@ void FieldSet::updateCoordVertical()
 
 void FieldSet::updateCoord(const bool recalc)
 {
-  if (getDeep() == 0) {
-    if (getOrgWidth() == ALIGN_CLIENT) {
-      if (updWidth != display.width()) {
-        hide();
-        updWidth = display.width();
-        setChanged();
-      }
+  if (!getParent()) {
+    switch (getOrgWidth()) {
+      case ALIGN_CLIENT:
+        if (updWidth != display.width()) {
+          hide();
+          updWidth = display.width();
+          setChanged();
+        }
+        break;
+      case ALIGN_COMPACT: // has no effect as desktop
+          // it should be placed on transparent client align desktop
+        break;
+      default:
+        int16_t maxw = display.width() - updLeft;
+        if (updWidth > maxw) {
+          hide();
+          updWidth = maxw;
+          setChanged();
+        }
     }
-    if (getOrgHeight() == ALIGN_CLIENT) {
-      if (updHeight != display.height()) {
-        hide();
-        updHeight = display.height();
-        setChanged();
-      }
+    switch (getOrgHeight()) {
+      case ALIGN_CLIENT:
+        if (updHeight != display.height()) {
+          hide();
+          updHeight = display.height();
+          setChanged();
+        }
+        break;
+      case ALIGN_COMPACT: // has no effect as desktop
+          // it should be placed on transparent client align desktop
+        break;
+      default:
+        int16_t maxh = display.height() - updTop;
+        if (updHeight > maxh) {
+          hide();
+          updHeight = maxh;
+          setChanged();
+        }
     }
   }
   if (!updated || recalc) {
     updated = true;
-    if (getOrgWidth() == ALIGN_COMPACT) {
-      updCompactWidth(false);
-    }
-    if (getOrgHeight() == ALIGN_COMPACT) {
-      updCompactHeight(false);
-    }
     if (orientation.vertical) {
       updateCoordVertical();
     }
