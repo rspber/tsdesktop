@@ -428,19 +428,19 @@ void FieldSet::drawVisibleBackground()
 {
   rgb_t bg = getBackgroundColor();
   clip_t clip;
-  getOuterClip(clip);
+  getOuterClip(clip, true); // important setting pageWidth, pageHeight
   int16_t x = clip.x1;
   int16_t y = clip.y1;
-  int16_t w = (clip.x2 - clip.x1);
+  int16_t w = getPageWidth();
   int16_t iw = w < updWidth ? w - marginRight : w;
-  int16_t h = (clip.y2 - clip.y1);
-  int16_t ih = h < updHeight ? h - marginBottom : h;
+  int16_t h = getPageHeight();
+  int16_t jh = h < updHeight ? h - marginBottom : h;
 
   for (int16_t j = 0; j < h; ++j ) {
     int16_t i0 = 0;
     int16_t i = 0;
     while (i < w) {
-      if (i < iw && j < ih) {
+      if (i < iw && j < jh) {
         int16_t t = innerCovers(i - marginLeft + offsetLeft, j - marginTop + offsetTop);
         if (t) {
           if (i > i0) {

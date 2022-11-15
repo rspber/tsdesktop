@@ -236,7 +236,7 @@ public:
   const int16_t getPageHeight() { return pageHeight; }
 
   clip_t* getInnerClip(clip_t& clip);
-  clip_t* getOuterClip(clip_t& clip);
+  clip_t* getOuterClip(clip_t& clip, const bool setPages);
 
   clip_t* getClip(clip_t& clip);
 

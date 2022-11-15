@@ -335,7 +335,7 @@ bool Container::setUpdHeight(const int16_t aHeight)
 
 const int16_t Container::getAbsOuterLeft()
 {
-  return updLeft + (parent ? parent->getAbsInnerLeft(0) : 0);
+  return (parent ? parent->getAbsInnerLeft(0) : 0) + updLeft;
 }
 
 const int16_t Container::getAbsInnerLeft(const int16_t pos)
@@ -345,7 +345,7 @@ const int16_t Container::getAbsInnerLeft(const int16_t pos)
 
 const int16_t Container::getAbsOuterTop()
 {
-  return updTop + (parent ? parent->getAbsInnerTop(0) : 0);
+  return (parent ? parent->getAbsInnerTop(0) : 0) + updTop;
 }
 
 const int16_t Container::getAbsInnerTop(const int16_t pos)
@@ -408,15 +408,17 @@ clip_t* Container::getClip(clip_t& clip)
   }
 }
 
-clip_t* Container::getOuterClip(clip_t& clip)
+clip_t* Container::getOuterClip(clip_t& clip, const bool setPages)
 {
   getInnerClip(clip);
   clip.x1 -= marginLeft;
   clip.y1 -= marginTop;
   clip.x2 += marginRight;
   clip.y2 += marginBottom;
-  pageWidth = clip.x2 - clip.x1;
-  pageHeight = clip.y2 - clip.y1;
+  if (setPages) {
+    pageWidth = clip.x2 - clip.x1;
+    pageHeight = clip.y2 - clip.y1;
+  }
   return &clip;
 }
 
@@ -463,14 +465,12 @@ const int16_t Container::covers(const int16_t posX, const int16_t posY)
 Container* Container::pressed(const int16_t xScreen, const int16_t yScreen)
 {
   if (!disabled && getAbsVisible()) {
-    int16_t absLeft = getAbsOuterLeft();
-    int16_t absTop = getAbsOuterTop();
-    int16_t absRight = getClipRight(0x7fff, 0) + marginRight;
-    int16_t absBottom = getClipBottom(0x7fff, 0) + marginBottom;
-    bool pressed = (xScreen >= absLeft && xScreen < absRight) && (yScreen >= absTop && yScreen < absBottom);
+    clip_t clip;
+    getOuterClip(clip, false);
+    bool pressed = (xScreen >= clip.x1 && xScreen < clip.x2) && (yScreen >= clip.y1 && yScreen < clip.y2);
     if (pressed) {
-      int16_t posX = xScreen - absLeft;
-      int16_t posY = yScreen - absTop;
+      int16_t posX = xScreen - clip.x1;
+      int16_t posY = yScreen - clip.y1;
 
       clickEffect(posX, posY);
 

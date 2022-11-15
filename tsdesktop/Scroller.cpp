@@ -82,7 +82,7 @@ bool GoScroller::walk()
   int8_t ws = 16;
   int8_t hs = 16;
   clip_t clip;
-  c->getOuterClip(clip);
+  c->getOuterClip(clip, true); // important setting pageWidth, pageHeight
   int8_t mgr = 0;
   int16_t scrls = (btns & SCROLL_HOME ? 1 : 0) + (btns & SCROLL_PAGE ? 1 : 0) + (btns & SCROLL_STEP ? 1 : 0);
   if (c->getPageHeight() < c->getUpdHeight() && c->getPageHeight() >= 2 * scrls * (hs + 2)) {
@@ -263,7 +263,7 @@ const int16_t doScroll(const uint8_t tp, const bool up, int16_t offs, const int1
 void Container::scroll(const uint8_t tp, const bool up, const bool vert)
 {
   clip_t clip;
-  getClip(clip);
+  getOuterClip(clip, false);
   bool ok = false;
   if (vert) {
     int16_t offs = doScroll(tp, up, offsetTop, updHeight, clip.y2 - clip.y1);
