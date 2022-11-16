@@ -207,7 +207,7 @@ public:
   virtual const rgb_t getBackgroundColor();    // or NO_BACKGROUND_COLOR
   const rgb_t getBackground() { return getBackgroundColor(); }
 
-  virtual const bool isRadius() { return false; }
+  virtual const bool isBorderRadius() { return false; }
   const uint8_t getBorderSize() { return borderSize; }
 
   virtual Container* pressed(const int16_t xScreen, const int16_t yScreen);
@@ -339,7 +339,7 @@ public:
 
   const int8_t getRadius() { return radius; }
   const rgb_t getBorderColor() { return borderColor; }
-  virtual const bool isRadius() { return radius > 0; }
+  virtual const bool isBorderRadius() { return radius > 0 && borderSize > 0; }
 
   virtual const rgb_t getBackgroundColor();    // or NO_BACKGROUND_COLOR
 
@@ -803,7 +803,7 @@ public:
 
   virtual void drawBackground();
 
-  virtual const bool isRadius();
+  virtual const bool isBorderRadius();
   virtual void innerDraw(const bool redraw);
 
   virtual Container* pressed(const int16_t xScreen, const int16_t yScreen);

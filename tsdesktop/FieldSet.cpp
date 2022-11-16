@@ -374,25 +374,25 @@ void FieldSet::setNotWasDrawn()
   }
 }
 
-const bool FieldSet::isRadius()
+const bool FieldSet::isBorderRadius()
 {
-  if (Button::isRadius()) {
+  if (Button::isBorderRadius()) {
     return true;
   }
   for (int16_t i = len; --i >= 0; ) {
     Container* b = children[i];
     if (b->getAbsVisible()) {
-      if (b->isRadius()) {
-        int16_t le = b->getUpdLeft();
-        int16_t tp = b->getUpdTop();
+      if (b->isBorderRadius()) {
+        int16_t le = marginLeft + b->getUpdLeft();
+        int16_t tp = marginTop + b->getUpdTop();
         int16_t wh = b->getUpdWidth();
-		int16_t ht = b->getUpdHeight();
+        int16_t ht = b->getUpdHeight();
         uint8_t bs = b->getBorderSize();
         if (
           le - bs < 0 ||
           tp - bs < 0 ||
-          le + wh + bs > updWidth ||
-          tp + ht + bs > updHeight)
+          le + wh + bs >= updWidth ||
+          tp + ht + bs >= updHeight)
         {
           return true;
         }
@@ -405,13 +405,13 @@ const bool FieldSet::isRadius()
 void FieldSet::drawBackground()
 {
   backgroundDrawn = false;
-  if (radius > 0) {
+  if (isBorderRadius()) {
     backgroundDrawn = true;
   }
   for (int16_t i = len; --i >= 0; ) {
     Container* b = children[i];
     if (b->getAbsVisible()) {
-      if (b->isRadius()) {
+      if (b->isBorderRadius()) {
         backgroundDrawn = true;
         break;
       }

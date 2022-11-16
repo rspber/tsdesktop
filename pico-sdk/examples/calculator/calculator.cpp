@@ -25,6 +25,13 @@ Touch touch;
 
 Editable operBtn(80);
 TextButton sumBtn;
+
+Container* E0T[]{
+  &operBtn, &sumBtn
+};
+
+FieldSet e0FSet(VERTICAL, 10, 2, 2, E0T, 2);
+
 TextButton kDelBtn;
 TextButton kMvRBtn;
 TextButton kModBtn;
@@ -57,43 +64,43 @@ Container* R4T[]{
   &kClrBtn, &kMvLBtn, &kMvRBtn, &kDelBtn, &kBSBtn
 };
 
-FieldSet r4FSet(HORIZONTAL, BTN_DIST, 0, 0, R4T, 5);
+FieldSet r4FSet(HORIZONTAL, BTN_DIST, 2, 2, R4T, 5);
 
 Container* R3T[]{
   &kLParBtn, &k07Btn, &k08Btn, &k09Btn, &kDivBtn
 };
 
-FieldSet r3FSet(HORIZONTAL, BTN_DIST, 0, 0, R3T, 5);
+FieldSet r3FSet(HORIZONTAL, BTN_DIST, 2, 2, R3T, 5);
 
 Container* R2T[]{
   &kRParBtn, &k04Btn, &k05Btn, &k06Btn, &kMulBtn
 };
 
-FieldSet r2FSet(HORIZONTAL, BTN_DIST, 0, 0, R2T, 5);
+FieldSet r2FSet(HORIZONTAL, BTN_DIST, 2, 2, R2T, 5);
 
 Container* R1T[]{
   &kModBtn, &k01Btn, &k02Btn, &k03Btn, &kSubBtn
 };
 
-FieldSet r1FSet(HORIZONTAL, BTN_DIST, 0, 0, R1T, 5);
+FieldSet r1FSet(HORIZONTAL, BTN_DIST, 2, 2, R1T, 5);
 
 Container* R0T[]{
   &kExcBtn, &kInsBtn, &k00Btn, &kDotBtn, &kAddBtn
 };
 
-FieldSet r0FSet(HORIZONTAL, BTN_DIST, 0, 0, R0T, 5);
+FieldSet r0FSet(HORIZONTAL, BTN_DIST, 2, 2, R0T, 5);
 
 Container* VCT[]{
   &r4FSet, &r3FSet, &r2FSet, &r1FSet, &r0FSet
 };
 
-FieldSet div01(VERTICAL, BTN_DIST, 0, 0, VCT, 5);
+FieldSet div01(VERTICAL, BTN_DIST-4, 2, 2, VCT, 5);
 
 Container* CT[]{
-  &operBtn, &sumBtn, &div01
+  &e0FSet, &div01
 };
 
-FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, CT, 3);
+FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, CT, 2);
 
 // ----------------------------------------------------------------
 
@@ -140,7 +147,7 @@ void calc_btn(TextButton* b, const int id, const char* text)
 {
   b->setId(id);
   b->setText(text);
-  int BTN_SIZE = display.width() / 7;
+  int BTN_SIZE = display.width() / 7 + 2;
   b->setSize(BTN_SIZE, BTN_SIZE);
   b->setFontSize(2);
   b->setRadius(8);
@@ -208,6 +215,10 @@ void setup() {
   calc_row(&r1FSet);
   calc_row(&r0FSet);
 
+  e0FSet.setAlignClientHoriz();
+  e0FSet.setTransparent(true);
+  e0FSet.setBorderSize(0);
+  
 //  r4FSet.setAlignClientHoriz();
 //  r3FSet.setAlignClientHoriz();
 //  r2FSet.setAlignClientHoriz();
@@ -223,8 +234,10 @@ void setup() {
 //  div01.setAlignClient();
   div01.setTransparent(true);
   div01.setBorderSize(0);
+
+  desktop.setBorderSize(0);
   desktop.setBackground(CBG_COLOR);
-  desktop.setOrientation(VERTICAL, 4);
+  desktop.setOrientation(VERTICAL, 0);
 
   screenEnabled = true;
 
