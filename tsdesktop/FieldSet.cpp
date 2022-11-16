@@ -408,7 +408,6 @@ void FieldSet::drawBackground()
   if (radius > 0) {
     backgroundDrawn = true;
   }
-  int32_t area = 0;
   for (int16_t i = len; --i >= 0; ) {
     Container* b = children[i];
     if (b->getAbsVisible()) {
@@ -416,18 +415,7 @@ void FieldSet::drawBackground()
         backgroundDrawn = true;
         break;
       }
-      int32_t a = b->getUpdWidth() * b->getUpdHeight();
-/*
-      clip_t clip;
-      b->getOuterClip(clip, false);
-      uint8_t bs = b->getBorderSize();
-      int32_t a = (clip.x2 - clip.x1 + bs + bs) * (clip.y2 - clip.y1 + bs + bs);
-*/
-      area += a;
     }
-  }
-  if (area * 2 < updWidth * updHeight) {
-    backgroundDrawn = true;
   }
   if (backgroundDrawn) {
     Button::drawBackground();
@@ -448,12 +436,15 @@ const int16_t innerCovers(clip_t* p, int16_t n, const int16_t posX, const int16_
 void FieldSet::drawVisibleBackground()
 {
   rgb_t bg = getBackgroundColor();
+  if (bg == NO_BACKGROUND_COLOR) {
+    return;
+  }
   clip_t clip;
   getOuterClip(clip);
   int16_t x = clip.x1;
   int16_t y = clip.y1;
-  int16_t w = clip.x2 - clip.x1;
-  int16_t h = clip.y2 - clip.y1;
+  int16_t w = clip.width();
+  int16_t h = clip.height();
 
   clip_t tmp[20];
 

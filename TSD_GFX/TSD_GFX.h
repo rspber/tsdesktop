@@ -19,6 +19,8 @@ typedef struct {
 
 typedef struct {
   int16_t x1, y1, x2, y2;
+  const int16_t width();
+  const int16_t height();
 } clip_t;
 
 class TSD_GFX {

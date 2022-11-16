@@ -83,8 +83,8 @@ bool GoScroller::walk()
   int8_t hs = 16;
   clip_t clip;
   c->getOuterClip(clip);
-  int16_t pageWidth = clip.x2 - clip.x1;
-  int16_t pageHeight = clip.y2 - clip.y1;
+  int16_t pageWidth = clip.width();
+  int16_t pageHeight = clip.height();
   int8_t mgr = 0;
   int16_t scrls = (btns & SCROLL_HOME ? 1 : 0) + (btns & SCROLL_PAGE ? 1 : 0) + (btns & SCROLL_STEP ? 1 : 0);
   if (pageHeight < c->getUpdHeight() && pageHeight >= 2 * scrls * (hs + 2)) {
@@ -268,7 +268,7 @@ void Container::scroll(const uint8_t tp, const bool up, const bool vert)
   getOuterClip(clip);
   bool ok = false;
   if (vert) {
-    int16_t offs = doScroll(tp, up, offsetTop, updHeight, clip.y2 - clip.y1);
+    int16_t offs = doScroll(tp, up, offsetTop, updHeight, clip.height());
     if (offs != offsetTop) {
       HideProgress(this, scroll_btns).walk();
       offsetTop = offs;
@@ -276,7 +276,7 @@ void Container::scroll(const uint8_t tp, const bool up, const bool vert)
     }
   }
   else {
-    int16_t offs = doScroll(tp, up, offsetLeft, updWidth, clip.x2 - clip.x1);
+    int16_t offs = doScroll(tp, up, offsetLeft, updWidth, clip.width());
     if (offs != offsetLeft) {
       HideProgress(this, scroll_btns).walk();
       offsetLeft = offs;

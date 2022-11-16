@@ -69,6 +69,16 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 #include "glcdfont.c.h"
 
+const int16_t clip_t::width()
+{
+  return x2 > x1 ? x2 - x1 : 0;
+}
+
+const int16_t clip_t::height()
+{
+  return y2 > y1 ? y2 - y1 : 0;
+}
+
 #ifndef min
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
