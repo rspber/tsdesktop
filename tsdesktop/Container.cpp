@@ -384,17 +384,13 @@ clip_t* Container::getClip(clip_t& clip)
   }
 }
 
-clip_t* Container::getOuterClip(clip_t& clip, const bool setPages)
+clip_t* Container::getOuterClip(clip_t& clip)
 {
   getInnerClip(clip);
   clip.x1 -= marginLeft;
   clip.y1 -= marginTop;
   clip.x2 += marginRight;
   clip.y2 += marginBottom;
-  if (setPages) {
-    pageWidth = clip.x2 - clip.x1;
-    pageHeight = clip.y2 - clip.y1;
-  }
   return &clip;
 }
 
@@ -424,25 +420,11 @@ const rgb_t Container::getBackgroundColor()
   return NO_BACKGROUND_COLOR;
 }
 
-const int16_t Container::covers(const int16_t posX, const int16_t posY)
-{
-  if (getAbsVisible()) {
-    int16_t w = pageWidth > 0 ? pageWidth : updWidth;
-    int16_t h = pageHeight > 0 ? pageHeight : updHeight;
-    if (posX >= updLeft - borderSize && posX < updLeft + w + borderSize &&
-        posY >= updTop - borderSize && posY < updTop + h + borderSize)
-    {
-      return updLeft + w + borderSize - posX;
-    }
-  }
-  return 0;
-}
-
 Container* Container::pressed(const int16_t xScreen, const int16_t yScreen)
 {
   if (!disabled && getAbsVisible()) {
     clip_t clip;
-    getOuterClip(clip, false);
+    getOuterClip(clip);
     bool pressed = (xScreen >= clip.x1 && xScreen < clip.x2) && (yScreen >= clip.y1 && yScreen < clip.y2);
     if (pressed) {
       int16_t posX = xScreen - clip.x1;

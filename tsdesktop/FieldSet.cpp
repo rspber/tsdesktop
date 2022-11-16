@@ -383,11 +383,16 @@ const bool FieldSet::isRadius()
     Container* b = children[i];
     if (b->getAbsVisible()) {
       if (b->isRadius()) {
+        int16_t le = b->getUpdLeft();
+        int16_t tp = b->getUpdTop();
+        int16_t wh = b->getUpdWidth();
+		int16_t ht = b->getUpdHeight();
+        uint8_t bs = b->getBorderSize();
         if (
-          b->getUpdLeft() - b->getBorderSize() < 0 ||
-          b->getUpdTop() - b->getBorderSize() < 0 ||
-          b->getUpdLeft() + b->getUpdWidth() + b->getBorderSize() >= updWidth ||
-          b->getUpdTop() + b->getUpdHeight() + b->getBorderSize() >= updHeight)
+          le - bs < 0 ||
+          tp - bs < 0 ||
+          le + wh + bs > updWidth ||
+          tp + ht + bs > updHeight)
         {
           return true;
         }
@@ -412,6 +417,12 @@ void FieldSet::drawBackground()
         break;
       }
       int32_t a = b->getUpdWidth() * b->getUpdHeight();
+/*
+      clip_t clip;
+      b->getOuterClip(clip, false);
+      uint8_t bs = b->getBorderSize();
+      int32_t a = (clip.x2 - clip.x1 + bs + bs) * (clip.y2 - clip.y1 + bs + bs);
+*/
       area += a;
     }
   }
@@ -423,14 +434,13 @@ void FieldSet::drawBackground()
   }
 }
 
-const int16_t FieldSet::innerCovers(const int16_t posX, const int16_t posY)
+const int16_t innerCovers(clip_t* p, int16_t n, const int16_t posX, const int16_t posY)
 {
-  for (int16_t i = len; --i >= 0; ) {
-    Container* b = children[i];
-    int16_t t = b->covers(posX, posY);
-    if (t) {
-      return t;
+  while (--n >= 0) {
+    if (posX >= p->x1 && posX < p->x2 && posY >= p->y1 && posY < p->y2) {
+      return p->x2 - posX;
     }
+    ++p;
   }
   return 0;
 }
@@ -439,37 +449,113 @@ void FieldSet::drawVisibleBackground()
 {
   rgb_t bg = getBackgroundColor();
   clip_t clip;
-  getOuterClip(clip, true); // important setting pageWidth, pageHeight
+  getOuterClip(clip);
   int16_t x = clip.x1;
   int16_t y = clip.y1;
-  int16_t w = getPageWidth();
-  int16_t iw = w < updWidth ? w - marginRight : w;
-  int16_t h = getPageHeight();
-  int16_t jh = h < updHeight ? h - marginBottom : h;
+  int16_t w = clip.x2 - clip.x1;
+  int16_t h = clip.y2 - clip.y1;
 
-  for (int16_t j = 0; j < h; ++j ) {
-    int16_t i0 = 0;
-    int16_t i = 0;
-    while (i < w) {
-      if (i < iw && j < jh) {
-        int16_t t = innerCovers(i - marginLeft + offsetLeft, j - marginTop + offsetTop);
-        if (t) {
-          if (i > i0) {
-            display.drawFastHLine(&clip, x + i0, y, i - i0, bg);
+  clip_t tmp[20];
+
+  int16_t n = 0;
+  for (int16_t i = len; --i >= 0; ) {
+    Container* b = children[i];
+    n += b->getAbsVisible();
+  }
+  clip_t* cps = n <= 20 ? tmp : (clip_t*)malloc(n * sizeof(clip_t));
+  int16_t mini = 0x7fff, minj = 0x7fff, maxi = 0, maxj = 0;
+  {
+    clip_t* p = cps;
+    for (int16_t i = 0; i < len; ++i ) {
+      Container* b = children[i];
+      if (b->getAbsVisible()) {
+        int16_t x1 = b->getUpdLeft() + marginLeft - offsetLeft;
+        int16_t x2 = x1 + b->getUpdWidth();
+        int16_t y1 = b->getUpdTop() + marginTop - offsetTop;
+        int16_t y2 = y1 + b->getUpdHeight();
+        {
+          clip_t cp;
+          b->getOuterClip(cp);
+          if (x2 > cp.x2 - x) {
+            x2 = cp.x2 - x;
           }
-          i += t;
-          i0 = i;
-          continue;
+          if (y2 > cp.y2 - y) {
+            y2 = cp.y2 - y;
+          }
         }
+        {
+          uint8_t bs = b->getBorderSize();
+          x1 += -bs;
+          x2 += +bs;
+          y1 += -bs;
+          y2 += +bs;
+        }
+        if (x1 < mini) {
+          mini = x1;
+        }
+        if (x2 > maxi) {
+          maxi = x2;
+        }
+        if (y1 < minj) {
+          minj = y1;
+        }
+        if (y2 > maxj) {
+          maxj = y2;
+        }
+        p->x1 = x1;
+        p->x2 = x2;
+        p->y1 = y1;
+        p->y2 = y2;
+        ++p;
+      }
+    }
+  }
+
+  if (mini < 0) {
+    mini = 0;
+  }
+  if (minj < 0) {
+    minj = 0;
+  }
+
+  int16_t j = minj;
+  while (j < maxj) {
+    int16_t i0 = mini;
+    int16_t i = i0;
+    while (i < maxi) {
+      int16_t t = innerCovers(cps, n, i, j);
+      if (t) {
+        if (i > i0) {
+          display.drawFastHLine(&clip, x + i0, y + j, i - i0, bg);
+        }
+        i += t;
+        i0 = i;
+        continue;
       }
       ++i;
     }
     if (i > i0) {
-      display.drawFastHLine(&clip, x + i0, y, i - i0, bg);
+      display.drawFastHLine(&clip, x + i0, y + j, i - i0, bg);
     }
-    ++y;
+    ++j;
+  }
+  
+  if (mini > 0) {
+    display.fillRect(&clip, x, y, mini, h, bg);
+  }
+  if (minj > 0) {
+    display.fillRect(&clip, x + mini, y, maxi - mini, minj, bg);
+  }
+  if (maxj < h) {
+    display.fillRect(&clip, x + mini, y + maxj, maxi - mini, maxj, bg);
+  }
+  if (maxi < w) {
+    display.fillRect(&clip, x + maxi, y, w - maxi, h, bg);
   }
 
+  if (n > 20) {
+    free(cps);
+  }
 }
 
 void FieldSet::innerDraw(const bool redraw)

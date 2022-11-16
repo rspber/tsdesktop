@@ -82,10 +82,12 @@ bool GoScroller::walk()
   int8_t ws = 16;
   int8_t hs = 16;
   clip_t clip;
-  c->getOuterClip(clip, true); // important setting pageWidth, pageHeight
+  c->getOuterClip(clip);
+  int16_t pageWidth = clip.x2 - clip.x1;
+  int16_t pageHeight = clip.y2 - clip.y1;
   int8_t mgr = 0;
   int16_t scrls = (btns & SCROLL_HOME ? 1 : 0) + (btns & SCROLL_PAGE ? 1 : 0) + (btns & SCROLL_STEP ? 1 : 0);
-  if (c->getPageHeight() < c->getUpdHeight() && c->getPageHeight() >= 2 * scrls * (hs + 2)) {
+  if (pageHeight < c->getUpdHeight() && pageHeight >= 2 * scrls * (hs + 2)) {
     int16_t x1 = clip.x2 - ws;
     int16_t y1 = clip.y1 - (hs + 2);;
 
@@ -107,7 +109,7 @@ bool GoScroller::walk()
 
     int16_t y_progress_top = y1 + (hs + 2);
 
-    y1 = clip.y1 + c->getPageHeight() + 2;
+    y1 = clip.y1 + pageHeight + 2;
     if (btns & SCROLL_HOME) {
       if (btn(x1, y1 -= hs + 2, SCROLL_HOME, false, true)) {
         return true;
@@ -125,12 +127,12 @@ bool GoScroller::walk()
     }
 
     if (btns & SCROLL_PROGRESS) {
-      int8_t percent = c->getOffsetTop() * 100 / (c->getUpdHeight() - c->getPageHeight());
+      int8_t percent = c->getOffsetTop() * 100 / (c->getUpdHeight() - pageHeight);
       progress(x1, y_progress_top + (percent * (y1 - y_progress_top - 10) / 100 ) - 4);
     }
     mgr = 1;
   }
-  if (c->getPageWidth() < c->getUpdWidth() && c->getPageWidth() >= 2 * scrls * (ws + 2)) {
+  if (pageWidth < c->getUpdWidth() && pageWidth >= 2 * scrls * (ws + 2)) {
     int16_t y1 = clip.y2 - hs;
     int16_t x1 = clip.x1 - (ws + 2);
     if (btns & SCROLL_HOME) {
@@ -151,7 +153,7 @@ bool GoScroller::walk()
 
     int16_t x_progress_left = x1 + (ws + 2);
 
-    x1 = clip.x1 + c->getPageWidth() + 2 - mgr * (ws + 2);
+    x1 = clip.x1 + pageWidth + 2 - mgr * (ws + 2);
     if (btns & SCROLL_HOME) {
       if (btn(x1 -= ws + 2, y1, SCROLL_HOME, false, false)) {
         return true;
@@ -169,7 +171,7 @@ bool GoScroller::walk()
     }
 
     if (btns & SCROLL_PROGRESS) {
-      int8_t percent = c->getOffsetLeft() * 100 / (c->getUpdWidth() - c->getPageWidth());
+      int8_t percent = c->getOffsetLeft() * 100 / (c->getUpdWidth() - pageWidth);
       progress(x_progress_left + (percent * (x1 - x_progress_left - 10) / 100) - 4, y1);
     }
   }
@@ -263,7 +265,7 @@ const int16_t doScroll(const uint8_t tp, const bool up, int16_t offs, const int1
 void Container::scroll(const uint8_t tp, const bool up, const bool vert)
 {
   clip_t clip;
-  getOuterClip(clip, false);
+  getOuterClip(clip);
   bool ok = false;
   if (vert) {
     int16_t offs = doScroll(tp, up, offsetTop, updHeight, clip.y2 - clip.y1);

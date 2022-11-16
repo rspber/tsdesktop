@@ -210,8 +210,6 @@ public:
   virtual const bool isRadius() { return false; }
   const uint8_t getBorderSize() { return borderSize; }
 
-  const int16_t covers(const int16_t posX, const int16_t posY);
-
   virtual Container* pressed(const int16_t xScreen, const int16_t yScreen);
 
   virtual void clickEffect(const int16_t posX, const int16_t posY) {}
@@ -231,11 +229,8 @@ public:
   const int16_t getOffsetLeft() { return offsetLeft; }
   const int16_t getOffsetTop() { return offsetTop; }
 
-  const int16_t getPageWidth() { return pageWidth; }
-  const int16_t getPageHeight() { return pageHeight; }
-
   clip_t* getInnerClip(clip_t& clip);
-  clip_t* getOuterClip(clip_t& clip, const bool setPages);
+  clip_t* getOuterClip(clip_t& clip);
 
   clip_t* getClip(clip_t& clip);
 
@@ -255,8 +250,6 @@ private:
   void setUpdPos(const int16_t aLeft, const int16_t aTop);
   bool setUpdWidth(const int16_t aWidth);
   bool setUpdHeight(const int16_t aHeight);
-
-  int16_t pageWidth, pageHeight;  // set by getOuterClip
 
   int16_t updLeft, updTop, updWidth, updHeight;
   bool updated = false;
@@ -825,7 +818,6 @@ private:
   bool backgroundDrawn;
 
   void drawVisibleBackground();
-  const int16_t innerCovers(const int16_t posX, const int16_t posY);
 
   virtual void updCompactWidth(const bool recalc);
   virtual void updCompactHeight(const bool recalc);
