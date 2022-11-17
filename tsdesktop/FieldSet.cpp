@@ -405,6 +405,10 @@ const bool FieldSet::isBorderRadius()
 void FieldSet::drawBackground()
 {
   backgroundDrawn = false;
+  rgb_t bg = getBackgroundColor();
+  if (bg == NO_BACKGROUND_COLOR) {
+    return;
+  }
   if (isBorderRadius()) {
     backgroundDrawn = true;
   }
