@@ -404,7 +404,7 @@ public:
     marginLeft = 2;
     marginTop = 2;
     marginRight = 2;
-    marginBottom = 2;
+    marginBottom = 4;
 
 	disabled = true;
   }
@@ -439,7 +439,7 @@ private:
     marginLeft = 2;
     marginTop = 2;
     marginRight = 2;
-    marginBottom = 2;
+    marginBottom = 4;
   }
 
 public:
