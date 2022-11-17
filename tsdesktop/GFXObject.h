@@ -13,6 +13,7 @@
 class GFXObject {
 public:
   GFXObject(Button* aparent, rgb_t acolor) : parent(aparent), color(acolor) {}
+  virtual ~GFXObject(){}
 
   void setVisible(const bool aVisible) { visible = aVisible; }
   const bool getVisible() { return visible; }

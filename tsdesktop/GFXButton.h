@@ -16,7 +16,7 @@
 class GFXButton : public Button {
 public:
   GFXButton() : GFXButton(-1, -1, ALIGN_CLIENT, ALIGN_CLIENT) {}
-  ~GFXButton();
+  virtual ~GFXButton();
 
   GFXButton(
     const int16_t aLeft,
