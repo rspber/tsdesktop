@@ -12,6 +12,10 @@
 GFXButton::~GFXButton()
 {
   if (list) {
+    for( int16_t i = len; --i >= 0; ) {
+      GFXObject* g = list[i];
+      free(g);
+    }
     free(list);
   }
 }
