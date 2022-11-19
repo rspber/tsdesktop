@@ -412,15 +412,6 @@ void FieldSet::drawBackground()
   if (isBorderRadius()) {
     backgroundDrawn = true;
   }
-  for (int16_t i = len; --i >= 0; ) {
-    Container* b = children[i];
-    if (b->getAbsVisible()) {
-      if (b->isBorderRadius()) {
-        backgroundDrawn = true;
-        break;
-      }
-    }
-  }
   if (backgroundDrawn) {
     Button::drawBackground();
   }
@@ -513,26 +504,90 @@ void FieldSet::drawVisibleBackground()
     minj = 0;
   }
 
-  int16_t j = minj;
-  while (j < maxj) {
-    int16_t i0 = mini;
-    int16_t i = i0;
-    while (i < maxi) {
-      int16_t t = innerCovers(cps, n, i, j);
-      if (t) {
+  if (n > 1) {
+    clip_t* p = cps;
+    int16_t x1 = p->x1, x2 = p->x2, y1 = p->y1, y2 = p->y2;
+    bool dnok = true, rgok = true;
+    for (int16_t i = 1; i < n; ++i ) {
+      ++p;
+      if (dnok && p->y1 >= y2 && p->x1 == x1 && p->x2 == x2) {
+        y2 = p->y2;
+      }
+      else {
+        dnok = false;
+      }
+      if (rgok && p->x1 >= x2 && p->y1 == y1 && p->y2 == y2) {
+        x2 = p->x2;
+      }
+      else {
+        rgok = false;
+      }
+    }
+
+    if (dnok) {
+      clip_t* p = cps;
+      for (int16_t i = 1; i < n; ++i ) {
+        y1 = p->y2;
+        if (y1 >= maxj) {
+          break;
+        }
+        ++p;
+        y2 = p->y1;
+        if (y2 > maxj) {
+          y2 = maxj;
+        }
+        if (y2 > minj) {
+          if (y1 < minj) {
+            y1 = minj;
+          }
+          display.fillRect(&clip, x + x1, y + y1, x2 - x1, y2 - y1, bg);
+        }
+      }
+    }
+    else
+    if (rgok) {
+      clip_t* p = cps;
+      for (int16_t i = 1; i < n; ++i ) {
+        x1 = p->x2;
+        if (x1 >= maxi) {
+          break;
+        }
+        ++p;
+        x2 = p->x1;
+        if (x2 > maxi) {
+          x2 = maxi;
+        }
+        if (x2 > mini) {
+          if (x1 < mini) {
+            x1 = mini;
+          }
+          display.fillRect(&clip, x + x1, y + y1, x2 - x1, y2 - y1, bg);
+        }
+      }
+    }
+    else {
+      int16_t j = minj;
+      while (j < maxj) {
+        int16_t i0 = mini;
+        int16_t i = i0;
+        while (i < maxi) {
+          int16_t t = innerCovers(cps, n, i, j);
+          if (t) {
+            if (i > i0) {
+              display.drawFastHLine(&clip, x + i0, y + j, i - i0, bg);
+            }
+            i += t;
+            i0 = i;
+            continue;
+          }
+          ++i;
+        }
         if (i > i0) {
           display.drawFastHLine(&clip, x + i0, y + j, i - i0, bg);
         }
-        i += t;
-        i0 = i;
-        continue;
+        ++j;
       }
-      ++i;
     }
-    if (i > i0) {
-      display.drawFastHLine(&clip, x + i0, y + j, i - i0, bg);
-    }
-    ++j;
   }
   
   if (mini > 0) {
@@ -542,7 +597,7 @@ void FieldSet::drawVisibleBackground()
     display.fillRect(&clip, x + mini, y, maxi - mini, minj, bg);
   }
   if (maxj < h) {
-    display.fillRect(&clip, x + mini, y + maxj, maxi - mini, maxj, bg);
+    display.fillRect(&clip, x + mini, y + maxj, maxi - mini, h - maxj, bg);
   }
   if (maxi < w) {
     display.fillRect(&clip, x + maxi, y, w - maxi, h, bg);
