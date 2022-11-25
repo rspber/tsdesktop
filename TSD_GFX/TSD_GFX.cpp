@@ -574,7 +574,7 @@ void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bit
     @param    color
 */
 /**************************************************************************/
-void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char c, const rgb_t color)
+void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char c, rgb_t color)
 {
   GFXfont* gfxFont = font->gfxFont;
   uint8_t size_x = font->fontSizeX;
@@ -656,7 +656,7 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char 
   @param    spacing extra horizontal spacing for letters
 */
 /**************************************************************************/
-void TSD_GFX::drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, const rgb_t color, const int8_t spacing)
+void TSD_GFX::drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, rgb_t color, const int8_t spacing)
 {
   const char* p = text;
   char c;

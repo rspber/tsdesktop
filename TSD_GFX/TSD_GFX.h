@@ -55,7 +55,7 @@ public:
   void drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bitmap, int16_t w, int16_t h);
   void drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bitmap, const uint8_t *mask, int16_t w, int16_t h);
 
-  void drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char c, const rgb_t color);
-  void drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, const rgb_t color = WHITE, const int8_t spacing = 0);
+  void drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char c, rgb_t color);
+  void drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, rgb_t color = WHITE, const int8_t spacing = 0);
 };
 
