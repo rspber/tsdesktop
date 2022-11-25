@@ -10,7 +10,7 @@
 void font_t::cursorAdjust(int16_t* x, int16_t* y)
 {
   if (!gfxFont) {  // Default font
-    ++* x;
+    ++*x;
     *y += (fontSizeY + 1) >> 1;
   }
   else {
@@ -29,6 +29,12 @@ void font_t::cursorAdjust(int16_t* x, int16_t* y)
   }
 }
 
+const int16_t font_t::yAdvHeight(const int16_t yAdvance)
+{
+  // some magic code
+  return yAdvance * 2 * fontSizeY / 3; 
+}  
+  
 const int16_t font_t::charSize(const char c, int16_t* letterHeight)
 {
   int16_t w, h;
@@ -45,8 +51,7 @@ const int16_t font_t::charSize(const char c, int16_t* letterHeight)
     else {
       w = 0;
     }
-    // some magic code
-    h = (uint16_t)gfxFont->yAdvance * 2 * fontSizeY / 3;
+    h = yAdvHeight(gfxFont->yAdvance);
   }
   *letterHeight = h;
   return w * fontSizeX;

@@ -17,6 +17,8 @@ typedef struct {
   // some magic code
   void cursorAdjust(int16_t* x, int16_t* y);
 
+  const int16_t yAdvHeight(const int16_t yAdvance);
+
   // character size
   // parameters:
   //   c - character

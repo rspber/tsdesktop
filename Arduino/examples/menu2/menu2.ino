@@ -183,7 +183,7 @@ void setup()   {
   board.setAlignTop(true);
 
   menu.setAlignLeft(true);
-  
+
   desktop.setMargin(10);
   desktop.setOrientation(HORIZONTAL, 10);
 

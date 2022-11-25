@@ -327,16 +327,17 @@ public:
 
 class GFXChar : public GFXCursorFontColor {
 public:
-  GFXChar(Button* parent, int16_t x1, int16_t y1, char ac, rgb_t color = WHITE)
-   : GFXCursorFontColor(parent, x1, y1, color), c(ac) {}
+  GFXChar(Button* parent, int16_t x1, int16_t y1, char ac, rgb_t color = WHITE, rgb_t abg = BLACK)
+   : GFXCursorFontColor(parent, x1, y1, color), c(ac), bg(abg) {}
 
   virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
   {
     cursor_t cursor{(int16_t)(x + x1), (int16_t)(y + y1)};
-    display.drawChar(clip, &cursor, &font, c, color);
+    display.drawChar(clip, &cursor, &font, c, color, bg);
   }
 
   char c;
+  rgb_t bg;
 };
 
 
@@ -344,14 +345,15 @@ public:
 
 class GFXTextLine : public GFXCursorFontColor {
 public:
-  GFXTextLine(Button* parent, int16_t x1, int16_t y1, const char* atext, rgb_t color = WHITE)
-   : GFXCursorFontColor(parent, x1, y1, color), text(atext) {}
+  GFXTextLine(Button* parent, int16_t x1, int16_t y1, const char* atext, rgb_t color = WHITE, rgb_t abg = BLACK)
+   : GFXCursorFontColor(parent, x1, y1, color), text(atext), bg(abg) {}
 
   virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
   {
     cursor_t cursor{(int16_t)(x + x1), (int16_t)(y + y1)};
-    display.drawTextLine(clip, &cursor, &font, text, color);
+    display.drawTextLine(clip, &cursor, &font, text, color, bg);
   }
 
   const char* text;
+  rgb_t bg;
 };

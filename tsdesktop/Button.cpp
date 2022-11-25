@@ -107,8 +107,16 @@ const rgb_t Button::getBackgroundColor()
 void Button::drawBackground(const rgb_t aBackgroundColor)
 {
   if (aBackgroundColor != NO_BACKGROUND_COLOR) {
+    int16_t x = getAbsOuterLeft();
+    int16_t y = getAbsOuterTop();
     clip_t clip;
-    display.fillRoundRect(getClip(clip), getAbsOuterLeft(), getAbsOuterTop(), updWidth, updHeight, radius, aBackgroundColor);
+    getClip(clip);
+    if (radius) {
+      display.fillRoundRect(&clip, x, y, updWidth, updHeight, radius, aBackgroundColor);
+    }
+    else {
+      display.fillRect(&clip, x, y, updWidth, updHeight, aBackgroundColor);
+    }
   }
 }
 

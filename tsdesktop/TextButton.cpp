@@ -115,7 +115,7 @@ void TextButton::updCompactHeight(const bool recalc)
 
 void TextButton::textUpdateCoord()
 {
-  int16_t textWidth = getTextWidth();
+  textWidth = font.textSize(getText(), &textHeight);
   int16_t w = updWidth - marginLeft - marginRight - getTextMarginLeft() - getTextMarginRight();
   if (alignCenterHoriz) {
     textLeft = w > textWidth ? (w - textWidth) / 2 : 0;
@@ -140,7 +140,6 @@ void TextButton::textUpdateCoord()
     }
   }
 
-  int16_t textHeight = getTextHeight();
   int16_t h = updHeight - marginTop - marginBottom - getTextMarginTop() - getTextMarginBottom();
   if (alignCenterVert) {
     textTop = h > textHeight ? (h - textHeight) / 2 : 0;
@@ -174,11 +173,35 @@ void TextButton::updateCoord(const bool recalc)
   }
 }
 
+void TextButton::drawBackground()
+{
+  rgb_t bg = getBackgroundColor();
+  if (bg != NO_BACKGROUND_COLOR) {
+    int16_t x = getAbsOuterLeft();
+    int16_t y = getAbsOuterTop();
+    clip_t clip;
+    getClip(clip);
+    bool lines = strstr(getText(), "\n");
+    if (radius || lines) {
+      display.fillRoundRect(&clip, x, y, updWidth, updHeight, radius, bg);
+    }
+    else {
+      display.fillRect(&clip, x, y, updWidth, marginTop + textTop, bg);
+      int16_t toph = marginTop + textTop + textHeight;
+      display.fillRect(&clip, x, y + toph, updWidth, updHeight - toph, bg);
+      display.fillRect(&clip, x, y + marginTop + textTop, marginLeft + textLeft, textHeight, bg);
+      int16_t lftw = marginLeft + textLeft + textWidth;
+      display.fillRect(&clip, x + lftw, y + marginTop + textTop, updWidth - lftw, textHeight, bg);
+    }
+  }
+}
+
 void TextButton::drawText(const rgb_t aTextColor)
 {
-  int16_t absLeft = getAbsInnerLeft(getTextMarginLeft() + textLeft);
-  int16_t absTop = getAbsInnerTop(getTextMarginTop() + textTop);
-  cursor_t cursor{ absLeft, absTop };
+  rgb_t bg = getBackgroundColor();
+  int16_t x = getAbsInnerLeft(getTextMarginLeft() + textLeft);
+  int16_t y = getAbsInnerTop(getTextMarginTop() + textTop);
+  cursor_t cursor{ x, y };
   clip_t clip;
   getClip(clip);
   const char* p = getText();
@@ -202,9 +225,9 @@ void TextButton::drawText(const rgb_t aTextColor)
         break;
       default:;
       }
-      display.drawTextLine(&clip, &cursor, &font, p0, aTextColor);
+      display.drawTextLine(&clip, &cursor, &font, p0, aTextColor, bg == NO_BACKGROUND_COLOR ? aTextColor : bg);
       p0 = p;
-      cursor.x = absLeft;
+      cursor.x = x;
       cursor.y += font.textLineHeight();
     }
   }

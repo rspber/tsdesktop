@@ -281,21 +281,21 @@ void TSD_SCREEN::drawRGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, const 
   drawRGBBitmap(&clip, x, y, bitmap, mask, w, h);
 }
 
-void TSD_SCREEN::drawChar(cursor_t* cursor, font_t* font, const char c, rgb_t color)
+void TSD_SCREEN::drawChar(cursor_t* cursor, font_t* font, const char c, rgb_t color, rgb_t bg)
 {
   clip_t clip{0, 0, _width, _height};
-  drawChar(&clip, cursor, font, c, color);
+  drawChar(&clip, cursor, font, c, color, bg);
 }
 
-void TSD_SCREEN::drawTextLine(cursor_t* cursor, font_t* font, const char* text, rgb_t color, const int8_t spacing)
+void TSD_SCREEN::drawTextLine(cursor_t* cursor, font_t* font, const char* text, rgb_t color, rgb_t bg, const int8_t spacing)
 {
   clip_t clip{0, 0, _width, _height};
-  drawTextLine(&clip, cursor, font, text, color, spacing);
+  drawTextLine(&clip, cursor, font, text, color, bg, spacing);
 }
 
-void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, const int8_t fontSize, rgb_t color, const int8_t spacing)
+void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, const int8_t fontSize, rgb_t color, rgb_t bg, const int8_t spacing)
 {
   cursor_t cursor{x, y};
   font_t font{NULL, fontSize, fontSize};
-  drawTextLine(&cursor, &font, text, color, spacing);
+  drawTextLine(&cursor, &font, text, color, bg, spacing);
 }

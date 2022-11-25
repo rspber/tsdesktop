@@ -153,9 +153,9 @@ void TSD_GFX::writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, rgb_
 
 void TSD_GFX::writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color)
 {
-  for (int16_t i = x; i < x + w; i++) {
-    writeFastVLine(clip, i, y, h, color);
-}
+  for (int16_t i = 0; i < h; i++) {
+    writeFastHLine(clip, x, y + i, w, color);
+  }
 }
 
 void TSD_GFX::endWrite() {}
@@ -181,7 +181,7 @@ void TSD_GFX::drawFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, rgb_t
   startWrite();
   writeFastHLine(clip, x, y, w, color);
   endWrite();
-  }
+}
 
 void TSD_GFX::fillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color)
 {
@@ -574,7 +574,7 @@ void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bit
     @param    color
 */
 /**************************************************************************/
-void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char c, rgb_t color)
+void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char c, rgb_t color, rgb_t bg, const int8_t spacing)
 {
   GFXfont* gfxFont = font->gfxFont;
   uint8_t size_x = font->fontSizeX;
@@ -584,9 +584,18 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char 
   int16_t y = cursor->y;
   font->cursorAdjust(&x, &y);
 
-  int8_t x_adw;
+  int16_t lw;
+  int16_t lhz;
+  startWrite();
   if (!gfxFont) { // 'Classic' built-in font
-    startWrite();
+    lw = 6;
+    lhz = 8 * size_y;
+    if (bg != color && x - cursor->x > 0) {
+      writeFillRect(clip, cursor->x, cursor->y, x - cursor->x, lhz, bg);
+    }
+    if (bg != color && y - cursor->y > 0) {
+      writeFillRect(clip, cursor->x, cursor->y, lw * size_x, y - cursor->y, bg);
+    }
     for (int8_t i = 0; i < 5; i++) { // Char bitmap = 5 columns
       uint8_t line = default_font[c * 5 + i];
       for (int8_t j = 0; j < 8; j++, line >>= 1) {
@@ -596,53 +605,114 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char 
           else
             writeFillRect(clip, x + i * size_x, y + j * size_y, size_x, size_y,
               color);
+        } else if (bg != color) {
+          if (size_x == 1 && size_y == 1)
+            writePixel(clip, x + i, y + j, bg);
+          else
+            writeFillRect(clip, x + i * size_x, y + j * size_y, size_x, size_y, bg);
         }
       }
     }
-    endWrite();
-    x_adw = 6;
-
+    if (bg != color) { // If opaque, draw vertical line for last column
+      if (size_x == 1 && size_y == 1)
+        writeFastVLine(clip, x + 5, y, 8, bg);
+      else
+        writeFillRect(clip, x + 5 * size_x, y, size_x, 8 * size_y, bg);
+    }
   }
   else { // Custom font
+    lhz = font->yAdvHeight(gfxFont->yAdvance);
 
     GFXglyph* glyph = &gfxFont->glyph[c - gfxFont->first];
+    lw = glyph->xAdvance;
     uint8_t* bitmap = gfxFont->bitmap;
 
     uint16_t bo = glyph->bitmapOffset;
-    uint8_t w = glyph->width, h = glyph->height;
-    int8_t xo = glyph->xOffset,
-      yo = glyph->yOffset;
-    uint8_t xx, yy, bits = 0, bit = 0;
-    int16_t xo16 = 0, yo16 = 0;
+    uint16_t w = glyph->width, h = glyph->height;
+    int16_t xo = glyph->xOffset, yo = glyph->yOffset;
 
-    if (size_x > 1 || size_y > 1) {
-      xo16 = (xo + 1) >> 1;
-      yo16 = yo;
+    if (bg != color && x - cursor->x + xo * size_x > 0) {
+      writeFillRect(clip, cursor->x, cursor->y, x - cursor->x + xo * size_x, lhz, bg);
+    }
+    if (bg != color && y - cursor->y + yo * size_y > 0) {
+      writeFillRect(clip, cursor->x, cursor->y, lw * size_x, y - cursor->y + yo * size_y, bg);
     }
 
-    startWrite();
+    uint8_t xx, yy, bits = 0, bit = 0;
+
+    if (size_x > 1 || size_y > 1) {
+      xo = (xo + 1) >> 1;
+    }
+
     for (yy = 0; yy < h; yy++) {
+      int16_t xfg0 = -1;
+      int16_t xbg0 = -1;
       for (xx = 0; xx < w; xx++) {
         if (!(bit++ & 7)) {
           bits = bitmap[bo++];
         }
         if (bits & 0x80) {
-          if (size_x == 1 && size_y == 1) {
-            writePixel(clip, x + xo + xx, y + yo + yy, color);
+          if (bg != color && xbg0 >= 0) {
+            if (size_x == 1 && size_y == 1) {
+              writeFastHLine(clip, x + xo + xbg0, y + yo + yy, xx - xbg0, bg);
+            }
+            else {
+              writeFillRect(clip, x + (xo + xbg0) * size_x, y + (yo + yy) * size_y, (xx - xbg0) * size_x, size_y, bg);
+            }
           }
-          else {
-            writeFillRect(clip, x + (xo16 + xx) * size_x, y + (yo16 + yy) * size_y,
-              size_x, size_y, color);
+          xbg0 = -1;
+          if (xfg0 < 0 ) {
+            xfg0 = xx;
+          }
+        }
+        else {
+          if ( xfg0 >= 0 ) {
+            if (size_x == 1 && size_y == 1) {
+              writeFastHLine(clip, x + xo + xfg0, y + yo + yy, xx - xfg0, color);
+            }
+            else {
+              writeFillRect(clip, x + (xo + xfg0) * size_x, y + (yo + yy) * size_y, (xx - xfg0) * size_x, size_y, color);
+            }
+          }
+          xfg0 = -1;
+          if (xbg0 < 0 ) {
+            xbg0 = xx;
           }
         }
         bits <<= 1;
       }
+      if (bg != color && xbg0 >= 0) {
+        if (size_x == 1 && size_y == 1) {
+          writeFastHLine(clip, x + xo + xbg0, y + yo + yy, xx - xbg0, bg);
+        }
+        else {
+          writeFillRect(clip, x + (xo + xbg0) * size_x, y + (yo + yy) * size_y, (xx - xbg0) * size_x, size_y, bg);
+        }
+      }
+      if ( xfg0 >= 0 ) {
+        if (size_x == 1 && size_y == 1) {
+          writeFastHLine(clip, x + xo + xfg0, y + yo + yy, xx - xfg0, color);
+        }
+        else {
+          writeFillRect(clip, x + (xo + xfg0) * size_x, y + (yo + yy) * size_y, (xx - xfg0) * size_x, size_y, color);
+        }
+      }
     }
-    endWrite();
-    x_adw = glyph->xAdvance;
-
+    int16_t y2 = y + (yo + h) * size_y;
+    int16_t h2 = cursor->y + lhz - y2;
+    if (bg != color && h2 > 0) {
+      writeFillRect(clip, cursor->x, y2, lw * size_x, h2, bg);
+    }
+    int16_t w2 = lw - (xo + w);
+    if (bg != color && w2 > 0) {
+      writeFillRect(clip, cursor->x + (xo + w) * size_x, cursor->y, w2 * size_x, lhz, bg);
+    }
   } // End classic vs custom font
-  cursor->x += x_adw * size_x;
+  if (bg != color && spacing > 0) {
+    writeFillRect(clip, cursor->x + lw * size_x, cursor->y, spacing * size_x, lhz, bg);
+  }
+  endWrite();
+  cursor->x += (lw + spacing) * size_x;
 }
 
 // Draw text line
@@ -652,16 +722,15 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char 
     @param    cursor top left corner x, y coordinate
     @param    font  gfxFont with fontSizeX and fontSizeY
     @param    text   text line to be drawn
-    @param    color 16-bit 5-6-5 Color to draw chraracter with
+    @param    color
   @param    spacing extra horizontal spacing for letters
 */
 /**************************************************************************/
-void TSD_GFX::drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, rgb_t color, const int8_t spacing)
+void TSD_GFX::drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, rgb_t color, rgb_t bg, const int8_t spacing)
 {
   const char* p = text;
   char c;
   while ((c = *p++) && c != '\r' && c != '\n') {
-    drawChar(clip, cursor, font, c, color);
-    cursor->x += spacing * font->fontSizeX;
+    drawChar(clip, cursor, font, c, color, bg, spacing);
   }
 }

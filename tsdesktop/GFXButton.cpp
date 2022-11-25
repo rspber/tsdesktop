@@ -156,14 +156,14 @@ GFXRGBBitmap* GFXButton::RGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, co
 }
 
 
-GFXChar* GFXButton::character(int16_t x1, int16_t y1, char c, rgb_t color)
+GFXChar* GFXButton::character(int16_t x1, int16_t y1, char c, rgb_t color, rgb_t bg)
 {
-  return (GFXChar*)add(new GFXChar(this, x1, y1, c, color));
+  return (GFXChar*)add(new GFXChar(this, x1, y1, c, color, bg));
 }
 
-GFXTextLine* GFXButton::textLine(int16_t x1, int16_t y1, const char* text, rgb_t color)
+GFXTextLine* GFXButton::textLine(int16_t x1, int16_t y1, const char* text, rgb_t color, rgb_t bg)
 {
-  return (GFXTextLine*)add(new GFXTextLine(this, x1, y1, text, color));
+  return (GFXTextLine*)add(new GFXTextLine(this, x1, y1, text, color, bg));
 }
 
 

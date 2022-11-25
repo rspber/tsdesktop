@@ -358,8 +358,8 @@ private:
   bool wasDrawn = false;
   virtual void setNotWasDrawn() { wasDrawn = false; }
 
-  virtual void drawBackground();
   void drawBackground(const rgb_t color);
+  virtual void drawBackground();
 
   void drawBorder();
   void drawBorder(const rgb_t color);
@@ -462,6 +462,7 @@ public:
   const int8_t getFontSizeY() { return font.fontSizeY; }
   const rgb_t getTextColor() { return textColor; }
 
+  virtual void drawBackground();
   virtual void innerDraw(const bool redraw);
 
   friend class Editable;
@@ -492,7 +493,7 @@ private:
 private:
   font_t font{ NULL, 1, 1 };
   const char* textp = "";
-  int16_t textLeft, textTop = 0;
+  int16_t textLeft = 0, textTop = 0, textWidth = 0, textHeight = 0;
   rgb_t textColor = 0;
   TEXT_ALIGN textAlign = TEXT_ALIGN_LEFT;
 };
@@ -612,6 +613,7 @@ public:
 
   virtual void hideDecor() = 0;
 
+  virtual void drawBackground() { Button::drawBackground(); }
   virtual void innerDraw(const bool redraw);
 
   friend class CheckBox;
