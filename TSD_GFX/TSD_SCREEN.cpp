@@ -138,26 +138,21 @@ void TSD_SCREEN::drawCircle(int16_t x0, int16_t y0, int16_t r, rgb_t color, int1
   drawCircle(&clip, x0, y0, r, color, ts);
 }
 
-void TSD_SCREEN::drawCircleHelper(clip_t* clip, int16_t x0, int16_t y0, int16_t r, uint8_t cornername, rgb_t color, int16_t ts)
+void TSD_SCREEN::drawCircleFragment(clip_t* clip, int16_t x0, int16_t y0, int16_t r, uint8_t corners, rgb_t color, int16_t ts)
 {
   int16_t u = ts / 2;
   int16_t d = u - ts;
-  while (++d <= u) {
-    drawCircleHelper(clip, x0, y0, r + d, cornername, color);
-  }
-}
-
-void TSD_SCREEN::drawCircleFragment(clip_t* clip, int16_t x, int16_t y, int16_t r, uint8_t fragment, rgb_t color, int16_t ts)
-{
   startWrite();
-  drawCircleHelper(clip, x, y, r, fragment, color, ts);
+  while (++d <= u) {
+    writeCircleHelper(clip, x0, y0, r + d, corners, color);
+  }
   endWrite();
 }
 
-void TSD_SCREEN::drawCircleFragment(int16_t x, int16_t y, int16_t r, uint8_t fragment, rgb_t color, int16_t ts)
+void TSD_SCREEN::drawCircleFragment(int16_t x, int16_t y, int16_t r, uint8_t corners, rgb_t color, int16_t ts)
 {
   clip_t clip{0, 0, _width, _height};
-  drawCircleFragment(&clip, x, y, r, fragment, color, ts);
+  drawCircleFragment(&clip, x, y, r, corners, color, ts);
 }
 
 void TSD_SCREEN::fillCircle(int16_t x0, int16_t y0, int16_t r, rgb_t color)
@@ -166,17 +161,17 @@ void TSD_SCREEN::fillCircle(int16_t x0, int16_t y0, int16_t r, rgb_t color)
   fillCircle(&clip, x0, y0, r, color);
 }
 
-void TSD_SCREEN::fillCircleFragment(clip_t* clip, int16_t x0, int16_t y0, int16_t r, uint8_t fragment, int16_t delta, rgb_t color)
+void TSD_SCREEN::fillCircleFragment(clip_t* clip, int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, rgb_t color)
 {
   startWrite();
-  fillCircleHelper(clip, x0, y0, r, fragment, delta, color);
+  writeFillCircleHelper(clip, x0, y0, r, corners, delta, color);
   endWrite();
 }
 
-void TSD_SCREEN::fillCircleFragment(int16_t x0, int16_t y0, int16_t r, uint8_t fragment, int16_t delta, rgb_t color)
+void TSD_SCREEN::fillCircleFragment(int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, rgb_t color)
 {
   clip_t clip{0, 0, _width, _height};
-  fillCircleFragment(&clip, x0, y0, r, fragment, delta, color);
+  fillCircleFragment(&clip, x0, y0, r, corners, delta, color);
 }
 
 void TSD_SCREEN::drawTriangle(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts, uint8_t mode)
@@ -208,27 +203,27 @@ void TSD_SCREEN::drawRoundRect(clip_t* clip, int16_t x, int16_t y, int16_t w, in
     }
     // smarter version
     int16_t u = ts / 2;
-    fillRect(clip, x + r, y - u, w - 2 * r, ts, color);     // Top
-    fillRect(clip, x + r, y + h - u, w - 2 * r, ts, color); // Bottom
-    fillRect(clip, x - u, y + r, ts, h - 2 * r, color);     // Left
-    fillRect(clip, x + w - u, y + r, ts, h - 2 * r, color); // Right
-    // dodraw four corners
     startWrite();
+    writeFillRect(clip, x + r, y - u, w - 2 * r, ts, color);     // Top
+    writeFillRect(clip, x + r, y + h - u, w - 2 * r, ts, color); // Bottom
+    writeFillRect(clip, x - u, y + r, ts, h - 2 * r, color);     // Left
+    writeFillRect(clip, x + w - u, y + r, ts, h - 2 * r, color); // Right
+    // dodraw four corners
     int16_t d = u - ts;
     while (++d <= u ) {
-      drawCircleHelper(clip, x + r, y + r, r + d, 1, color);
+      writeCircleHelper(clip, x + r, y + r, r + d, 1, color);
     }
     d = u - ts;
     while (++d <= u ) {
-      drawCircleHelper(clip, x + w - r - 1, y + r, r + d, 2, color);
+      writeCircleHelper(clip, x + w - r - 1, y + r, r + d, 2, color);
     }
     d = u - ts;
     while (++d <= u ) {
-      drawCircleHelper(clip, x + w - r - 1, y + h - r - 1, r + d, 4, color);
+      writeCircleHelper(clip, x + w - r - 1, y + h - r - 1, r + d, 4, color);
     }
     d = u - ts;
     while (++d <= u ) {
-      drawCircleHelper(clip, x + r, y + h - r - 1, r + d, 8, color);
+      writeCircleHelper(clip, x + r, y + h - r - 1, r + d, 8, color);
     }
     endWrite();
   }

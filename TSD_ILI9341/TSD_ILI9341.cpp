@@ -11,7 +11,7 @@ differences:
 
 Original Adafruit's license attached further.
 
-2. Implementations for drawPixel and other draws comes from
+2. Implementations for writePixel and other writes comes from
 https://github.com/rdagger/micropython-ili9341/ili9341.py,
 partially rewritten from python to c,
 
@@ -454,18 +454,16 @@ void TSD_ILI9341::displayOn()
   endTransaction();
 }
 
-void TSD_ILI9341::drawPixel(clip_t* clip, const int16_t x, const int16_t y, const rgb_t color)
+void TSD_ILI9341::writePixel(clip_t* clip, const int16_t x, const int16_t y, const rgb_t color)
 {
   if (x >= clip->x1 && y >= clip->y1 && x < clip->x2 && y < clip->y2) {
-    startWrite();
     setAddrWindow(x, y, 1, 1);
     uint8_t buf[8];
     sendMDTData(1, mdt_color(buf, color, 1));
-    endWrite();
   }
 }
 
-void TSD_ILI9341::drawFastHLine(clip_t* clip, int16_t x, const int16_t y, int16_t w, const rgb_t color)
+void TSD_ILI9341::writeFastHLine(clip_t* clip, int16_t x, const int16_t y, int16_t w, const rgb_t color)
 {
   if (x < clip->x1) {
     w -= clip->x1 - x;
@@ -475,14 +473,12 @@ void TSD_ILI9341::drawFastHLine(clip_t* clip, int16_t x, const int16_t y, int16_
     w = clip->x2 - x;
   }
   if (y >= clip->y1 && y < clip->y2 && w > 0) {
-    startWrite();
     setAddrWindow(x, y, w, 1);
     sendMDTData(w, buffer_mdt_color(color, w));
-    endWrite();
   }
 }
 
-void TSD_ILI9341::drawFastVLine(clip_t* clip, const int16_t x, int16_t y, int16_t h, const rgb_t color)
+void TSD_ILI9341::writeFastVLine(clip_t* clip, const int16_t x, int16_t y, int16_t h, const rgb_t color)
 {
   if (y < clip->y1) {
     h -= clip->y1 - y;
@@ -492,10 +488,8 @@ void TSD_ILI9341::drawFastVLine(clip_t* clip, const int16_t x, int16_t y, int16_
     h = clip->y2 - y;
   }
   if (x >= clip->x1 && x < clip->x2 && h > 0) {
-    startWrite();
     setAddrWindow(x, y, 1, h);
     sendMDTData(h, buffer_mdt_color(color, h));
-    endWrite();
   }
 }
 
@@ -573,14 +567,12 @@ void TSD_ILI9341::fill_vrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int1
   }
 }
 
-void TSD_ILI9341::fillRect(clip_t* clip, const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
+void TSD_ILI9341::writeFillRect(clip_t* clip, const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
 {
-  startWrite();
   if (w > h) {
     fill_hrect(clip, x, y, w, h, color);
   }
   else {
     fill_vrect(clip, x, y, w, h, color);
   }
-  endWrite();
 }

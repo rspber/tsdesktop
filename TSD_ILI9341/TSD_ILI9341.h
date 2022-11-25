@@ -37,10 +37,10 @@ public:
   void displayOff();
   void displayOn();
 
-  virtual void drawPixel(clip_t* clip, const int16_t x, const int16_t y, const rgb_t color);
-  virtual void drawFastHLine(clip_t* clip, int16_t x, const int16_t y, int16_t w, const rgb_t color);
-  virtual void drawFastVLine(clip_t* clip, const int16_t x, int16_t y, int16_t h, const rgb_t color);
-  virtual void fillRect(clip_t* clip, const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color);
+  virtual void writePixel(clip_t* clip, const int16_t x, const int16_t y, const rgb_t color);
+  virtual void writeFastHLine(clip_t* clip, int16_t x, const int16_t y, int16_t w, const rgb_t color);
+  virtual void writeFastVLine(clip_t* clip, const int16_t x, int16_t y, int16_t h, const rgb_t color);
+  virtual void writeFillRect(clip_t* clip, const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color);
 
   virtual void beginTransaction(const uint32_t Hz) = 0;
   virtual void endTransaction() = 0;

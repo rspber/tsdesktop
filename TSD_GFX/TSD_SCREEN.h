@@ -63,15 +63,13 @@ public:
   void fillScreen(const rgb_t color = BLACK);
   void clearDisplay();
 
-  void drawCircleHelper(clip_t* clip, int16_t x0, int16_t y0, int16_t r, uint8_t cornername, rgb_t color, int16_t ts); // thickness
-
   void drawLine(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color, int16_t ts, uint8_t mode); // thickness, mode:1 cut
   void drawRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color, int16_t ts); // thickness
   void drawTriangle(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts, uint8_t mode); // thickness, mode:1 cut
   void drawRoundRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, int16_t radius, rgb_t color, int16_t ts); // thickness
   void drawCircle(clip_t* clip, int16_t x0, int16_t y0, int16_t r, rgb_t color, int16_t ts); // thickness
-  void drawCircleFragment(clip_t* clip, int16_t x, int16_t y, int16_t r, uint8_t fragment, rgb_t color, int16_t ts); // thickness
-  void fillCircleFragment(clip_t* clip, int16_t x0, int16_t y0, int16_t r, uint8_t fragment, int16_t delta, rgb_t color);
+  void drawCircleFragment(clip_t* clip, int16_t x0, int16_t y0, int16_t r, uint8_t corners, rgb_t color, int16_t ts); // thickness
+  void fillCircleFragment(clip_t* clip, int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, rgb_t color);
 
   void drawPixel(int16_t x, int16_t y, rgb_t color);
   void drawFastVLine(int16_t x, int16_t y, int16_t h, rgb_t color);
@@ -80,9 +78,9 @@ public:
   void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color, int16_t ts = 1, uint8_t mode = 0); // thickness, mode:1 cut
   void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color, int16_t ts = 1); // thickness
   void drawCircle(int16_t x0, int16_t y0, int16_t r, rgb_t color, int16_t ts = 1); // thickness
-  void drawCircleFragment(int16_t x, int16_t y, int16_t r, uint8_t fragment, rgb_t color, int16_t ts = 1); // thickness
+  void drawCircleFragment(int16_t x0, int16_t y0, int16_t r, uint8_t corners, rgb_t color, int16_t ts = 1); // thickness
   void fillCircle(int16_t x0, int16_t y0, int16_t r, rgb_t color);
-  void fillCircleFragment(int16_t x0, int16_t y0, int16_t r, uint8_t fragment, int16_t delta, rgb_t color);
+  void fillCircleFragment(int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, rgb_t color);
   void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts = 1, uint8_t mode = 0); // thickness, mode:1 cut
   void fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color);
   void drawRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h, int16_t radius, rgb_t color, int16_t ts = 1); // thickness
@@ -105,9 +103,7 @@ public:
   using TSD_GFX::drawLine;
   using TSD_GFX::drawRect;
   using TSD_GFX::drawCircle;
-  using TSD_GFX::drawCircleHelper;
   using TSD_GFX::fillCircle;
-  using TSD_GFX::fillCircleHelper;
   using TSD_GFX::drawTriangle;
   using TSD_GFX::fillTriangle;
   using TSD_GFX::drawRoundRect;
