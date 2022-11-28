@@ -510,7 +510,7 @@ void TSD_ILI9341::fill_hrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int1
     h = clip->y2 - y;
   }
   if (w > 0 && h > 0) {
-    int16_t chunk_height = 2048 / w;
+    int16_t chunk_height = MDT_BUFFER_SIZE / w;
     int16_t chunk_count = h / chunk_height;
     int16_t remainder = h % chunk_height;
     int16_t chunk_size = chunk_height * w;
@@ -547,7 +547,7 @@ void TSD_ILI9341::fill_vrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int1
     h = clip->y2 - y;
   }
   if (w > 0 && h > 0) {
-    int16_t chunk_width = 2048 / h;
+    int16_t chunk_width = MDT_BUFFER_SIZE / h;
     int16_t chunk_count = w / chunk_width;
     int16_t remainder = w % chunk_width;
     int16_t chunk_size = chunk_width * h;
