@@ -17,8 +17,8 @@ missed:
 changes:
 - rotation and invertDisplay are maintain in TSD_ILI9341,
 - no integrated cursor, now it is a parameter,
-- no integrated gfxFont, textSizes, textColor, bakcgroundColor:
-  they are parameters too and are handled by TSDesktop,
+- no integrated gfxFont, textSizes: they are parameters too, and textColor and
+  bakcgroundColor are handled by TSDesktop,
 - drawChar was modified to the new solution,
 - integrated fixed font in file glcdfont.c was reformatted and renamed to
   dafault_font,
