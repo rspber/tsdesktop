@@ -177,7 +177,7 @@ int16_t proc_char(const uint char_code, const char z, const char w, const char c
   int THN = 0;
 
   char fontName[0x80];
-  char hexen[8];
+  char fract[8];
 
   int z = 0;
   int w = 0;
@@ -188,15 +188,15 @@ int16_t proc_char(const uint char_code, const char z, const char w, const char c
 
 void page_start()
 {
-    printf("static const uint8_t %s_Glyphs_%s[] {\n", fontName, hexen);
+    printf("static const uint8_t %s_Glyphs_%s[] {\n", fontName, fract);
 }
 
 int page_end()
 {
     printf("0};\n\n");
 
-    printf("static const GFXfont %s_%s {\n", fontName, hexen);
-    printf("  %s_Glyphs_%s,\n", fontName, hexen);
+    printf("static const GFXfont %s_%s {\n", fontName, fract);
+    printf("  %s_Glyphs_%s,\n", fontName, fract);
     int16_t h = face->size->metrics.height;
     // No face height info, assume fixed width and get from a glyph.
     int c1 = z > 0 ? z : w;
@@ -222,22 +222,22 @@ void run(int first, int last)
           if (fr == 0) {
             fr = 0x20;
             to = fr + 0x1f;
-            snprintf(hexen, sizeof(hexen), "%02X", fr);
+            snprintf(fract, sizeof(fract), "%02X", fr);
           }
           else {
             if (fr < 0x80) {
               to = fr + 0x1f;
-              snprintf(hexen, sizeof(hexen), "%02X", fr);
+              snprintf(fract, sizeof(fract), "%02X", fr);
             }
             else {
               if (first >= 0xE0) {
                 z = first;
                 w = 0x80;
-                snprintf(hexen, sizeof(hexen), "%02X%02X", z, w);
+                snprintf(fract, sizeof(fract), "%02X%02X", z, w);
               }
               else {
                 w = first;
-                snprintf(hexen, sizeof(hexen), "%02X", w);
+                snprintf(fract, sizeof(fract), "%02X", w);
               }
               fr = 0x80;
               to = 0xbf;
@@ -259,7 +259,7 @@ void run(int first, int last)
               to = last;
             }
           }
-          snprintf(hexen, sizeof(hexen), "%02X", fr);
+          snprintf(fract, sizeof(fract), "%02X", fr);
         }
       }
       else {
@@ -276,7 +276,7 @@ void run(int first, int last)
               break;
             }
           }
-          snprintf(hexen, sizeof(hexen), "%02X%02X", z, w);
+          snprintf(fract, sizeof(fract), "%02X%02X", z, w);
         }
         else {
           if (first >= 0xc0) {  // utf-8 2 byte
@@ -286,7 +286,7 @@ void run(int first, int last)
             else {
               break;
             }
-            snprintf(hexen, sizeof(hexen), "%02X", w);
+            snprintf(fract, sizeof(fract), "%02X", w);
           }
           else {
             break;
@@ -297,7 +297,7 @@ void run(int first, int last)
       }
       page_start();
       fr0 = fr;
-      strncpy(TH[THN++], hexen, sizeof(hexen));
+      strncpy(TH[THN++], fract, sizeof(fract));
     }
 
     uint uni16;
