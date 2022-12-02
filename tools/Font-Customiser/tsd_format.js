@@ -388,7 +388,8 @@ function exportFont() {
   if (utf8_pfx.length >= 2) {
     c1 = '0x' + utf8_pfx.substring(0, 2)
     if (utf8_pfx.length >= 4) {
-      c2 = '0x' + utf8_pfx.substring(2, 4)
+      const i = 2 + (utf8_pfx.length > 4 ? 1 : 0)
+      c2 = '0x' + utf8_pfx.substring(i, i + 2)
     }
   }
   let output =
