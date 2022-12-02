@@ -12,7 +12,7 @@
 #include <Display.h>
 #include <Touch.h>
 #include <TSDesktop.h>
-#include <Fonts/FreeSerif18pt7b.h>
+#include <Fonts/TSD_FreeSerif_18pt.h>
 
 #include <TSD_PCF8575.h>
 
@@ -230,7 +230,7 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
 
   logo.setText("TSDesktop\n\nTouch\nScreen\nDesktop");
-  logo.setFont(&FreeSerif18pt7b);
+  logo.setFont(FreeSerif_18pt);
   logo.setTextAlign(TEXT_ALIGN_CENTER);
   logo.setTextColor(GRAY);
   logo.setBorderSize(0);

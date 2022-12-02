@@ -11,7 +11,7 @@
 #include <Touch.h>
 #include <TSDesktop.h>
 #include <GFXButton.h>
-#include <Fonts/FreeSans9pt7b.h>
+#include <Fonts/TSD_FreeSans_9pt.h>
 
 #define ROTATION ROTATION_HLR
 
@@ -118,7 +118,7 @@ void tx_btn(TextButton* b, const int id, const char* text)
   b->setId(id);
   b->setText(text);
   b->setTextColor(GRAY);
-  b->setFont(&FreeSans9pt7b);
+  b->setFont(FreeSans_9pt);
   b->setFontSize(1);
   b->setBorderColor(GRAY);
   b->setEnabled();

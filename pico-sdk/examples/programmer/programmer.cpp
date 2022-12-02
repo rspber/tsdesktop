@@ -19,9 +19,9 @@
 #include <PicoFlash.h>
 #include "Pgms.h"
 
-#include <Fonts/FreeSans9pt7b.h>
+#include <Fonts/TSD_FreeSans_9pt.h>
 
-#define FONT &FreeSans9pt7b
+#define FONT FreeSans_9pt
 
 #define ROTATION ROTATION_VTB
 

@@ -66,7 +66,7 @@ void setup()   {
   canvas.triangle(200, 80, 350, 120, 210, 200, BLACK, 5);
   canvas.fillTriangle(160, 40, 180, 60, 170, 80, PINK);
 // canvas.textLine(30, 150, "5V", RED)->setFontSize(3);
-  tx = canvas.textLine(30, 150, "5V", RED);
+  tx = canvas.textLine(30, 150, "5V", RED, RED);
   tx->setFontSize(3);
 
   tcentb.setAlignClient();

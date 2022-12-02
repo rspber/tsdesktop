@@ -7,6 +7,19 @@ Touch Screen Desktop for Raspberry pi pico
 
 2.4" TFT SPI 240X320 v1.3 is supported (see Setup.h)
 
+### UTF-8 Support
+
+  Although utf-8 fonts are not included, see the tools directory for more details.
+
+  When the correct font with UTF-8 encoding is included in the code, use the following scheme
+  to deliver utf-8 text:
+
+  - const char buf[] { 0xc4, 0x85, 0xc4, 0xb2, 0 };
+  - textBtn.setText(buf);
+
+  remember to end the construction with a 0.
+
+
 ## pico-sdk
 
 1. No other libraries are required,

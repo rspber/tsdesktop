@@ -53,7 +53,7 @@ public:
   GFXRGBBitmap* RGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, int16_t w, int16_t h);
   GFXRGBBitmap* RGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, const uint8_t *mask, int16_t w, int16_t h);
 
-  GFXChar* character(int16_t x1, int16_t y1, char c, rgb_t color = WHITE, rgb_t bg = BLACK);
+  GFXChar* character(int16_t x1, int16_t y1, const char* c, rgb_t color = WHITE, rgb_t bg = BLACK);
   GFXTextLine* textLine(int16_t x1, int16_t y1, const char* text, rgb_t color = WHITE, rgb_t bg = BLACK);
 
   virtual void innerDraw(const bool redraw);

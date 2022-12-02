@@ -1,0 +1,177 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+  <script src="script.js"></script>
+  <script src="tsd_format.js"></script>
+  <script src="update_pixels.js"></script>
+</head>
+<body>
+  <h1 class="ui header">.</h1>
+  <h1 class="ui header">TSD_GFX Pixel font customiser</h1>
+  <p>
+    <em>Created by <a href="https://github.com/rspber">rspber</a>,
+    based on <a href="https://github.com/tchapi/Adafruit-GFX-Font-Customiser">tchapi</a> font customiser.</em>
+  </p>
+
+  <div class="ui divider"></div>
+
+  <div class="ui grid">
+    <div class="eight wide column">
+      <div class="ui teal segment">
+        <div class="ui form">
+          <div class="field">
+            <label>Extract fonts from source</label>
+            <textarea id="source"></textarea>
+          </div>
+            <button class="ui button teal" id="import"><i class="icon upload"></i> Import font set</button>
+            <button class="ui button red right floated" id="reset" disabled><i class="icon undo"></i> Reset</button>
+            <button class="ui button blue right floated" id="create"><i class="icon file outline"></i> Create a new font set</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui small modal newfont">
+      <div class="header">Create a new font set</div>
+      <div class="content">
+        <form class="ui form">
+        <div class="ui right labeled input">
+          <a class="ui label">Font name</a>
+          <input type="text" id="newfont-name" placeholder="Name of the new font">
+        </div>
+        <p>Font height in pixels for all characters.</p>
+        <div class="ui right labeled input">
+          <a class="ui label">Font size</a><input
+          id="newfont-size" style="width:150px" type="number" min="1" placeholder="in pt e.g. 12"><a
+          class="ui label">Font height</a><input
+          id="newfont-height" style="width:150px" type="number" min="1" placeholder="in pixels e.g. 28">
+        </div>
+        </form>
+        <p>UTF-8 (hex coded) starting characters e.g.: C4 - for latin A, E5 AD - for some CJKs.</p>
+        <div class="ui right labeled input">
+          <a class="ui label">UTF-8 prefix</a>
+          <input type="text" id="newfont-utf8-pfx" placeholder="for ASCII leave it empty" maxlength="5">
+        </div>
+        <br/>
+        <p>2 hex char code, for UTF-8: last sequence - valid are 80 to BF.</p>
+        <div class="ui right labeled input">
+          <a class="ui label">First char code</a><input
+            style="width:80px" type="text" id="newfont-first-hex" placeholder="e.g. 40" maxlength="2"><input
+            style="width:60px" readonly type="text" id="code"><input
+            style="width:100px" readonly type="text" id="ucode"><input
+            style="width:150px" readonly type="text" id="utf8">
+        </div>
+        <div class="ui right labeled input">
+          <a class="ui label">Last char code</a><input
+            style="width:80px" type="text" id="newfont-last-hex" placeholder="e.g. 5F" maxlength="2"><input
+            style="width:60px" readonly type="text" id="code"><input
+            style="width:100px" readonly type="text" id="ucode"><input
+            style="width:150px" readonly type="text" id="utf8">
+        </div>
+      </div>
+      <div class="actions">
+        <div class="ui cancel red button">Cancel</div>
+        <div class="ui approve green button">Create</div>
+      </div>
+    </div>
+
+    <div class="ui small modal message">
+      <div class="header">⚠️ Warning</div>
+      <div class="content">
+        <p></p>
+      </div>
+      <div class="actions">
+        <div class="ui approve blue button">Ok</div>
+      </div>
+    </div>
+
+    <div class="ui small modal confirmation">
+      <div class="header">⚠️ Warning</div>
+      <div class="content">
+        <p></p>
+      </div>
+      <div class="actions">
+        <div class="ui cancel blue button">Cancel</div>
+        <div class="ui approve red button">Reset</div>
+      </div>
+    </div>
+
+    <div class="eight wide column">
+      <div class="ui green segment" id="resultWrapper">
+        <div class="ui form">
+          <div class="field">
+            <label>Output</label>
+            <textarea onclick="this.focus();this.select()" id="result" readonly></textarea>
+          </div>
+          <div class="two fields">
+            <div class="field">
+              <label>First glyph to export</label>
+              <input type="text" id="firstglyph" disabled />
+            </div>
+            <div class="field">
+              <label>Last glyph to export</label>
+              <input type="text" id="lastglyph" disabled />
+            </div>
+          </div>
+          <button class="ui button green" id="export" disabled="disabled"><i class="icon download"></i> Export data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui divider"></div>
+
+  <h2 class="ui header">How to use it</h2>
+  <div class="ui grid">
+    <div class="five wide column">
+      <div class="ui explanation">
+        <h5>Importing or creating a font set:</h5>
+        You can either:
+        <ul>
+          <li>Import a font set by copying &amp; pasting a one section only:
+          <br>from-&gt;<br>static const uint8_t <b>name</b>_<b>size</b>pt_Glyphs_<b>fract</b>[] {<br>&nbsp;&nbsp;...<br>0};<br>
+          static const GFXfont <b>name</b>_<b>size</b>pt_<b>fract</b>{<br>
+          &nbsp;&nbsp;<b>name</b>_<b>size</b>pt_Glyphs_<b>fract</b>,<br>&nbsp;&nbsp;...<br>};<br>&lt;-to<br>
+          from the existing TSD_<b>name</b>_<b>size</b>pt.h font source file in the textarea above</li>
+          <li>Create a new font set</li>
+        </ul>
+      </div>
+    </div>
+    <div class="eleven wide column">
+      <div class="ui explanation">
+        <h5>Editing glyphs:</h5>
+        Glyphs can be edited individually. You can:
+        <ul>
+          <li>Enable or disable the glyph</li>
+          <li>Edit each pixel of the glyph</li>
+          <li>Edit all values present in the GFXglyph data structure</li>
+        </ul>
+        <h5>When exporting, you can :</h5>
+        <ul>
+          <li>Disable individual characters, they will be skipped.</li>
+        </ul>
+        <p>regarding the Adafruit format, yOffset is saved as positive.</p>
+        <p>The TSD font format is prepared to handle multiple font sets in a single TSD_<b>name</b>_<b>size</b>pt.h header file.
+        <br>These sets should be disjoint and not necessarily continuous both inside and outside,
+        <br>so during export disabled fonts are simply skipped.
+        <br>During font import, missing fonts are added as disabled.<p/>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui divider"></div>
+  <h2 class="ui header" style="display: none;">Font: <em class="fontname">unknown</em></h2>
+
+  <div id="loader">
+    <div class="advance-wrapper"><div class="advance"></div></div>
+    <span>Loading and extracting font ...</span>
+  </div>
+  <div id="glyphs" class="ui glyph-grid"><em>Please import or create a font set first.</em></div>
+</body>
+</html>

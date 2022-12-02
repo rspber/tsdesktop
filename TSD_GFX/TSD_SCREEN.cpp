@@ -281,10 +281,10 @@ void TSD_SCREEN::drawRGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, const 
   drawRGBBitmap(&clip, x, y, bitmap, mask, w, h);
 }
 
-void TSD_SCREEN::drawChar(cursor_t* cursor, font_t* font, const char c, rgb_t color, rgb_t bg)
+void TSD_SCREEN::drawChar(cursor_t* cursor, font_t* font, const char* c, rgb_t color, rgb_t bg)
 {
   clip_t clip{0, 0, _width, _height};
-  drawChar(&clip, cursor, font, c, color, bg);
+  drawChar(&clip, cursor, font, (char **)&c, color, bg);
 }
 
 void TSD_SCREEN::drawTextLine(cursor_t* cursor, font_t* font, const char* text, rgb_t color, rgb_t bg, const int8_t spacing)

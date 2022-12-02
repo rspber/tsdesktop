@@ -12,7 +12,7 @@ Code comes from https://github.com/Bodmer/TFT_eSPI/Extensions:
 notes:
 - only hardware spi is supported
 
-Original notes bellow
+Original notes below
 vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvStartvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 // The following touch screen support code by maxpautsch was merged 1/10/17
 // https://github.com/maxpautsch
@@ -27,7 +27,7 @@ vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvStartvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 // See license in root directory.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^End^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Bodmer's root directory essencials from licence.txt bellow
+Bodmer's root directory essencials from licence.txt below
 vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvStartvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 Software License Agreement (FreeBSD License)
 

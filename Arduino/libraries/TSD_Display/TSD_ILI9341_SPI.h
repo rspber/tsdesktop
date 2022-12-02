@@ -5,7 +5,7 @@
 
   Based on Adafruit's Adafruit_SPITFT
 
-Original Adafruit's licence bellow.
+Original Adafruit's licence below.
 */
 
 /*!

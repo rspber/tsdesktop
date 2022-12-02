@@ -13,11 +13,11 @@
 
 #include "TSDesktop.h"
 
-void TextButton::setFont(const GFXfont* aFont)
+void TextButton::setFont(const GFXfont** aFont)
 {
-  if (font.gfxFont != aFont) {
+  if (font.getFont() != aFont) {
     hide();
-    font.gfxFont = (GFXfont*)aFont;
+    font.setFont(aFont);
     setChanged();
   }
 }

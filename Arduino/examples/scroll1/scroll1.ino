@@ -10,7 +10,9 @@
 #include <Display.h>
 #include <Touch.h>
 #include <TSDesktop.h>
-#include <Fonts/FreeSerif24pt7b.h>
+#include <Fonts/TSD_FreeSerif_24pt.h>
+
+#define FONT FreeSerif_24pt
 
 #define ROTATION ROTATION_HLR
 
@@ -47,8 +49,8 @@ void setup()   {
 
   btn01.setSize(ALIGN_COMPACT, 400);
   btn01.setBackground(BROWN);
+  btn01.setFont(FONT);
   btn01.setText("Abcdefghijklmnopqrstuvwxyz");
-  btn01.setFont(&FreeSerif24pt7b);
   btn01.setFontSize(5);
   btn01.setTextColor(WHITE);
 

@@ -27,12 +27,11 @@ changes:
 - drawPixel, drawFastHLine, drawFastVLine, drawCircleHelper, fillCircleHelper
   have been renamed to writePixel, writeFastHLine, writeFastVLine, writeCircleHelper,
   writeFillCircleHelper to suggest use them within startWrite and endWrite,
-- canvas was implemented in TSDesktop in GFXButton
+- canvas was implemented in TSDesktop in GFXButton,
+- gfxfont.h was changed to handle characters in utf-8 encoding,
+- fonts from Font directory ware converted to new structure by tsdfontconvert.py
 
-notes:
-- original gfxfont.h and Fonts directory from Adafruit's library are included,
-
-Original Adafruit's license bellow
+Original Adafruit's license below
 */
 
 /*
@@ -574,20 +573,22 @@ void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bit
     @param    color
 */
 /**************************************************************************/
-void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char c, rgb_t color, rgb_t bg, const int8_t spacing)
+void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, rgb_t color, rgb_t bg, const int8_t spacing)
 {
-  GFXfont* gfxFont = font->gfxFont;
   uint8_t size_x = font->fontSizeX;
   uint8_t size_y = font->fontSizeY;
 
   int16_t x = cursor->x;
   int16_t y = cursor->y;
-  font->cursorAdjust(&x, &y);
 
   int16_t lw;
   int16_t lhz;
   startWrite();
-  if (!gfxFont) { // 'Classic' built-in font
+  GFXfont* gfxFont;
+  const GFXglyph* glyph = font->getCharGlyph(&gfxFont, c);
+  font->cursorAdjust(gfxFont, &x, &y);
+
+  if (!glyph) { // 'Classic' built-in font
     lw = 6;
     lhz = 8 * size_y;
     if (bg != color && x - cursor->x > 0) {
@@ -597,7 +598,7 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char 
       writeFillRect(clip, cursor->x, cursor->y, lw * size_x, y - cursor->y, bg);
     }
     for (int8_t i = 0; i < 5; i++) { // Char bitmap = 5 columns
-      uint8_t line = default_font[c * 5 + i];
+      uint8_t line = default_font[**c * 5 + i];
       for (int8_t j = 0; j < 8; j++, line >>= 1) {
         if (line & 1) {
           if (size_x == 1 && size_y == 1)
@@ -619,17 +620,16 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char 
       else
         writeFillRect(clip, x + 5 * size_x, y, size_x, 8 * size_y, bg);
     }
+    *c += 1;
   }
   else { // Custom font
+    lw = glyph->xAdvance;
     lhz = font->yAdvHeight(gfxFont->yAdvance);
 
-    GFXglyph* glyph = &gfxFont->glyph[c - gfxFont->first];
-    lw = glyph->xAdvance;
-    uint8_t* bitmap = gfxFont->bitmap;
-
-    uint16_t bo = glyph->bitmapOffset;
+    const uint8_t* bp = (const uint8_t*)(glyph + 1);
     uint16_t w = glyph->width, h = glyph->height;
-    int16_t xo = glyph->xOffset, yo = glyph->yOffset;
+    int16_t xo = glyph->xOffset,
+       yo = 1 - glyph->yOffset; // yOffset is positive
 
     if (bg != color && x - cursor->x + xo * size_x > 0) {
       writeFillRect(clip, cursor->x, cursor->y, x - cursor->x + xo * size_x, lhz, bg);
@@ -649,7 +649,7 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char 
       int16_t xbg0 = -1;
       for (xx = 0; xx < w; xx++) {
         if (!(bit++ & 7)) {
-          bits = bitmap[bo++];
+          bits = *bp++;
         }
         if (bits & 0x80) {
           if (bg != color && xbg0 >= 0) {
@@ -728,9 +728,9 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const char 
 /**************************************************************************/
 void TSD_GFX::drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, rgb_t color, rgb_t bg, const int8_t spacing)
 {
-  const char* p = text;
+  char* p = (char *)text;
   char c;
-  while ((c = *p++) && c != '\r' && c != '\n') {
-    drawChar(clip, cursor, font, c, color, bg, spacing);
+  while ((c = *p) && c != '\r' && c != '\n') {
+    drawChar(clip, cursor, font, &p, color, bg, spacing);
   }
 }

@@ -289,19 +289,19 @@ public:
   GFXCursorFontColor(Button* parent, int16_t ax1, int16_t ay1, rgb_t color = WHITE)
    : GFXObject(parent, color), x1(ax1), y1(ay1)
   {
-    font.gfxFont = NULL;
+    font.setFont(NULL);
     font.fontSizeX = 1;
     font.fontSizeY = 1;
   }
 
-  void setFont(const GFXfont* gfxFont, int8_t fontSizeX, int8_t fontSizeY)
+  void setFont(const GFXfont** gfxFont, int8_t fontSizeX, int8_t fontSizeY)
   {
-    font.gfxFont = (GFXfont*)gfxFont;
+    font.setFont(gfxFont);
     font.fontSizeX = fontSizeX;
     font.fontSizeY = fontSizeY;
   }
 
-  void setFont(const GFXfont* gfxFont, int8_t fontSize = 1)
+  void setFont(const GFXfont** gfxFont, int8_t fontSize = 1)
   {
     setFont(gfxFont, fontSize, fontSize);
   }
@@ -327,16 +327,16 @@ public:
 
 class GFXChar : public GFXCursorFontColor {
 public:
-  GFXChar(Button* parent, int16_t x1, int16_t y1, char ac, rgb_t color = WHITE, rgb_t abg = BLACK)
-   : GFXCursorFontColor(parent, x1, y1, color), c(ac), bg(abg) {}
+  GFXChar(Button* parent, int16_t x1, int16_t y1, const char *ac, rgb_t color = WHITE, rgb_t abg = BLACK)
+   : GFXCursorFontColor(parent, x1, y1, color), c((char *)ac), bg(abg) {}
 
   virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
   {
     cursor_t cursor{(int16_t)(x + x1), (int16_t)(y + y1)};
-    display.drawChar(clip, &cursor, &font, c, color, bg);
+    display.drawChar(clip, &cursor, &font, &c, color, bg);
   }
 
-  char c;
+  char* c;
   rgb_t bg;
 };
 

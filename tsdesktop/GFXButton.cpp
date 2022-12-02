@@ -156,7 +156,7 @@ GFXRGBBitmap* GFXButton::RGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, co
 }
 
 
-GFXChar* GFXButton::character(int16_t x1, int16_t y1, char c, rgb_t color, rgb_t bg)
+GFXChar* GFXButton::character(int16_t x1, int16_t y1, const char* c, rgb_t color, rgb_t bg)
 {
   return (GFXChar*)add(new GFXChar(this, x1, y1, c, color, bg));
 }

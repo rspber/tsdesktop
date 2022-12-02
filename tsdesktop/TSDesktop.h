@@ -443,8 +443,8 @@ private:
   }
 
 public:
-  void setFont(const GFXfont* aFont = NULL);
-  GFXfont* getFont() { return font.gfxFont; }
+  void setFont(const GFXfont** aFont = NULL);
+  const GFXfont** getFont() { return font.getFont(); }
 
   void setText(const char* aText);
   void setTextCoord(const int16_t aLeft, const int16_t aTop);
