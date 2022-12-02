@@ -29,7 +29,7 @@ changes:
   writeFillCircleHelper to suggest use them within startWrite and endWrite,
 - canvas was implemented in TSDesktop in GFXButton,
 - gfxfont.h was changed to handle characters in utf-8 encoding,
-- fonts from Font directory ware converted to new structure by tsdfontconvert.py
+- fonts from Font directory ware converted to the new structure by tsdfontconvert.py
 
 Original Adafruit's license below
 */
