@@ -160,7 +160,10 @@
         <p>The TSD font format is prepared to handle multiple font sets in a single TSD_<b>name</b>_<b>size</b>pt.h header file.
         <br>These sets should be disjoint and not necessarily continuous both inside and outside,
         <br>so during export disabled fonts are simply skipped.
-        <br>During font import, missing fonts are added as disabled.<p/>
+        <br>During font import, missing fonts are added as disabled.
+        <br>After export, copy the output content to the .h file somewhere inside.
+        <br>Then remember add this section to the fonts list in the bottom of the file.
+        <br>Alphabetical order in this list is indicated.</p>
       </div>
     </div>
   </div>
