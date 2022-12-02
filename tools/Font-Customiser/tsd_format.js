@@ -392,8 +392,8 @@ function exportFont() {
     }
   }
   let output =
-  'static const uint8_t ' + font_name + '_Glyphs_' + font_fract + '[] {\n'
-    output += glyphs.join('\n') + '\n' +
+  'static const uint8_t ' + font_name + '_Glyphs_' + font_fract + '[] {\n' +
+    glyphs.join('\n') + '\n' +
   '0};\n\n' +
   'static const GFXfont ' + font_name + '_' + font_fract + ' {\n' +
     '  ' + font_name + '_Glyphs_' + font_fract + ',\n' +
