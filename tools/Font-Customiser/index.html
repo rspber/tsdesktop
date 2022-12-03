@@ -163,7 +163,10 @@
         <br>During font import, missing fonts are added as disabled.
         <br>After export, copy the output content to the .h file somewhere inside.
         <br>Then remember add this section to the fonts list in the bottom of the file.
-        <br>The alphabetical order in this list is indicated.</p>
+        <br>The alphabetical order in this list is indicated.
+        <br>The use of static const resulted in the inclusion of fonts in the program code,
+        <br>which allowed the inclusion of the entire set of 12pt fonts for CJK unified from E4 to E9,
+        <br>the resulting sketch took 1.9 MB and ran on RP pico.</p>
       </div>
     </div>
   </div>
