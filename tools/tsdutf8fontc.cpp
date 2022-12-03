@@ -172,7 +172,7 @@ int16_t proc_char(const uint char_code, const char z, const char w, const char c
 }
 
 // ----------------------------------------------------------------------------
-  char TH[0x200][8];
+  char TH[0x800][8];
   int THN = 0;
 
   char fontName[0x80];
