@@ -295,7 +295,7 @@ function extractFont () {
       ++lastChar
     }
   }
-  while (lastChar < last) {
+  while (lastChar <= last) {
     const grid = makeGlyphItem (' ' , 1, 1, toHex00(lastChar), 4, 0, -font_height, true)
     $('#glyphs').append(grid)
     ++lastChar
