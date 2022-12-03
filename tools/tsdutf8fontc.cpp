@@ -59,7 +59,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #include FT_GLYPH_H
 #include FT_MODULE_H
 #include FT_TRUETYPE_DRIVER_H
-#include <gfxfont.h> // extended Adafruit_GFX font structures
 
 #define DPI 141 // Approximate res. of Adafruit 2.8" TFT
 

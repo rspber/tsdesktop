@@ -389,8 +389,8 @@ $(document).ready(function () {
         glyph_table_width = Math.max(160, fontHeight * 11 + 30 /* some margin */)
 
         $('.fontname').text(font_name).parent().show()
-        $('#firstglyph').val(first.toUpperCase())
-        $('#lastglyph').val(last.toUpperCase())
+        $('#firstglyph').val('0x' + first.toUpperCase())
+        $('#lastglyph').val('0x' + last.toUpperCase())
         $('#glyphs').empty()
 
         // Change button states

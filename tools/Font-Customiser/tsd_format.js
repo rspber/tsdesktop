@@ -242,8 +242,8 @@ function extractFont () {
   font_height = tt[5]
 
   $('.fontname').text(font_name).parent().show()
-  $('#firstglyph').val(toHex00(first).toUpperCase())
-  $('#lastglyph').val(toHex00(last).toUpperCase())
+  $('#firstglyph').val(toHex(first))
+  $('#lastglyph').val(toHex(last))
 
   const glyphsArray = FirstFontSection
 
@@ -395,7 +395,7 @@ function exportFont() {
   '0};\n\n' +
   'static const GFXfont ' + font_name + '_' + font_fract + ' {\n' +
     '  ' + font_name + '_Glyphs_' + font_fract + ',\n' +
-    '  ' + c1 + ', ' + c2 + ', ' + '0' + ', ' + '0x' + $('#firstglyph').val() + ', ' + '0x' + $('#lastglyph').val() + ', ' + font_height + '\n' +
+    '  ' + c1 + ', ' + c2 + ', ' + '0' + ', ' + $('#firstglyph').val() + ', ' + $('#lastglyph').val() + ', ' + font_height + '\n' +
   '};\n'
 
   $('#result').val(output)
