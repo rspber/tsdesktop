@@ -299,3 +299,18 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, co
   font_t font{NULL, fontSize, fontSize};
   drawTextLine(&cursor, &font, text, color, bg, spacing);
 }
+
+void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, const GFXfont** gfxFont, const int8_t fontSize, rgb_t color, rgb_t bg, const int8_t spacing)
+{
+  cursor_t cursor{ x, y };
+  clip_t clip{0, 0, _width, _height};
+  font_t font{gfxFont, fontSize, fontSize};
+  const char* p = text;
+  while (*p) {
+    p = drawTextLine(&clip, &cursor, &font, p, color, bg, spacing);
+    while (*p == '\r') ++p;
+    if (*p == '\n') ++p;
+    cursor.x = x;
+    cursor.y += font.textLineHeight();
+  }
+}

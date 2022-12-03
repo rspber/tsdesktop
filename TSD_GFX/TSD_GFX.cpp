@@ -726,11 +726,12 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, r
   @param    spacing extra horizontal spacing for letters
 */
 /**************************************************************************/
-void TSD_GFX::drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, rgb_t color, rgb_t bg, const int8_t spacing)
+const char*  TSD_GFX::drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, rgb_t color, rgb_t bg, const int8_t spacing)
 {
   char* p = (char *)text;
   char c;
   while ((c = *p) && c != '\r' && c != '\n') {
     drawChar(clip, cursor, font, &p, color, bg, spacing);
   }
+  return (const char*) p;
 }

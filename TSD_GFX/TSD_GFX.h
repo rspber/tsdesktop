@@ -56,6 +56,6 @@ public:
   void drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bitmap, const uint8_t *mask, int16_t w, int16_t h);
 
   void drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, rgb_t color = WHITE, rgb_t bg = BLACK, const int8_t spacing = 0);
-  void drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, rgb_t color = WHITE, rgb_t bg = BLACK, const int8_t spacing = 0);
+  const char* drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, rgb_t color = WHITE, rgb_t bg = BLACK, const int8_t spacing = 0);
 };
 

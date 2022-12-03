@@ -15,6 +15,8 @@ Touch Screen Desktop for Raspberry pi pico
   to deliver utf-8 text:
 
   - const char buf[] { 0xc4, 0x85, 0xc4, 0xb2, 0 };
+  - display.drawText(x, y, buf, FontName);
+  or
   - textBtn.setText(buf);
 
   remember to end the construction with a 0.
