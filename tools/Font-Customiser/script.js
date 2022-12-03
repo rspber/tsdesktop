@@ -351,7 +351,7 @@ $(document).ready(function () {
           return
         }
 
-        const l_utf8_pfx = $('#newfont-utf8-pfx').val()
+        const l_utf8_pfx = $('#newfont-utf8-pfx').val().replace(/\s/g, '').toUpperCase()
         const first = $('#newfont-first-hex').val()
         const last = $('#newfont-last-hex').val()
 
@@ -379,9 +379,9 @@ $(document).ready(function () {
 
         font_name = name + '_' + fontSize + 'pt'
         font_size = fontSize
-        utf8_pfx = l_utf8_pfx.toUpperCase()
-        font_fract = (utf8_pfx.length > 0 ? utf8_pfx.replace(/\s/g, '') : first).toUpperCase()
-        maxH = fontHeight
+        utf8_pfx = l_utf8_pfx
+        font_fract = (utf8_pfx.length > 0 ? utf8_pfx : first).toUpperCase()
+        font_height = fontHeight
         minUnderBaseline = -Math.round(fontHeight/5)
         maxBaseline = fontHeight + minUnderBaseline;
 

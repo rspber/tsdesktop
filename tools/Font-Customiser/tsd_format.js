@@ -239,7 +239,7 @@ function extractFont () {
     load_err('Font subranges in footer not match: ' + font_fract + ' <> ' + fract3)
     return;
   }
-  maxH = tt[5]
+  font_height = tt[5]
 
   $('.fontname').text(font_name).parent().show()
   $('#firstglyph').val(toHex00(first).toUpperCase())
@@ -251,7 +251,6 @@ function extractFont () {
   let maxW = 0
   maxBaseline = 0
   minUnderBaseline = 0
-  let tablen = 0;
   for (ind in glyphsArray) {
     const glyph = glyphsArray[ind]
     if (Array.isArray(glyph)) {
@@ -259,7 +258,6 @@ function extractFont () {
       maxW = Math.max(maxW, glyph[3], glyph[5])
       maxBaseline = Math.max(maxBaseline, inv_oh)
       minUnderBaseline = Math.min(minUnderBaseline, inv_oh + 1 - glyph[4])
-      tablen++;
     }
   }
 
@@ -268,27 +266,15 @@ function extractFont () {
 
   // sort glyphsArray
 
-  let charIndex = 0;
-  let lastChar = glyphsArray[0][0]
+  let lastChar = first
   for (ind in glyphsArray) {
     const glyph = glyphsArray[ind]
     if (Array.isArray(glyph)) {
-      ++lastChar
-
-      function glyphAppendClosure(el, adv) {
-        setTimeout(function () {
-          advanceLoading(0.2 * adv)
-          $('#glyphs').append(el)
-          if (adv === 1) {
-            // Run the setGlyphTable function now
-            displayGlyphTable()
-          }
-        }, 1)
-      }
 
       while (glyph[0] > lastChar) {
-        const grid = makeGlyphItem (' ' , 1, 1, toHex00(lastChar), 4, 0, -fontHeight, true)
-        ++lastChar;
+        const grid = makeGlyphItem (' ' , 1, 1, toHex00(lastChar), 4, 0, -font_height, true)
+        $('#glyphs').append(grid)
+        ++lastChar
       }
       const hexChar = toHex00(glyph[0])
       const w = glyph[3]
@@ -298,17 +284,23 @@ function extractFont () {
       const oh = -signedByte(glyph[7])
       let n = ''
 
-      const nof = parseInt(glyph[8]) | (parseInt(glyph[9]) << 8);
+      const nof = glyph[8] | (glyph[9] << 8);
       for (let k = 0; k < nof; k++) {
         n += ('000000000' + glyph[10 + k].toString(2)).substr(-8)
       }
 
       const grid = makeGlyphItem (n, w, h, hexChar, adv, ow, oh, false)
+      $('#glyphs').append(grid)
 
-      charIndex ++;
-      glyphAppendClosure(grid, charIndex / tablen)
+      ++lastChar
     }
   }
+  while (lastChar < last) {
+    const grid = makeGlyphItem (' ' , 1, 1, toHex00(lastChar), 4, 0, -font_height, true)
+    $('#glyphs').append(grid)
+    ++lastChar
+  }
+  displayGlyphTable()
 
   $('#export').prop( "disabled", false )
   $('#reset').prop("disabled", false)
@@ -333,6 +325,11 @@ function exportFont() {
     const data_adv = parseInt(t.attr('data-adv'))
     const data_ow = parseInt(t.attr('data-ow'))
     const data_oh = parseInt(t.attr('data-oh'))
+
+    const disabled = parseInt(t.attr('data-dis'))
+    if (disabled) {
+      return
+    }
 
     var data_pixels = t.attr('data-pixels')
 //    const data_dis = parseInt(t.attr('data-dis'))
@@ -398,7 +395,7 @@ function exportFont() {
   '0};\n\n' +
   'static const GFXfont ' + font_name + '_' + font_fract + ' {\n' +
     '  ' + font_name + '_Glyphs_' + font_fract + ',\n' +
-    '  ' + c1 + ', ' + c2 + ', ' + '0' + ', ' + '0x' + $('#firstglyph').val() + ', ' + '0x' + $('#lastglyph').val() + ', ' + maxH + '\n' +
+    '  ' + c1 + ', ' + c2 + ', ' + '0' + ', ' + '0x' + $('#firstglyph').val() + ', ' + '0x' + $('#lastglyph').val() + ', ' + font_height + '\n' +
   '};\n'
 
   $('#result').val(output)
