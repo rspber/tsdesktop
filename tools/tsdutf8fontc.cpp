@@ -396,6 +396,7 @@ int main(int argc, char *argv[]) {
   }
   if (first >= 0xf0) {  // 4 byte utf-8
     fprintf(stderr, "4 byte utf-8 not supported yet.\n");
+    return 1;
   }
   if (first >= 0xe0) {  // 3 byte utf-8
     if (last != 0) {
