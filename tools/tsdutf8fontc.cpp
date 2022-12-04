@@ -303,11 +303,11 @@ void run(int first, int last)
 // ----------------------------------------------------------------------------
 //  uint uni32 = ((z & 0x07) << 18) | ((u & 0x3f) << 12) | ((w & 0x3f) << 6) | (i & 0x3f);
 
-    if (first >= 0xe0) {  // utf-8 3 byte
+    if (z) {  // utf-8 3 byte
       uni16 = ((z & 0x0f) << 12) | ((w & 0x3f) << 6) | (fr & 0x3f);
     }
     else {
-      if (first >= 0xc0) {  // utf-8 2 byte
+      if (w) {  // utf-8 2 byte
         uni16 = ((w & 0x1f) << 6) | (fr & 0x3f);
       }
       else {
