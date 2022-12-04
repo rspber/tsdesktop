@@ -372,7 +372,7 @@ $(document).ready(function () {
 
         for (i = 0; i <= l_idx; ++i) {
           if (parseInt(fst_utf8_tt[i], 16) > parseInt(lst_utf8_tt[i], 16)) {
-            say('Last char can\'t be less then first one')
+            say('Last char can\'t be less then the first one')
             return;
           }
         }
