@@ -8,7 +8,6 @@
 #pragma once
 
 #include <Display.h>
-#include <cstring>
 
 #define ALIGN_CLIENT  -101
 #define ALIGN_COMPACT -102
@@ -446,14 +445,69 @@ public:
   void setFont(const GFXfont** aFont = NULL);
   const GFXfont** getFont() { return font.getFont(); }
 
-  void setText(const char* aText);
+
+  /**
+   * setText - safe mothod to set text,
+   * text is moved to allocated memory 
+  */
+  void setText(const char* aText) {
+    setTempText((const void*)aText, false, true);
+  }
+
+  void setText(const uint16_t* aText) {
+    setTempText((const void*)aText, true, true);
+  }
+
+  /**
+   * setStaticText - for static, permanent texts, not from the stack,
+   * this method avoids memmory allocation 
+  */
+  void setStaticText(const char* aText) {
+    setTempText((const void*)aText, false, false);
+  }
+
+  void setStaticText(const uint16_t* aText) {
+    setTempText((const void*)aText, true, false);
+  }
+
   void setTextCoord(const int16_t aLeft, const int16_t aTop);
   void setFontSize(const int8_t aFontSize);
   void setFontSize(const int8_t aFontSizeX, const int8_t aFontSizeY);
   void setTextColor(const rgb_t aTextColor);
   void setTextAlign(TEXT_ALIGN aTextAlign);
 
-  virtual const char* getText() { return textp; }
+//  const int getText(char* buf, const int bufsize); not implemented yet
+//  const int getText(uint16_t* buf, const int bufsize); not implemented yet
+
+  /**
+   * getUtf8Text
+   *  returns utf-8 text if the internal representation is utf-8, else ""
+  */
+  const char* getUtf8Text() {
+    return unicode ? "" : (const char*)textp;
+  }
+
+  /**
+   * getUnicodeText
+   *  returns unicode text if the internal representation is unicode, else ^0
+  */
+  const uint16_t* getUnicodeText() {
+    static const uint16_t EMPTY_1 = 0;
+    return unicode ? (const uint16_t*)textp : (const uint16_t*)&EMPTY_1;
+  }
+
+  /**
+   * textToUtf8
+   *  converts internally unicode to utf-8 (if needed) and returns utf-8 text
+  */
+  const char* textToUtf8();
+
+  /**
+   * textToUnicode
+   *  converts internally utf-8 text to unicode (if needed) and returns unicode text
+  */
+  const uint16_t* textToUnicode();
+
   const int16_t getTextLeft() { return textLeft; }
   const int16_t getTextTop() { return textTop; }
   const int16_t getTextWidth();
@@ -468,7 +522,7 @@ public:
   friend class Editable;
 
 protected:
-  virtual void innerSetText(const char* aText) { textp = aText; }
+  const void* reallocTextTo(const int size);
 
   virtual const uint8_t getTextMarginLeft() { return 0; }
   virtual const uint8_t getTextMarginRight() { return 0; }
@@ -483,6 +537,8 @@ protected:
   virtual void hideText();
 
 private:
+  void setTempText(const void* aText, const bool aUnicode, const bool temp);
+  virtual void innerSetText(const void* aText, const bool aUnicode, const bool temp);
   void textUpdateCoord();
 
   virtual void updateCoord(const bool recalc);
@@ -492,7 +548,10 @@ private:
 
 private:
   font_t font{ NULL, 1, 1 };
-  const char* textp = "";
+  static const uint16_t EMPTY_0 = 0;
+  const void* textp = (const void *)&EMPTY_0;
+  bool unicode = 0;
+  int16_t allocated = 0;
   int16_t textLeft = 0, textTop = 0, textWidth = 0, textHeight = 0;
   rgb_t textColor = 0;
   TEXT_ALIGN textAlign = TEXT_ALIGN_LEFT;
@@ -516,7 +575,7 @@ public:
     const rgb_t aTextColor = WHITE,
     const rgb_t aBackgroundColor = BLACK,
     const rgb_t aBorderColor = WHITE)
-    : TextButton((const char*)buf, aLeft, aTop, aWidth, aHeight, aTextColor, aBackgroundColor, aBorderColor)
+    : TextButton("", aLeft, aTop, aWidth, aHeight, aTextColor, aBackgroundColor, aBorderColor)
   {
   }
 
@@ -530,21 +589,18 @@ public:
   {
   }
 
-  virtual const char* getText() { return buf; }
-
   virtual void setValue(const int aValue);
   virtual void setProp(const char* aName, const int aValue);
   virtual void setProp(const char* aName, const char* aValue);
 
+  /*
+    use permanent texts only, not from the stack
+  */
   void setValueFormat(const char* aValueFormat) { valueFormat = aValueFormat; }  // TODO
   const char* getValueFormat() { return valueFormat; }
 
 private:
-  virtual void innerSetText(const char* aText) { strncpy(&buf[0], aText, sizeof(buf)); }
-
-private:
   const char* valueFormat = "%d";
-  char buf[25] = { '\0' };
 };
 
 

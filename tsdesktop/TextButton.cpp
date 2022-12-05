@@ -12,6 +12,9 @@
 */
 
 #include "TSDesktop.h"
+#include<cstring>
+
+static const uint8_t EMPTY[] {0,0,0,0};
 
 void TextButton::setFont(const GFXfont** aFont)
 {
@@ -67,40 +70,141 @@ void TextButton::setTextAlign(TEXT_ALIGN aTextAlign)
 const int16_t TextButton::getTextWidth()
 {
   int16_t h;
-  return font.textSize(getText(), &h);
+  return font.textSize(textp, unicode, &h);
 }
 
 const int16_t TextButton::getTextHeight()
 {
   int16_t h;
-  font.textSize(getText(), &h);
+  font.textSize(textp, unicode, &h);
   return h;
 }
 
-void TextButton::setText(const char* aText)
+void TextButton::setTempText(const void* aText, const bool aUnicode, const bool temp)
 {
-  const char* t = getText();
-  if (strcmp(t, aText) != 0) {
-    int16_t oldh;
-    int16_t oldw = font.textSize(t, &oldh);
-    int16_t newh;
-    int16_t neww = font.textSize(aText, &newh);
-    if (orgWidth >= 0 || (oldw == neww && oldh == newh)) {   // no need to resize button
+  if (unicode != aUnicode || textCmp(textp, aText, unicode) != 0) {
+    bool ok = false;
+    if (unicode != aUnicode) {
+      ok = true;
+    }
+    else {
+      int16_t oldh;
+      int16_t oldw = font.textSize(textp, unicode, &oldh);
+      int16_t newh;
+      int16_t neww = font.textSize(aText, aUnicode, &newh);
+      ok = orgWidth >= 0 || (oldw == neww && oldh == newh);
+    }
+    if (ok) {   // no need to resize button
       if (wasDrawn) {
         hideText();
-        innerSetText(aText);
+        innerSetText(aText, aUnicode, temp);
         drawText();
       }
       else {
-        innerSetText(aText);
+        innerSetText(aText, aUnicode, temp);
       }
     }
     else {
       hide();
-      innerSetText(aText);
+      innerSetText(aText, aUnicode, temp);
       setChanged();
     }
   }
+}
+
+const char* TextButton::textToUtf8()
+{
+  if (unicode) {
+    int len = textLength(textp, true);
+    if (len) {
+      len = (len + 1) * 3;   // to be enough
+      allocated = len;
+      void* p = malloc(len);
+      unicodeToUtf8((char*)p, len, (const uint16_t*)textp);
+      free((void*)textp);
+      textp = p;
+    }
+    else {
+      textp = &EMPTY;
+    }
+    unicode = false;
+  }
+  return (const char*)textp;
+}
+
+const uint16_t* TextButton::textToUnicode()
+{
+  if (!unicode) {
+    int len = utf8CharLen((const char*)textp);
+    if (len) {
+      len += 2;
+      allocated = len;
+      void* p = malloc(len<<1);
+      utf8ToUnicode((uint16_t*)p, len, (const char*)textp);
+      free((void*)textp);
+      textp = p;
+    }
+    else {
+      textp = &EMPTY;
+    }
+    unicode = true;
+  }
+  return (const uint16_t*)textp;
+}
+
+void TextButton::innerSetText(const void* aText, const bool aUnicode, const bool temp)
+{
+  bool empty = !(aText && aUnicode ? *(uint16_t*)aText : *(char*)aText);
+  if (unicode != aUnicode || empty || !temp ) {
+    if (allocated) {
+      free((void*)textp);
+      allocated = 0;
+    }
+    unicode = aUnicode;
+  }
+  if (empty) {
+    textp = &EMPTY;
+  }
+  else {
+    if (temp) {
+      int len = textLength(aText, aUnicode) + 1;
+      if (allocated == 0) {
+        textp = malloc(len<<unicode);
+        allocated = len;
+      }
+      else {
+        if (len > allocated) {
+          textp = realloc((void*)textp, len<<unicode);
+          allocated = len;
+        }
+      }
+      memcpy((void*)textp, aText, len<<unicode);
+    }
+    else {
+      textp = aText;
+    }
+  }
+}
+
+const void* TextButton::reallocTextTo(const int size)
+{
+  if (allocated < size) {
+    if (allocated > 0) {
+      allocated = size + 20;
+      textp = realloc((void*)textp, allocated<<unicode);
+    }
+    else {
+      int len = textLength(textp, unicode) + 1;
+      allocated = size + 20;
+      if (allocated < len) {
+        allocated = len;
+      }
+      void* p = malloc(allocated<<unicode);
+      memcpy((void*)p, textp, len<<unicode);
+      textp = p;
+    }
+  }
+  return textp;
 }
 
 void TextButton::updCompactWidth(const bool recalc)
@@ -115,7 +219,7 @@ void TextButton::updCompactHeight(const bool recalc)
 
 void TextButton::textUpdateCoord()
 {
-  textWidth = font.textSize(getText(), &textHeight);
+  textWidth = font.textSize(textp, unicode, &textHeight);
   int16_t w = updWidth - marginLeft - marginRight - getTextMarginLeft() - getTextMarginRight();
   if (alignCenterHoriz) {
     textLeft = w > textWidth ? (w - textWidth) / 2 : 0;
@@ -181,7 +285,7 @@ void TextButton::drawBackground()
     int16_t y = getAbsOuterTop();
     clip_t clip;
     getClip(clip);
-    bool lines = strstr(getText(), "\n");
+    bool lines = (textChr(textp, unicode, '\n'));
     if (radius || lines) {
       display.fillRoundRect(&clip, x, y, updWidth, updHeight, radius, bg);
     }
@@ -204,28 +308,35 @@ void TextButton::drawText(const rgb_t aTextColor)
   cursor_t cursor{ x, y };
   clip_t clip;
   getClip(clip);
-  const char* p = getText();
+  const void* p = textp;
   int16_t h;
-  int16_t w = font.textSize(p, &h);
-  const char* p0 = p;
-  char c = 1;
-  while (c) {
-    c = *p++;
-    if (c == 0 || c == '\n') {
+  int16_t w = font.textSize(p, unicode, &h);
+  const void* p0 = p;
+  uint16_t uc = 1;
+  while (uc) {
+    uc = unicode ? *(uint16_t*)p : *(char*)p;
+    p = (void*)((uint8_t*)p + (1<<unicode));
+    if (uc == 0 || uc == '\n') {
+      int16_t nofchars;
       int16_t h0;
       int16_t w0;
       switch (textAlign) {
       case TEXT_ALIGN_RIGHT:
-        w0 = font.textLineSize(p0, &h0);
+        w0 = font.textLineSize(p0, unicode, &h0, &nofchars);
         cursor.x += w - w0;
         break;
       case TEXT_ALIGN_CENTER:
-        w0 = font.textLineSize(p0, &h0);
+        w0 = font.textLineSize(p0, unicode, &h0, &nofchars);
         cursor.x += (w - w0) / 2;
         break;
       default:;
       }
-      display.drawTextLine(&clip, &cursor, &font, p0, aTextColor, bg == NO_BACKGROUND_COLOR ? aTextColor : bg);
+      if (unicode) {
+        display.drawTextLine(&clip, &cursor, &font, (const uint16_t*)p0, aTextColor, bg == NO_BACKGROUND_COLOR ? aTextColor : bg);
+      }
+      else {
+        display.drawTextLine(&clip, &cursor, &font, (const char*)p0, aTextColor, bg == NO_BACKGROUND_COLOR ? aTextColor : bg);
+      }
       p0 = p;
       cursor.x = x;
       cursor.y += font.textLineHeight();

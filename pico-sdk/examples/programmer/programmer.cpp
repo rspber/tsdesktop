@@ -18,6 +18,7 @@
 #include <TSD_PCF8575.h>
 #include <PicoFlash.h>
 #include "Pgms.h"
+#include <cstring>
 
 #include <Fonts/TSD_FreeSans_9pt.h>
 
@@ -179,7 +180,7 @@ FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, DESKTOPT, 2, BG_COLOR);
 
 void dtdist_btn(TextButton* b, const char* text, const int fontSize)
 {
-  b->setText(text);
+  b->setStaticText(text);
   b->setFontSize(fontSize);
   b->setTextColor(GRAY);
   b->setBorderSize(0);
@@ -215,6 +216,7 @@ void dttm_btn(TextButton* b, const int id, const int fontSize)
   b->setId(id);
   b->setOnClick(dttm_select_click);
   b->setTextColor(GRAY_88);
+  b->setBottomMargin(2);
   b->setFont(FONT);
   b->setFontSize(fontSize);
 //  b->setFontSize(fontSize + 1);
@@ -254,7 +256,7 @@ void selected_dttm_up(const int up)
     int what = selectedDTBtn->getId();
     int value = ds3231.up(&tm, what, up);
     if (selectedDTBtn == &dtDowBtn) {
-      dtDowBtn.setText(dow(value));
+      dtDowBtn.setStaticText(dow(value));
     }
     else {
       static_cast<ValueButton*>(selectedDTBtn)->setValue(value);
@@ -291,6 +293,7 @@ void rpgm_radio_btn(RadioButton* b)
 {
   b->setMargin(4);
   b->setTextColor(GRAY);
+  b->setBottomMargin(2);
   b->setBorderSize(0);
   b->setDecorInActiveColor(GRAY);
   b->setOnClick(pgm_radio_click);
@@ -309,6 +312,7 @@ void tpgm_btn(ValueButton* b, const int id)
   b->setId(id);
   b->setOnClick(pgm_select_click);
   b->setTextColor(GRAY_88);
+  b->setBottomMargin(2);
   b->setFont(FONT);
   b->setFontSize(2);
   b->setBorderColor(GRAY);
@@ -354,7 +358,7 @@ void selected_pgm_up(const int up)
 void main_btn(TextButton* b, const int tag, const char* aText, void(*onClick)(Container* c))
 {
   b->setTag(tag);
-  b->setText(aText);
+  b->setStaticText(aText);
   b->setRadius(5);
 //  b->setBorderSize(2);
   b->setFontSize(2);
@@ -423,7 +427,7 @@ void setup() {
   tm_btn(&tmSecBtn, 7);
   dt_btn(&agingBtn, 8);
 
-  agingName.setText("aging");
+  agingName.setStaticText("aging");
   agingName.setTextColor(BLACK);
   agingName.setFont(FONT);
 //  agingName.setFontSize(1);
@@ -481,7 +485,7 @@ void setup() {
 
 void updateDate()
 {
-  dtDowBtn.setText(dow(tm.dow));
+  dtDowBtn.setStaticText(dow(tm.dow));
   dtYearBtn.setValue(2000 + tm.year);
   dtMonBtn.setValue(tm.month);
   dtDayBtn.setValue(tm.day);

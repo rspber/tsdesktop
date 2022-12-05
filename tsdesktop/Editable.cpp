@@ -7,11 +7,11 @@
 
 #include "Editable.h"
 
-void Editable::innerSetText(const char* aText)
+void Editable::innerSetText(const void* aText, const bool aUnicode, const bool temp)
 {
-  int oldLen = strlen(bufp);
-  int newLen = strlen(aText);
-  strncpy(bufp, aText, bufSize);
+  int oldLen = textLength(textp, unicode);
+  int newLen = textLength(aText, aUnicode);
+  TextButton::innerSetText(aText, aUnicode, temp);
   if (textCursor == oldLen || textCursor > newLen) {
     textCursor = newLen;
   }
@@ -37,7 +37,7 @@ void Editable::setCursorInsMode(const bool aCursorInsMode)
 
 void Editable::setCursor(const int aCursor)
 {
-  int len = strlen(getText());
+  int len = textLength(textp, unicode);
   int nc = aCursor < 0 ? 0 : aCursor < len ? aCursor : len;
   if (textCursor != nc) {
     hideCursor();
@@ -70,8 +70,8 @@ void Editable::drawCursor(const rgb_t aCursorColor)
   if (cursorAllow) {
     int16_t absLeft = getAbsInnerLeft(getTextMarginLeft() + getTextLeft());
     int16_t absTop = getAbsInnerTop(getTextMarginTop() + getTextTop());
-    int16_t cpos = font.textLineWidth(textCursor);
-    int16_t cursor_width = (cursorInsMode || textCursor >= (int)strlen(getText())) ? 1 : font.textLineWidth(1) + 2;
+    int16_t cpos = font.textApproxLineWidth(textp, unicode, textCursor);
+    int16_t cursor_width = (cursorInsMode || textCursor >= (int)textLength(textp, unicode)) ? 1 : font.textApproxLineWidth(textp, unicode, 1) + 2;
     int16_t cursor_height = getTextHeight() + 2;
     clip_t clip;
     display.drawRect(getClip(clip), absLeft + (cpos ? cpos + 1 : -1), absTop - 1, cursor_width, cursor_height, aCursorColor);
@@ -103,46 +103,58 @@ void Editable::drawText()
 void Editable::clickEffect(const int16_t posX, const int16_t posY)
 {
   if (cursorAllow) {
-    setCursor((posX - getLeftMargin() - getTextLeft() - getTextMarginLeft()) / font.textLineWidth(1));
+    setCursor((posX - getLeftMargin() - getTextLeft() - getTextMarginLeft()) / font.textApproxLineWidth(textp, unicode, 1));
   }
   else {
     TextButton::clickEffect(posX, posY);
   }
 }
 
-void Editable::cmdInsChar(const char aChar)
+void Editable::cmdInsChar_(const uint16_t aChar)
 {
-  int len = strlen(bufp);
-  if (len + 1 < bufSize) {
-    int i = textCursor;
-    if (i < 0) {
-      i = 0;
-    }
-    if (cursorInsMode) {
-      //      hideText();
-      hide();
+  int len = textLength(textp, unicode);
+  const void* p = reallocTextTo(len + 1);
+  int i = textCursor;
+  if (i < 0) {
+    i = 0;
+  }
+  if (cursorInsMode) {
+    //      hideText();
+    hide();
+    if (unicode) {
       for (int j = len; j >= i; --j) {
-        bufp[j + 1] = bufp[j];
+        ((uint16_t*)p)[j + 1] = ((uint16_t*)p)[j];
       }
-      ++len;
     }
     else {
-      if (i >= len) {
-        return;
+      for (int j = len; j >= i; --j) {
+        ((char*)p)[j + 1] = ((char*)p)[j];
       }
-      //      hideText();
-      hide();
     }
-    bufp[i] = aChar;
-    textCursor = textCursor < len ? textCursor + 1 : len;
-    setChanged();
+    ++len;
   }
+  else {
+    if (i >= len) {
+      return;
+    }
+    //      hideText();
+    hide();
+  }
+  if (unicode) {
+    ((uint16_t*)p)[i] = aChar;
+  }
+  else {
+    ((char*)p)[i] = aChar;
+  }
+  textCursor = textCursor < len ? textCursor + 1 : len;
+  setChanged();
 }
 
 void Editable::cmdDelBS(const bool BS)
 {
-  int len = strlen(bufp);
+  int len = textLength(textp, unicode);
   if (len > 0) {
+    const void* p = reallocTextTo(len); // if textp is static convert it to allocated
     int i = textCursor;
     if (BS) {
       --i;
@@ -150,8 +162,15 @@ void Editable::cmdDelBS(const bool BS)
     if (i >= 0 && i < len) {
       //      hideText();
       hide();
-      for (; i < len; ++i) {
-        bufp[i] = bufp[i + 1];
+      if (unicode) {
+        for (; i < len; ++i) {
+          ((uint16_t*)p)[i] = ((uint16_t*)p)[i + 1];
+        }
+      }
+      else {
+        for (; i < len; ++i) {
+          ((char*)p)[i] = ((char*)p)[i + 1];
+        }
       }
       --len;
       if (BS) {

@@ -6,6 +6,7 @@
 */
 
 #include "font.h"
+#include <cstring>
 
 void font_t::setFont(const GFXfont** gfxFont)
 {
@@ -298,7 +299,7 @@ const int16_t font_t::yAdvHeight(const int16_t yAdvance)
   // some magic code
   return yAdvance * 2 * fontSizeY / 3; 
 }  
-  
+
 const int16_t font_t::charSize(char** c, int16_t* letterHeight)  // utf-8
 {
   int16_t w, h;
@@ -317,18 +318,36 @@ const int16_t font_t::charSize(char** c, int16_t* letterHeight)  // utf-8
   return w * fontSizeX;
 }
 
-const int16_t font_t::textLineSize(const char* text, int16_t* textHeight)
+const int16_t font_t::charSize(const void** c, const bool unicode, int16_t* letterHeight)
+{
+  if (unicode) {
+    char buf[8];
+    toUtf8(buf, **(uint16_t**)c);
+    *(uint16_t**)c += 1;
+    char* pb = buf;
+    return charSize(&pb, letterHeight);
+  }
+  else {
+    return charSize((char**)c, letterHeight);
+  }
+}
+
+const int16_t font_t::textLineSize(const void* textp, const bool unicode, int16_t* textHeight, int16_t* nOfChars)
 {
   int16_t w = 0;
   int16_t h = 0;
-  int16_t lh;
+  *nOfChars = 0;
 
-  char* p = (char *)text;
-  char c;
-  while ((c = *p) && c != '\r' && c != '\n') {
-    w += charSize(&p, &lh);
-    if (lh > h) {
-      h = lh;
+  if (textp) {
+    const void* p = textp;
+    int16_t lh;
+    uint16_t uc;
+    while ((uc = unicode ? *(uint16_t*)p : *(char *)p) && uc != '\r' && uc != '\n') {
+      w += charSize(&p, unicode, &lh);
+      if (lh > h) {
+        h = lh;
+      }
+      ++*nOfChars;
     }
   }
   if (h == 0) {
@@ -338,59 +357,63 @@ const int16_t font_t::textLineSize(const char* text, int16_t* textHeight)
   return w;
 }
 
-const int16_t font_t::textSize(const char* text, int16_t* textHeight)
+const int16_t font_t::textSize(const void* textp, const bool unicode, int16_t* textHeight)
 {
-  char* p = (char *)text;
   int16_t w = 0;
   int16_t h = 0;
-  int16_t lw = 0;
-  int16_t lh = 0;
-  char c = 1;
-  while (c) {
-    c = *p;
-    if (c != '\r') {
-      if (c == 0 || c == '\n') {
-        if (lw > w) {
-          w = lw;
+  if (textp) {
+    int16_t lw = 0;
+    int16_t lh = 0;
+    const void* p = textp;
+    uint16_t uc = 1;
+    while (uc) {
+      uc = unicode ? *(uint16_t*)p : *(char*)p;
+      if (uc != '\r') {
+        if (uc == 0 || uc == '\n') {
+          if (lw > w) {
+            w = lw;
+          }
+          lw = 0;
+          if (lh == 0) {
+            defaultCharSize(&lh);
+          }
+          h += lh;
+          lh = 0;
+          p = (void*)((uint8_t*)p + (1<<unicode));
         }
-        lw = 0;
-        if (lh == 0) {
-          defaultCharSize(&lh);
+        else {
+          int16_t lh1;
+          lw += charSize(&p, unicode, &lh1);
+          if (lh1 > lh) {
+            lh = lh1;
+          }
         }
-        h += lh;
-        lh = 0;
-        ++p;
       }
       else {
-        int16_t lh1;
-        lw += charSize(&p, &lh1);
-        if (lh1 > lh) {
-          lh = lh1;
-        }
+        p = (void*)((uint8_t*)p + (1<<unicode));
       }
-    }
-    else {
-      ++p;
     }
   }
   if (h == 0) {
-    defaultCharSize(&lh);
-    h = lh;
+    defaultCharSize(&h);
   }
   *textHeight = h;
   return w;
 }
 
-const int16_t font_t::textLineWidth(int16_t len)
+const int16_t font_t::textApproxLineWidth(const void* textp, const bool unicode, int16_t len)
 {
   int16_t h;
-  return defaultCharSize(&h) * len;
+  int16_t nofch;
+  int16_t w = textLineSize(textp, unicode, &h, &nofch);
+  return w * len / nofch;
 }
 
-const int16_t font_t::textLineWidth(const char* text)
+const int16_t font_t::textLineWidth(const void* textp, const bool unicode)
 {
   int16_t h;
-  return textLineSize(text, &h);
+  int16_t nofch;
+  return textLineSize(textp, unicode, &h, &nofch);
 }
 
 const int16_t font_t::textLineHeight()
@@ -398,4 +421,176 @@ const int16_t font_t::textLineHeight()
   int16_t h;
   defaultCharSize(&h);
   return h;
+}
+
+// bi strings
+
+int textLength(const void* textp, const bool unicode)
+{
+  if (textp) {
+    if (unicode) {
+      const uint16_t* p = (const uint16_t*)textp;
+      while (*p) {++p;}
+      return p - (const uint16_t*)textp;
+    }
+    else {
+      return strlen((char*)textp);
+    }
+  }
+  return 0;
+}
+
+const void* textChr(const void* textp, const bool unicode, const char c)
+{
+  if (textp) {
+    if (unicode) {
+      const uint16_t* p = (const uint16_t*)textp;
+      uint16_t u;
+      while ((u = *p)) {
+        if (u != c) {
+          return p;
+        }
+        ++p;
+      }
+      return 0;
+    }
+    else {
+      return (const void*)strchr((const char*)textp, c);
+    }
+  }
+  return 0;
+}
+
+int textCmp(const void* t1, const void* t2, const bool unicode)
+{
+  if (t1 && t2) {
+    if (unicode) {
+      uint16_t* p1 = (uint16_t*)t1;
+      uint16_t* p2 = (uint16_t*)t2;
+      while (true) {
+        if (*p1) {
+          if (*p2) {
+            if (*p1 > *p2) {
+              return 1;
+            }
+            if (*p1 < *p2) {
+              return -1;
+            }
+            ++p1, ++p2;
+          }
+          else {
+            return 1;
+          }
+        }
+        else {
+          return *p2 ? -1 : 0;
+        }
+      }
+    }
+    else {
+      return strcmp((const char*)t1, (const char*)t2);
+    }
+  }
+  return -1;
+}
+
+// unicode -> utf-8
+
+const int toUtf8(char* buf, const uint16_t ucode)
+{
+  if (ucode & 0xF800) {
+    buf[0] = 0xE0 | ((ucode >> 12) & 0x0F);
+    buf[1] = 0x80 | ((ucode >> 6) & 0x3F);
+    buf[2] = 0x80 | (ucode & 0x3F);
+    buf[3] = 0;
+    return 3;
+  }
+  else
+  if (ucode & 0x0700) {
+    buf[0] = 0xC0 | ((ucode >> 6) & 0x1F);
+    buf[1] = 0x80 | (ucode & 0x3F);
+    buf[2] = 0;
+    return 2;
+  }
+  else {
+    buf[0] = (ucode & 0xff);
+    buf[1] = 0;
+    return 1;
+  }
+}
+
+const int unicodeToUtf8(char* utf8, const int size, const uint16_t* unicode)
+{
+  if (unicode) {
+    const uint16_t* w = unicode;
+    char* p = utf8;
+    while (*w && p - utf8 < size - 4) {
+      p += toUtf8(p, *w++);
+    }
+    *p = 0;
+    return p - utf8;
+  }
+  *utf8 = 0;
+  return 0;
+}
+
+const uint16_t toUnicode(char** c)
+{
+  uchar c1 = **c;
+  if (c1 >= 0xE0) {
+    uchar* p = (uchar*)*c;
+    uint16_t w = *p++ & 0x0F;
+    if (*p >= 0x80 && *p <= 0xBF) {
+      w = (w << 6) | (*p++ & 0x3F);
+      if (*p >= 0x80 && *p <= 0xBF) {
+        w = (w << 6) | (*p++ & 0x3F);
+        *c = (char*)p;
+        return w;
+      }
+    }
+  }
+  else {
+    if (c1 >= 0xC0) {
+      uchar* p = (uchar*)*c;
+      uint16_t w = *p++ & 0x1F;
+      if (*p >= 0x80 && *p <= 0xBF) {
+        w = (w << 6) | (*p++ & 0x3F);
+        *c = (char*)p;
+        return w;
+      }
+    }
+  }
+  *c += 1;
+  return c1;
+}
+
+const int utf8CharLen(const char* utf8)
+{
+  if (utf8) {
+    char* p = (char*)utf8;
+    int n = 0;
+    while (*p) {
+      toUnicode(&p);
+      ++n;
+    }
+    return n;
+  }
+  return 0;
+}
+
+const int utf8ToUnicode(uint16_t* unicode, const int size, const char* utf8)
+{
+  if (utf8) {
+    char* p = (char*)utf8;
+    int j = 0;
+    uint16_t* w = unicode;
+    while (*p && j < size - 1) {
+      *w++ = toUnicode(&p);
+      ++j;
+    }
+    *w = 0;
+    return j;
+  }
+  *unicode = 0;
+  return 0;
 }

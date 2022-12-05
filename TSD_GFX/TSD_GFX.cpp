@@ -563,6 +563,8 @@ void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bit
 
 // TEXT- AND CHARACTER-HANDLING FUNCTIONS ----------------------------------
 
+// utf-8
+
 // Draw a character
 /**************************************************************************/
 /*!
@@ -728,10 +730,37 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, r
 /**************************************************************************/
 const char*  TSD_GFX::drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, rgb_t color, rgb_t bg, const int8_t spacing)
 {
-  char* p = (char *)text;
-  char c;
-  while ((c = *p) && c != '\r' && c != '\n') {
-    drawChar(clip, cursor, font, &p, color, bg, spacing);
+  if (text) {
+    char* p = (char *)text;
+    char c;
+    while ((c = *p) && c != '\r' && c != '\n') {
+      drawChar(clip, cursor, font, &p, color, bg, spacing);
+    }
+    return (const char*) p;
   }
-  return (const char*) p;
+  return NULL;
+}
+
+// unicode
+
+void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const uint16_t uchar, rgb_t color, rgb_t bg, const int8_t spacing)
+{
+  char buf[8];
+  toUtf8(buf, uchar);
+  char* p = buf;
+  drawChar(clip, cursor, font, &p, color, bg, spacing);
+}
+
+const uint16_t* TSD_GFX::drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const uint16_t* utext, rgb_t color, rgb_t bg, const int8_t spacing)
+{
+  if (utext) {
+    const uint16_t* p = utext;
+    uint16_t u;
+    while ((u = *p) && u != '\r' && u != '\n') {
+      drawChar(clip, cursor, font, u, color, bg, spacing);
+      ++p;
+    }
+    return p;
+  }
+  return NULL;
 }

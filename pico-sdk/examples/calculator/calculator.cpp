@@ -23,7 +23,7 @@ Touch touch;
 
 #define ROTATION ROTATION_VTB
 
-Editable operBtn(80);
+Editable operBtn;
 TextButton sumBtn;
 
 Container* E0T[]{
@@ -122,7 +122,7 @@ void btn_click(Container* c)
   case 1:
   {
     TextButton* b = static_cast<TextButton*>(c);
-    operBtn.cmdInsChar(*b->getText());
+    operBtn.cmdInsChar(*b->getUtf8Text());
     break;
   }
   case 2:
@@ -137,7 +137,7 @@ void btn_click(Container* c)
     operBtn.cmdDelBS(id == -8);
     break;
   case -3:  // CC
-    operBtn.setText("");
+    operBtn.setStaticText("");
     break;
   }
   desktop.draw();
@@ -146,7 +146,7 @@ void btn_click(Container* c)
 void calc_btn(TextButton* b, const int id, const char* text)
 {
   b->setId(id);
-  b->setText(text);
+  b->setStaticText(text);
   int BTN_SIZE = display.width() / 7 + 2;
   b->setSize(BTN_SIZE, BTN_SIZE);
   b->setFontSize(2);

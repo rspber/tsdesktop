@@ -112,14 +112,14 @@ FieldSet desktop(-1, -1, ALIGN_CLIENT, ALIGN_CLIENT, TDIV1T, 1, BLACK);
 
 void tx_click(Container* c)
 {
-  sel01.setText(static_cast<TextButton*>(c)->getText());
+  sel01.setText(static_cast<TextButton*>(c)->getUtf8Text());
   desktop.draw();
 }
 
 void tx_btn(TextButton* b, const int id, const char* text)
 {
   b->setId(id);
-  b->setText(text);
+  b->setStaticText(text);
   b->setTextColor(GRAY);
   b->setFont(FreeSans_9pt);
   b->setFontSize(1);
@@ -199,7 +199,7 @@ void setup()   {
   board.setAlignTop(true);
   board.setTransparent(true);
 
-  gap01.setText("Menu");
+  gap01.setStaticText("Menu");
   gmenu.setAlignClientVert();
   gmenu.setTransparent(true);
 
@@ -214,7 +214,7 @@ void setup()   {
   div01.setTransparent(true);
 
   desktop.setTransparent(true);
-  
+
   display.drawLine(0, 0, 500, 500, WHITE);
   display.drawLine(100, 0, 300, 400, WHITE);
   display.drawLine(200, 0, -100, 300, GRAY, 8);

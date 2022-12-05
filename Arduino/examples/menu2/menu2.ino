@@ -97,14 +97,14 @@ FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, TMT, 2, AQUA);
 
 void tx_click(Container* c)
 {
-  sel01.setText(static_cast<TextButton*>(c)->getText());
+  sel01.setText(static_cast<TextButton*>(c)->getUtf8Text());
   desktop.draw();
 }
 
 void tx_btn(TextButton* b, const int id, const char* text)
 {
   b->setId(id);
-  b->setText(text);
+  b->setStaticText(text);
   b->setTextColor(GRAY);
   b->setFont(FreeSans_9pt);
   b->setFontSize(1);

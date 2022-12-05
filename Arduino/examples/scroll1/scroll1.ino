@@ -50,7 +50,7 @@ void setup()   {
   btn01.setSize(ALIGN_COMPACT, 400);
   btn01.setBackground(BROWN);
   btn01.setFont(FONT);
-  btn01.setText("Abcdefghijklmnopqrstuvwxyz");
+  btn01.setStaticText("Abcdefghijklmnopqrstuvwxyz");
   btn01.setFontSize(5);
   btn01.setTextColor(WHITE);
 

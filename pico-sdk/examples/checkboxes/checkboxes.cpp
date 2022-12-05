@@ -173,7 +173,7 @@ void btn_click(Container* c)
 void lchk_box(CheckBox* c, const int16_t id, const char* text)
 {
   c->setId(100 + id);
-  c->setText(text);
+  c->setStaticText(text);
   c->setTextColor(GRAY_A0);
   c->setDecorPos(DECOR_POS_RIGHT);
   c->setOnClick(btn_click);
@@ -185,7 +185,7 @@ void lchk_box(CheckBox* c, const int16_t id, const char* text)
 void rchk_box(CheckBox* c, const int16_t id, const char* text)
 {
   c->setId(200 + id);
-  c->setText(text);
+  c->setStaticText(text);
   c->setTextColor(GRAY_A0);
   c->setOnClick(btn_click);
   if (id >= 0 && id < 8) {
@@ -196,7 +196,7 @@ void rchk_box(CheckBox* c, const int16_t id, const char* text)
 void tchk_box(CheckBox* c, const int16_t id, const char* text)
 {
   c->setId(300 + id);
-  c->setText(text);
+  c->setStaticText(text);
   c->setTextColor(GRAY_A0);
   c->setDecorAlign(DECOR_ALIGN_BOTTOM);
   c->setDecorPos(DECOR_POS_CENTER);
@@ -206,7 +206,7 @@ void tchk_box(CheckBox* c, const int16_t id, const char* text)
 void bchk_box(CheckBox* c, const int16_t id, const char* text)
 {
   c->setId(400 + id);
-  c->setText(text);
+  c->setStaticText(text);
   c->setTextColor(GRAY_A0);
   c->setDecorAlign(DECOR_ALIGN_TOP);
   c->setDecorPos(DECOR_POS_CENTER);
@@ -229,7 +229,7 @@ void setup() {
 
   pinMode(LED_PIN, OUTPUT);
 
-  logo.setText("TSDesktop\n\nTouch\nScreen\nDesktop");
+  logo.setStaticText("TSDesktop\n\nTouch\nScreen\nDesktop");
   logo.setFont(FreeSerif_18pt);
   logo.setTextAlign(TEXT_ALIGN_CENTER);
   logo.setTextColor(GRAY);

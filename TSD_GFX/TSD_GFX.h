@@ -55,7 +55,12 @@ public:
   void drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bitmap, int16_t w, int16_t h);
   void drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bitmap, const uint8_t *mask, int16_t w, int16_t h);
 
+  // utf-8
   void drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, rgb_t color = WHITE, rgb_t bg = BLACK, const int8_t spacing = 0);
   const char* drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, rgb_t color = WHITE, rgb_t bg = BLACK, const int8_t spacing = 0);
+
+  // unicode
+  void drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const uint16_t uchar, rgb_t color = WHITE, rgb_t bg = BLACK, const int8_t spacing = 0);
+  const uint16_t* drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const uint16_t* utext, rgb_t color = WHITE, rgb_t bg = BLACK, const int8_t spacing = 0);
 };
 

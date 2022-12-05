@@ -31,7 +31,7 @@ void ValueButton::setProp(const char* aName, const int aValue)
 void ValueButton::setProp(const char* aName, const char* aValue)
 {
   char tmp[80];
-  snprintf(buf, sizeof(buf), "%s: %s", aName, aValue);
+  snprintf(tmp, sizeof(tmp), "%s: %s", aName, aValue);
   setText(tmp);
 }
 

@@ -13,17 +13,11 @@
 
 class Editable : public TextButton {
 public:
-   Editable(const int aBufSize)
+   Editable()
       : TextButton("", -1, -1, ALIGN_CLIENT, ALIGN_COMPACT)
    {
-      bufSize = aBufSize;
-      bufp = new char[aBufSize];
-      bufp[0] = '\0';
-
       setEnabled();
    }
-
-   virtual const char* getText() { return bufp; }
 
    void setCursorAllow(const bool aCursorAllow);
    void setCursor(const int aCursor);
@@ -38,18 +32,33 @@ public:
    const rgb_t getCursorColor() { return cursorColor; }
    const bool getCursorInsMode() { return cursorInsMode; }
 
-   void cmdInsChar(const char aChar);
+   /**
+    * cmdInsChar - insert unicode char
+   */
+   void cmdInsChar(const uint16_t aChar) {
+     textToUnicode();
+     cmdInsChar_(aChar);
+   }
+
+   /**
+    * cmdInsChar - insert utf-8 char
+   */
+   void cmdInsChar(const char aChar) {
+      cmdInsChar_(aChar);
+   }
+
    void cmdDelBS(const bool BS);
    void cmdBS() { cmdDelBS(true); }
    void cmdDel() { cmdDelBS(false); }
 
 protected:
-   virtual void innerSetText(const char* aText);
-
    virtual void hideText();
    virtual void drawText();
 
 private:
+   void cmdInsChar_(const uint16_t aChar);
+   virtual void innerSetText(const void* aText, const bool aUnicode, const bool temp);
+
    virtual void clickEffect(const int16_t posX, const int16_t posY);
 
    void drawCursor(const rgb_t aCursorColor);
@@ -58,8 +67,6 @@ private:
    void hideCursor();
 
 private:
-   int bufSize = 0;
-   char* bufp;
    int textCursor = 0;
    bool cursorAllow = true;
    bool cursorInsMode = true;   // insert chars vs overwrite

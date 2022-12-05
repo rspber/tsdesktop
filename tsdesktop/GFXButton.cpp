@@ -6,6 +6,7 @@
 */
 
 #include "GFXButton.h"
+#include <cstring>
 
 /// @GFXButton
 
