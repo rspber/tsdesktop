@@ -1,4 +1,4 @@
-TSD GFX Pixel font customiser
+TSD GFX Pixel font customizer
 ---
 
 This is a handy utility that goes well with the tsdutf8fontc tool for converting TTF/TTC fonts to TSD_GFX `.h` format.
