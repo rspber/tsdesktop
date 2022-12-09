@@ -362,10 +362,11 @@ typedef struct {
   void t2x_err(const char* msg);
 
   const char* t2xname;
-  int line, pos;
+  int line, pos, prevc;
   bool err;
   FILE* file;
   bool getc_(int* c);
+  void succ(int c);
   bool getc(int* c);
 } b4buf_t;
 
@@ -377,7 +378,8 @@ bool b4buf_t::init(const char* t2xname)
   t = (uint32_t*)malloc(size * sizeof(uint32_t));
   err = 0;
   line = 1;
-  pos = 0;
+  pos = 1;
+  prevc = 0;
 
   file = fopen(t2xname, "r");
 
@@ -508,16 +510,22 @@ bool b4buf_t::getc_(int* c)
   }
 }
 
+void b4buf_t::succ(int c)
+{
+  if (prevc == '\n') {
+    ++line;
+    pos = 1;
+  }
+  else {
+    ++pos;
+  }
+  prevc = c;
+}
+
 bool b4buf_t::getc(int* c)
 {
   if (getc_(c) && *c != 0) {
-    if (*c != '\n') {
-      ++pos;
-    }
-    else {
-      ++line;
-      pos = 1;
-    }
+    succ(*c);
     return true;
   }
   return false;
@@ -549,25 +557,16 @@ void b4buf_t::read_file()
       if (!u) {
         break;
       }
-      if (u == '\n') {
-        ++line;
-        pos = 0;
-        continue;
-      }
-      ++pos;
-      if (u == ' ' || u == '\t' || u == '\r') {
+      prevc = u;
+      succ(0);
+      if (u == ' ' || u == '\t' || u == '\r' || u == '\n') {
         continue;
       }
       add(toUtf8b4(u));
       continue;
     }
-    if (c1 == '\n') {
-      ++line;
-      pos = 0;
-      continue;
-    }
-    ++pos;
-    if (c1 == ' ' || c1 == '\t' || c1 == '\r') {
+    succ(c1);
+    if (c1 == ' ' || c1 == '\t' || c1 == '\r', c1 == '\n') {
       continue;
     }
     if (c1 >= 0xc0) {
@@ -676,19 +675,19 @@ void b4buf_t::read_file()
                                             }
                                           }
                                           else {
-                                          t2x_err("unexpected eof");
+                                            t2x_err("0..9 or a..f expected");
                                           }
                                         }
                                         else {
-                                          t2x_err("0..9 or a..f expected");
+                                          t2x_err("unexpected eof");
                                         }
                                       }
                                       else {
-                                        t2x_err("unexpected eof");
+                                        t2x_err("0..9 or a..f expected");
                                       }
                                     }
                                     else {
-                                      t2x_err("0..9 or a..f expected");
+                                      t2x_err("unexpected eof");
                                     }
                                   }
                                   else {
@@ -708,7 +707,7 @@ void b4buf_t::read_file()
                             }
                           }
                           else {
-                            t2x_err("unexpected eof");
+                            t2x_err("0..9 or a..f expected");
                           }
                         }
                         else {
@@ -716,7 +715,7 @@ void b4buf_t::read_file()
                         }
                       }
                       else {
-                        t2x_err("unexpected eof");
+                        t2x_err("0..9 or a..f expected");
                       }
                     }
                     else {
