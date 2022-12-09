@@ -4,8 +4,15 @@
 
 TrueType to TSD_GFX font converter. Supports UTF-8.
 
-Based on Adafruit_GFX library fontconvert.
+The program has two modes of operation,
+- either we specify a range of characters
+- or a file with characters
+for which we want to obtain fonts.
 
+Based on Adafruit_GFX library fontconvert.
+*/
+
+/*
 Derived from Peter Jakobs' Adafruit_ftGFX fork & makefont tool,
 and Paul Kourany's Adafruit_mfGFX.
 
@@ -82,25 +89,40 @@ void enbit(uint8_t value)
 FT_Face face;
 
 // ----------------------------------------------------------------------------
-int16_t proc_char(const uint char_code, const char z, const char w, const char c)
+int16_t proc_char(const char z, const char w, const char c)
 {
+//uint uni32 = ((z & 0x07) << 18) | ((u & 0x3f) << 12) | ((w & 0x3f) << 6) | (i & 0x3f);
+  uint uni;
+
+  if (z) {  // utf-8 3 byte
+    uni = ((z & 0x0f) << 12) | ((w & 0x3f) << 6) | (c & 0x3f);
+  }
+  else {
+    if (w) {  // utf-8 2 byte
+      uni = ((w & 0x1f) << 6) | (c & 0x3f);
+    }
+    else {
+      uni = c;
+    }
+  }
+
   int err;
 
   // MONO renderer provides clean image with perfect crop
   // (no wasted pixels) via bitmap struct.
-  if ((err = FT_Load_Char(face, char_code, FT_LOAD_TARGET_MONO))) {
-    fprintf(stderr, "Error %d loading char 0x%06X\n", err, char_code);
+  if ((err = FT_Load_Char(face, uni, FT_LOAD_TARGET_MONO))) {
+    fprintf(stderr, "Error %d loading char 0x%06X\n", err, uni);
     return 0;
   }
 
     if ((err = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_MONO))) {
-      fprintf(stderr, "Error %d rendering char 0x%06X\n", err, char_code);
+      fprintf(stderr, "Error %d rendering char 0x%06X\n", err, uni);
       return 0;
   }
 
   FT_Glyph glyph;
   if ((err = FT_Get_Glyph(face->glyph, &glyph))) {
-    fprintf(stderr, "Error %d getting glyph 0x%06X\n", err, char_code);
+    fprintf(stderr, "Error %d getting glyph 0x%06X\n", err, uni);
     return 0;
   }
 
@@ -173,24 +195,19 @@ int16_t proc_char(const uint char_code, const char z, const char w, const char c
 
 // ----------------------------------------------------------------------------
   char TH[0x800][8];
-  int THN = 0;
+  int THN;
 
   char fontName[0x80];
   char fract[8];
 
-  int z = 0;
-  int w = 0;
-  int fr = 0;
-  int to = -1;
-  int hgh = 0;
-  int fr0 = 0;
+  int hgh;
 
 void page_start()
 {
     printf("static const uint8_t %s_Glyphs_%s[] {\n", fontName, fract);
 }
 
-int page_end()
+int page_end(const int z, const int w, const int first, const int last)
 {
     printf("0};\n\n");
 
@@ -200,20 +217,44 @@ int page_end()
     // No face height info, assume fixed width and get from a glyph.
     int c1 = z > 0 ? z : w;
     int c2 = z > 0 ? w : 0;
-    printf("  0x%02X, 0x%02X, 0, 0x%02X, 0x%02X, %d\n};\n\n", c1, c2, fr0, to, h != 0 ? h >> 6 : hgh);
+    printf("  0x%02X, 0x%02X, 0, 0x%02X, 0x%02X, %d\n};\n\n", c1, c2, first, last, h != 0 ? h >> 6 : hgh);
 
     return 4 + 6;
 }
 
-void run(int first, int last)
+void print_footer(int totsize)
 {
+  printf("static const GFXfont* %s[] {\n", fontName);
+  for (int i = 0; i < THN; ++i) {
+    printf("  &%s_%s,\n", fontName, TH[i]);
+  }
+  printf("  0\n};\n\n");
+
+  totsize += (THN + 1) * 4;
+
+  printf("// Approx. %d bytes\n", totsize);
+  // Size estimate is based on AVR struct and pointer sizes;
+  // actual size may vary.
+}
+
+// ----------------------------------------------------------------------------
+
+void proc_range(int first, int last)
+{
+  hgh = 0;
+  THN = 0;
   int totsize = 0;
+  int fr0 = 0;
+  int z = 0;
+  int w = 0;
+  int fr = 0;
+  int to = -1;
   for( ; ; ++fr) {
 
     if (fr > to) {
 
       if (fr > 0) {
-        totsize += page_end();
+        totsize += page_end(z, w, fr0, to);
       }
 
       if (z == 0 && w == 0) {
@@ -299,37 +340,438 @@ void run(int first, int last)
       strncpy(TH[THN++], fract, sizeof(fract));
     }
 
-    uint uni16;
-// ----------------------------------------------------------------------------
-//  uint uni32 = ((z & 0x07) << 18) | ((u & 0x3f) << 12) | ((w & 0x3f) << 6) | (i & 0x3f);
+    totsize += proc_char(z, w, fr);
+  }
+  print_footer(totsize);
+}
 
-    if (z) {  // utf-8 3 byte
-      uni16 = ((z & 0x0f) << 12) | ((w & 0x3f) << 6) | (fr & 0x3f);
+// ----------------------------------------------------------------------------
+
+typedef struct {
+  int size;
+  int len;
+  uint32_t* t;
+
+  bool init(const char* t2xname);
+  void done();
+  void add(uint32_t b4);
+  void sort();
+  void run();
+  void read_file();
+  void proc_file(const char* t2xname);
+  void t2x_err(const char* msg);
+
+  const char* t2xname;
+  int line, pos;
+  bool err;
+  FILE* file;
+  bool getc_(int* c);
+  bool getc(int* c);
+} b4buf_t;
+
+bool b4buf_t::init(const char* t2xname)
+{
+  this->t2xname = t2xname;
+  size = 500;
+  len = 0;
+  t = (uint32_t*)malloc(size * sizeof(uint32_t));
+  err = 0;
+  line = 1;
+  pos = 0;
+
+  file = fopen(t2xname, "r");
+
+  if (!file) {
+    fprintf(stderr, "File %s can't be opened\n", t2xname);
+    err = true;
+    return false;
+  }
+  return true;
+}
+
+void b4buf_t::done()
+{
+  free(t);
+}
+
+void b4buf_t::add(uint32_t b4)
+{
+  if (b4 == 0 || b4 == '\n' || b4 == '\r' || b4 == '\t') {
+    return;
+  }
+  for (int i = 0; i < len; ++i) {
+    if (t[i] == b4) {
+      return;
     }
-    else {
-      if (w) {  // utf-8 2 byte
-        uni16 = ((w & 0x1f) << 6) | (fr & 0x3f);
+  }
+  if (len >= size) {
+    size += 500;
+    t = (uint32_t*)realloc(t, size * sizeof(uint32_t));
+  }
+  t[len++] = b4;
+}
+
+void b4buf_t::sort()
+{
+  for( int i = 0; i < len - 1; ++i) {
+    for( int j = i + 1; j < len; ++j) {
+      if (t[j] < t[i]) {
+        uint32_t tmp = t[i];
+        t[i] = t[j];
+        t[j] = tmp;
+      }
+    }
+  }
+}
+
+void b4buf_t::run()
+{
+  hgh = 0;
+  THN = 0;
+  int totsize = 0;
+  int z0 = 0, w0 = 0, first = 0, last = 0, to = -1;
+  for( int i = 0; i < len; ++i) {
+
+    uint32_t b4 = t[i];
+    int z = b4 >> 16;
+    int w = (b4 >> 8) & 0xff;
+    int c = b4 & 0xff;
+
+    if (z != z0 || w != w0 || c > to) {
+
+      if (first > 0) {
+        totsize += page_end(z0, w0, first, last);
+      }
+
+      if (z) {  // utf-8 3 byte
+        snprintf(fract, sizeof(fract), "%02X%02X", z, w);
+        to = 0xbf;
       }
       else {
-        uni16 = fr;
+        if (w) { // utf-8 2 byte
+          snprintf(fract, sizeof(fract), "%02X", w);
+          to = 0xbf;
+        }
+        else {
+          snprintf(fract, sizeof(fract), "%02X", c);
+          to = c + 0x1f;
+        }
+      }
+      page_start();
+      strncpy(TH[THN++], fract, sizeof(fract));
+      z0 = z;
+      w0 = w;
+      first = c;
+    }
+    last = c;
+    totsize += proc_char(z0, w0, c);
+  }
+  totsize += page_end(z0, w0, first, last);
+  print_footer(totsize);
+}
+
+const uint32_t toUtf8b4(const uint16_t ucode)
+{
+  if (ucode & 0xF800) {
+    return ((0xE0 | ((ucode >> 12) & 0x0F)) << 16) | ((0x80 | ((ucode >> 6) & 0x3F)) << 8) | (0x80 | (ucode & 0x3F));
+  }
+  else
+  if (ucode & 0x0700) {
+    return ((0xC0 | ((ucode >> 6) & 0x1F)) << 8) | (0x80 | (ucode & 0x3F));
+  }
+  else {
+    return (ucode & 0xff);
+  }
+}
+
+bool isHex(int c)
+{
+  return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
+}
+
+void b4buf_t::t2x_err(const char* msg)
+{
+  fprintf(stderr, "Error in file %s in line %d:%d: %s", t2xname, line, pos, msg);
+  err = true;
+}
+
+bool b4buf_t::getc_(int* c)
+{
+  int i = fgetc(file);
+  if (i != -1) {
+    *c = i;
+    return true;
+  }
+  else {
+    *c = 0;
+    return false;
+  }
+}
+
+bool b4buf_t::getc(int* c)
+{
+  if (getc_(c) && *c != 0) {
+    if (*c != '\n') {
+      ++pos;
+    }
+    else {
+      ++line;
+      pos = 1;
+    }
+    return true;
+  }
+  return false;
+}
+
+void b4buf_t::read_file()
+{
+  bool start = true;
+  bool unicode = false;
+  int c1, c2, c3, c4;
+  while (!err && getc_(&c1)) {
+    if (start) {
+      start = false;
+      if (c1 == 0xff) {
+        if (!getc_(&c2)) {
+          break;
+        }
+        if (c2 == 0xfe) {
+          unicode = true;
+        }
+        continue;
       }
     }
-
-    totsize += proc_char(uni16, z, w, fr);
+    if (unicode) {
+      if (!getc_(&c2)) {
+        break;
+      }
+      uint16_t u = c1 | (c2 << 8);
+      if (!u) {
+        break;
+      }
+      if (u == '\n') {
+        ++line;
+        pos = 0;
+        continue;
+      }
+      ++pos;
+      if (u == ' ' || u == '\t' || u == '\r') {
+        continue;
+      }
+      add(toUtf8b4(u));
+      continue;
+    }
+    if (c1 == '\n') {
+      ++line;
+      pos = 0;
+      continue;
+    }
+    ++pos;
+    if (c1 == ' ' || c1 == '\t' || c1 == '\r') {
+      continue;
+    }
+    if (c1 >= 0xc0) {
+      if (getc(&c2)) {
+        if (c2 >= 0x80 && c2 <= 0xbf) {
+          if (c1 >= 0xe0) {
+            if (getc(&c3)) {
+              if (c3 >= 0x80 & c3 <= 0xbf) {
+                add((c1 << 16) | (c2 << 8) | c3);
+              }
+              else {
+                t2x_err("80..bf nexpected");
+              }
+            }
+            else {
+              t2x_err("unexpected eof");
+            }
+          }
+          else {
+            if (c2 >= 0x80 & c2 <= 0xbf) {
+              add((c1 << 8) | c2);
+            }
+            else {
+              t2x_err("80..bf nexpected");
+            }
+          }
+        }
+        else {
+          t2x_err("80..bf nexpected");
+        }
+      }
+      else {
+        t2x_err("unexpected eof");
+      }
+    }
+    else {
+      if (isHex(c1)) {
+        if (getc(&c2)) {
+          bool h4 = false;
+          if (c1 == '0' && c2 == 'x') {
+            h4 = true;
+            if (!getc(&c1)) {
+              t2x_err("unexpected eof");
+              break;
+            }
+            if (!isHex(c1)) {
+              t2x_err("0..9 or a..f expected");
+              break;
+            }
+            if (!getc(&c2)) {
+              t2x_err("unexpected eof");
+              break;
+            }
+            if (!isHex(c2)) {
+              t2x_err("0..9 or a..f expected");
+              break;
+            }
+          }
+          if (isHex(c2)) {
+            char buf[3] {(char)c1, (char)c2, 0};
+            c1 = strtoll(buf, NULL, 16);
+            if (getc(&c3)) {
+              if (isHex(c3)) {  // unicode
+                if (getc(&c4)) {
+                  if (isHex(c4)) {
+                    buf[0] = c3;
+                    buf[1] = c4;
+                    c2 = strtoll(buf, NULL, 16);
+                    uint16_t u = (c1 << 8) | c2;
+                    add(toUtf8b4(u));
+                  }
+                  else {
+                    t2x_err("0..9 or a..f expected");
+                  }
+                }
+                else {
+                  t2x_err("unexpected eof");
+                }
+              }
+              else {  // first utf-8 byte in c1
+                if (c1 >= 0xc0) {
+                  if (c3 == ' ') {
+                    if (getc(&c2)) {
+                      if (isHex(c2)) {
+                        if (getc(&c3)) {
+                          if (isHex(c3)) {
+                            buf[0] = c2;
+                            buf[1] = c3;
+                            c2 = strtoll(buf, NULL, 16); // second utf-8 byte in c2
+                            if (c2 >= 0x80 && c2 <= 0xbf) {
+                              if (c1 >= 0xe0) {
+                                if (getc(&c3)) {
+                                  if (c3 == ' ') {
+                                    if (getc(&c3)) {
+                                      if (isHex(c3)) {
+                                        if (getc(&c4)) {
+                                          if (isHex(c4)) {
+                                            buf[0] = c3;
+                                            buf[1] = c4;
+                                            c3 = strtoll(buf, NULL, 16); // third utf-8 byte in c3
+                                            if (c3 >= 0x80 & c3 <= 0xbf) {
+                                              add((c1 << 16) | (c2 << 8) | c3);
+                                            }
+                                            else {
+                                              t2x_err("80..bf nexpected");
+                                            }
+                                          }
+                                          else {
+                                          t2x_err("unexpected eof");
+                                          }
+                                        }
+                                        else {
+                                          t2x_err("0..9 or a..f expected");
+                                        }
+                                      }
+                                      else {
+                                        t2x_err("unexpected eof");
+                                      }
+                                    }
+                                    else {
+                                      t2x_err("0..9 or a..f expected");
+                                    }
+                                  }
+                                  else {
+                                    t2x_err("space expected");
+                                  }
+                                }
+                                else {
+                                  t2x_err("unexpected eof");
+                                }
+                              }
+                              else { // 2 byte utf-8
+                                add((c1 << 8) | c2);
+                              }
+                            }
+                            else {
+                              t2x_err("80..bf nexpected");
+                            }
+                          }
+                          else {
+                            t2x_err("unexpected eof");
+                          }
+                        }
+                        else {
+                          t2x_err("unexpected eof");
+                        }
+                      }
+                      else {
+                        t2x_err("unexpected eof");
+                      }
+                    }
+                    else {
+                      add(c1);
+                    }
+                  }
+                  else {
+                    t2x_err("space expected");
+                  }
+                }
+                else {
+                  add(c1);
+                }
+              }
+            }
+            else {
+              if (h4) {
+                t2x_err("0..9 or a..f expected");
+              }
+              else {
+                if (c1 >= 0xc0) {
+                  t2x_err("0..9 or a..f expected");
+                }
+                else {
+                  add(c1);
+                }
+              }
+            }
+          }
+        }
+        else {
+          add(c1);
+        }
+      }
+      else {
+        add(c1);
+      }
+    }
   }
+  fclose(file);
+}
 
-
-  printf("static const GFXfont* %s[] {\n", fontName);
-  for (int i = 0; i < THN; ++i) {
-    printf("  &%s_%s,\n", fontName, TH[i]);
+void b4buf_t::proc_file(const char* t2xname)
+{
+  if (init(t2xname)) {
+/*
+  for (char c = 0x20; c <= 0x7E; ++c) {
+    bb.add(c);
   }
-  printf("  0\n};\n\n");
-
-  totsize += (THN + 1) * 4;
-
-  printf("// Approx. %d bytes\n", totsize);
-  // Size estimate is based on AVR struct and pointer sizes;
-  // actual size may vary.
+*/
+    read_file();
+    sort();
+    run();
+    done();
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -348,19 +790,18 @@ int getint(const char* s)
 
 // ----------------------------------------------------------------------------
 int main(int argc, char *argv[]) {
-  int err;
-  char *ptr;
-  FT_Library library;
 
   // Parse command line.  Valid syntaxes are:
   //   utf8fontc [filename] [size]
+  //   utf8fontc [filename] [size] [-c charset-file]
   //   utf8fontc [filename] [size] [first char]
   //   utf8fontc [filename] [size] [first char] [last char]
   // Unless overridden, default first and last chars are
   // ' ' (space) and '~', respectively
 
   if (argc < 3) {
-    fprintf(stderr, "Usage: %s fontfile[.ttf|.ttc] size [first] [last]\n", argv[0]);
+    fprintf(stderr, "Usage: %s fontfile size\n", argv[0]);
+    fprintf(stderr, "Usage: %s fontfile size [first] [last]\n", argv[0]);
     fprintf(stderr, "Usage: %s fontfile 12                for ASCII 12pt 0x20 to 0x7E \n", argv[0]);
     fprintf(stderr, "Usage: %s fontfile 18 0x20 0x7E      for ASCII 18pt\n", argv[0]);
     fprintf(stderr, "Usage: %s fontfile 24 0x20 0xFE      for ASCII 24pt with latin 1\n", argv[0]);
@@ -370,68 +811,25 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Usage: %s fontfile 24 0xE4           for ASCII 24pt with utf-8 3 bytes starting with 0xE4\n", argv[0]);
     fprintf(stderr, "Usage: %s fontfile 18 0xEB           for ASCII 18pt with utf-8 3 bytes starting with 0xEB\n", argv[0]);
     fprintf(stderr, "Usage: %s fontfile 12 0xE0 0xEF      for ASCII 12pt with all utf-8 3 bytes\n", argv[0]);
+    fprintf(stderr, "Usage: %s fontfile size [-t sample-text-file] - can be in utf-8 or unicode\n", argv[0]);
+    fprintf(stderr, "Usage: %s fontfile 12 -t sample.utf-8 for ASCII 12pt with characters defined in the sample.utf-8\n", argv[0]);
+    fprintf(stderr, "use for ttf/ttc font files\n");
     return 1;
+  }
+
+  int err;
+  char *ptr;
+  FT_Library library;
+
+  ptr = strrchr(argv[1], '/'); // Find last slash in filename
+  if (ptr) {
+    ptr++; // First character of filename (path stripped)
+  }
+  else {
+    ptr = argv[1]; // No path; font in local dir.
   }
 
   int size = getint(argv[2]);
-
-  int first = 0x20, last = 0;
-
-  if (argc >= 4) {
-    first = getint(argv[3]);
-  };
-  if (argc >= 5) {
-    last = getint(argv[4]);
-  }
-
-  ptr = strrchr(argv[1], '/'); // Find last slash in filename
-  if (ptr)
-    ptr++; // First character of filename (path stripped)
-  else
-    ptr = argv[1]; // No path; font in local dir.
-
-  if (first >= 0x100) {
-    fprintf(stderr, "Value of first: 0x%x is to big\n", first);
-    return 1;
-  }
-  if (first >= 0xf0) {  // 4 byte utf-8
-    fprintf(stderr, "4 byte utf-8 not supported yet.\n");
-    return 1;
-  }
-  if (first >= 0xe0) {  // 3 byte utf-8
-    if (last != 0) {
-      if (last < first || last >= 0xf0) {
-        fprintf(stderr, "Value of last: 0x%x for first (0xe0 to 0xef) should be >= first, but not too much.\n", last);
-        return 1;
-      }
-    }
-    else {
-      last = first;
-    }
-  }
-  else
-  if (first >= 0xc0) {  // 2 byte utf-8
-    if (last != 0) {
-      if (last < first || last >= 0xe0) {
-        fprintf(stderr, "Value of last: 0x%x for first (0xc0 to 0xdf) should be >= first, but not too much.\n", last);
-        return 1;
-      }
-    }
-    else {
-      last = first;
-    }
-  }
-  else {  // ASCII
-    if (last != 0) {
-      if (last < first || last >= 0x100) {
-        fprintf(stderr, "Value of last: 0x%x for first (0x00 to 0xbf) should be >= first, but <= 0xff.\n", last);
-        return 1;
-      }
-    }
-    else {
-      last = first >= 0x80 ? 0xff : 0x7e;
-    }
-  }
 
   // Derive font table names from filename.  Period (filename
   // extension) is truncated and replaced with the font size & bits.
@@ -472,14 +870,72 @@ int main(int argc, char *argv[]) {
   // << 6 because '26dot6' fixed-point format
   FT_Set_Char_Size(face, size << 6, 0, DPI, 0);
 
-  // Currently all symbols from 'first' to 'last' are processed.
-  // Fonts may contain WAY more glyphs than that, but this code
-  // will need to handle encoding stuff to deal with extracting
-  // the right symbols, and that's not done yet.
-  // fprintf(stderr, "%ld glyphs\n", face->num_glyphs);
 
-  run(first, last);
+  if (argc >= 5 && !strcmp(argv[3], "-t")) {
+    b4buf_t bb;
+    bb.proc_file(argv[4]);
+  }
+  else {
+    int first = 0x20, last = 0;
 
+    if (argc >= 4) {
+      first = getint(argv[3]);
+    };
+    if (argc >= 5) {
+      last = getint(argv[4]);
+    }
+
+    if (first >= 0x100) {
+      fprintf(stderr, "Value of first: 0x%x is to big\n", first);
+      return 1;
+    }
+    if (first >= 0xf0) {  // 4 byte utf-8
+      fprintf(stderr, "4 byte utf-8 not supported yet.\n");
+      return 1;
+    }
+    if (first >= 0xe0) {  // 3 byte utf-8
+      if (last != 0) {
+        if (last < first || last >= 0xf0) {
+          fprintf(stderr, "Value of last: 0x%x for first (0xe0 to 0xef) should be >= first, but not too much.\n", last);
+          return 1;
+        }
+      }
+      else {
+        last = first;
+      }
+    }
+    else
+    if (first >= 0xc0) {  // 2 byte utf-8
+      if (last != 0) {
+        if (last < first || last >= 0xe0) {
+          fprintf(stderr, "Value of last: 0x%x for first (0xc0 to 0xdf) should be >= first, but not too much.\n", last);
+          return 1;
+        }
+      }
+      else {
+        last = first;
+      }
+    }
+    else {  // ASCII
+      if (last != 0) {
+        if (last < first || last >= 0x100) {
+          fprintf(stderr, "Value of last: 0x%x for first (0x00 to 0xbf) should be >= first, but <= 0xff.\n", last);
+          return 1;
+        }
+      }
+      else {
+        last = first >= 0x80 ? 0xff : 0x7e;
+      }
+    }
+
+    // Currently all symbols from 'first' to 'last' are processed.
+    // Fonts may contain WAY more glyphs than that, but this code
+    // will need to handle encoding stuff to deal with extracting
+    // the right symbols, and that's not done yet.
+    // fprintf(stderr, "%ld glyphs\n", face->num_glyphs);
+
+    proc_range(first, last);
+  }
   FT_Done_FreeType(library);
 
   return 0;
