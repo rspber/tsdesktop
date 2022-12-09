@@ -579,7 +579,7 @@ void b4buf_t::read_file()
                 add((c1 << 16) | (c2 << 8) | c3);
               }
               else {
-                t2x_err("80..bf nexpected");
+                t2x_err("80..bf expected");
               }
             }
             else {
@@ -591,12 +591,12 @@ void b4buf_t::read_file()
               add((c1 << 8) | c2);
             }
             else {
-              t2x_err("80..bf nexpected");
+              t2x_err("80..bf expected");
             }
           }
         }
         else {
-          t2x_err("80..bf nexpected");
+          t2x_err("80..bf expected");
         }
       }
       else {
@@ -672,7 +672,7 @@ void b4buf_t::read_file()
                                               add((c1 << 16) | (c2 << 8) | c3);
                                             }
                                             else {
-                                              t2x_err("80..bf nexpected");
+                                              t2x_err("80..bf expected");
                                             }
                                           }
                                           else {
@@ -704,7 +704,7 @@ void b4buf_t::read_file()
                               }
                             }
                             else {
-                              t2x_err("80..bf nexpected");
+                              t2x_err("80..bf expected");
                             }
                           }
                           else {
