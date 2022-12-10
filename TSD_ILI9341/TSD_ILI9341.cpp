@@ -3,23 +3,13 @@
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
-1. This is a modified Adafruit's ILI9341 driver: Adafruit_ILI9341
+This is a modified Adafruit's ILI9341 driver: Adafruit_ILI9341
 
 differences:
 - Adafruit_SPITFT is missed, all spi functions are abstract
 - added support for ILI9341 devices v1.3
 
-Original Adafruit's license attached further.
-
-2. Implementations for writePixel and other writes comes from
-https://github.com/rdagger/micropython-ili9341/ili9341.py,
-partially rewritten from python to c,
-
-changes:
-- added overflow: clip
-- setAddrWindow was used
-
-that software is under the MIT license, attached further.
+Original Adafruit's license attached below.
 */
 
 /*!
@@ -69,30 +59,6 @@ that software is under the MIT license, attached further.
  * BSD license, all text here must be included in any redistribution.
  *
  */
-
-/*
-MIT License
-
-Copyright (c) 2020
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
 
 #include "TSD_ILI9341.h"
 
@@ -305,6 +271,20 @@ void TSD_ILI9341::begin(const int16_t RST)
   endTransaction();
 }
 
+void TSD_ILI9341::displayOff()
+{
+  beginTransaction(SETUP_SPEED);
+  sendCmd(ILI9341_DISPOFF);
+  endTransaction();
+}
+
+void TSD_ILI9341::displayOn()
+{
+  beginTransaction(SETUP_SPEED);
+  sendCmd(ILI9341_DISPON);
+  endTransaction();
+}
+
 /**************************************************************************/
 /*!
    @brief   Set origin of (0,0) and orientation of TFT display
@@ -437,33 +417,30 @@ void TSD_ILI9341::setAddrWindow(int16_t x1, int16_t y1, int16_t w, int16_t h) {
   sendCmd(ILI9341_RAMWR); // Write to RAM
 }
 
-
-// from MicroPython_ILI9341, mostly modified
-
-void TSD_ILI9341::displayOff()
+void TSD_ILI9341::writeColor(int16_t w, int16_t h, const rgb_t color)
 {
-  beginTransaction(SETUP_SPEED);
-  sendCmd(ILI9341_DISPOFF);
-  endTransaction();
+  uint8_t buf[8];
+  mdt_color(buf, color, 1);
+  startWriteData();
+  for (int j = 0; j < h; ++j) {
+    for (int i = 0; i < w; ++i) {
+      for (int k = 0; k < MDT_SIZE; ++k) {
+        pushByte(buf[k]);
+      }
+    }
+  }
+  endWriteData();
 }
 
-void TSD_ILI9341::displayOn()
-{
-  beginTransaction(SETUP_SPEED);
-  sendCmd(ILI9341_DISPON);
-  endTransaction();
-}
-
-void TSD_ILI9341::writePixel(clip_t* clip, const int16_t x, const int16_t y, const rgb_t color)
+void TSD_ILI9341::writePixel(clip_t* clip, int16_t x, int16_t y, const rgb_t color)
 {
   if (x >= clip->x1 && y >= clip->y1 && x < clip->x2 && y < clip->y2) {
     setAddrWindow(x, y, 1, 1);
-    uint8_t buf[8];
-    sendMDTData(1, mdt_color(buf, color, 1));
+    writeColor(1, 1, color);
   }
 }
 
-void TSD_ILI9341::writeFastHLine(clip_t* clip, int16_t x, const int16_t y, int16_t w, const rgb_t color)
+void TSD_ILI9341::writeFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, const rgb_t color)
 {
   if (x < clip->x1) {
     w -= clip->x1 - x;
@@ -474,11 +451,11 @@ void TSD_ILI9341::writeFastHLine(clip_t* clip, int16_t x, const int16_t y, int16
   }
   if (y >= clip->y1 && y < clip->y2 && w > 0) {
     setAddrWindow(x, y, w, 1);
-    sendMDTData(w, buffer_mdt_color(color, w));
+    writeColor(w, 1, color);
   }
 }
 
-void TSD_ILI9341::writeFastVLine(clip_t* clip, const int16_t x, int16_t y, int16_t h, const rgb_t color)
+void TSD_ILI9341::writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, const rgb_t color)
 {
   if (y < clip->y1) {
     h -= clip->y1 - y;
@@ -489,11 +466,11 @@ void TSD_ILI9341::writeFastVLine(clip_t* clip, const int16_t x, int16_t y, int16
   }
   if (x >= clip->x1 && x < clip->x2 && h > 0) {
     setAddrWindow(x, y, 1, h);
-    sendMDTData(h, buffer_mdt_color(color, h));
+    writeColor(1, h, color);
   }
 }
 
-void TSD_ILI9341::fill_hrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color)
+void TSD_ILI9341::writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color)
 {
   if (x < clip->x1) {
     w -= clip->x1 - x;
@@ -510,69 +487,7 @@ void TSD_ILI9341::fill_hrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int1
     h = clip->y2 - y;
   }
   if (w > 0 && h > 0) {
-    int16_t chunk_height = MDT_BUFFER_SIZE / w;
-    int16_t chunk_count = h / chunk_height;
-    int16_t remainder = h % chunk_height;
-    int16_t chunk_size = chunk_height * w;
-    int16_t chunk_y = y;
-    if (chunk_count) {
-      const uint8_t* buf = buffer_mdt_color(color, chunk_size);
-      for (int16_t i = 0; i < chunk_count; ++i) {
-        setAddrWindow(x, chunk_y, w, chunk_height);
-        sendMDTData(chunk_size, buf);
-        chunk_y += chunk_height;
-      }
-    }
-    if (remainder) {
-      setAddrWindow(x, chunk_y, w, remainder);
-      sendMDTData(remainder * w, buffer_mdt_color(color, remainder * w));
-    }
-  }
-}
-
-void TSD_ILI9341::fill_vrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color)
-{
-  if (x < clip->x1) {
-    w -= clip->x1 - x;
-    x = clip->x1;
-  }
-  if (x + w > clip->x2) {
-    w = clip->x2 - x;
-  }
-  if (y < clip->y1) {
-    h -= clip->y1 - y;
-    y = clip->y1;
-  }
-  if (y + h > clip->y2) {
-    h = clip->y2 - y;
-  }
-  if (w > 0 && h > 0) {
-    int16_t chunk_width = MDT_BUFFER_SIZE / h;
-    int16_t chunk_count = w / chunk_width;
-    int16_t remainder = w % chunk_width;
-    int16_t chunk_size = chunk_width * h;
-    int16_t chunk_x = x;
-    if (chunk_count) {
-      const uint8_t* buf = buffer_mdt_color(color, chunk_size);
-      for (int16_t i = 0; i < chunk_count; ++i) {
-        setAddrWindow(chunk_x, y, chunk_width, h);
-        sendMDTData(chunk_size, buf);
-        chunk_x += chunk_width;
-      }
-    }
-    if (remainder) {
-      setAddrWindow(chunk_x, y, remainder, h);
-      sendMDTData(remainder * h, buffer_mdt_color(color, remainder * h));
-    }
-  }
-}
-
-void TSD_ILI9341::writeFillRect(clip_t* clip, const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
-{
-  if (w > h) {
-    fill_hrect(clip, x, y, w, h, color);
-  }
-  else {
-    fill_vrect(clip, x, y, w, h, color);
+    setAddrWindow(x, y, w, h);
+    writeColor(w, h, color);
   }
 }

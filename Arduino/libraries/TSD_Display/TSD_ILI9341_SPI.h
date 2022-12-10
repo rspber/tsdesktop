@@ -104,6 +104,46 @@ public:
     END_TRANSACTION();
   }
 
+  void startWriteData()
+  {
+    DC(HIGH);
+    CS(LOW);
+  }
+
+  void pushByte(const uint8_t u8bit)
+  {
+#if defined(ARDUINO_ARCH_RP2040)
+    spi_inst_t *pi_spi = _spi == &SPI ? spi0 : spi1;
+    while (!spi_is_writable(pi_spi))
+      tight_loop_contents();
+    spi_get_hw(pi_spi)->dr = (uint32_t)u8bit;
+#elif defined(ESP8266) || defined(ESP32)
+    _spi->wri te(b);
+#else
+    _spi->tran sfer(b);
+#endif
+  }
+
+  void endWriteData()
+  {
+#if defined(ARDUINO_ARCH_RP2040)
+    spi_inst_t *pi_spi = _spi == &SPI ? spi0 : spi1;
+    // Drain RX FIFO, then wait for shifting to finish (which may be *after*
+    // TX FIFO drains), then drain RX FIFO again
+    while (spi_is_readable(pi_spi))
+        (void)spi_get_hw(pi_spi)->dr;
+    while (spi_get_hw(pi_spi)->sr & SPI_SSPSR_BSY_BITS)
+        tight_loop_contents();
+    while (spi_is_readable(pi_spi))
+        (void)spi_get_hw(pi_spi)->dr;
+
+    // Don't leave overrun flag set
+    spi_get_hw(pi_spi)->icr = SPI_SSPICR_RORIC_BITS;
+#endif
+    DC(HIGH);
+    CS(HIGH);
+  }
+
   void spiWrite(const uint8_t b)
   {
 #if defined(ARDUINO_ARCH_RP2040)

@@ -201,6 +201,30 @@ public:
     dc(1);
   }
 
+
+  void pushByte(const uint8_t u8bit)
+  {
+    while (!spi_is_writable(_spi))
+      tight_loop_contents();
+    spi_get_hw(_spi)->dr = (uint32_t)u8bit;
+  }
+
+  void endWrite()
+  {
+    // Drain RX FIFO, then wait for shifting to finish (which may be *after*
+    // TX FIFO drains), then drain RX FIFO again
+    while (spi_is_readable(_spi))
+        (void)spi_get_hw(_spi)->dr;
+    while (spi_get_hw(_spi)->sr & SPI_SSPSR_BSY_BITS)
+        tight_loop_contents();
+    while (spi_is_readable(_spi))
+        (void)spi_get_hw(_spi)->dr;
+
+    // Don't leave overrun flag set
+    spi_get_hw(_spi)->icr = SPI_SSPICR_RORIC_BITS;
+  }
+
+
   // SPI read
 
   const uint8_t transfer(const uint8_t cmd)

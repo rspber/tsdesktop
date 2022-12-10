@@ -20,11 +20,7 @@
   #define MDT_SIZE 3
 #endif
 
-#define MDT_BUFFER_SIZE 0x400
-
 #define WHITE RGB(0xFF, 0xFF, 0xFF)
 #define BLACK RGB(0x00, 0x00, 0x00)
 
 uint8_t* mdt_color(uint8_t* buf, const rgb_t color, int size);
-
-uint8_t* buffer_mdt_color(const rgb_t color, int size);

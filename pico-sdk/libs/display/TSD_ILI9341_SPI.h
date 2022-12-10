@@ -44,6 +44,24 @@ public:
     _spi->endTransaction();
   }
 
+  void startWriteData()
+  {
+    _spi->dc(1);
+    _spi->cs(0);
+  }
+
+  void pushByte(const uint8_t u8bit)
+  {
+    _spi->pushByte(u8bit);
+  }
+
+  void endWriteData()
+  {
+    _spi->endWrite();
+    _spi->dc(1);
+    _spi->cs(1);
+  }
+
   void sendCmd(const uint8_t cmd)
   {
     _spi->writeCmd(cmd);

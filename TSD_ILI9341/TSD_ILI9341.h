@@ -37,13 +37,17 @@ public:
   void displayOff();
   void displayOn();
 
-  virtual void writePixel(clip_t* clip, const int16_t x, const int16_t y, const rgb_t color);
-  virtual void writeFastHLine(clip_t* clip, int16_t x, const int16_t y, int16_t w, const rgb_t color);
-  virtual void writeFastVLine(clip_t* clip, const int16_t x, int16_t y, int16_t h, const rgb_t color);
-  virtual void writeFillRect(clip_t* clip, const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color);
+  virtual void writePixel(clip_t* clip, int16_t x, int16_t y, const rgb_t color);
+  virtual void writeFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, const rgb_t color);
+  virtual void writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, const rgb_t color);
+  virtual void writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color);
 
   virtual void beginTransaction(const uint32_t Hz) = 0;
   virtual void endTransaction() = 0;
+
+  virtual void startWriteData() = 0;
+  virtual void pushByte(const uint8_t u8bit) = 0;
+  virtual void endWriteData() = 0;
 
   virtual void sendCmd(const uint8_t cmd) = 0;
   virtual void sendData(const int16_t size, const uint8_t* data) = 0;
@@ -54,14 +58,7 @@ public:
     sendCmdData(cmd, 1, &data);
   }
 
-  void sendMDTData(const int16_t size, const uint8_t* data)
-  {
-    sendData(size * MDT_SIZE, data);
-  }
-
-protected:
-  void fill_hrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color);
-  void fill_vrect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color);
+  void writeColor(int16_t w, int16_t h, const rgb_t color);
 
 private:
   int16_t _RST;
