@@ -165,7 +165,7 @@ public:
     CS(HIGH);
   }
 
-  void sendData(const int16_t size, const uint8_t* data)
+  void sendData(const uint8_t* data, const int16_t size)
   {
     CS(LOW);
     DC(HIGH);
@@ -182,7 +182,7 @@ public:
     DC(HIGH);
   }
 
-  void sendCmdData(const uint8_t cmd, const int16_t size, const uint8_t* data)
+  void sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size)
   {
     CS(LOW);
     DC(LOW);

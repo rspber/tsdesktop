@@ -186,80 +186,48 @@ void TSD_ILI9341::begin(const int16_t RST)
   sleep_ms(150);
 
   if (ILI9341_VERSION < 3) {  // < v1.2
-    static uint8_t ILI9341_EF_DATA[] = {0x03, 0x80, 0x02};
-    sendCmdData(ILI9341_EF, 3, ILI9341_EF_DATA);              // unknown
-
-    static uint8_t ILI9341_PWCTRB_DATA[] = {0x00, 0xC1, 0x30};
-    sendCmdData(ILI9341_PWCTRB, 3, ILI9341_PWCTRB_DATA);      // retired in v.1.02
-
-    static uint8_t ILI9341_POSC_DATA[] = {0x64, 0x03, 0x12, 0x81};
-    sendCmdData(ILI9341_POSC, 4, ILI9341_POSC_DATA);          // retired in v.1.02
-
-    static uint8_t ILI9341_DTCA_DATA[] = {0x85, 0x00, 0x78};
-    sendCmdData(ILI9341_DTCA, 3, ILI9341_DTCA_DATA);          // retired in v.1.02
-
-    static uint8_t ILI9341_PWCTRA_DATA[] = {0x39, 0x2C, 0x00, 0x34, 0x02};
-    sendCmdData(ILI9341_PWCTRA, 5, ILI9341_PWCTRA_DATA);      // retired in v.1.02
+    sendCmdData(ILI9341_EF, (uint8_t*)"\x03\x80\x02", 3);              // unknown
+    sendCmdData(ILI9341_PWCTRB, (uint8_t*)"\x00\xC1\x30", 3);      // retired in v.1.02
+    sendCmdData(ILI9341_POSC, (uint8_t*)"\x64\x03\x12\x81", 4);          // retired in v.1.02
+    sendCmdData(ILI9341_DTCA, (uint8_t*)"\x85\x00\x78", 3);          // retired in v.1.02
+    sendCmdData(ILI9341_PWCTRA, (uint8_t*)"\x39\x2C\x00\x34\x02", 5);      // retired in v.1.02
   }
-
   sendCmdData(ILI9341_PUMPRC,   0x20);
 
   if (ILI9341_VERSION < 3) {  // < v1.2
-    static uint8_t ILI9341_DTCB_DATA[] = {0x00, 0x00};
-    sendCmdData(ILI9341_DTCB, 2, ILI9341_DTCB_DATA);          // retired in v.1.02
+    sendCmdData(ILI9341_DTCB, (uint8_t*)"\x00\x00", 2);          // retired in v.1.02
   }
-
   if (ILI9341_VERSION < 3) {  // < v1.2
     sendCmdData(ILI9341_PWCTR1, 0x23);             // Power control VRH[5:0]
   }
   else {
     sendCmdData(ILI9341_MADCTL13, 0x21);           // xCRICxCC
   }
-
   sendCmdData(ILI9341_PWCTR2,   0x10);             // Power control SAP[2:0];BT[3:0]
-
-  static uint8_t ILI9341_VCOMCTR_DATA[] = {0x31, 0x3c};
-  sendCmdData(ILI9341_VCOMCTR1, 2, ILI9341_VCOMCTR_DATA);       // VCM control 1
-
+  sendCmdData(ILI9341_VCOMCTR1, (uint8_t*)"\x31\x3c", 2);       // VCM control 1
   sendCmdData(ILI9341_VCOMCTR2, 0xC0);             // VCM control 2
-
   if (ILI9341_VERSION < 3) {  // < v1.2
     sendCmdData(ILI9341_MADCTL,   0x48);             // Memory Access Control
   }
-
   sendCmdData(ILI9341_VSCRSADD, 0x00);             // Vertical scroll zero
-
 #ifdef COLOR_565
   sendCmdData(ILI9341_PIXFMT,   0x55);
 #else
   sendCmdData(ILI9341_PIXFMT,   0x66);
 #endif
-
-  static uint8_t ILI9341_FRMCTR1_DATA[] = {0x00, 0x18};
-  sendCmdData(ILI9341_FRMCTR1, 2, ILI9341_FRMCTR1_DATA);
-
-  static uint8_t ILI9341_DFUNCTR_DATA[] = {0x08, 0x82, 0x27};
-  sendCmdData(ILI9341_DFUNCTR, 3, ILI9341_DFUNCTR_DATA);  // Display Function Control
-
+  sendCmdData(ILI9341_FRMCTR1, (uint8_t*)"\x00\x18", 2);
+  sendCmdData(ILI9341_DFUNCTR, (uint8_t*)"\x08\x82\x27", 3);  // Display Function Control
   sendCmdData(ILI9341_ENABLE3G, 0x00);             // 3Gamma Function Disable   // retired in v.1.02
-
   sendCmdData(ILI9341_GAMMASET, 0x01);             // Gamma curve selected
-
   if (ILI9341_VERSION < 3) {  // < v1.2
-//  static uint8_t ILI9341_GMCTRP1_DATA[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00}; // original
-    static uint8_t ILI9341_GMCTRP1_DATA[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E, 0x21, 0x26, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};
-    sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA);  // positive gamma correction
-
-//  static uint8_t ILI9341_GMCTRN1_DATA[] = {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F}; // original
-    static uint8_t ILI9341_GMCTRN1_DATA[] = {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F};
-    sendCmdData(ILI9341_GMCTRN1, 15, ILI9341_GMCTRN1_DATA);  // negative gamma correction
+                                         //"\x0F\x31\x2B\x0C\x0E\x08\x4E\xF1\x37\x07\x10\x03\x0E\x09\x00" // original
+    sendCmdData(ILI9341_GMCTRP1, (uint8_t*)"\x0F\x31\x2B\x0C\x0E\x08\x4E\x21\x26\x07\x10\x03\x0E\x09\x00", 15);  // positive gamma correction
+                                         //"\x00\x0E\x14\x03\x11\x07\x31\xC1\x48\x08\x0F\x0C\x31\x36\x0F" // original
+    sendCmdData(ILI9341_GMCTRN1, (uint8_t*)"\x00\x0E\x14\x03\x11\x07\x31\xC1\x48\x08\x0F\x0C\x31\x36\x0F", 15);  // negative gamma correction
   }
   else {
-    static uint8_t ILI9341_GMCTRP1_DATA_V13[] = {0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x30, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00};
-    sendCmdData(ILI9341_GMCTRP1, 15, ILI9341_GMCTRP1_DATA_V13);  // positive gamma correction v1.3
-
-    static uint8_t ILI9341_GMCTRN1_DATA_V13[] = {0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x11, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F};
-    sendCmdData(ILI9341_GMCTRN1, 15, ILI9341_GMCTRN1_DATA_V13);  // negative gamma correction
+    sendCmdData(ILI9341_GMCTRP1, (uint8_t*)"\x0F\x31\x2B\x0C\x0E\x08\x30\xF1\x37\x07\x10\x03\x0E\x09\x00", 15);  // positive gamma correction v1.3
+    sendCmdData(ILI9341_GMCTRN1, (uint8_t*)"\x00\x0E\x14\x03\x11\x07\x11\xC1\x48\x08\x0F\x0C\x31\x36\x0F", 15);  // negative gamma correction
   }
 
   sendCmd(ILI9341_SLPOUT);   // Exit Sleep
@@ -350,7 +318,7 @@ void TSD_ILI9341::scrollTo(int16_t y) {
   data[0] = y >> 8;
   data[1] = y & 0xff;
   beginTransaction(SETUP_SPEED);
-  sendCmdData(ILI9341_VSCRSADD, 2, (uint8_t*)data);
+  sendCmdData(ILI9341_VSCRSADD, (uint8_t*)data, 2);
   endTransaction();
 }
 
@@ -373,7 +341,7 @@ void TSD_ILI9341::setScrollMargins(int16_t top, int16_t bottom) {
     data[4] = bottom >> 8;
     data[5] = bottom & 0xff;
     beginTransaction(SETUP_SPEED);
-    sendCmdData(ILI9341_VSCRDEF, 6, (uint8_t*)data);
+    sendCmdData(ILI9341_VSCRDEF, (uint8_t*)data, 6);
     endTransaction();
   }
 }
@@ -401,7 +369,7 @@ void TSD_ILI9341::setAddrWindow(int16_t x1, int16_t y1, int16_t w, int16_t h) {
     uint16_t buf[2];
     buf[0] = SWAP16(x1);
     buf[1] = SWAP16(x2);
-    sendData(sizeof(buf), (const uint8_t*)buf);
+    sendData((const uint8_t*)buf, sizeof(buf));
     old_x1 = x1;
     old_x2 = x2;
   }
@@ -410,7 +378,7 @@ void TSD_ILI9341::setAddrWindow(int16_t x1, int16_t y1, int16_t w, int16_t h) {
     uint16_t buf[2];
     buf[0] = SWAP16(y1);
     buf[1] = SWAP16(y2);
-    sendData(sizeof(buf), (const uint8_t*)buf);
+    sendData((const uint8_t*)buf, sizeof(buf));
     old_y1 = y1;
     old_y2 = y2;
   }

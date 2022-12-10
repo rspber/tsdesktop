@@ -67,12 +67,12 @@ public:
     _spi->writeCmd(cmd);
   }
 
-  void sendData(const int16_t size, const uint8_t* data)
+  void sendData(const uint8_t* data, const int16_t size)
   {
     _spi->writeData(data, size);
   }
 
-  void sendCmdData(const uint8_t cmd, const int16_t size, const uint8_t* data)
+  void sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size)
   {
     _spi->writeCmdData(cmd, data, size);
   }

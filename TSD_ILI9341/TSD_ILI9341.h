@@ -50,12 +50,12 @@ public:
   virtual void endWriteData() = 0;
 
   virtual void sendCmd(const uint8_t cmd) = 0;
-  virtual void sendData(const int16_t size, const uint8_t* data) = 0;
-  virtual void sendCmdData(const uint8_t cmd, const int16_t size, const uint8_t* data) = 0;
+  virtual void sendData(const uint8_t* data, const int16_t size) = 0;
+  virtual void sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size) = 0;
 
   void sendCmdData(const uint8_t cmd, const uint8_t data)
   {
-    sendCmdData(cmd, 1, &data);
+    sendCmdData(cmd, &data, 1);
   }
 
   void writeColor(int16_t w, int16_t h, const rgb_t color);

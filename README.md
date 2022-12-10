@@ -15,20 +15,19 @@ Touch Screen Desktop for Raspberry pi pico
   to deliver utf-8 text:
 
 ```c++
-  const char buf[] { 0xc4, 0x85, 0xc4, 0xb2, 0 };
-  display.drawText(x, y, buf, FontName);
+  display.drawText(x, y, "\xc4\x85\xc4\xb2", FontName);
   // or
-  textBtn.setText(buf);
+  textBtn.setStaticText("\xc4\x85\xc4\xb2");
 ```
   and for unicode:
 ```c++
   const uint16_t buf[] { 0x4E00, 0x3007, 0 };
   display.drawText(x, y, buf, FontName);
   // or
-  textBtn.setText(buf);
+  textBtn.setStaticText(buf);
 ```
 
-  remember to end the constructions with a 0.
+  remember to end the construction with a 0.
 
 ## pico-sdk
 
