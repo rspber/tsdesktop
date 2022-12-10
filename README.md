@@ -14,17 +14,19 @@ Touch Screen Desktop for Raspberry pi pico
   When the correct font with UTF-8 encoding is included in the code, use the following scheme
   to deliver utf-8 text:
 
-  - const char buf[] { 0xc4, 0x85, 0xc4, 0xb2, 0 };
-  - display.drawText(x, y, buf, FontName);
-  or
-  - textBtn.setText(buf);
-
+```c++
+  const char buf[] { 0xc4, 0x85, 0xc4, 0xb2, 0 };
+  display.drawText(x, y, buf, FontName);
+  // or
+  textBtn.setText(buf);
+```
   and for unicode:
-
-  - const uint16_t buf[] { 0x4E00, 0x3007, 0 };
-  - display.drawText(x, y, buf, FontName);
-  or
-  - textBtn.setText(buf);
+```c++
+  const uint16_t buf[] { 0x4E00, 0x3007, 0 };
+  display.drawText(x, y, buf, FontName);
+  // or
+  textBtn.setText(buf);
+```
 
   remember to end the constructions with a 0.
 
