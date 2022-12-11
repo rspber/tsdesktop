@@ -37,6 +37,7 @@ FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, LCRT, 1);
 uint8_t LED_PIN = PICO_DEFAULT_LED_PIN;
 int pin13state = LOW;
 
+GFXFillRectGradient* hrect;
 GFXLine* line;
 GFXCircle* c0,* c1;
 GFXTextLine* tx;
@@ -51,6 +52,11 @@ void setup()   {
   pinMode(LED_PIN, OUTPUT);
 
   canvas.setBackground(YELLOW);
+  gradient_t g1{GNT_LR, RED, 100, BLUE};
+  hrect = canvas.fillRectGradient(0, 0, 100, 220, &g1);
+  gradient_t g2{GNT_TB, CYAN, 30, BLACK};
+  canvas.fillRectGradient(110, 0, 300, 100, &g2);
+
   line = canvas.line(0, 0, 100, 100, BLACK, 3);
   canvas.fillCircle(60, 10, 30, BLUE);
   canvas.circleFragment(140, 180, 20, 0x06, BROWN, 5);
@@ -88,6 +94,7 @@ void loop() {
     /*Container* b =*/ desktop.pressed(p.x, p.y);
   }
   line->hide();
+  hrect->draw();
   c0->draw();
   c1->draw();
   tx->draw();

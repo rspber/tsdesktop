@@ -49,6 +49,12 @@ void TSD_SCREEN::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, rgb_t colo
   fillRect(&clip, x, y, w, h, color);
 }
 
+void TSD_SCREEN::fillRectGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
+{
+  clip_t clip{0, 0, _width, _height};
+  fillRectGradient(&clip, x, y, w, h, z);
+}
+
 void TSD_SCREEN::drawLine(clip_t* clip, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts, uint8_t mode)
 {
   if (ts > 1) {

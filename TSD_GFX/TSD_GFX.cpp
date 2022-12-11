@@ -157,6 +157,11 @@ void TSD_GFX::writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16
   }
 }
 
+void TSD_GFX::writeFillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
+{
+  writeFillRect(clip, x, y, w, h, z->color1);
+}
+
 void TSD_GFX::endWrite() {}
 
 /**************************************************************************/
@@ -186,6 +191,13 @@ void TSD_GFX::fillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h,
 {
   startWrite();
   writeFillRect(clip, x, y, w, h, color);
+  endWrite();
+}
+
+void TSD_GFX::fillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
+{
+  startWrite();
+  writeFillRectGradient(clip, x, y, w, h, z);
   endWrite();
 }
 

@@ -298,6 +298,9 @@ void TextButton::drawBackground()
       display.fillRect(&clip, x + lftw, y + marginTop + textTop, updWidth - lftw, textHeight, bg);
     }
   }
+  else {
+    Button::drawBackground();
+  }
 }
 
 void TextButton::drawText(const rgb_t aTextColor)

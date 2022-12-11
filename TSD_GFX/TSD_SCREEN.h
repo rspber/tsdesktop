@@ -75,6 +75,7 @@ public:
   void drawFastVLine(int16_t x, int16_t y, int16_t h, rgb_t color);
   void drawFastHLine(int16_t x, int16_t y, int16_t w, rgb_t color);
   void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color);
+  void fillRectGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
   void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color, int16_t ts = 1, uint8_t mode = 0); // thickness, mode:1 cut
   void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color, int16_t ts = 1); // thickness
   void drawCircle(int16_t x0, int16_t y0, int16_t r, rgb_t color, int16_t ts = 1); // thickness
@@ -110,6 +111,7 @@ public:
   using TSD_GFX::drawFastVLine;
   using TSD_GFX::drawFastHLine;
   using TSD_GFX::fillRect;
+  using TSD_GFX::fillRectGradient;
   using TSD_GFX::drawLine;
   using TSD_GFX::drawRect;
   using TSD_GFX::drawCircle;

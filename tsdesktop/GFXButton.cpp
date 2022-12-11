@@ -91,6 +91,11 @@ GFXFillRect* GFXButton::fillRect(int16_t x1, int16_t y1, int16_t w, int16_t h, r
   return (GFXFillRect*)add(new GFXFillRect(this, x1, y1, w, h, color));
 }
 
+GFXFillRectGradient* GFXButton::fillRectGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
+{
+  return (GFXFillRectGradient*)add(new GFXFillRectGradient(this, x, y, w, h, z));
+}
+
 GFXFillRoundRect* GFXButton::fillRoundRect(int16_t x1, int16_t y1, int16_t w, int16_t h, int16_t radius, rgb_t color)
 {
   return (GFXFillRoundRect*)add(new GFXFillRoundRect(this, x1, y1, w, h, radius, color));

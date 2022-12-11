@@ -17,6 +17,19 @@ typedef struct {
   int16_t x, y;
 } cursor_t;
 
+#define GNT_LR 1 // horizontal gradient left to right
+#define GNT_TB 2 // vertical gradient top to bottom
+#define GNT_RL 3 // horizontal gradient right to left
+#define GNT_BT 4 // vertical gradient bottom to top
+
+typedef struct {
+  uint8_t deg;  // 1,3 - horizontal, 2,4 -vertical
+  rgb_t color1;
+  int8_t percent; // 0 .. 50 .. 100
+  rgb_t color2;
+//  int8_t gradient = 0;
+} gradient_t;
+
 typedef struct {
   int16_t x1, y1, x2, y2;
   const int16_t width();
@@ -28,10 +41,11 @@ class TSD_GFX {
 public:
   virtual void startWrite(void);
   virtual void writePixel(clip_t* clip, int16_t x, int16_t y, rgb_t color) = 0;
-  virtual void writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color);
   virtual void writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, rgb_t color);
   virtual void writeFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, rgb_t color);
   virtual void writeLine(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color);
+  virtual void writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color);
+  virtual void writeFillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
   virtual void endWrite(void);
 
   void drawPixel(clip_t* clip, int16_t x, int16_t y, rgb_t color);
@@ -39,6 +53,7 @@ public:
   void drawFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, rgb_t color);
   void drawLine(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color);
   void fillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color);
+  void fillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
   void drawRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color);
   void drawCircle(clip_t* clip, int16_t x0, int16_t y0, int16_t r, rgb_t color);
   void writeCircleHelper(clip_t* clip, int16_t x0, int16_t y0, int16_t r, uint8_t corners, rgb_t color);

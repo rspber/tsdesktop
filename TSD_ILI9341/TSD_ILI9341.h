@@ -41,6 +41,7 @@ public:
   virtual void writeFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, const rgb_t color);
   virtual void writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, const rgb_t color);
   virtual void writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color);
+  virtual void writeFillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
 
   virtual void beginTransaction(const uint32_t Hz) = 0;
   virtual void endTransaction() = 0;
@@ -59,6 +60,10 @@ public:
   }
 
   void writeColor(int16_t w, int16_t h, const rgb_t color);
+
+private:
+  void writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
+  void writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
 
 private:
   int16_t _RST;

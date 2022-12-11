@@ -475,6 +475,9 @@ void setup() {
   desktop.setMargin(2, 2, 2, 10);
 //  desktop.setTransparent(true);
 
+  gradient_t g1{GNT_LR, OLIVE, 100, YELLOW};
+  desktop.setGradient(&g1);
+
   readPgmsFromEEProm(PGMS);
 
   screenEnabled = true;

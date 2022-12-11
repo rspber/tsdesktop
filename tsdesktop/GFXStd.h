@@ -89,6 +89,20 @@ public:
 };
 
 
+/// @GFXFillRectGradient
+
+class GFXFillRectGradient : public GFXRect {
+public:
+  GFXFillRectGradient(Button* parent, int16_t x1, int16_t y1, int16_t w, int16_t h, gradient_t* z)
+   : GFXRect(parent, x1, y1, w, h, z->color1, 0), gradient(*z)  {}
+
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color)
+  {
+    display.fillRectGradient(clip, x + x1, y + y1, w, h, &gradient);
+  }
+  gradient_t gradient;
+};
+
 /// @GFXFillRoundRect
 
 class GFXFillRoundRect : public GFXRoundRect {

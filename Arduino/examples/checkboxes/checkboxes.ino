@@ -295,7 +295,9 @@ void setup() {
   bchk_box(&box408, 8, "8.");
   bchk_box(&box409, 9, "9.");
 
-  desktop.setBackground(AQUA);
+//  desktop.setBackground(AQUA);
+  gradient_t g1{GNT_LR, AQUA, 70, BLUE};
+  desktop.setGradient(&g1);
   desktop.setOrientation(HORIZONTAL, 2);
 
   screenEnabled = true;

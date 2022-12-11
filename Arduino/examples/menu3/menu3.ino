@@ -215,6 +215,10 @@ void setup()   {
 
   desktop.setTransparent(true);
 
+  gradient_t g1{GNT_LR, RED, 100, BLUE};
+  display.fillRectGradient(0, 0, 100, 220, &g1);
+  gradient_t g2{GNT_BT, CYAN, 30, BLACK};
+  display.fillRectGradient(110, 0, 300, 100, &g2);
   display.drawLine(0, 0, 500, 500, WHITE);
   display.drawLine(100, 0, 300, 400, WHITE);
   display.drawLine(200, 0, -100, 300, GRAY, 8);

@@ -39,6 +39,7 @@ public:
   GFXRect* rect(int16_t x1, int16_t y1, int16_t w, int16_t h, rgb_t color, int16_t ts = 1); // thickness
   GFXRoundRect* roundRect(int16_t x0, int16_t y0, int16_t w, int16_t h, int16_t radius, rgb_t color, int16_t ts = 1); // thickness
   GFXFillRect* fillRect(int16_t x1, int16_t y1, int16_t w, int16_t h, rgb_t color);
+  GFXFillRectGradient* fillRectGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
   GFXFillRoundRect* fillRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h, int16_t radius, rgb_t color);
   GFXCircle* circle(int16_t x0, int16_t y0, int16_t r, rgb_t color, int16_t ts = 1); // thickness
   GFXCircleFragment* circleFragment(int16_t x0, int16_t y0, int16_t r, uint8_t fragment, rgb_t color, int16_t ts = 1); // thickness

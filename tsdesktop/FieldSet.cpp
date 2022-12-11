@@ -407,7 +407,7 @@ void FieldSet::drawBackground()
   backgroundDrawn = false;
   rgb_t bg = getBackgroundColor();
   if (bg == NO_BACKGROUND_COLOR) {
-    return;
+    backgroundDrawn = true;
   }
   if (isBorderRadius()) {
     backgroundDrawn = true;

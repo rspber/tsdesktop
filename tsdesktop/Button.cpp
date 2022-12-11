@@ -40,6 +40,14 @@ void Button::setBackground(const rgb_t aBackgroundColor)
   setChanged();
 }
 
+void Button::setGradient(gradient_t* aGradient)
+{
+  hide();
+  gradient = *aGradient;
+  backgroundColor = NO_BACKGROUND_COLOR;
+  setChanged();
+}
+
 void Button::setBorderColor(const rgb_t aBorderColor)
 {
   if (aBorderColor != borderColor) {
@@ -97,6 +105,9 @@ void Button::drawBorder()
 
 const rgb_t Button::getBackgroundColor()
 {
+  if (gradient.deg) {
+    return NO_BACKGROUND_COLOR;
+  }
   if (!transparent && backgroundColor != NO_BACKGROUND_COLOR) {
     return backgroundColor;
   }
@@ -122,7 +133,16 @@ void Button::drawBackground(const rgb_t aBackgroundColor)
 
 void Button::drawBackground()
 {
-  drawBackground(getBackgroundColor());
+  if (gradient.deg) {
+    int16_t x = getAbsOuterLeft();
+    int16_t y = getAbsOuterTop();
+    clip_t clip;
+    getClip(clip);
+    display.fillRectGradient(&clip, x, y, updWidth, updHeight, &gradient);
+  }
+  else {
+    drawBackground(getBackgroundColor());
+  }
 }
 
 void Button::draw(const bool redraw)

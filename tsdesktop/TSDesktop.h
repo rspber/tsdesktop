@@ -323,24 +323,25 @@ public:
   }
 
   void setRadius(const int8_t aRadius);
+  const int8_t getRadius() { return radius; }
 
   void setTransparent(const bool aTransparent);
+  const bool getTransparent() { return transparent; }
+
   void setBackgroundColor(const rgb_t aBackgroundColor);
   void setBackground(const rgb_t aBackgroundColor);
+  virtual const rgb_t getBackgroundColor();    // or NO_BACKGROUND_COLOR
+
+  void setGradient(gradient_t* aGradient);
+  gradient_t* getGradient() { return &gradient; }
 
   void setBorderSize(const uint8_t aBorderSize) { borderSize = aBorderSize; }
   void setBorderColor(const rgb_t aBorderColor);
-
-  void setClickHighlightColor(const rgb_t aClickHighlightColor) { clickHighlightColor = aClickHighlightColor; }
-  const rgb_t getClickHighlightColor() { return clickHighlightColor; }
-
-  const bool getTransparent() { return transparent; }
-
-  const int8_t getRadius() { return radius; }
   const rgb_t getBorderColor() { return borderColor; }
   virtual const bool isBorderRadius() { return radius > 0 && borderSize > 0; }
 
-  virtual const rgb_t getBackgroundColor();    // or NO_BACKGROUND_COLOR
+  void setClickHighlightColor(const rgb_t aClickHighlightColor) { clickHighlightColor = aClickHighlightColor; }
+  const rgb_t getClickHighlightColor() { return clickHighlightColor; }
 
   virtual void innerDraw(const bool redraw) = 0;
   virtual void draw(const bool redraw);
@@ -369,6 +370,7 @@ private:
   bool transparent = false;
   int8_t radius = 0;
   rgb_t backgroundColor = 0;
+  gradient_t gradient{0};
   rgb_t borderColor = 0;
   rgb_t clickHighlightColor = RED;
 };

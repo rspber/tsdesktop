@@ -3,11 +3,13 @@
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
-This is a modified Adafruit's ILI9341 driver: Adafruit_ILI9341
+1. This is a modified Adafruit's ILI9341 driver: Adafruit_ILI9341
 
 differences:
 - Adafruit_SPITFT is missed, all spi functions are abstract
 - added support for ILI9341 devices v1.3
+
+2. chapter 2 further
 
 Original Adafruit's license attached below.
 */
@@ -59,6 +61,27 @@ Original Adafruit's license attached below.
  * BSD license, all text here must be included in any redistribution.
  *
  */
+
+/*
+2. writeFillRectGradient: based on https://github.com/PaulStoffregen/ILI9341_t3
+
+Original license below.
+*/
+
+/***************************************************
+  This is our library for the Adafruit  ILI9341 Breakout and Shield
+  ----> http://www.adafruit.com/products/1651
+
+  Check out the links above for our tutorials and wiring diagrams
+  These displays use SPI to communicate, 4 or 5 pins are required to
+  interface (RST is optional)
+  Adafruit invests time and resources providing this open source code,
+  please support Adafruit and open-source hardware by purchasing
+  products from Adafruit!
+
+  Written by Limor Fried/Ladyada for Adafruit Industries.
+  MIT license, all text above must be included in any redistribution
+ ****************************************************/
 
 #include "TSD_ILI9341.h"
 
@@ -457,5 +480,181 @@ void TSD_ILI9341::writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, i
   if (w > 0 && h > 0) {
     setAddrWindow(x, y, w, h);
     writeColor(w, h, color);
+  }
+}
+
+// color565toRGB14		- converts 16 bit 565 format color to 14 bit RGB (2 bits clear for math and sign)
+// returns 00rrrrr000000000,00gggggg00000000,00bbbbb000000000
+// thus not overloading sign, and allowing up to double for additions for fixed point delta
+static void RGB14fromColor(rgb_t color, int16_t &r, int16_t &g, int16_t &b)
+{
+#ifdef COLOR_565
+  r = (color >> 2) & 0x3E00;
+	g = (color << 3) & 0x3F00;
+	b = (color << 9) & 0x3E00;
+#else
+  r = (color >> 10) & 0x3F00;
+	g = (color >>  2) & 0x3F00;
+	b = (color <<  6) & 0x3F00;
+#endif
+}
+	
+// RGB14tocolor565		- converts 14 bit RGB back to 16 bit 565 format color
+static rgb_t RGB14toColor(int16_t r, int16_t g, int16_t b)
+{
+#ifdef COLOR_565
+	return (((r & 0x3E00) << 2) | ((g & 0x3F00) >> 3) | ((b & 0x3E00) >> 9));
+#else
+	return (((r & 0x3F00) << 10) | ((g & 0x3F00) << 2) | ((b & 0x3F00) >> 6));
+#endif
+}
+
+void TSD_ILI9341::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
+{
+  int16_t r1, g1, b1;
+  RGB14fromColor(z->color1, r1, g1, b1);
+  int16_t r2, g2, b2;
+  RGB14fromColor(z->color2, r2, g2, b2);
+  if (z->deg == 2) {
+    setAddrWindow(x, y, w, h);
+    startWriteData();
+  }
+  int16_t r = r1;
+  int16_t g = g1;
+  int16_t b = b1;
+  int8_t prc = z->percent;
+  if (prc < 0) {
+    prc = 0;
+  }
+  if (prc > 100) {
+    prc = 100;
+  }
+  for (int j = 0; j < h; ++j) {
+    
+    if (z->deg == 4) {
+      setAddrWindow(x, y + h - 1 - j, w, 1);
+      startWriteData();
+    }
+
+    uint8_t buf[8];
+    mdt_color(buf, RGB14toColor(r, g, b), 1);
+    for (int i = 0; i < w; ++i) {
+      for (int k = 0; k < MDT_SIZE; ++k) {
+        pushByte(buf[k]);
+      }
+    }
+
+    if (z->deg == 4) {
+      endWriteData();
+    }
+
+    int16_t p = prc + (50 + (prc - 50)/2 - prc) * j * 2 / h;
+    int16_t dr = (int)(r2 - r1) * 50 / (p * h);
+    int16_t dg = (int)(g2 - g1) * 50 / (p * h);
+    int16_t db = (int)(b2 - b1) * 50 / (p * h);
+    int q;
+    q = r + dr;
+    if ((r2 >= r1 && q <= r2 && q >= r1) || (r1 >= r2 && q <= r1 && q >= r2)) r = q; else
+      q = 0;
+    q = g + dg;
+    if ((g2 >= g1 && q <= g2 && q >= g1) || (g1 >= g2 && q <= g1 && q >= g2)) g = q; else
+      q = 0;
+    q = b + db;
+    if ((b2 >= b1 && q <= b2 && q >= b1) || (b1 >= b2 && q <= b1 && q >= b2)) b = q; else
+      q = 0;
+  }
+  if (z->deg == 2) {
+    endWriteData();
+  }
+}
+
+void TSD_ILI9341::writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
+{
+  int16_t r1, g1, b1;
+  RGB14fromColor(z->color1, r1, g1, b1);
+  int16_t r2, g2, b2;
+  RGB14fromColor(z->color2, r2, g2, b2);
+  setAddrWindow(x, y, w, h);
+  startWriteData();
+  int8_t prc = z->percent;
+  if (prc < 0) {
+    prc = 0;
+  }
+  if (prc > 100) {
+    prc = 100;
+  }
+
+  uint8_t* tmp;
+  if (z->deg == 3) {
+    tmp = (uint8_t*)malloc(w * MDT_SIZE);
+  }
+
+  for (int j = 0; j < h; ++j) {
+    int16_t r = r1;
+    int16_t g = g1;
+    int16_t b = b1;
+    for (int i = 0; i < w; ++i) {
+      uint8_t buf[8];
+      mdt_color(buf, RGB14toColor(r, g, b), 1);
+      for (int k = 0; k < MDT_SIZE; ++k) {
+        if (z->deg == 3) {
+          tmp[(w - 1 - i) * MDT_SIZE + k] = buf[k];
+        }
+        else {
+          pushByte(buf[k]);
+        }
+      }
+      int16_t p = prc + (50 + (prc - 30)/2 - prc) * i * 2 / w;
+      int16_t dr = (int)(r2 - r1) * 50 / (p * w);
+      int16_t dg = (int)(g2 - g1) * 50 / (p * w);
+      int16_t db = (int)(b2 - b1) * 50 / (p * w);
+      int q;
+      q = r + dr;
+      if ((r2 >= r1 && q <= r2 && q >= r1) || (r1 >= r2 && q <= r1 && q >= r2)) r = q; else
+        q = 0;
+      q = g + dg;
+      if ((g2 >= g1 && q <= g2 && q >= g1) || (g1 >= g2 && q <= g1 && q >= g2)) g = q; else
+        q = 0;
+      q = b + db;
+      if ((b2 >= b1 && q <= b2 && q >= b1) || (b1 >= b2 && q <= b1 && q >= b2)) b = q; else
+        q = 0;
+    }
+    if (z->deg == 3) {
+      for (int k = 0; k < w * MDT_SIZE; ++k) {
+        pushByte(tmp[k]);
+      }
+    }
+  }
+
+  if (z->deg == 3) {
+    free(tmp);
+  }
+
+  endWriteData();
+}
+
+void TSD_ILI9341::writeFillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
+{
+  if (x < clip->x1) {
+    w -= clip->x1 - x;
+    x = clip->x1;
+  }
+  if (x + w > clip->x2) {
+    w = clip->x2 - x;
+  }
+  if (y < clip->y1) {
+    h -= clip->y1 - y;
+    y = clip->y1;
+  }
+  if (y + h > clip->y2) {
+    h = clip->y2 - y;
+  }
+  if (w > 0 && h > 0) {
+    if (z->deg == 1 || z->deg == 3) {
+      writeFillRectHGradient(x, y, w, h, z);
+    }
+    if (z->deg == 2 || z->deg == 4) {
+      writeFillRectVGradient(x, y, w, h, z);
+    }
   }
 }
