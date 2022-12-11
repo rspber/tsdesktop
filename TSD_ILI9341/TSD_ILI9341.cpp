@@ -490,22 +490,22 @@ static void RGB14fromColor(rgb_t color, int16_t &r, int16_t &g, int16_t &b)
 {
 #ifdef COLOR_565
   r = (color >> 2) & 0x3E00;
-	g = (color << 3) & 0x3F00;
-	b = (color << 9) & 0x3E00;
+  g = (color << 3) & 0x3F00;
+  b = (color << 9) & 0x3E00;
 #else
   r = (color >> 10) & 0x3F00;
-	g = (color >>  2) & 0x3F00;
-	b = (color <<  6) & 0x3F00;
+  g = (color >>  2) & 0x3F00;
+  b = (color <<  6) & 0x3F00;
 #endif
 }
-	
+
 // RGB14tocolor565		- converts 14 bit RGB back to 16 bit 565 format color
 static rgb_t RGB14toColor(int16_t r, int16_t g, int16_t b)
 {
 #ifdef COLOR_565
-	return (((r & 0x3E00) << 2) | ((g & 0x3F00) >> 3) | ((b & 0x3E00) >> 9));
+  return (((r & 0x3E00) << 2) | ((g & 0x3F00) >> 3) | ((b & 0x3E00) >> 9));
 #else
-	return (((r & 0x3F00) << 10) | ((g & 0x3F00) << 2) | ((b & 0x3F00) >> 6));
+  return (((r & 0x3F00) << 10) | ((g & 0x3F00) << 2) | ((b & 0x3F00) >> 6));
 #endif
 }
 
@@ -530,7 +530,7 @@ void TSD_ILI9341::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_
     prc = 100;
   }
   for (int j = 0; j < h; ++j) {
-    
+
     if (z->deg == 4) {
       setAddrWindow(x, y + h - 1 - j, w, 1);
       startWriteData();
@@ -548,7 +548,7 @@ void TSD_ILI9341::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_
       endWriteData();
     }
 
-    int16_t p = prc + (50 + (prc - 50)/2 - prc) * j * 2 / h;
+    int16_t p = prc + (50 + (prc - 30)/2 - prc) * j * 2 / h;
     int16_t dr = (int)(r2 - r1) * 50 / (p * h);
     int16_t dg = (int)(g2 - g1) * 50 / (p * h);
     int16_t db = (int)(b2 - b1) * 50 / (p * h);
