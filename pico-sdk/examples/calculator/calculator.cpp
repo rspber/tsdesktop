@@ -6,6 +6,7 @@
 */
 
 #include <Setup.h>
+#include <eval.h>
 
 #define TX_COLOR  GREEN_YELLOW
 #define BG_COLOR  DODGER_BLUE
@@ -24,10 +25,10 @@ Touch touch;
 #define ROTATION ROTATION_VTB
 
 Editable operBtn;
-TextButton sumBtn;
+TextButton equalsBtn;
 
 Container* E0T[]{
-  &operBtn, &sumBtn
+  &operBtn, &equalsBtn
 };
 
 FieldSet e0FSet(VERTICAL, 10, 2, 2, E0T, 2);
@@ -104,7 +105,7 @@ FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, CT, 2);
 
 // ----------------------------------------------------------------
 
-void calc_sum_btn(TextButton* b)
+void calc_oper_btn(TextButton* b)
 {
   b->setFontSize(2);
   b->setRadius(10);
@@ -133,11 +134,18 @@ void btn_click(Container* c)
     operBtn.swapCursorInsMode();
     break;
   case -5:  // Del
+    operBtn.cmdDel();
+    break;
   case -8:  // BS
-    operBtn.cmdDelBS(id == -8);
+    operBtn.cmdBS();
     break;
   case -3:  // CC
     operBtn.setStaticText("");
+    equalsBtn.setStaticText("");
+    break;
+  case -7:  // =
+    eval_t eval;
+    equalsBtn.setText(eval.eval(operBtn.getUtf8Text()));
     break;
   }
   desktop.draw();
@@ -206,8 +214,8 @@ void setup() {
   calc_btn(&kClrBtn, -3, "CC");
   calc_btn(&kBSBtn, -8, "BS");
 
-  calc_sum_btn(&operBtn);
-  calc_sum_btn(&sumBtn);
+  calc_oper_btn(&operBtn);
+  calc_oper_btn(&equalsBtn);
 
   calc_row(&r4FSet);
   calc_row(&r3FSet);

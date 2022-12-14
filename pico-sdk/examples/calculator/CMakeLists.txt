@@ -6,6 +6,7 @@ target_link_libraries(calculator
   setup
   desktop
   xpt2046
+  utils
 )
 
 # create map/bin/hex/uf2 file etc.
