@@ -78,7 +78,7 @@ Touch Screen Desktop for Raspberry pi pico
 
     - Hit OK to close the dialog.
 
-  * Tools / Board / Board Manager
+  * Tools / Board / Boards Manager ...
 
     - Type "pico" in the search box, you should see: Raspberry Pi Pico/RP2040, and select "Install"
 
@@ -94,7 +94,7 @@ Touch Screen Desktop for Raspberry pi pico
 
 6. For linux users:
 
-  * In Aduino:
+  * In Arduino:
     - Tools / Port / `/dev/ttyACM0`
   
   ```
