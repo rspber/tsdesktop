@@ -34,6 +34,11 @@ Touch Screen Desktop for Raspberry pi pico
 1. No other libraries are required,
 
 2. Install CMake (at least version 3.13), and GCC cross compiler
+* Fedora
+   ```
+   sudo dnf install cmake gcc-c++ arm-none-eabi-gcc-cs-c++ arm-none-eabi-newlib
+   ```
+* Ubuntu
    ```
    sudo apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib
    ```
