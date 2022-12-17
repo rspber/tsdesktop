@@ -1,6 +1,5 @@
 # TSDesktop
   Touch Screen Desktop for Raspberry pi pico.
-  The aim of this project is to provide a tool for easy placement of objects (mainly buttons) on the screen with integrated touch screen support.
 
 - https://youtube.com/shorts/Ooa5Czfw7PA
 - https://youtu.be/W1wCEIwkDYY
