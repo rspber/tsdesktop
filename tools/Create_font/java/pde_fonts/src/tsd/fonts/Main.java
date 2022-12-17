@@ -183,7 +183,9 @@ class ToFile {
 
 		writer.write("static const GFXfont %s_%s {\n", fontName, fract);
 		writer.write("  %s_Glyphs_%s,\n", fontName, fract);
-		writer.write("  0x%x, 0x%x, 0, 0x%02X, 0x%02X, %d\n};\n\n", z, w, fr, to, fontHeight);
+		int c1 = z > 0 ? z : w;
+		int c2 = z > 0 ? w : 0;
+		writer.write("  0x%x, 0x%x, 0, 0x%02X, 0x%02X, %d\n};\n\n", c1, c2, fr, to, fontHeight);
 	}
 
 	public void run(PFont font) throws IOException
