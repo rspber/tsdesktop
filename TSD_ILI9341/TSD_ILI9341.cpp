@@ -550,16 +550,16 @@ void TSD_ILI9341::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_
 
     int adj = abs(50 - prc);
     if (adj > 40)
-      adj = 20;
+      adj = 40;
     else
     if (adj > 30)
-      adj = 15;
+      adj = 32;
     else
     if (adj > 20)
-      adj = 10;
+      adj = 18;
     else
     if (adj > 10)
-      adj = 5;
+      adj = 10;
     else
       adj = 0;
     if (prc < 50)
@@ -623,16 +623,16 @@ void TSD_ILI9341::writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_
       }
       int adj = abs(50 - prc);
       if (adj > 40)
-        adj = 20;
+        adj = 40;
       else
       if (adj > 30)
-        adj = 15;
+        adj = 32;
       else
       if (adj > 20)
-        adj = 10;
+        adj = 18;
       else
       if (adj > 10)
-        adj = 5;
+        adj = 10;
       else
         adj = 0;
       if (prc < 50)
