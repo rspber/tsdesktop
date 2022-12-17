@@ -78,10 +78,14 @@ Touch Screen Desktop for Raspberry pi pico
 
     - Hit OK to close the dialog.
 
-  * Tools / Boards / Board Manager
+  * Tools / Board / Board Manager
 
-    - Type "pico" in the search box, you should see: Raspberry Pi Pico/RP2040, and select "Add"
+    - Type "pico" in the search box, you should see: Raspberry Pi Pico/RP2040, and select "Install"
 
+  * Tools / Board / Raspberry Pi RP2040 Boards / `select your board`
+
+    - Type "pico" in the search box, you should see: Raspberry Pi Pico/RP2040, and select "Install"
+  
 3. `download` or `git clone` this repository
 
 4. Copy Arduino/libraries to Arduino's libraries, pay attention on TSDesktop, TSD_GFX, TSD_ILI9341 and utils folders and dependenciens:
@@ -89,3 +93,12 @@ Touch Screen Desktop for Raspberry pi pico
   * https://github.com/PaulStoffregen/XPT2046_Touchscreen
 
 5. Copy Arduino/examples to Arduino's Sketchbook directory
+
+6. For linux users:
+
+  * In Aduino:
+    - Tools / Port / `/dev/ttyACM0`
+  
+  ```
+    sudo chmod a+rw /dev/ttyACM0
+  ```
