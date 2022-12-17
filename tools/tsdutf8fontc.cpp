@@ -249,7 +249,7 @@ void proc_range(int first, int last)
   int w = 0;
   int fr = 0;
   int to = -1;
-  for( ; ; ++fr) {
+  for (; ; ++fr) {
 
     if (fr > to) {
 
@@ -415,8 +415,8 @@ void b4buf_t::add(uint32_t b4)
 
 void b4buf_t::sort()
 {
-  for( int i = 0; i < len - 1; ++i) {
-    for( int j = i + 1; j < len; ++j) {
+  for (int i = 0; i < len - 1; ++i) {
+    for (int j = i + 1; j < len; ++j) {
       if (t[j] < t[i]) {
         uint32_t tmp = t[i];
         t[i] = t[j];
@@ -432,7 +432,7 @@ void b4buf_t::run()
   THN = 0;
   int totsize = 0;
   int z0 = 0, w0 = 0, first = 0, last = 0, to = -1;
-  for( int i = 0; i < len; ++i) {
+  for (int i = 0; i < len; ++i) {
 
     uint32_t b4 = t[i];
     int z = b4 >> 16;

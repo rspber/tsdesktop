@@ -15,7 +15,7 @@
 
 void debug(const char *buf)
 {
-  if( screenEnabled ) {
+  if (screenEnabled) {
     clip_t clip{0, 0, display.width(), display.height()};
     display.fillRect(&clip, 0, 0, display.width(), 8, BLACK);
     display.drawText(0, 0, buf, 1, WHITE);
@@ -124,13 +124,13 @@ void init_spi1(const uint8_t RX, const uint8_t SCK, const uint8_t TX)
 void set_spi_speed(spi_inst_t* spi, const uint Hz)
 {
   if (spi == spi0) {
-    if( current_spi0_speed != Hz ) {
+    if (current_spi0_speed != Hz) {
       spi_set_baudrate(spi, Hz);
       current_spi0_speed = Hz;
     }
   }   
   else {
-    if (current_spi1_speed != Hz ) {
+    if (current_spi1_speed != Hz) {
       spi_set_baudrate(spi, Hz);
       current_spi1_speed = Hz;
     }

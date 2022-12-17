@@ -27,7 +27,7 @@ function updatePixels (table, newWidth, newHeight, x, y, fill) {
   for (let i = 0; i < height; ++i) {
     const rowArray = []
     for (let j = 0; j < width; ++j) {
-      if(x == j && y == i) {
+      if (x == j && y == i) {
         rowArray.push(fill)
       } else {
         rowArray.push(dataPixels.charAt(pixelIndex))

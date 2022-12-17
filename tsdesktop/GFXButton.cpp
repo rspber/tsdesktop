@@ -13,7 +13,7 @@
 GFXButton::~GFXButton()
 {
   if (list) {
-    for( int16_t i = len; --i >= 0; ) {
+    for (int16_t i = len; --i >= 0;) {
       GFXObject* g = list[i];
       delete g;
     }
@@ -23,7 +23,7 @@ GFXButton::~GFXButton()
 
 int16_t GFXButton::index(GFXObject* item)
 {
-  for( int16_t i = len; --i >= 0; ) {
+  for (int16_t i = len; --i >= 0;) {
     if (list[i] == item) {
       return i;
     }
@@ -33,7 +33,7 @@ int16_t GFXButton::index(GFXObject* item)
 
 GFXObject* GFXButton::remove(GFXObject* item)
 {
-  for( int16_t i = len; --i >= 0; ) {
+  for (int16_t i = len; --i >= 0;) {
     if (list[i] == item) {
       remove(i);
     } 
@@ -181,7 +181,7 @@ void GFXButton::innerDraw(bool redraw)
   getClip(clip);
   int16_t x = getAbsInnerLeft(0);
   int16_t y = getAbsInnerTop(0);
-  for( int16_t i = 0; i < len; ++i) {
+  for (int16_t i = 0; i < len; ++i) {
     GFXObject* g = list[i];
     if (g->getVisible()) {
       g->doDraw(&clip, x, y, redraw);

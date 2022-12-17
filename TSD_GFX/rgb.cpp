@@ -14,7 +14,7 @@ uint8_t* mdt_color(uint8_t* buf, const rgb_t color, int size)
   uint8_t* p = buf;
   while (--size >= 0) {
     int8_t i = MDT_SIZE;
-    while( --i >= 0 ) {
+    while (--i >= 0) {
       *p++ = b[i];
     }
   }

@@ -343,7 +343,7 @@ const int16_t Container::getClipRight(int16_t r, int16_t m2)
 {
   int16_t m1 = marginLeft + marginRight;
   int16_t i = updWidth - m1 - m2 - offsetLeft;
-  if( r > i ) {
+  if (r > i) {
      r = i;
   }
   return updLeft + marginLeft + (parent ? parent->getClipRight(r, updLeft + m1 + m2) : r);
@@ -353,7 +353,7 @@ const int16_t Container::getClipBottom(int16_t b, int16_t m2)
 {
   int16_t m1 = marginTop + marginBottom;
   int16_t i = updHeight - m1 - m2 - offsetTop;
-  if( b > i ) {
+  if (b > i) {
     b = i;
   }
   return updTop + marginTop + (parent ? parent->getClipBottom(b, updTop + m1 + m2) : b);

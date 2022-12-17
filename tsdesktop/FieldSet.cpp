@@ -153,7 +153,7 @@ void FieldSet::updateCoordHorizontal()
     }
   }
   else {
-    //      if( getAlignLeft() ) {  // left is default
+    //      if (getAlignLeft()) {  // left is default
     int16_t x = stretch;
     for (int16_t i = 0; i < len; i++) {
       Container* b = children[i];
@@ -297,7 +297,7 @@ void FieldSet::updateCoordVertical()
     }
   }
   else {
-    //    if( getAlignTop() ) { // top is default
+    //    if (getAlignTop()) { // top is default
     int16_t y = stretch;
     for (int16_t i = 0; i < len; i++) {
       Container* b = children[i];

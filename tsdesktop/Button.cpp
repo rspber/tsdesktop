@@ -70,10 +70,10 @@ void Button::drawBorder(const rgb_t aBorderColor)
     int16_t h = updHeight;
     clip_t clip;
     getClip(clip);
-    if( l + w > clip.x2 ) {
+    if (l + w > clip.x2) {
       w = clip.x2 - l;
     }
-    if( t + h > clip.y2 ) {
+    if (t + h > clip.y2) {
       h = clip.y2 - t;
     }
     while (--bs >= 0) {
@@ -87,10 +87,10 @@ void Button::drawBorder(const rgb_t aBorderColor)
       if (clip.y1 > 0) {
         --clip.y1;
       }
-      if( clip.x2 < display.width() ) {
+      if (clip.x2 < display.width()) {
         ++clip.x2;
       }
-      if( clip.y2 < display.height() ) {
+      if (clip.y2 < display.height()) {
         ++ clip.y2;
       }
       display.drawRoundRect(&clip, l, t, w, h, radius, aBorderColor);
