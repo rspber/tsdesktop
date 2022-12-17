@@ -548,22 +548,12 @@ void TSD_ILI9341::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_
       endWriteData();
     }
 
-    int adj = abs(50 - prc);
-    if (adj > 40)
-      adj = 40;
+    int adj = prc - 50;
+    if (adj > 45)
+      adj = 45;
     else
-    if (adj > 30)
-      adj = 32;
-    else
-    if (adj > 20)
-      adj = 18;
-    else
-    if (adj > 10)
-      adj = 10;
-    else
-      adj = 0;
-    if (prc < 50)
-      adj = -adj;
+    if (adj < -45)
+      adj = -45;
       
     int16_t p = prc + (50 - prc + adj) * j * 2 / h;
     int16_t dr = (int)(r2 - r1) * 50 / (p * h);
@@ -621,22 +611,12 @@ void TSD_ILI9341::writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_
           pushByte(buf[k]);
         }
       }
-      int adj = abs(50 - prc);
-      if (adj > 40)
-        adj = 40;
+      int adj = prc - 50;
+      if (adj > 45)
+        adj = 45;
       else
-      if (adj > 30)
-        adj = 32;
-      else
-      if (adj > 20)
-        adj = 18;
-      else
-      if (adj > 10)
-        adj = 10;
-      else
-        adj = 0;
-      if (prc < 50)
-        adj = -adj;
+      if (adj < -45)
+        adj = -45;
       
       int16_t p = prc + (50 - prc + adj) * i * 2 / w;
       int16_t dr = (int)(r2 - r1) * 50 / (p * w);
