@@ -247,7 +247,7 @@ class ToFile {
     
     int totsize = 0;
     int len0 = 0;
-    for( int i = 0; i < font.getGlyphCount(); ++i ) {
+    for (int i = 0; i < font.getGlyphCount(); ++i) {
       Glyph glyph = font.getGlyph(i);
       int len = decodeUnicode(buf, glyph.value);
       if (len < 1) {
