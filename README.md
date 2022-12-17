@@ -60,7 +60,7 @@ Touch Screen Desktop for Raspberry pi pico
 
   * In the bottom panel:
 
-    - CMake : GCC 6.3.1 arm-none-eabi, Release
+    - CMake : GCC `Version` arm-none-eabi, Release
 
     - Build
 
