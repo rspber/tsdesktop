@@ -97,6 +97,12 @@
   * In Arduino:
     - Tools / Port / `/dev/ttyACM0`
   
+    - for one-time access
   ```
     sudo chmod a+rw /dev/ttyACM0
+  ```
+    - for permanent access
+  ```
+    sudo usermod -aG dialout $USER
+    sudo reboot
   ```
