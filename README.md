@@ -98,7 +98,7 @@
 
     - Tools / Port / `/dev/ttyACM0`
 
-  * In console
+  * In console:
 
     - for one-time access:
     ```
