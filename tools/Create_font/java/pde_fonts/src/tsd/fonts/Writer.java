@@ -13,6 +13,6 @@ public class Writer {
 	
 	public void write(String format, Object... args)
 	{
-		sb.append( String.format(format, args) );
+		sb.append(String.format(format, args));
 	}
 }
