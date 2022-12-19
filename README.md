@@ -64,7 +64,7 @@
 
     - Build
 
-7. Use BOOTSEL to upload *.uf2 examples
+7. Use bootselBoot tool to upload *.uf2 examples
 
 ## Arduino
 

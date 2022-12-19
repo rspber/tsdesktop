@@ -20,7 +20,7 @@ NOT AN ARDUINO SKETCH.  This is a command-line tool for preprocessing
 fonts to be used with the TSD_GFX.
 
 For UNIX-like systems.  Outputs to stdout; redirect to header file, e.g.:
-  ./tsdutf8fontc ~/Library/Fonts/FreeSans.ttf 18 > TSD_FreeSans_18pt.h
+  ./utf8fontc ~/Library/Fonts/FreeSans.ttf 18 > TSD_FreeSans_18pt.h
 
 REQUIRES FREETYPE LIBRARY.  www.freetype.org
 
