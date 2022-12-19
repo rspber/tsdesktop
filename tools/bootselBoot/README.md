@@ -1,8 +1,8 @@
-####The original Raspberry-pi-pico BOOTSEL tool.
+#### The original Raspberry-pi-pico BOOTSEL tool.
 
 For pico-sdk users only.
 
-###Reset Pi Pico via. USB
+### Reset Pi Pico via. USB
 
 Author: https://github.com/illusiaDecafish/bootselBoot
 
