@@ -7,7 +7,16 @@
 
 2.4" TFT SPI 240X320 v1.3 is supported (see Setup.h)
 
-### UTF-8/Unicode Support
+### Topics on this page
+* TSDesktop
+  - easy way to place objects on the screen: all examples
+  - integrated touch screen: almost all examples
+  - scroller: see examples: scroll1, menu1, menu2, menu3
+* Gradient with percentage
+  - see examples: canvas1, menu3, checkboxes
+* Flexible font format
+  - visit tools folder
+* UTF-8/Unicode Support
 
   Although utf-8/unicode fonts are not included, see the tools directory for more details.
 
