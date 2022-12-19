@@ -4,7 +4,7 @@ For pico-sdk users only.
 
 ### Reset Pi Pico via. USB
 
-Author: https://github.com/illusiaDecafish/bootselBoot
+https://github.com/illusiaDecafish/bootselBoot
 
 Required packages:
 
