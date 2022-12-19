@@ -48,4 +48,4 @@ Notes:
   ```
   2. Unfortunately, it's not compatible with Arduino platform.
 
-  3. More details on author's page.
+  3. More details on Author's page.
