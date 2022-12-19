@@ -38,6 +38,7 @@
       textBtn.setStaticText(buf);
     ```
       remember to end the construction with a 0.
+* Thickness parameter for lines, rectangles, triangles and circles
 
 ## pico-sdk
 
