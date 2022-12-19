@@ -8,21 +8,21 @@ Author: https://github.com/illusiaDecafish/bootselBoot
 
 Required packages:
 
-  Fedora:
+  * Fedora:
   ```
     sudo dnf install libusb-devel
   ```
-  Ubuntu:
+  * Ubuntu:
   ```
     sudo apt-get install libusb-1.0-0-dev
   ```
 Compile:
 
-  Fedora:
+  * Fedora:
   ```
     cc bootselBoot.c -o bootselBoot -I/usr/include/libusb-1.0 -L/usr/lib64 -lusb-1.0
   ```
-  Ubuntu:
+  * Ubuntu:
   ```
     cc bootselBoot.c -o bootselBoot -I/usr/include/libusb-1.0 -L/usr/lib/x86_64-linux-gnu -lusb-1.0
   ```
@@ -31,11 +31,11 @@ Using:
   ```
     sudo ./bootselBoot
   ```
-  or
+  - or
   ```
     sudo ./bootselBoot b      - same as above: replug pico with BOOTSEL pressed
   ```
-  or
+  - or
   ```
     sudo ./bootselBoot f      - reset your pico
   ```
