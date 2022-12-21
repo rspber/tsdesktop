@@ -24,18 +24,21 @@
     Although utf-8/unicode fonts are not included, see the tools directory for more details.
 
     When the correct font with UTF-8 encoding is included in the code, use the following scheme
-    to deliver utf-8 text:
-
-    ```c++
+      to deliver utf-8 text:
+    ```
       display.drawText(x, y, "\xc4\x85\xc4\xb2", FontName);
-    // or
+    ```
+      or
+    ```
       textBtn.setStaticText("\xc4\x85\xc4\xb2");
     ```
       and for unicode:
-    ```c++
+    ```
       const uint16_t buf[] { 0x4E00, 0x3007, 0 };
       display.drawText(x, y, buf, FontName);
-      // or
+    ```
+      or
+    ```
       textBtn.setStaticText(buf);
     ```
       remember to end the construction with a 0.
