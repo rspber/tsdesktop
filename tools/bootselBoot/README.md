@@ -37,7 +37,7 @@ Using:
   ```
   - or
   ```
-    sudo ./bootselBoot f      - reset your pico
+    sudo ./bootselBoot f      - reset pico
   ```
 Notes:
 
