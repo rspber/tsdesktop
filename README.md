@@ -30,26 +30,26 @@
       display.drawText(x, y, "\xc4\x85\xc4\xb2", FontName);
     ```
 
-      or
+    or
 
     ```
       textBtn.setStaticText("\xc4\x85\xc4\xb2");
     ```
 
-      and for unicode:
+    and for unicode:
 
     ```
       const uint16_t buf[] { 0x4E00, 0x3007, 0 };
       display.drawText(x, y, buf, FontName);
     ```
 
-      or
+    or
 
     ```
       textBtn.setStaticText(buf);
     ```
 
-      remember to end the construction with a 0.
+    remember to end the construction with a 0.
 * Thickness parameter for lines, rectangles, triangles and circles
 
 ## pico-sdk
