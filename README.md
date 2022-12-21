@@ -7,7 +7,7 @@
 
 2.4" TFT SPI 240X320 v1.3 is supported (see Setup.h)
 
-### Topics on this page
+### Topics on this site
 * TSDesktop
   - easy way to place objects on the screen: all examples
   - integrated touch screen: almost all examples
