@@ -37,7 +37,7 @@ Using:
   ```
   - or
   ```
-    sudo ./bootselBoot f      - reset pico
+    sudo ./bootselBoot f      - reset to regular boot mode
   ```
 Notes:
 
