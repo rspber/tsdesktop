@@ -342,7 +342,7 @@ class ToFile {
      boolean smooth = false;
      PFont font = createFont(fontPath+fontName+fontType, fontSize2, smooth, charset); //<>//
   
-    String fontNameSizePt = fontName + "_" + fontSize + "pt";
+    String fontNameSizePt = fontName.replace("-", "_") + "_" + fontSize + "pt";
     ToFile toFile = new ToFile(fontNameSizePt, fontHeight); 
     try {
       String currentPath = new java.io.File(".").getCanonicalPath();
