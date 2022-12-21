@@ -25,30 +25,22 @@
 
     When the correct font with UTF-8 encoding is included in the code, use the following scheme
       to deliver utf-8 text:
-
     ```
       display.drawText(x, y, "\xc4\x85\xc4\xb2", FontName);
     ```
-
     or
-
     ```
       textBtn.setStaticText("\xc4\x85\xc4\xb2");
     ```
-
     and for unicode:
-
     ```
       const uint16_t buf[] { 0x4E00, 0x3007, 0 };
       display.drawText(x, y, buf, FontName);
     ```
-
     or
-
     ```
       textBtn.setStaticText(buf);
     ```
-
     remember to end the construction with a 0.
 * Thickness parameter for lines, rectangles, triangles and circles
 
