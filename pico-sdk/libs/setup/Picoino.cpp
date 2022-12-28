@@ -5,7 +5,7 @@
 
 */
 
-#include "Picoino.h"
+#include "Arduino.h"
 
 #include "pico/binary_info.h"
 #include "hardware/sync.h"
@@ -128,7 +128,7 @@ void set_spi_speed(spi_inst_t* spi, const uint Hz)
       spi_set_baudrate(spi, Hz);
       current_spi0_speed = Hz;
     }
-  }   
+  }
   else {
     if (current_spi1_speed != Hz) {
       spi_set_baudrate(spi, Hz);
@@ -177,57 +177,3 @@ void init_i2c1(const uint8_t SDA, const uint8_t SCL, const uint Hz)
 {
   init_i2c(SDA, SCL, i2c1, Hz);
 }
-
-// --------------------------------- PicoI2C ----------------------------------
-
-void PicoI2C::read(uint8_t* dst, const int16_t len, const bool nostop)
-{
-  i2c_read_blocking(_i2c, _addr, dst, len, nostop);
-}
-
-const uint8_t PicoI2C::read8(const bool nostop)
-{
-  uint8_t b;
-  i2c_read_blocking(_i2c, _addr, &b, 1, nostop);
-  return b;    // endian
-}
-
-const uint16_t PicoI2C::read16(const bool nostop)
-{
-  uint8_t b[2];
-  i2c_read_blocking(_i2c, _addr, b, 2, nostop);
-  return (b[1] << 8) | b[0];    // endian
-}
-
-void PicoI2C::write(const uint8_t* src, const int16_t len, const bool nostop)
-{
-  i2c_write_blocking(_i2c, _addr, src, len, nostop);
-}
-
-void PicoI2C::write8(const uint8_t endian, const bool nostop)
-{
-  i2c_write_blocking(_i2c, _addr, &endian, 1, nostop);
-}
-
-void PicoI2C::write8write8(const uint8_t reg, const uint8_t value, const bool nostop)
-{
-  write16(value << 8 | reg, nostop);
-}
-
-void PicoI2C::write16(const uint16_t endian, const bool nostop)
-{
-  i2c_write_blocking(_i2c, _addr, (uint8_t*)&endian, 2, nostop);
-}
-
-void PicoI2C::write8read(const uint8_t reg, uint8_t* dst, const int16_t len)
-{
-  write8(reg, true);
-  read(dst, len);
-}
-
-const uint8_t PicoI2C::write8read8(const uint8_t reg)
-{
-  write8(reg, true);
-  return read8();
-}
-

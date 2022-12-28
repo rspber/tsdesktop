@@ -8,7 +8,7 @@
 #include "PicoFlash.h"
 #include <cstring>
 
-#include <Picoino.h>
+#include <Arduino.h>
 
 void clear_flash_buffer()
 {

@@ -62,7 +62,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 #include "TSD_XPT2046.h"
-#include <Picoino.h>
+#include <Arduino.h>
 
 #define beginTransaction() spi->spiBegin()
 #define endTransaction() spi->spiEnd()

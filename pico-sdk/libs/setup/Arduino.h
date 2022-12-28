@@ -6,7 +6,7 @@
 */
 
 /*
-  Picoino contains shortcuts to spi and i2c interfaces and
+  Arduino contains shortcuts to spi and i2c interfaces and
   very very common functions from Arduino, implemented on pico-sdk
 */
 
@@ -175,33 +175,3 @@ void init_i2c0(i2c_section_t section = I2C0_SECT, const uint Hz = DEF_I2C_HZ);
 #define I2C1_SECT I2C_SECT_1
 
 void init_i2c1(i2c_section_t section = I2C1_SECT, const uint Hz = DEF_I2C_HZ);
-
-// --------------------------------- PicoI2C ----------------------------------
-
-class PicoI2C {
-public:
-  PicoI2C(const uint8_t addr, i2c_inst_t* i2c = i2c0)
-  {
-    _i2c = i2c;
-    _addr = addr;
-  }
-
-  // I2C read
-  void read(uint8_t* dst, const int16_t len, const bool nostop = false);
-  const uint8_t read8(const bool nostop = false);
-  const uint16_t read16(const bool nostop = false);
-
-  // I2C write
-  void write(const uint8_t* src, const int16_t len, const bool nostop = false);
-  void write8(const uint8_t endian, const bool nostop = false);
-  void write8write8(const uint8_t reg, const uint8_t value, const bool nostop = false);
-  void write16(const uint16_t endian, const bool nostop = false);
-
-  // I2C write and read
-  void write8read(const uint8_t reg, uint8_t* dst, const int16_t len);
-  const uint8_t write8read8(const uint8_t reg);
-
-private:
-  i2c_inst_t* _i2c;
-  uint8_t _addr;
-};

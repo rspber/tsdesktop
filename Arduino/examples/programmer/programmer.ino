@@ -433,6 +433,7 @@ void setup() {
 //  agingName.setFontSize(1);
   agingName.setBorderSize(0);
   agingName.setTransparent(true);
+  agingName.setBottomMargin(4);   // for gg visibility
 
   agngFSet.setHidden(true);
 

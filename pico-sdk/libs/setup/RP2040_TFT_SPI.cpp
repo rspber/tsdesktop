@@ -6,7 +6,7 @@
 */
 
 #include "RP2040_TFT_SPI.h"
-#include <Picoino.h>
+#include <Arduino.h>
 
 void inline cs_select(const uint8_t CS, const uint8_t mode)
 {

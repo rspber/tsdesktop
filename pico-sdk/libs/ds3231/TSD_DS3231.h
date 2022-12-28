@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <Picoino.h>
+#include <Wire.h>
 
 typedef struct
 {
@@ -27,10 +27,10 @@ typedef struct
 //#define DS1307_ADDRESS 0x68
 #define DS3231_ADDRESS 0x68
 
-class TSD_DS3231 : public PicoI2C {
+class TSD_DS3231 : public TwoWire {
 public:
   TSD_DS3231(i2c_inst_t* i2c = i2c0, const uint8_t deviceAddress = DS3231_ADDRESS)
-    : PicoI2C(deviceAddress, i2c) {}
+    : TwoWire(deviceAddress, i2c) {}
 
   void setDateTime(const dttm_t* dttm);
   void getDateTime(dttm_t* dttm);

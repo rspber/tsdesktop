@@ -7,6 +7,7 @@ target_sources(setup INTERFACE
   ${CMAKE_CURRENT_LIST_DIR}/Setup.cpp
   ${CMAKE_CURRENT_LIST_DIR}/Touch.cpp
   ${CMAKE_CURRENT_LIST_DIR}/RP2040_TFT_SPI.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/Wire.cpp
 )
 
 target_link_libraries(setup INTERFACE

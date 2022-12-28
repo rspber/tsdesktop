@@ -8,7 +8,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "Picoino.h"
+#include "Arduino.h"
 
 #define COLOR_565     // comment it for 666 colors
 
