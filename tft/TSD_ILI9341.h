@@ -49,13 +49,13 @@ public:
   void writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color);
   void writeFillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
 
+  rgb_t readPixel(clip_t* clip, int16_t x, int16_t y);
+
 private:
   void sendCmd2x16(const uint8_t cmd, const int16_t i1, const int16_t i2);
 
   void writeAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h);
   void readAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h);
-
-  rgb_t readPixel(clip_t* clip, int16_t x, int16_t y);
 
   void writePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color);
   void storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t);
