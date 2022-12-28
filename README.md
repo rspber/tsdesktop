@@ -129,4 +129,4 @@
 
 1. If incidental touch pressed or not calibrated touch illusion occures, try reduce touch speed first
 
-2. If not all colors are displayed, try reduce tft spped first
+2. If not all colors are displayed, try reduce tft speed first
