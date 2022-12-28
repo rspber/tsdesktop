@@ -444,6 +444,36 @@ rgb_t TSD_ILI9341::readPixel(clip_t* clip, int16_t x, int16_t y)
   return 0;
 }
 
+void TSD_ILI9341::storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t)
+{
+  endTransaction();
+  beginTransaction(TFT_SPI_READ_SPEED);
+  readAddrWindow(x, y, w, h);
+  transfer(0);  // the first is thorough
+  for (int i = w * h; --i >= 0; ) {
+    // Read the 3 RGB bytes, color is in the top 6 bits of each byte
+    uint8_t r = transfer(0);
+    uint8_t g = transfer(0);
+    uint8_t b = transfer(0);
+    if (t->len + 3 > t->size) {
+      t->size += 100;
+      t->buf = (uint8_t*)realloc(t->buf, t->size);
+    }
+    if (MDT_SIZE > 2) {
+      t->buf[t->len++] = r;
+      t->buf[t->len++] = g;
+      t->buf[t->len++] = b;
+    }
+    else {
+      uint16_t c = RGB565(r,g,b);
+      t->buf[t->len++] = c >> 8;
+      t->buf[t->len++] = c & 0xff;
+    }
+  }
+  endTransaction();
+  beginTransaction(TFT_SPI_WRITE_SPEED);
+}
+
 void TSD_ILI9341::writeColor(const int16_t w, const int16_t h, const rgb_t color)
 {
   uint8_t buf[8];
@@ -461,8 +491,32 @@ void TSD_ILI9341::writeColor(const int16_t w, const int16_t h, const rgb_t color
 
 void TSD_ILI9341::writePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
 {
-  writeAddrWindow(x, y, w, h);
-  writeColor(w, h, color);
+  // very dubious method to detect pointer in rgb_t type
+  // in rp2040 pointers are 4 byte:
+  // code: 1x xx xx xx
+  // data: 2x xx xx xx 
+  // RGB(r,g,b) adds 0xFF000000 to color definition
+  if ((color & 0xFF000000) != 0xFF000000) {	// not a RGB color
+    over_t* t = (over_t*)color;
+    if (t->mode == 1) {   // store underlaing pixels
+      storePixels(x, y, w, h, t);
+    }
+    if (t->mode == 2) {   // restore background from buf
+      writeAddrWindow(x, y, w, h);
+      startSending();
+      for (int i = w * h * MDT_SIZE; --i >= 0; ) {
+        send(t->buf[t->len++]);
+      }
+      endSending();
+      return;
+    }
+    writeAddrWindow(x, y, w, h);
+    writeColor(w, h, t->color);
+  }
+  else {
+    writeAddrWindow(x, y, w, h);
+    writeColor(w, h, color);
+  }
 }
 
 void TSD_ILI9341::writePixel(clip_t* clip, int16_t x, int16_t y, const rgb_t color)
@@ -526,25 +580,25 @@ void TSD_ILI9341::writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, i
 // thus not overloading sign, and allowing up to double for additions for fixed point delta
 static void RGB14fromColor(rgb_t color, int16_t &r, int16_t &g, int16_t &b)
 {
-#ifdef COLOR_565
-  r = (color >> 2) & 0x3E00;
-  g = (color << 3) & 0x3F00;
-  b = (color << 9) & 0x3E00;
-#else
+//#ifdef COLOR_565
+//  r = (color >> 2) & 0x3E00;
+//  g = (color << 3) & 0x3F00;
+//  b = (color << 9) & 0x3E00;
+//#else
   r = (color >> 10) & 0x3F00;
   g = (color >>  2) & 0x3F00;
   b = (color <<  6) & 0x3F00;
-#endif
+//#endif
 }
 
 // RGB14tocolor565		- converts 14 bit RGB back to 16 bit 565 format color
 static rgb_t RGB14toColor(int16_t r, int16_t g, int16_t b)
 {
-#ifdef COLOR_565
-  return (((r & 0x3E00) << 2) | ((g & 0x3F00) >> 3) | ((b & 0x3E00) >> 9));
-#else
+//#ifdef COLOR_565
+//  return (((r & 0x3E00) << 2) | ((g & 0x3F00) >> 3) | ((b & 0x3E00) >> 9));
+//#else
   return (((r & 0x3F00) << 10) | ((g & 0x3F00) << 2) | ((b & 0x3F00) >> 6));
-#endif
+//#endif
 }
 
 void TSD_ILI9341::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)

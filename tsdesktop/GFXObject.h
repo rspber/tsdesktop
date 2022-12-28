@@ -12,27 +12,48 @@
 /// @GFXObject
 class GFXObject {
 public:
-  GFXObject(Button* aparent, rgb_t acolor) : parent(aparent), color(acolor) {}
-  virtual ~GFXObject(){}
+  GFXObject(Button* aparent, rgb_t acolor) : parent(aparent)
+  {
+    over.color = acolor;
+    over.mode = 0;
+    over.buf = 0;
+    over.len = 0;
+  }
+  virtual ~GFXObject()
+  {
+    if (over.buf) {
+      free(over.buf);
+      over.buf = 0;
+      over.size = 0;
+      over.len = 0;
+      over.mode = 0;
+    }
+  }
 
   void setVisible(const bool aVisible) { visible = aVisible; }
   const bool getVisible() { return visible; }
 
-  void setColor(rgb_t acolor) { color = acolor; }
-  rgb_t getColor() { return color; }
+  void setColor(rgb_t acolor) { over.color = acolor; }
+  rgb_t getColor() { return over.color; }
+
+  void setOverlaid(bool aOverlaid);
+  rgb_t getOver();
 
   void hide();
   void draw();
 
-  virtual void dodraw(clip_t* clip, int16_t x, int16_t y, rgb_t color) = 0;
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y) = 0;
   void doDraw(clip_t* clip, int16_t x, int16_t y, const bool redraw);
 
 private:
-  void doDraw(rgb_t color);
+  void doDraw();
 
 private:
   Button* parent;
-  rgb_t color;
   bool visible = true;
   bool wasDrawn = false;
+
+protected:
+  over_t over;
 };
+

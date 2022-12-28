@@ -38,4 +38,4 @@ add_subdirectory(examples/menu1)
 add_subdirectory(examples/menu2)
 add_subdirectory(examples/menu3)
 add_subdirectory(examples/canvas1)
-
+add_subdirectory(examples/canvas2)

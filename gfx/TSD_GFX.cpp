@@ -220,7 +220,7 @@ void TSD_GFX::drawLine(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t
   }
 }
 
-void TSD_GFX::drawCircle(clip_t* clip, int16_t x0, int16_t y0, int16_t r, rgb_t color)
+void TSD_GFX::writeCircle(clip_t* clip, int16_t x0, int16_t y0, int16_t r, rgb_t color)
 {
   int16_t f = 1 - r;
   int16_t ddF_x = 1;
@@ -228,7 +228,6 @@ void TSD_GFX::drawCircle(clip_t* clip, int16_t x0, int16_t y0, int16_t r, rgb_t 
   int16_t x = 0;
   int16_t y = r;
 
-  startWrite();
   writePixel(clip, x0, y0 + r, color);
   writePixel(clip, x0, y0 - r, color);
   writePixel(clip, x0 + r, y0, color);
@@ -253,6 +252,12 @@ void TSD_GFX::drawCircle(clip_t* clip, int16_t x0, int16_t y0, int16_t r, rgb_t 
     writePixel(clip, x0 + y, y0 - x, color);
     writePixel(clip, x0 - y, y0 - x, color);
   }
+}
+
+void TSD_GFX::drawCircle(clip_t* clip, int16_t x0, int16_t y0, int16_t r, rgb_t color)
+{
+  startWrite();
+  writeCircle(clip, x0, y0, r, color);
   endWrite();
 }
 
@@ -332,31 +337,40 @@ void TSD_GFX::writeFillCircleHelper(clip_t* clip, int16_t x0, int16_t y0, int16_
   }
 }
 
+void TSD_GFX::writeFillCircle(clip_t* clip, int16_t x0, int16_t y0, int16_t r, rgb_t color)
+{
+  writeFastVLine(clip, x0, y0 - r, 2 * r + 1, color);
+  writeFillCircleHelper(clip, x0, y0, r, 3, 0, color);
+}
+
 void TSD_GFX::fillCircle(clip_t* clip, int16_t x0, int16_t y0, int16_t r, rgb_t color)
 {
   startWrite();
-  writeFastVLine(clip, x0, y0 - r, 2 * r + 1, color);
-  writeFillCircleHelper(clip, x0, y0, r, 3, 0, color);
+  writeFillCircle(clip, x0, y0, r, color);
   endWrite();
+}
+
+void TSD_GFX::writeRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color)
+{
+  writeFastHLine(clip, x, y, w, color);
+  writeFastHLine(clip, x, y + h - 1, w, color);
+  writeFastVLine(clip, x, y, h, color);
+  writeFastVLine(clip, x + w - 1, y, h, color);
 }
 
 void TSD_GFX::drawRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color)
 {
   startWrite();
-  writeFastHLine(clip, x, y, w, color);
-  writeFastHLine(clip, x, y + h - 1, w, color);
-  writeFastVLine(clip, x, y, h, color);
-  writeFastVLine(clip, x + w - 1, y, h, color);
+  writeRect(clip, x, y, w, h, color);
   endWrite();
 }
 
-void TSD_GFX::drawRoundRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, rgb_t color)
+void TSD_GFX::writeRoundRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, rgb_t color)
 {
   int16_t max_radius = ((w < h) ? w : h) / 2; // 1/2 minor axis
   if (r > max_radius)
     r = max_radius;
   // smarter version
-  startWrite();
   writeFastHLine(clip, x + r, y, w - 2 * r, color);         // Top
   writeFastHLine(clip, x + r, y + h - 1, w - 2 * r, color); // Bottom
   writeFastVLine(clip, x, y + r, h - 2 * r, color);         // Left
@@ -366,32 +380,48 @@ void TSD_GFX::drawRoundRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16
   writeCircleHelper(clip, x + w - r - 1, y + r, r, 2, color);
   writeCircleHelper(clip, x + w - r - 1, y + h - r - 1, r, 4, color);
   writeCircleHelper(clip, x + r, y + h - r - 1, r, 8, color);
+}
+
+void TSD_GFX::drawRoundRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, rgb_t color)
+{
+  startWrite();
+  writeRoundRect(clip, x, y, w, h, r, color);
   endWrite();
 }
 
-void TSD_GFX::fillRoundRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, rgb_t color)
+void TSD_GFX::writeFillRoundRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, rgb_t color)
 {
   int16_t max_radius = ((w < h) ? w : h) / 2; // 1/2 minor axis
   if (r > max_radius)
     r = max_radius;
-  startWrite();
   writeFillRect(clip, x + r, y, w - 2 * r, h, color);
   // draw four corners
   writeFillCircleHelper(clip, x + w - r - 1, y + r, r, 1, h - 2 * r - 1, color);
   writeFillCircleHelper(clip, x + r, y + r, r, 2, h - 2 * r - 1, color);
+}
+
+void TSD_GFX::fillRoundRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, rgb_t color)
+{
+  startWrite();
+  writeFillRoundRect(clip, x, y, w, h, r, color);
   endWrite();
+}
+
+void TSD_GFX::writeTriangle(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color)
+{
+  writeLine(clip, x0, y0, x1, y1, color);
+  writeLine(clip, x1, y1, x2, y2, color);
+  writeLine(clip, x2, y2, x0, y0, color);
 }
 
 void TSD_GFX::drawTriangle(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color)
 {
   startWrite();
-  writeLine(clip, x0, y0, x1, y1, color);
-  writeLine(clip, x1, y1, x2, y2, color);
-  writeLine(clip, x2, y2, x0, y0, color);
+  writeTriangle(clip, x0, y0, x1, y1, x2, y2, color);
   endWrite();
 }
 
-void TSD_GFX::fillTriangle(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color)
+void TSD_GFX::writeFillTriangle(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color)
 {
   int16_t a, b, y, last;
 
@@ -409,7 +439,6 @@ void TSD_GFX::fillTriangle(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int
     _swap_int16_t(x0, x1);
   }
 
-  startWrite();
   if (y0 == y2) { // Handle awkward all-on-same-line case as its own thing
     a = b = x0;
     if (x1 < a)
@@ -421,7 +450,6 @@ void TSD_GFX::fillTriangle(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int
     else if (x2 > b)
       b = x2;
     writeFastHLine(clip, a, y0, b - a + 1, color);
-    endWrite();
     return;
   }
 
@@ -471,8 +499,15 @@ void TSD_GFX::fillTriangle(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int
       _swap_int16_t(a, b);
     writeFastHLine(clip, a, y, b - a + 1, color);
   }
+}
+
+void TSD_GFX::fillTriangle(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color)
+{
+  startWrite();
+  writeFillTriangle(clip, x0, y0, x1, y1, x2, y2, color);
   endWrite();
 }
+
 
 // BITMAP / XBITMAP / GRAYSCALE / RGB BITMAP FUNCTIONS ---------------------
 
@@ -575,6 +610,18 @@ void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bit
 
 // TEXT- AND CHARACTER-HANDLING FUNCTIONS ----------------------------------
 
+bool ifdrawbgif(rgb_t color, rgb_t bg)
+{
+  // see TSD_ILI9341.cpp for explanation
+  if ((color & 0xFF000000) != 0xFF000000) {
+    over_t* t = (over_t*)color;
+    return t->color != bg;
+  }
+  else {
+    return color != bg;
+  }
+}
+
 // utf-8
 
 // Draw a character
@@ -587,7 +634,7 @@ void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bit
     @param    color
 */
 /**************************************************************************/
-void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, rgb_t color, rgb_t bg, const int8_t spacing)
+void TSD_GFX::writeChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, rgb_t color, rgb_t bg, const int8_t spacing)
 {
   uint8_t size_x = font->fontSizeX;
   uint8_t size_y = font->fontSizeY;
@@ -597,18 +644,19 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, r
 
   int16_t lw;
   int16_t lhz;
-  startWrite();
   GFXfont* gfxFont;
   const GFXglyph* glyph = font->getCharGlyph(&gfxFont, c);
   font->cursorAdjust(gfxFont, &x, &y);
 
+  bool drawbg = ifdrawbgif(color, bg);
+
   if (!glyph) { // 'Classic' built-in font
     lw = 6;
     lhz = 8 * size_y;
-    if (bg != color && x - cursor->x > 0) {
+    if (drawbg && x - cursor->x > 0) {
       writeFillRect(clip, cursor->x, cursor->y, x - cursor->x, lhz, bg);
     }
-    if (bg != color && y - cursor->y > 0) {
+    if (drawbg && y - cursor->y > 0) {
       writeFillRect(clip, cursor->x, cursor->y, lw * size_x, y - cursor->y, bg);
     }
     for (int8_t i = 0; i < 5; i++) { // Char bitmap = 5 columns
@@ -618,9 +666,8 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, r
           if (size_x == 1 && size_y == 1)
             writePixel(clip, x + i, y + j, color);
           else
-            writeFillRect(clip, x + i * size_x, y + j * size_y, size_x, size_y,
-              color);
-        } else if (bg != color) {
+            writeFillRect(clip, x + i * size_x, y + j * size_y, size_x, size_y, color);
+        } else if (drawbg) {
           if (size_x == 1 && size_y == 1)
             writePixel(clip, x + i, y + j, bg);
           else
@@ -628,7 +675,7 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, r
         }
       }
     }
-    if (bg != color) { // If opaque, draw vertical line for last column
+    if (drawbg) { // If opaque, draw vertical line for last column
       if (size_x == 1 && size_y == 1)
         writeFastVLine(clip, x + 5, y, 8, bg);
       else
@@ -645,10 +692,10 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, r
     int16_t xo = glyph->xOffset,
        yo = 1 - glyph->yOffset; // yOffset is positive
 
-    if (bg != color && x - cursor->x + xo * size_x > 0) {
+    if (drawbg && x - cursor->x + xo * size_x > 0) {
       writeFillRect(clip, cursor->x, cursor->y, x - cursor->x + xo * size_x, lhz, bg);
     }
-    if (bg != color && y - cursor->y + yo * size_y > 0) {
+    if (drawbg && y - cursor->y + yo * size_y > 0) {
       writeFillRect(clip, cursor->x, cursor->y, lw * size_x, y - cursor->y + yo * size_y, bg);
     }
 
@@ -666,7 +713,7 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, r
           bits = *bp++;
         }
         if (bits & 0x80) {
-          if (bg != color && xbg0 >= 0) {
+          if (drawbg && xbg0 >= 0) {
             if (size_x == 1 && size_y == 1) {
               writeFastHLine(clip, x + xo + xbg0, y + yo + yy, xx - xbg0, bg);
             }
@@ -695,7 +742,7 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, r
         }
         bits <<= 1;
       }
-      if (bg != color && xbg0 >= 0) {
+      if (drawbg && xbg0 >= 0) {
         if (size_x == 1 && size_y == 1) {
           writeFastHLine(clip, x + xo + xbg0, y + yo + yy, xx - xbg0, bg);
         }
@@ -714,19 +761,26 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, r
     }
     int16_t y2 = y + (yo + h) * size_y;
     int16_t h2 = cursor->y + lhz - y2;
-    if (bg != color && h2 > 0) {
+    if (drawbg && h2 > 0) {
       writeFillRect(clip, cursor->x, y2, lw * size_x, h2, bg);
     }
     int16_t w2 = lw - (xo + w);
-    if (bg != color && w2 > 0) {
+    if (drawbg && w2 > 0) {
       writeFillRect(clip, cursor->x + (xo + w) * size_x, cursor->y, w2 * size_x, lhz, bg);
     }
   } // End classic vs custom font
-  if (bg != color && spacing > 0) {
+  if (drawbg && spacing > 0) {
     writeFillRect(clip, cursor->x + lw * size_x, cursor->y, spacing * size_x, lhz, bg);
   }
-  endWrite();
   cursor->x += (lw + spacing) * size_x;
+}
+
+
+void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, rgb_t color, rgb_t bg, const int8_t spacing)
+{
+  startWrite();
+  writeChar(clip, cursor, font, c, color, bg, spacing);
+  endWrite();
 }
 
 // Draw text line
@@ -740,17 +794,25 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, r
   @param    spacing extra horizontal spacing for letters
 */
 /**************************************************************************/
-const char*  TSD_GFX::drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, rgb_t color, rgb_t bg, const int8_t spacing)
+const char*  TSD_GFX::writeTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, rgb_t color, rgb_t bg, const int8_t spacing)
 {
   if (text) {
     char* p = (char *)text;
     char c;
     while ((c = *p) && c != '\r' && c != '\n') {
-      drawChar(clip, cursor, font, &p, color, bg, spacing);
+      writeChar(clip, cursor, font, &p, color, bg, spacing);
     }
     return (const char*) p;
   }
   return NULL;
+}
+
+const char*  TSD_GFX::drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const char* text, rgb_t color, rgb_t bg, const int8_t spacing)
+{
+  startWrite();
+  const char* res = writeTextLine(clip, cursor, font, text, color, bg, spacing);
+  endWrite();
+  return res;
 }
 
 // unicode
@@ -759,20 +821,31 @@ void TSD_GFX::drawChar(clip_t* clip, cursor_t* cursor, font_t* font, const uint1
 {
   char buf[8];
   toUtf8(buf, uchar);
-  char* p = buf;
-  drawChar(clip, cursor, font, &p, color, bg, spacing);
+  char* bp = buf;
+  drawChar(clip, cursor, font, &bp, color, bg, spacing);
 }
 
-const uint16_t* TSD_GFX::drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const uint16_t* utext, rgb_t color, rgb_t bg, const int8_t spacing)
+const uint16_t* TSD_GFX::writeTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const uint16_t* utext, rgb_t color, rgb_t bg, const int8_t spacing)
 {
   if (utext) {
     const uint16_t* p = utext;
     uint16_t u;
     while ((u = *p) && u != '\r' && u != '\n') {
-      drawChar(clip, cursor, font, u, color, bg, spacing);
+      char buf[8];
+      toUtf8(buf, u);
+      char* bp = buf;
+      writeChar(clip, cursor, font, &bp, color, bg, spacing);
       ++p;
     }
     return p;
   }
   return NULL;
+}
+
+const uint16_t* TSD_GFX::drawTextLine(clip_t* clip, cursor_t* cursor, font_t* font, const uint16_t* utext, rgb_t color, rgb_t bg, const int8_t spacing)
+{
+  startWrite();
+  const uint16_t* res = writeTextLine(clip, cursor, font, utext, color, bg, spacing);
+  endWrite();
+  return res;
 }

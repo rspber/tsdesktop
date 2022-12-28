@@ -55,16 +55,16 @@ void TSD_SCREEN::fillRectGradient(int16_t x, int16_t y, int16_t w, int16_t h, gr
   fillRectGradient(&clip, x, y, w, h, z);
 }
 
-void TSD_SCREEN::drawLine(clip_t* clip, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts, uint8_t mode)
+void TSD_SCREEN::writeLine(clip_t* clip, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts, uint8_t mode)
 {
   if (ts > 1) {
     int16_t u = ts / 2;
     if (x1 == x2) {
-      fillRect(clip, x1 - u, y1, ts, y2 - y1, color);
+      writeFillRect(clip, x1 - u, y1, ts, y2 - y1, color);
       return;
     }
     if (y1 == y2)  {
-      fillRect(clip, x1, y1 - u, x2 - x1, ts, color);
+      writeFillRect(clip, x1, y1 - u, x2 - x1, ts, color);
       return;
     }
     switch (mode) {
@@ -74,11 +74,11 @@ void TSD_SCREEN::drawLine(clip_t* clip, int16_t x1, int16_t y1, int16_t x2, int1
         u = ts / 2;
         int16_t d = u - ts;
         while (++d <= 0) {
-          drawLine(clip, x1, y1 - d, x2 + d, y2, color);
+          writeLine(clip, x1, y1 - d, x2 + d, y2, color);
         }
         --d;
         while (++d <= u) {
-          drawLine(clip, x1 + d, y1, x2, y2 - d, color);
+          writeLine(clip, x1 + d, y1, x2, y2 - d, color);
         }
         break;
       }
@@ -87,20 +87,27 @@ void TSD_SCREEN::drawLine(clip_t* clip, int16_t x1, int16_t y1, int16_t x2, int1
         int16_t d = u - ts;
         if (abs(x2 - x1) > abs(y2 - y1)) {
           while (++d <= u) {
-            drawLine(clip, x1, y1 + d, x2, y2 + d, color);
+            writeLine(clip, x1, y1 + d, x2, y2 + d, color);
           }
         }
         else {
           while (++d <= u) {
-            drawLine(clip, x1 + d, y1, x2 + d, y2, color);
+            writeLine(clip, x1 + d, y1, x2 + d, y2, color);
           }
         }
       }
     }
   }
   else {
-    drawLine(clip, x1, y1, x2, y2, color);
+    writeLine(clip, x1, y1, x2, y2, color);
   }
+}
+
+void TSD_SCREEN::drawLine(clip_t* clip, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts, uint8_t mode)
+{
+    startWrite();
+    writeLine(clip, x1, y1, x2, y2, color, ts, mode);
+    endWrite();
 }
 
 void TSD_SCREEN::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color, int16_t ts, uint8_t mode)
@@ -113,10 +120,12 @@ void TSD_SCREEN::drawRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t
 {
   if (ts > 1) {
     int16_t d = ts / 2;
-    fillRect(clip, x - d, y - d, w + ts, ts, color);     // Top
-    fillRect(clip, x - d, y + h - d, w + ts, ts, color); // Bottom
-    fillRect(clip, x - d, y + d, ts, h - ts, color);     // Left
-    fillRect(clip, x + w - d, y + d, ts, h - ts, color); // Right
+    startWrite();
+    writeFillRect(clip, x - d, y - d, w + ts, ts, color);     // Top
+    writeFillRect(clip, x - d, y + h - d, w + ts, ts, color); // Bottom
+    writeFillRect(clip, x - d, y + d, ts, h - ts, color);     // Left
+    writeFillRect(clip, x + w - d, y + d, ts, h - ts, color); // Right
+    endWrite();
   }
   else {
     drawRect(clip, x, y, w, h, color);
@@ -133,9 +142,11 @@ void TSD_SCREEN::drawCircle(clip_t* clip, int16_t x0, int16_t y0, int16_t r, rgb
 {
   int16_t u = ts / 2;
   int16_t d = u - ts;
+  startWrite();
   while (++d <= u) {
-    drawCircle(clip, x0, y0, r + d, color);
+    writeCircle(clip, x0, y0, r + d, color);
   }
+  endWrite();
 }
 
 void TSD_SCREEN::drawCircle(int16_t x0, int16_t y0, int16_t r, rgb_t color, int16_t ts)
@@ -182,9 +193,11 @@ void TSD_SCREEN::fillCircleFragment(int16_t x0, int16_t y0, int16_t r, uint8_t c
 
 void TSD_SCREEN::drawTriangle(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts, uint8_t mode)
 {
-  drawLine(clip, x0, y0, x1, y1, color, ts, mode);
-  drawLine(clip, x1, y1, x2, y2, color, ts, mode);
-  drawLine(clip, x2, y2, x0, y0, color, ts, mode);
+  startWrite();
+  writeLine(clip, x0, y0, x1, y1, color, ts, mode);
+  writeLine(clip, x1, y1, x2, y2, color, ts, mode);
+  writeLine(clip, x2, y2, x0, y0, color, ts, mode);
+  endWrite();
 }
 
 void TSD_SCREEN::drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts, uint8_t mode)
@@ -308,13 +321,15 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, co
     clip_t clip{0, 0, _width, _height};
     font_t font{gfxFont, fontSize, fontSize};
     const char* p = text;
+    startWrite();
     while (*p) {
-      p = drawTextLine(&clip, &cursor, &font, p, color, bg, spacing);
+      p = writeTextLine(&clip, &cursor, &font, p, color, bg, spacing);
       while (*p == '\r') ++p;
       if (*p == '\n') ++p;
       cursor.x = x;
       cursor.y += font.textLineHeight();
     }
+    endWrite();
   }
 }
 
@@ -344,13 +359,15 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const uint16_t* utex
     clip_t clip{0, 0, _width, _height};
     font_t font{gfxFont, fontSize, fontSize};
     const uint16_t* p = utext;
+    startWrite();
     while (*p) {
-      p = drawTextLine(&clip, &cursor, &font, p, color, bg, spacing);
+      p = writeTextLine(&clip, &cursor, &font, p, color, bg, spacing);
       while (*p == '\r') ++p;
       if (*p == '\n') ++p;
       cursor.x = x;
       cursor.y += font.textLineHeight();
     }
+    endWrite();
   }
 }
 

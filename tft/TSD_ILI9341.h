@@ -58,6 +58,7 @@ private:
   rgb_t readPixel(clip_t* clip, int16_t x, int16_t y);
 
   void writePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color);
+  void storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t);
 
   void writeColor(const int16_t w, const int16_t h, const rgb_t color);
 
