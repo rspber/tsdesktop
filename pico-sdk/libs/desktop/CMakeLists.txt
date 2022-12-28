@@ -16,7 +16,3 @@ target_sources(desktop INTERFACE
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/GFXObject.cpp
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/GFXButton.cpp
 )
-
-target_link_libraries(desktop INTERFACE
-  display
-)

@@ -1,10 +1,10 @@
 add_library(gfx INTERFACE)
 
-target_include_directories(gfx INTERFACE ${CMAKE_CURRENT_LIST_DIR}/../../../TSD_GFX)
+target_include_directories(gfx INTERFACE ${CMAKE_CURRENT_LIST_DIR}/../../../gfx)
 
 target_sources(gfx INTERFACE
-  ${CMAKE_CURRENT_LIST_DIR}/../../../TSD_GFX/rgb.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/../../../TSD_GFX/font.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/../../../TSD_GFX/TSD_GFX.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/../../../TSD_GFX/TSD_SCREEN.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/../../../gfx/rgb.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/../../../gfx/font.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/../../../gfx/TSD_GFX.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/../../../gfx/TSD_SCREEN.cpp
 )

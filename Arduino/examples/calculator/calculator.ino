@@ -127,8 +127,10 @@ void btn_click(Container* c)
     break;
   }
   case 2:
+    operBtn.moveCursor(+1);
+    break;
   case 4:
-    operBtn.moveCursor(id == 4 ? -1 : +1);
+    operBtn.moveCursor(-1);
     break;
   case -4:  // Ins
     operBtn.swapCursorInsMode();

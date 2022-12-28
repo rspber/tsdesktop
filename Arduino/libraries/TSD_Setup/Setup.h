@@ -50,7 +50,8 @@
 
 #define TOUCH_CS 22     // Chip select pin (T_CS) of touch screen
 
-#define TFT_SPI_SPEED 40 * 1000 * 1000          // 40 MHz
+#define TFT_SPI_WRITE_SPEED    60 * 1000 * 1000          // 60 MHz
+#define TFT_SPI_READ_SPEED     20 * 1000 * 1000          // 20 MHz
 
 void init_hardware();
 

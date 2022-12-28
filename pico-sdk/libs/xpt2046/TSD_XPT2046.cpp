@@ -62,11 +62,18 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 #include "TSD_XPT2046.h"
+#include <Picoino.h>
 
-bool TSD_XPT2046::begin(PicoSPI* spi, const int16_t tirq)
+#define beginTransaction() spi->spiBegin()
+#define endTransaction() spi->spiEnd()
+#define transfer(cmd) spi->transfer(cmd)
+#define transfer16(cmd) spi->transfer16(cmd)
+
+bool TSD_XPT2046::begin(TFT_SPI* aspi, const int16_t atirq)
 {
-  _spi = spi;
-  _tirq = tirq;
+  spi = aspi;
+  spi->begin();
+  tirq = atirq;
 
   if (tirq >= 0) {
     //    pinMode( tirqPin, INPUT );
@@ -85,40 +92,38 @@ bool TSD_XPT2046::begin(PicoSPI* spi, const int16_t tirq)
 bool TSD_XPT2046::getTouchRaw(int16_t* x, int16_t* y) {
   int16_t tmp;
 
-  _spi->beginTransaction();
-  _spi->cs(0);
+  beginTransaction();
 
   // Start YP sample request for y position, read 4 times and keep last sample
-  _spi->transfer(0xd0);                    // Start new YP conversion
-  _spi->transfer(0);                       // Read first 8 bits
-  _spi->transfer(0xd0);                    // Read last 8 bits and start new YP conversion
-  _spi->transfer(0);                       // Read first 8 bits
-  _spi->transfer(0xd0);                    // Read last 8 bits and start new YP conversion
-  _spi->transfer(0);                       // Read first 8 bits
-  _spi->transfer(0xd0);                    // Read last 8 bits and start new YP conversion
+  transfer(0xd0);                    // Start new YP conversion
+  transfer(0);                       // Read first 8 bits
+  transfer(0xd0);                    // Read last 8 bits and start new YP conversion
+  transfer(0);                       // Read first 8 bits
+  transfer(0xd0);                    // Read last 8 bits and start new YP conversion
+  transfer(0);                       // Read first 8 bits
+  transfer(0xd0);                    // Read last 8 bits and start new YP conversion
 
-  tmp = _spi->transfer(0);                   // Read first 8 bits
+  tmp = transfer(0);                   // Read first 8 bits
   tmp = tmp << 5;
-  tmp |= 0x1f & (_spi->transfer(0x90) >> 3);   // Read last 8 bits and start new XP conversion
+  tmp |= 0x1f & (transfer(0x90) >> 3);   // Read last 8 bits and start new XP conversion
 
   *y = tmp;
 
   // Start XP sample request for x position, read 4 times and keep last sample
-  _spi->transfer(0);                       // Read first 8 bits
-  _spi->transfer(0x90);                    // Read last 8 bits and start new XP conversion
-  _spi->transfer(0);                       // Read first 8 bits
-  _spi->transfer(0x90);                    // Read last 8 bits and start new XP conversion
-  _spi->transfer(0);                       // Read first 8 bits
-  _spi->transfer(0x90);                    // Read last 8 bits and start new XP conversion
+  transfer(0);                       // Read first 8 bits
+  transfer(0x90);                    // Read last 8 bits and start new XP conversion
+  transfer(0);                       // Read first 8 bits
+  transfer(0x90);                    // Read last 8 bits and start new XP conversion
+  transfer(0);                       // Read first 8 bits
+  transfer(0x90);                    // Read last 8 bits and start new XP conversion
 
-  tmp = _spi->transfer(0);                 // Read first 8 bits
+  tmp = transfer(0);                 // Read first 8 bits
   tmp = tmp << 5;
-  tmp |= 0x1f & (_spi->transfer(0) >> 3);    // Read last 8 bits
+  tmp |= 0x1f & (transfer(0) >> 3);    // Read last 8 bits
 
   *x = tmp;
 
-  _spi->cs(1);
-  _spi->endTransaction();
+  endTransaction();
 
   return true;
 }
@@ -128,17 +133,15 @@ bool TSD_XPT2046::getTouchRaw(int16_t* x, int16_t* y) {
 ** Description:             read raw pressure on touchpad and return Z value.
 ***************************************************************************************/
 int16_t TSD_XPT2046::getTouchRawZ(void) {
-  _spi->beginTransaction();
-  _spi->cs(0);
+  beginTransaction();
 
   // Z sample request
   int16_t tz = 0xFFF;
-  _spi->transfer(0xb0);               // Start new Z1 conversion
-  tz += _spi->transfer16(0xc0) >> 3;  // Read Z1 and start Z2 conversion
-  tz -= _spi->transfer16(0x00) >> 3;  // Read Z2
+  transfer(0xb0);               // Start new Z1 conversion
+  tz += transfer16(0xc0) >> 3;  // Read Z1 and start Z2 conversion
+  tz -= transfer16(0x00) >> 3;  // Read Z2
 
-  _spi->cs(1);
-  _spi->endTransaction();
+  endTransaction();
 
   if (tz == 4095) tz = 0;
 

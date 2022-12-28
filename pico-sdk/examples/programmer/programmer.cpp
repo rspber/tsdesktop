@@ -216,7 +216,6 @@ void dttm_btn(TextButton* b, const int id, const int fontSize)
   b->setId(id);
   b->setOnClick(dttm_select_click);
   b->setTextColor(GRAY_88);
-  b->setBottomMargin(2);
   b->setFont(FONT);
   b->setFontSize(fontSize);
 //  b->setFontSize(fontSize + 1);
@@ -293,7 +292,6 @@ void rpgm_radio_btn(RadioButton* b)
 {
   b->setMargin(4);
   b->setTextColor(GRAY);
-  b->setBottomMargin(2);
   b->setBorderSize(0);
   b->setDecorInActiveColor(GRAY);
   b->setOnClick(pgm_radio_click);
@@ -312,7 +310,6 @@ void tpgm_btn(ValueButton* b, const int id)
   b->setId(id);
   b->setOnClick(pgm_select_click);
   b->setTextColor(GRAY_88);
-  b->setBottomMargin(2);
   b->setFont(FONT);
   b->setFontSize(2);
   b->setBorderColor(GRAY);

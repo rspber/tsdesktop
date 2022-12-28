@@ -11,13 +11,15 @@
 #include <Display.h>
 #include <Touch.h>
 
+#include <RP2040_TFT_SPI.h>
+
 void init_hardware()
 {
   stdio_init_all();
 }
 
-PicoSPI displaySPI(TFT_CS, SPI0_DC, TFT_SPI_SPEED);
-PicoSPI touchSPI(TOUCH_CS, SPI0_DC, TOUCH_SPI_SPEED);
+RP2040_TFT_SPI displaySPI(TFT_CS, SPI0_DC, TFT_SPI_WRITE_SPEED);
+RP2040_TFT_SPI touchSPI(TOUCH_CS, SPI0_DC, TOUCH_SPI_SPEED);
 
 void media_begin(int8_t rotation)
 {

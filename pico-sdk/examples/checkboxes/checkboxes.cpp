@@ -296,7 +296,7 @@ void setup() {
   bchk_box(&box409, 9, "9.");
 
 //  desktop.setBackground(AQUA);
-  gradient_t g1{GNT_LR, AQUA, 70, BLUE};
+  gradient_t g1{GNT_LR, AQUA, 80, BLUE};
   desktop.setGradient(&g1);
   desktop.setOrientation(HORIZONTAL, 2);
 

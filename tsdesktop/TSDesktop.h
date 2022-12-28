@@ -405,7 +405,7 @@ public:
     marginLeft = 2;
     marginTop = 2;
     marginRight = 2;
-    marginBottom = 4;
+    marginBottom = 2;
 
 	disabled = true;
   }
@@ -440,7 +440,7 @@ private:
     marginLeft = 2;
     marginTop = 2;
     marginRight = 2;
-    marginBottom = 4;
+    marginBottom = 2;
   }
 
 public:
@@ -450,7 +450,7 @@ public:
 
   /**
    * setText - safe mothod to set text,
-   * text is moved to allocated memory 
+   * text is moved to allocated memory
   */
   void setText(const char* aText) {
     setTempText((const void*)aText, false, true);
@@ -462,7 +462,7 @@ public:
 
   /**
    * setStaticText - for static, permanent texts, not from the stack,
-   * this method avoids memmory allocation 
+   * this method avoids memmory allocation
   */
   void setStaticText(const char* aText) {
     setTempText((const void*)aText, false, false);

@@ -101,7 +101,7 @@
 
 3. `download` or `git clone` this repository
 
-4. Copy Arduino/libraries to Arduino's libraries, pay attention on TSDesktop, TSD_GFX, TSD_ILI9341 and utils folders and dependenciens:
+4. Copy Arduino/libraries to Arduino's libraries, pay attention on TSDesktop, TSD_GFX, TSD_TFT and TSD_Utils folders and dependenciens:
 
   * https://github.com/PaulStoffregen/XPT2046_Touchscreen
 
@@ -125,3 +125,8 @@
       sudo usermod -aG dialout $USER
       sudo reboot
     ```
+## Hints
+
+1. If incidental touch pressed or not calibrated touch illusion occures, try reduce touch speed first
+
+2. If not all colors are displayed, try reduce tft spped first

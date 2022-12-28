@@ -111,7 +111,7 @@ Original license below.
 #define ILI9341_CASET       0x2A    // Column address set
 #define ILI9341_PASET       0x2B    // Page address set
 #define ILI9341_RAMWR       0x2C    // Memory write
-//#define ILI9341_RAMRD       0x2E    // Memory read
+#define ILI9341_RAMRD       0x2E    // Memory read
 //#define ILI9341_PTLAR       0x30    // Partial area
 #define ILI9341_VSCRDEF     0x33    // Vertical scrolling definition
 #define ILI9341_MADCTL      0x36    // Memory access control
@@ -174,12 +174,23 @@ Original license below.
 
 #define SETUP_SPEED 2 * 1000 * 1000   // 2 MHz
 
+#define beginTransaction(Hz) spi->spiBegin(Hz)
+#define endTransaction() spi->spiEnd()
+#define startSending() spi->startSending()
+#define send(data) spi->send(data)
+#define endSending() spi->endSending()
+#define sendCmd(cmd) spi->sendCmd(cmd)
+#define sendData(data, size) spi->sendData(data, size)
+#define sendCmdData(cmd, data, size) spi->sendCmdData(cmd, data, size)
+#define sendCmdByte(cmd, data) spi->sendCmdByte(cmd, data)
+#define transfer(cmd) spi->transfer(cmd)
+
 void TSD_ILI9341::hardReset()
 {
-  if (_RST >= 0) {
-    digitalWrite(_RST, LOW);
+  if (RST >= 0) {
+    digitalWrite(RST, LOW);
     sleep_ms(50);
-    digitalWrite(_RST, HIGH);
+    digitalWrite(RST, HIGH);
     sleep_ms(50);
   }
 }
@@ -189,14 +200,16 @@ void TSD_ILI9341::reset()
   hardReset();
   beginTransaction(SETUP_SPEED);   // slow down
   sendCmd(ILI9341_SWRESET); // Engage software reset
-  sleep_ms(150);
   endTransaction();
+  sleep_ms(150);
 }
 
-void TSD_ILI9341::begin(const int16_t RST)
+void TSD_ILI9341::begin(TFT_SPI* aspi, const int16_t aRST)
 {
-  _RST = RST;
+  spi = aspi;
+  spi->begin();
 
+  RST = aRST;
   if (RST >= 0) {
     pinMode(RST, OUTPUT);
   }
@@ -215,33 +228,33 @@ void TSD_ILI9341::begin(const int16_t RST)
     sendCmdData(ILI9341_DTCA, (uint8_t*)"\x85\x00\x78", 3);          // retired in v.1.02
     sendCmdData(ILI9341_PWCTRA, (uint8_t*)"\x39\x2C\x00\x34\x02", 5);      // retired in v.1.02
   }
-  sendCmdData(ILI9341_PUMPRC,   0x20);
+  sendCmdByte(ILI9341_PUMPRC,   0x20);
 
   if (ILI9341_VERSION < 3) {  // < v1.2
     sendCmdData(ILI9341_DTCB, (uint8_t*)"\x00\x00", 2);          // retired in v.1.02
   }
   if (ILI9341_VERSION < 3) {  // < v1.2
-    sendCmdData(ILI9341_PWCTR1, 0x23);             // Power control VRH[5:0]
+    sendCmdByte(ILI9341_PWCTR1, 0x23);             // Power control VRH[5:0]
   }
   else {
-    sendCmdData(ILI9341_MADCTL13, 0x21);           // xCRICxCC
+    sendCmdByte(ILI9341_MADCTL13, 0x21);           // xCRICxCC
   }
-  sendCmdData(ILI9341_PWCTR2,   0x10);             // Power control SAP[2:0];BT[3:0]
+  sendCmdByte(ILI9341_PWCTR2,   0x10);             // Power control SAP[2:0];BT[3:0]
   sendCmdData(ILI9341_VCOMCTR1, (uint8_t*)"\x31\x3c", 2);       // VCM control 1
-  sendCmdData(ILI9341_VCOMCTR2, 0xC0);             // VCM control 2
+  sendCmdByte(ILI9341_VCOMCTR2, 0xC0);             // VCM control 2
   if (ILI9341_VERSION < 3) {  // < v1.2
-    sendCmdData(ILI9341_MADCTL,   0x48);             // Memory Access Control
+    sendCmdByte(ILI9341_MADCTL,   0x48);             // Memory Access Control
   }
-  sendCmdData(ILI9341_VSCRSADD, 0x00);             // Vertical scroll zero
+  sendCmdByte(ILI9341_VSCRSADD, 0x00);             // Vertical scroll zero
 #ifdef COLOR_565
-  sendCmdData(ILI9341_PIXFMT,   0x55);
+  sendCmdByte(ILI9341_PIXFMT,   0x55);
 #else
-  sendCmdData(ILI9341_PIXFMT,   0x66);
+  sendCmdByte(ILI9341_PIXFMT,   0x66);
 #endif
   sendCmdData(ILI9341_FRMCTR1, (uint8_t*)"\x00\x18", 2);
   sendCmdData(ILI9341_DFUNCTR, (uint8_t*)"\x08\x82\x27", 3);  // Display Function Control
-  sendCmdData(ILI9341_ENABLE3G, 0x00);             // 3Gamma Function Disable   // retired in v.1.02
-  sendCmdData(ILI9341_GAMMASET, 0x01);             // Gamma curve selected
+  sendCmdByte(ILI9341_ENABLE3G, 0x00);             // 3Gamma Function Disable   // retired in v.1.02
+  sendCmdByte(ILI9341_GAMMASET, 0x01);             // Gamma curve selected
   if (ILI9341_VERSION < 3) {  // < v1.2
                                          //"\x0F\x31\x2B\x0C\x0E\x08\x4E\xF1\x37\x07\x10\x03\x0E\x09\x00" // original
     sendCmdData(ILI9341_GMCTRP1, (uint8_t*)"\x0F\x31\x2B\x0C\x0E\x08\x4E\x21\x26\x07\x10\x03\x0E\x09\x00", 15);  // positive gamma correction
@@ -282,7 +295,8 @@ void TSD_ILI9341::displayOn()
     @param   m  The index for rotation, from 0-3 inclusive
 */
 /**************************************************************************/
-void TSD_ILI9341::setRotation(const int8_t rotation) {
+void TSD_ILI9341::setRotation(const int8_t rotation)
+{
   uint8_t m = 0;
   uint8_t g = 0; // v1.3
   switch (rotation % 4) { // can't be higher than 3
@@ -309,10 +323,10 @@ void TSD_ILI9341::setRotation(const int8_t rotation) {
   }
   beginTransaction(SETUP_SPEED);
   if (ILI9341_VERSION < 3) { // < v1.2
-    sendCmdData(ILI9341_MADCTL, m);
+    sendCmdByte(ILI9341_MADCTL, m);
   }
   else {
-    sendCmdData(ILI9341_MADCTL13, g);
+    sendCmdByte(ILI9341_MADCTL13, g);
   }
   endTransaction();
 }
@@ -337,11 +351,12 @@ void TSD_ILI9341::invertDisplay(bool invert)
 */
 /**************************************************************************/
 void TSD_ILI9341::scrollTo(int16_t y) {
-  uint8_t data[2];
-  data[0] = y >> 8;
-  data[1] = y & 0xff;
   beginTransaction(SETUP_SPEED);
-  sendCmdData(ILI9341_VSCRSADD, (uint8_t*)data, 2);
+  sendCmd(ILI9341_VSCRSADD);
+  startSending();
+  send(y >> 8);
+  send(y & 0xff);
+  endSending();
   endTransaction();
 }
 
@@ -356,15 +371,16 @@ void TSD_ILI9341::setScrollMargins(int16_t top, int16_t bottom) {
   // TFA+VSA+BFA must equal 320
   if (top + bottom <= getHEIGHT()) {
     uint16_t middle = getHEIGHT() - (top + bottom);
-    uint8_t data[6];
-    data[0] = top >> 8;
-    data[1] = top & 0xff;
-    data[2] = middle >> 8;
-    data[3] = middle & 0xff;
-    data[4] = bottom >> 8;
-    data[5] = bottom & 0xff;
     beginTransaction(SETUP_SPEED);
-    sendCmdData(ILI9341_VSCRDEF, (uint8_t*)data, 6);
+    sendCmd(ILI9341_VSCRDEF);
+    startSending();
+    send(top >> 8);
+    send(top & 0xff);
+    send(middle >> 8);
+    send(middle & 0xff);
+    send(bottom >> 8);
+    send(bottom & 0xff);
+    endSending();
     endTransaction();
   }
 }
@@ -380,54 +396,79 @@ void TSD_ILI9341::setScrollMargins(int16_t top, int16_t bottom) {
     @param   h   Height of rectangle
 */
 /**************************************************************************/
-void TSD_ILI9341::setAddrWindow(int16_t x1, int16_t y1, int16_t w, int16_t h) {
-  static int16_t old_x1 = 0x7fff, old_x2 = 0x7fff;
-  static int16_t old_y1 = 0x7fff, old_y2 = 0x7fff;
-
-  #define SWAP16(x) (x >> 8 | x << 8)
-
-  int16_t x2 = (x1 + w - 1), y2 = (y1 + h - 1);
-  if (x1 != old_x1 || x2 != old_x2) {
-    sendCmd(ILI9341_CASET); // Column address set
-    uint16_t buf[2];
-    buf[0] = SWAP16(x1);
-    buf[1] = SWAP16(x2);
-    sendData((const uint8_t*)buf, sizeof(buf));
-    old_x1 = x1;
-    old_x2 = x2;
-  }
-  if (y1 != old_y1 || y2 != old_y2) {
-    sendCmd(ILI9341_PASET); // Row address set
-    uint16_t buf[2];
-    buf[0] = SWAP16(y1);
-    buf[1] = SWAP16(y2);
-    sendData((const uint8_t*)buf, sizeof(buf));
-    old_y1 = y1;
-    old_y2 = y2;
-  }
-  sendCmd(ILI9341_RAMWR); // Write to RAM
+void TSD_ILI9341::setAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
+{
+  beginTransaction(SETUP_SPEED);
+  writeAddrWindow(x, y, w, h);
+  endTransaction();
 }
 
-void TSD_ILI9341::writeColor(int16_t w, int16_t h, const rgb_t color)
+void TSD_ILI9341::sendCmd2x16(const uint8_t cmd, const int16_t i1, const int16_t i2)
+{
+  sendCmd(cmd);
+  startSending();
+  send(i1 >> 8);
+  send(i1 & 0xFF);
+  send(i2 >> 8);
+  send(i2 & 0xFF);
+  endSending();
+}
+
+void TSD_ILI9341::writeAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
+{
+  sendCmd2x16(ILI9341_CASET, x, x + w - 1);
+  sendCmd2x16(ILI9341_PASET, y, y + h - 1);
+  sendCmd(ILI9341_RAMWR);
+}
+
+void TSD_ILI9341::readAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
+{
+  sendCmd2x16(ILI9341_CASET, x, x + w - 1);
+  sendCmd2x16(ILI9341_PASET, y, y + h - 1);
+  sendCmd(ILI9341_RAMRD);
+}
+
+rgb_t TSD_ILI9341::readPixel(clip_t* clip, int16_t x, int16_t y)
+{
+  if (x >= clip->x1 && y >= clip->y1 && x < clip->x2 && y < clip->y2) {
+    beginTransaction(TFT_SPI_READ_SPEED);
+    readAddrWindow(x, y, 1, 1);
+    transfer(0);  // the first is thorough
+    // Read the 3 RGB bytes, color is in the top 6 bits of each byte
+    uint8_t r = transfer(0);
+    uint8_t g = transfer(0);
+    uint8_t b = transfer(0);
+    endTransaction();
+    return RGB(r,g,b);
+  }
+  return 0;
+}
+
+void TSD_ILI9341::writeColor(const int16_t w, const int16_t h, const rgb_t color)
 {
   uint8_t buf[8];
   mdt_color(buf, color, 1);
-  startWriteData();
+  startSending();
   for (int j = 0; j < h; ++j) {
     for (int i = 0; i < w; ++i) {
       for (int k = 0; k < MDT_SIZE; ++k) {
-        pushByte(buf[k]);
+        send(buf[k]);
       }
     }
   }
-  endWriteData();
+  endSending();
+}
+
+void TSD_ILI9341::writePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
+{
+  writeAddrWindow(x, y, w, h);
+  writeColor(w, h, color);
 }
 
 void TSD_ILI9341::writePixel(clip_t* clip, int16_t x, int16_t y, const rgb_t color)
 {
   if (x >= clip->x1 && y >= clip->y1 && x < clip->x2 && y < clip->y2) {
-    setAddrWindow(x, y, 1, 1);
-    writeColor(1, 1, color);
+    writePixels(x, y, 1, 1, color);
   }
 }
 
@@ -441,8 +482,7 @@ void TSD_ILI9341::writeFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, 
     w = clip->x2 - x;
   }
   if (y >= clip->y1 && y < clip->y2 && w > 0) {
-    setAddrWindow(x, y, w, 1);
-    writeColor(w, 1, color);
+    writePixels(x, y, w, 1, color);
   }
 }
 
@@ -456,8 +496,7 @@ void TSD_ILI9341::writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, 
     h = clip->y2 - y;
   }
   if (x >= clip->x1 && x < clip->x2 && h > 0) {
-    setAddrWindow(x, y, 1, h);
-    writeColor(1, h, color);
+    writePixels(x, y, 1, h, color);
   }
 }
 
@@ -478,8 +517,7 @@ void TSD_ILI9341::writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, i
     h = clip->y2 - y;
   }
   if (w > 0 && h > 0) {
-    setAddrWindow(x, y, w, h);
-    writeColor(w, h, color);
+    writePixels(x, y, w, h, color);
   }
 }
 
@@ -516,8 +554,8 @@ void TSD_ILI9341::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_
   int16_t r2, g2, b2;
   RGB14fromColor(z->color2, r2, g2, b2);
   if (z->deg == 2) {
-    setAddrWindow(x, y, w, h);
-    startWriteData();
+    writeAddrWindow(x, y, w, h);
+    startSending();
   }
   int16_t r = r1;
   int16_t g = g1;
@@ -532,20 +570,20 @@ void TSD_ILI9341::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_
   for (int j = 0; j < h; ++j) {
 
     if (z->deg == 4) {
-      setAddrWindow(x, y + h - 1 - j, w, 1);
-      startWriteData();
+      writeAddrWindow(x, y + h - 1 - j, w, 1);
+      startSending();
     }
 
     uint8_t buf[8];
     mdt_color(buf, RGB14toColor(r, g, b), 1);
     for (int i = 0; i < w; ++i) {
       for (int k = 0; k < MDT_SIZE; ++k) {
-        pushByte(buf[k]);
+        send(buf[k]);
       }
     }
 
     if (z->deg == 4) {
-      endWriteData();
+      endSending();
     }
 
     int adj = prc - 50;
@@ -571,7 +609,7 @@ void TSD_ILI9341::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_
       q = 0;
   }
   if (z->deg == 2) {
-    endWriteData();
+    endSending();
   }
 }
 
@@ -581,8 +619,8 @@ void TSD_ILI9341::writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_
   RGB14fromColor(z->color1, r1, g1, b1);
   int16_t r2, g2, b2;
   RGB14fromColor(z->color2, r2, g2, b2);
-  setAddrWindow(x, y, w, h);
-  startWriteData();
+  writeAddrWindow(x, y, w, h);
+  startSending();
   int8_t prc = z->percent;
   if (prc < 0) {
     prc = 0;
@@ -608,7 +646,7 @@ void TSD_ILI9341::writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_
           tmp[(w - 1 - i) * MDT_SIZE + k] = buf[k];
         }
         else {
-          pushByte(buf[k]);
+          send(buf[k]);
         }
       }
       int adj = prc - 50;
@@ -635,7 +673,7 @@ void TSD_ILI9341::writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_
     }
     if (z->deg == 3) {
       for (int k = 0; k < w * MDT_SIZE; ++k) {
-        pushByte(tmp[k]);
+        send(tmp[k]);
       }
     }
   }
@@ -644,7 +682,7 @@ void TSD_ILI9341::writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_
     free(tmp);
   }
 
-  endWriteData();
+  endSending();
 }
 
 void TSD_ILI9341::writeFillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)

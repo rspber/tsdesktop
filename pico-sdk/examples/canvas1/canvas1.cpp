@@ -54,7 +54,7 @@ void setup()   {
   canvas.setBackground(YELLOW);
   gradient_t g1{GNT_LR, RED, 100, BLUE};
   hrect = canvas.fillRectGradient(0, 0, 100, 220, &g1);
-  gradient_t g2{GNT_TB, CYAN, 30, BLACK};
+  gradient_t g2{GNT_TB, CYAN, 70, GREEN};
   canvas.fillRectGradient(110, 0, 300, 100, &g2);
 
   line = canvas.line(0, 0, 100, 100, BLACK, 3);
@@ -89,10 +89,10 @@ void setup()   {
 
 void loop() {
 
-  point_t p;
-  if (touch.getTouch(&p)) {
-    /*Container* b =*/ desktop.pressed(p.x, p.y);
-  }
+//  point_t p;
+//  if (touch.getTouch(&p)) {
+//    /*Container* b =*/ desktop.pressed(p.x, p.y);
+//  }
   line->hide();
   hrect->draw();
   c0->draw();
@@ -105,7 +105,7 @@ void loop() {
   }
   desktop.draw();
 
-  delay(50);
+//  delay(50);
 
   pin13state = 1 - pin13state;
   digitalWrite(LED_PIN, pin13state);

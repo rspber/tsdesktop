@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <Picoino.h>
+#include <TFT_SPI.h>
 
 #define Z_THRESHOLD 350 // Touch pressure threshold for validating touches
 
@@ -20,7 +20,7 @@ public:
   void setRotation(uint8_t n) { rotation = n % 4; }
   int8_t getRotation() { return rotation; }
 
-  bool begin(PicoSPI* spi, const int16_t tirq = -1);
+  bool begin(TFT_SPI* aspi, const int16_t atirq = -1);
 
   // Get raw x,y ADC values from touch controller
   bool getTouchRaw(int16_t* x, int16_t* y);
@@ -39,8 +39,8 @@ private:
   bool validTouch(int16_t* x, int16_t* y, uint16_t threshold = Z_THRESHOLD);
 
 private:
-  PicoSPI* _spi;
-  int16_t _tirq;
+  TFT_SPI* spi;
+  int16_t tirq;
   int _pressTime;
   int8_t rotation = 1;
 };

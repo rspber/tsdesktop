@@ -9,6 +9,7 @@
 #include "Display.h"
 #include "Touch.h"
 #include "Wire.h"
+#include "RP2040_TFT_SPI.h"
 
 void init_hardware()
 {
@@ -34,12 +35,14 @@ void init_i2c1()
   Wire1.setClock(I2C1_SPEED);
 }
 
+RP2040_TFT_SPI displaySPI(TFT_CS, SPI0_DC, TFT_SPI_WRITE_SPEED);
+
 void media_begin(int8_t rotation)
 {
   if (ILI9341_VERSION < 3) {     // < v1.2
     rotation = rotation & 1 ? rotation : (rotation + 2) % 4;
   }
-  display.begin(TFT_SPI_SPEED);
+  display.begin(&displaySPI, TFT_RST);
   display.setRotation(rotation);
 //  display.invertDisplay(true);    // invert display colors  WHITE <-> BLACK
 
