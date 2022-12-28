@@ -11,7 +11,7 @@
 
 * overlaid objects
 
-  GFXButton objects can 'flow' over others thanks to setOverlaid property.
+  GFXButton's objects can 'flow' over others thanks to setOverlaid property.
   The method is to remember the background when drawing the object 'show' and recreate it when hiding the object 'hide'.
   There are still many problems to solve to get perfect results, but the examples of canvas1 and canvas2 show the operation for simple objects like: line, text, square.
   Objects with a redundant method of drawing pixels such as triangles, circles leave streaks on the screen.
