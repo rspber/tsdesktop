@@ -1,3 +1,9 @@
+/*
+  Wire for pico-sdk
+
+  Copyright (c) 2022, rspber (https://github.com/rspber)
+
+*/
 
 #include "Wire.h"
 
