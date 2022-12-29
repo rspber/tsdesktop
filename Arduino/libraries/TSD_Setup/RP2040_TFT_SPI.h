@@ -22,6 +22,7 @@ public:
   void spiBegin();
   void spiEnd();
 
+  void startSending();
   void send(const uint8_t b);
   void endSending();
 

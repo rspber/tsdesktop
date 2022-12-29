@@ -30,10 +30,10 @@ bool Touch::getTouch(point_t* p)
     // A point objects holds x, y, and z coordinates
     TS_Point tsp = XPT2046_Touchscreen::getPoint();
     int8_t m = getRotation();
-    if (ILI9341_VERSION < 3) {   // < v1.2
+#if ILI9341_VERSION < 3   // < v1.2
       tsp.x = 4095 - tsp.x;
       m = m & 1 ? m : (2 + m) % 4;
-    }
+#endif
     int16_t minx = 0;
     int16_t maxx = 4095;
     int16_t miny = 0;

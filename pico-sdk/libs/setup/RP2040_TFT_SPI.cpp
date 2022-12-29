@@ -7,6 +7,7 @@
 
 #include "RP2040_TFT_SPI.h"
 #include <Arduino.h>
+#include <Setup.h>
 
 void inline cs_select(const uint8_t CS, const uint8_t mode)
 {
@@ -62,6 +63,14 @@ void RP2040_TFT_SPI::spiBegin()
 void RP2040_TFT_SPI::spiEnd()
 {
   cs(1);
+}
+
+void RP2040_TFT_SPI::startSending()
+{
+#if ILI9341_VERSION > 0
+  cs(1);
+  cs(0);
+#endif
 }
 
 void RP2040_TFT_SPI::send(const uint8_t b)

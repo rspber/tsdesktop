@@ -33,9 +33,15 @@ public:
     cs(1);
   }
 
-  virtual void startSending() {}
-  virtual void send(const uint8_t b) {}
-  virtual void endSending() {}
+  virtual void startSending()
+  {
+  }
+
+  virtual void send(const uint8_t b) = 0;
+
+  virtual void endSending()
+  {
+  }
 
   virtual void sendData(const uint8_t data)
   {
@@ -74,7 +80,15 @@ public:
     sendData(data);
   }
 
-  virtual const uint8_t transfer(const uint8_t cmd) { return 0; };
-  virtual const uint16_t transfer16(const uint8_t cmd) { return 0; }
+  virtual void startTransferring()
+  {
+  }
+
+  virtual const uint8_t transfer(const uint8_t cmd) = 0;
+  virtual const uint16_t transfer16(const uint8_t cmd) = 0;
+
+  virtual void endTransferring()
+  {
+  }
 
 };

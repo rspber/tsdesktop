@@ -8,6 +8,7 @@
 #include "RP2040_TFT_SPI.h"
 #include "Arduino.h"
 #include "hardware/spi.h"
+#include "Setup.h"
 
 RP2040_TFT_SPI::RP2040_TFT_SPI(const int16_t aCS, const int16_t aDC, const uint Hz, SPIClass* aspi)
   : TFT_SPI()
@@ -62,6 +63,14 @@ void RP2040_TFT_SPI::spiEnd()
 {
   _spi->endTransaction();
   cs(1);
+}
+
+void RP2040_TFT_SPI::startSending()
+{
+#if ILI9341_VERSION > 0
+  cs(1);
+  cs(0);
+#endif
 }
 
 void RP2040_TFT_SPI::send(const uint8_t b)

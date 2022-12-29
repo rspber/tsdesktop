@@ -23,10 +23,10 @@ bool Touch::getTouch(point_t* p)
   int16_t tx, ty;
   if (TSD_XPT2046::getTouch(&tx, &ty)) {
     int8_t m = getRotation();
-    if (ILI9341_VERSION < 3) {   // < v1.2
+#if ILI9341_VERSION < 3   // < v1.2
       tx = 4095 - tx;
       m = m & 1 ? m : (2 + m) % 4;
-    }
+#endif
     int16_t minx = 0;
     int16_t maxx = 4095;
     int16_t miny = 0;
