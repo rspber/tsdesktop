@@ -553,7 +553,7 @@ void TSD_GFX::drawGrayscaleBitmap(clip_t* clip, int16_t x, int16_t y, const uint
   startWrite();
   for (int16_t j = 0; j < h; j++, y++) {
     for (int16_t i = 0; i < w; i++) {
-      writePixel(clip, x + i, y, bitmap[j * w + i]);
+      writePixel(clip, x + i, y, bitmap[j * w + i] ? WHITE : BLACK);
     }
   }
   endWrite();
@@ -571,7 +571,7 @@ void TSD_GFX::drawGrayscaleBitmap(clip_t* clip, int16_t x, int16_t y, const uint
       else
         b = mask[j * bw + i / 8];
       if (b & 0x80) {
-        writePixel(clip, x + i, y, bitmap[j * w + i]);
+        writePixel(clip, x + i, y, bitmap[j * w + i] ? WHITE : BLACK);
       }
     }
   }
@@ -583,7 +583,7 @@ void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bit
   startWrite();
   for (int16_t j = 0; j < h; j++, y++) {
     for (int16_t i = 0; i < w; i++) {
-      writePixel(clip, x + i, y, bitmap[j * w + i]);
+      writePixel(clip, x + i, y, bitmap[j * w + i] | 0xFF000000);
     }
   }
   endWrite();
@@ -601,7 +601,7 @@ void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bit
       else
         b = mask[j * bw + i / 8];
       if (b & 0x80) {
-        writePixel(clip, x + i, y, bitmap[j * w + i]);
+        writePixel(clip, x + i, y, bitmap[j * w + i] | 0xFF000000);
       }
     }
   }
