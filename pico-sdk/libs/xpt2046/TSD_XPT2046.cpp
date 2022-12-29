@@ -66,8 +66,10 @@ either expressed or implied, of the FreeBSD Project.
 
 #define beginTransaction() spi->spiBegin()
 #define endTransaction() spi->spiEnd()
+#define startTransferring() spi->startTransferring()
 #define transfer(cmd) spi->transfer(cmd)
 #define transfer16(cmd) spi->transfer16(cmd)
+#define endTransferring() spi->endTransferring()
 
 bool TSD_XPT2046::begin(TFT_SPI* aspi, const int16_t atirq)
 {
@@ -93,6 +95,7 @@ bool TSD_XPT2046::getTouchRaw(int16_t* x, int16_t* y) {
   int16_t tmp;
 
   beginTransaction();
+  startTransferring();
 
   // Start YP sample request for y position, read 4 times and keep last sample
   transfer(0xd0);                    // Start new YP conversion
@@ -123,6 +126,7 @@ bool TSD_XPT2046::getTouchRaw(int16_t* x, int16_t* y) {
 
   *x = tmp;
 
+  endTransferring();
   endTransaction();
 
   return true;
@@ -134,6 +138,7 @@ bool TSD_XPT2046::getTouchRaw(int16_t* x, int16_t* y) {
 ***************************************************************************************/
 int16_t TSD_XPT2046::getTouchRawZ(void) {
   beginTransaction();
+  startTransferring();
 
   // Z sample request
   int16_t tz = 0xFFF;
@@ -141,6 +146,7 @@ int16_t TSD_XPT2046::getTouchRawZ(void) {
   tz += transfer16(0xc0) >> 3;  // Read Z1 and start Z2 conversion
   tz -= transfer16(0x00) >> 3;  // Read Z2
 
+  endTransferring();
   endTransaction();
 
   if (tz == 4095) tz = 0;
