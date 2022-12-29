@@ -335,7 +335,7 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, co
 
 void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, const int8_t fontSize, rgb_t color, rgb_t bg, const int8_t spacing)
 {
-  drawText(x, y, text, (const GFXfont**)NULL, color, bg, spacing);
+  drawText(x, y, text, (const GFXfont**)NULL, fontSize, color, bg, spacing);
 }
 
 // unicode
@@ -373,5 +373,5 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const uint16_t* utex
 
 void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const uint16_t* utext, const int8_t fontSize, rgb_t color, rgb_t bg, const int8_t spacing)
 {
-  drawText(x, y, utext, (const GFXfont**)NULL, color, bg, spacing);
+  drawText(x, y, utext, (const GFXfont**)NULL, fontSize, color, bg, spacing);
 }
