@@ -15,7 +15,7 @@ typedef uint32_t rgb_t;
 #define RGB565(R,G,B) (((R >> 3) << 11) | ((G >> 2) << 5) | (B >> 3))
 inline rgb_t rgb(const uint16_t color)
 {
-  return (rgb_t)(0xFF000000 | ((color & 0xF800) << 8) | ((color & 0x07E0) << 5) | (color & 0x1F));
+  return (rgb_t)(0xFF000000 | ((uint32_t)(color & 0xF800) << 8) | ((color & 0x07E0) << 5) | (color & 0x1F));
 }
 
 #ifdef COLOR_565
