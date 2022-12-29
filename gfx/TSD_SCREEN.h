@@ -92,8 +92,10 @@ public:
   void drawBitmap(int16_t x, int16_t y, const uint8_t* bitmap, int16_t w, int16_t h, rgb_t color, rgb_t bg);
   void drawGrayscaleBitmap(int16_t x, int16_t y, const uint8_t* bitmap, int16_t w, int16_t h);
   void drawGrayscaleBitmap(int16_t x, int16_t y, const uint8_t* bitmap, const uint8_t* mask, int16_t w, int16_t h);
-  void drawRGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, int16_t w, int16_t h);
-  void drawRGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, const uint8_t *mask, int16_t w, int16_t h);
+  void drawRGBBitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h); // 565 color
+  void drawRGBBitmap(int16_t x, int16_t y, const uint16_t* bitmap, const uint8_t *mask, int16_t w, int16_t h); // 565 color
+  void drawRGBBitmap(int16_t x, int16_t y, const uint32_t* bitmap, int16_t w, int16_t h); // 666 color
+  void drawRGBBitmap(int16_t x, int16_t y, const uint32_t* bitmap, const uint8_t *mask, int16_t w, int16_t h); // 666 color
 
   // utf-8
   void drawChar(cursor_t* cursor, font_t* font, const char* c, rgb_t color, rgb_t bg);

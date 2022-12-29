@@ -578,7 +578,37 @@ void TSD_GFX::drawGrayscaleBitmap(clip_t* clip, int16_t x, int16_t y, const uint
   endWrite();
 }
 
-void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bitmap, int16_t w, int16_t h)
+void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h)
+{
+  startWrite();
+  for (int16_t j = 0; j < h; j++, y++) {
+    for (int16_t i = 0; i < w; i++) {
+      writePixel(clip, x + i, y, rgb(bitmap[j * w + i]));
+    }
+  }
+  endWrite();
+}
+
+void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const uint16_t* bitmap, const uint8_t* mask, int16_t w, int16_t h)
+{
+  int16_t bw = (w + 7) / 8; // Bitmask scanline pad = whole byte
+  uint8_t b = 0;
+  startWrite();
+  for (int16_t j = 0; j < h; j++, y++) {
+    for (int16_t i = 0; i < w; i++) {
+      if (i & 7)
+        b <<= 1;
+      else
+        b = mask[j * bw + i / 8];
+      if (b & 0x80) {
+        writePixel(clip, x + i, y, rgb(bitmap[j * w + i]));
+      }
+    }
+  }
+  endWrite();
+}
+
+void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const uint32_t* bitmap, int16_t w, int16_t h)
 {
   startWrite();
   for (int16_t j = 0; j < h; j++, y++) {
@@ -589,7 +619,7 @@ void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bit
   endWrite();
 }
 
-void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bitmap, const uint8_t* mask, int16_t w, int16_t h)
+void TSD_GFX::drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const uint32_t* bitmap, const uint8_t* mask, int16_t w, int16_t h)
 {
   int16_t bw = (w + 7) / 8; // Bitmask scanline pad = whole byte
   uint8_t b = 0;

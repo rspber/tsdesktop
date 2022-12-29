@@ -13,6 +13,10 @@
 typedef uint32_t rgb_t;
 #define RGB(R,G,B)  (0xFF000000 | (((uint32_t)(R) << 16)) | ((uint16_t)(G) << 8) | (B))
 #define RGB565(R,G,B) (((R >> 3) << 11) | ((G >> 2) << 5) | (B >> 3))
+inline rgb_t rgb(const uint16_t color)
+{
+  return (rgb_t)(0xFF000000 | ((color & 0xF800) << 8) | ((color & 0x07E0) << 5) | (color & 0x1F));
+}
 
 #ifdef COLOR_565
   #define MDT_SIZE 2

@@ -151,12 +151,22 @@ GFXGrayscaleBitmap* GFXButton::grayscaleBitmap(int16_t x, int16_t y, const uint8
   return (GFXGrayscaleBitmap*)add(new GFXGrayscaleBitmap(this, x, y, bitmap, mask, w, h));
 }
 
-GFXRGBBitmap* GFXButton::RGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, int16_t w, int16_t h)
+GFX565Bitmap* GFXButton::bitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h)
+{
+  return (GFX565Bitmap*)add(new GFX565Bitmap(this, x, y, bitmap, w, h));
+}
+
+GFX565Bitmap* GFXButton::bitmap(int16_t x, int16_t y, const uint16_t* bitmap, const uint8_t *mask, int16_t w, int16_t h)
+{
+  return (GFX565Bitmap*)add(new GFX565Bitmap(this, x, y, bitmap, mask, w, h));
+}
+
+GFXRGBBitmap* GFXButton::bitmap(int16_t x, int16_t y, const uint32_t* bitmap, int16_t w, int16_t h)
 {
   return (GFXRGBBitmap*)add(new GFXRGBBitmap(this, x, y, bitmap, w, h));
 }
 
-GFXRGBBitmap* GFXButton::RGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, const uint8_t *mask, int16_t w, int16_t h)
+GFXRGBBitmap* GFXButton::bitmap(int16_t x, int16_t y, const uint32_t* bitmap, const uint8_t *mask, int16_t w, int16_t h)
 {
   return (GFXRGBBitmap*)add(new GFXRGBBitmap(this, x, y, bitmap, mask, w, h));
 }

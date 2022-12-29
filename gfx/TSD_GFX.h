@@ -75,8 +75,10 @@ public:
   void drawBitmap(clip_t* clip, int16_t x, int16_t y, const uint8_t* bitmap, int16_t w, int16_t h, rgb_t color, rgb_t bg);
   void drawGrayscaleBitmap(clip_t* clip, int16_t x, int16_t y, const uint8_t* bitmap, int16_t w, int16_t h);
   void drawGrayscaleBitmap(clip_t* clip, int16_t x, int16_t y, const uint8_t* bitmap, const uint8_t* mask, int16_t w, int16_t h);
-  void drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bitmap, int16_t w, int16_t h);
-  void drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const rgb_t* bitmap, const uint8_t *mask, int16_t w, int16_t h);
+  void drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h);   // 565 color
+  void drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const uint16_t* bitmap, const uint8_t *mask, int16_t w, int16_t h); // 565 color
+  void drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const uint32_t* bitmap, int16_t w, int16_t h);   // 666 color
+  void drawRGBBitmap(clip_t* clip, int16_t x, int16_t y, const uint32_t* bitmap, const uint8_t *mask, int16_t w, int16_t h); // 666 color
 
   // utf-8
   void writeChar(clip_t* clip, cursor_t* cursor, font_t* font, char** c, rgb_t color, rgb_t bg, const int8_t spacing);

@@ -389,14 +389,40 @@ protected:
 };
 
 
+/// @GFX565Bitmap
+
+class GFX565Bitmap : public GFXBitmapXY {
+public:
+  GFX565Bitmap(Button* parent, int16_t x1, int16_t y1, const uint16_t* abitmap, const uint8_t* amask, int16_t w, int16_t h)
+   : GFXBitmapXY(parent, x1, y1, w, h), bitmap(abitmap), mask(amask) {}
+
+  GFX565Bitmap(Button* parent, int16_t x1, int16_t y1, const uint16_t* bitmap, int16_t w, int16_t h)
+   : GFX565Bitmap(parent, x1, y1, bitmap, NULL, w, h) {}
+
+  virtual void dodraw(clip_t* clip, int16_t x, int16_t y)
+  {
+    if (mask) {
+      display.drawRGBBitmap(clip, x + x1, y + y1, bitmap, mask, w, h);
+    }
+    else {
+      display.drawRGBBitmap(clip, x + x1, y + y1, bitmap, w, h);
+    }
+  }
+
+protected:
+  const uint16_t* bitmap;
+  const uint8_t* mask;
+};
+
+
 /// @GFXRGBBitmap
 
 class GFXRGBBitmap : public GFXBitmapXY {
 public:
-  GFXRGBBitmap(Button* parent, int16_t x1, int16_t y1, const rgb_t* abitmap, const uint8_t* amask, int16_t w, int16_t h)
+  GFXRGBBitmap(Button* parent, int16_t x1, int16_t y1, const uint32_t* abitmap, const uint8_t* amask, int16_t w, int16_t h)
    : GFXBitmapXY(parent, x1, y1, w, h), bitmap(abitmap), mask(amask) {}
 
-  GFXRGBBitmap(Button* parent, int16_t x1, int16_t y1, const rgb_t* bitmap, int16_t w, int16_t h)
+  GFXRGBBitmap(Button* parent, int16_t x1, int16_t y1, const uint32_t* bitmap, int16_t w, int16_t h)
    : GFXRGBBitmap(parent, x1, y1, bitmap, NULL, w, h) {}
 
   virtual void dodraw(clip_t* clip, int16_t x, int16_t y)
@@ -410,7 +436,7 @@ public:
   }
 
 protected:
-  const rgb_t* bitmap;
+  const uint32_t* bitmap;
   const uint8_t* mask;
 };
 

@@ -22,9 +22,14 @@ rgb_t GFXObject::getOver()
       over.size = over.size * MDT_SIZE;
       over.buf = (uint8_t*)malloc(over.size);
     }
+    over.len = 0;
+    return (rgb_t)&over;
   }
-  over.len = 0;
-  return (rgb_t)&over;
+  if (over.mode == 2) {
+    over.len = 0;
+    return (rgb_t)&over;
+  }
+  return over.color;
 }
 
 void GFXObject::doDraw()

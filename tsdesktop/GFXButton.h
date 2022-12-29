@@ -51,8 +51,10 @@ public:
   GFXBitmap* bitmap(int16_t x, int16_t y, const uint8_t* bitmap, int16_t w, int16_t h, rgb_t color, rgb_t bg);
   GFXGrayscaleBitmap* grayscaleBitmap(int16_t x, int16_t y, const uint8_t* bitmap, int16_t w, int16_t h);
   GFXGrayscaleBitmap* grayscaleBitmap(int16_t x, int16_t y, const uint8_t* bitmap, const uint8_t* mask, int16_t w, int16_t h);
-  GFXRGBBitmap* RGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, int16_t w, int16_t h);
-  GFXRGBBitmap* RGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, const uint8_t *mask, int16_t w, int16_t h);
+  GFX565Bitmap* bitmap(int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h); // 565 color
+  GFX565Bitmap* bitmap(int16_t x, int16_t y, const uint16_t* bitmap, const uint8_t *mask, int16_t w, int16_t h);  // 565 color
+  GFXRGBBitmap* bitmap(int16_t x, int16_t y, const uint32_t* bitmap, int16_t w, int16_t h); // 666 color
+  GFXRGBBitmap* bitmap(int16_t x, int16_t y, const uint32_t* bitmap, const uint8_t *mask, int16_t w, int16_t h); // 666 color
 
   GFXChar* character(int16_t x1, int16_t y1, const char* c, rgb_t color = WHITE, rgb_t bg = BLACK);
   GFXTextLine* textLine(int16_t x1, int16_t y1, const char* text, rgb_t color = WHITE, rgb_t bg = BLACK);
