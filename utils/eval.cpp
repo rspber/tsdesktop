@@ -91,7 +91,7 @@ int eval_t::number(int64_t* e,  int8_t* dec)
     p += *dec;
   }
   *p = 0;
-  *e = atol(buf);
+  *e = strtoll(buf, NULL, 10);
   return -1;
 }
 
