@@ -19,6 +19,8 @@ public:
 
   void begin(TFT_SPI* aspi, const int16_t aRST = -1);
 
+  void readRegister(uint8_t* buf, const uint8_t reg, int8_t len);
+
   void setRotation(const int8_t rotation);
   void invertDisplay(bool invert);
 
