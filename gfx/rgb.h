@@ -1,5 +1,5 @@
 /*
-  Pixel's buffer for TSD_ILI9341
+  Pixel's buffer
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
