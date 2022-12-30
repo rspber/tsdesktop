@@ -1,9 +1,9 @@
 /*
-  ILI9341 driver for TSDesktop
+  TFT abstract driver
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
-  More information in TSD_ILI9341.cpp
+  More information in TFT_Driver.cpp
 
 */
 
@@ -12,28 +12,28 @@
 #include <TSD_SCREEN.h>
 #include <TFT_SPI.h>
 
-class TSD_ILI9341 : public TSD_SCREEN {
+class TFT_Driver : public TSD_SCREEN {
 public:
-  TSD_ILI9341(const int16_t w, const int16_t h)
+  TFT_Driver(const int16_t w, const int16_t h)
    : TSD_SCREEN(w, h) {}
 
-  void begin(TFT_SPI* aspi, const int16_t aRST = -1);
+  virtual void begin(TFT_SPI* aspi, const int16_t aRST = -1) = 0;
+  virtual void setRotation(const int8_t rotation) = 0;
 
-  void readRegister(uint8_t* buf, const uint8_t reg, int8_t len);
+  virtual void readRegister(uint8_t* buf, const uint8_t reg, int8_t len);
 
-  void setRotation(const int8_t rotation);
-  void invertDisplay(bool invert);
+  virtual void invertDisplay(bool invert);
 
-  void hardReset();
-  void reset();
+  virtual void hardReset();
+  virtual void reset();
 
-  void scrollTo(int16_t y);
-  void setScrollMargins(int16_t top, int16_t bottom);
+  virtual void scrollTo(int16_t y);
+  virtual void setScrollMargins(int16_t top, int16_t bottom);
 
-  void setAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h);
+  virtual void setAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h);
 
-  void displayOff();
-  void displayOn();
+  virtual void displayOff();
+  virtual void displayOn();
 
   void startWrite()
   {
@@ -51,9 +51,9 @@ public:
   void writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color);
   void writeFillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
 
-  rgb_t readPixel(clip_t* clip, int16_t x, int16_t y);
+  virtual rgb_t readPixel(clip_t* clip, int16_t x, int16_t y);
 
-private:
+protected:
   void sendCmd2x16(const uint8_t cmd, const int16_t i1, const int16_t i2);
 
   void writeAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h);
@@ -64,11 +64,11 @@ private:
 
   void writeColor(const int16_t w, const int16_t h, const rgb_t color);
 
-private:
+protected:
   void writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
   void writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
 
-private:
+protected:
   TFT_SPI* spi;
   int16_t RST;
 };

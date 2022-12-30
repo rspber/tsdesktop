@@ -111,9 +111,11 @@
 
 3. `download` or `git clone` this repository
 
-4. Copy Arduino/libraries to Arduino's libraries, pay attention on TSDesktop, TSD_GFX, TSD_TFT and TSD_Utils folders and dependenciens:
+4. Copy Arduino/libraries to Arduino's libraries, pay attention on
+    TSDesktop, TSD_GFX, TSD_TFT, TSD_Drivers and TSD_Utils folders
+  * and dependenciens:
 
-  * https://github.com/PaulStoffregen/XPT2046_Touchscreen
+    https://github.com/PaulStoffregen/XPT2046_Touchscreen
 
 5. Copy Arduino/examples to Arduino's Sketchbook directory
 

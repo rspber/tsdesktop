@@ -1,5 +1,5 @@
 /*
-  ILI9341 driver for TSDesktop
+  TFT abstract driver
 
   Copyright (c) 2022, rspber (https://github.com/rspber)
 
@@ -7,7 +7,7 @@
 
 differences:
 - Adafruit_SPITFT is missed, all spi functions are abstract
-- added support for ILI9341 devices v1.3
+- this is a ILIxxxx abstract driver
 
 2. chapter 2 further
 
@@ -83,12 +83,9 @@ Original license below.
   MIT license, all text above must be included in any redistribution
  ****************************************************/
 
-#include "ILI9341_Regs.h"
-#include "TSD_ILI9341.h"
-
+#include "TFT_Commands.h"
+#include "TFT_Driver.h"
 #include <Setup.h>
-
-#define BGR 1
 
 #define SETUP_SPEED 2 * 1000 * 1000   // 2 MHz
 
@@ -105,7 +102,7 @@ Original license below.
 #define transfer(cmd) spi->transfer(cmd)
 #define endTransferring() spi->endTransferring()
 
-void TSD_ILI9341::hardReset()
+void TFT_Driver::hardReset()
 {
   if (RST >= 0) {
     digitalWrite(RST, LOW);
@@ -115,7 +112,7 @@ void TSD_ILI9341::hardReset()
   }
 }
 
-void TSD_ILI9341::reset()
+void TFT_Driver::reset()
 {
   hardReset();
   beginTransaction(SETUP_SPEED);   // slow down
@@ -124,89 +121,19 @@ void TSD_ILI9341::reset()
   sleep_ms(150);
 }
 
-void TSD_ILI9341::begin(TFT_SPI* aspi, const int16_t aRST)
-{
-  spi = aspi;
-  spi->begin();
-
-  RST = aRST;
-  if (RST >= 0) {
-    pinMode(RST, OUTPUT);
-  }
-
-  hardReset();
-
-  beginTransaction(SETUP_SPEED);
-
-  sendCmd(ILI9341_SWRESET); // Engage software reset
-  sleep_ms(150);
-
-#if ILI9341_VERSION < 3  // < v1.2
-    sendCmdData(ILI9341_EF, (uint8_t*)"\x03\x80\x02", 3);              // unknown
-    sendCmdData(ILI9341_PWCTRB, (uint8_t*)"\x00\xC1\x30", 3);      // retired in v.1.02
-    sendCmdData(ILI9341_POSC, (uint8_t*)"\x64\x03\x12\x81", 4);          // retired in v.1.02
-    sendCmdData(ILI9341_DTCA, (uint8_t*)"\x85\x00\x78", 3);          // retired in v.1.02
-    sendCmdData(ILI9341_PWCTRA, (uint8_t*)"\x39\x2C\x00\x34\x02", 5);      // retired in v.1.02
-#endif
-  sendCmdByte(ILI9341_PUMPRC,   0x20);
-
-#if ILI9341_VERSION < 3  // < v1.2
-    sendCmdData(ILI9341_DTCB, (uint8_t*)"\x00\x00", 2);          // retired in v.1.02
-#endif
-#if ILI9341_VERSION < 3  // < v1.2
-    sendCmdByte(ILI9341_PWCTR1, 0x23);             // Power control VRH[5:0]
-#else
-    sendCmdByte(ILI9341_MADCTL13, 0x21);           // xCRICxCC
-#endif
-  sendCmdByte(ILI9341_PWCTR2,   0x10);             // Power control SAP[2:0];BT[3:0]
-  sendCmdData(ILI9341_VCOMCTR1, (uint8_t*)"\x31\x3c", 2);       // VCM control 1
-  sendCmdByte(ILI9341_VCOMCTR2, 0xC0);             // VCM control 2
-#if ILI9341_VERSION < 3  // < v1.2
-    sendCmdByte(ILI9341_MADCTL,   0x48);             // Memory Access Control
-#endif
-  sendCmdByte(ILI9341_VSCRSADD, 0x00);             // Vertical scroll zero
-#ifdef COLOR_565
-  sendCmdByte(ILI9341_PIXFMT,   0x55);
-#else
-  sendCmdByte(ILI9341_PIXFMT,   0x66);
-#endif
-  sendCmdData(ILI9341_FRMCTR1, (uint8_t*)"\x00\x18", 2);
-  sendCmdData(ILI9341_DFUNCTR, (uint8_t*)"\x08\x82\x27", 3);  // Display Function Control
-  sendCmdByte(ILI9341_ENABLE3G, 0x00);             // 3Gamma Function Disable   // retired in v.1.02
-  sendCmdByte(ILI9341_GAMMASET, 0x01);             // Gamma curve selected
-#if ILI9341_VERSION < 3  // < v1.2
-                                         //"\x0F\x31\x2B\x0C\x0E\x08\x4E\xF1\x37\x07\x10\x03\x0E\x09\x00" // original
-    sendCmdData(ILI9341_GMCTRP1, (uint8_t*)"\x0F\x31\x2B\x0C\x0E\x08\x4E\x21\x26\x07\x10\x03\x0E\x09\x00", 15);  // positive gamma correction
-                                         //"\x00\x0E\x14\x03\x11\x07\x31\xC1\x48\x08\x0F\x0C\x31\x36\x0F" // original
-    sendCmdData(ILI9341_GMCTRN1, (uint8_t*)"\x00\x0E\x14\x03\x11\x07\x31\xC1\x48\x08\x0F\x0C\x31\x36\x0F", 15);  // negative gamma correction
-#else
-    sendCmdData(ILI9341_GMCTRP1, (uint8_t*)"\x0F\x31\x2B\x0C\x0E\x08\x30\xF1\x37\x07\x10\x03\x0E\x09\x00", 15);  // positive gamma correction v1.3
-    sendCmdData(ILI9341_GMCTRN1, (uint8_t*)"\x00\x0E\x14\x03\x11\x07\x11\xC1\x48\x08\x0F\x0C\x31\x36\x0F", 15);  // negative gamma correction
-#endif
-
-  sendCmd(ILI9341_SLPOUT);   // Exit Sleep
-  delay(150);
-
-  sendCmd(ILI9341_DISPON);   // Display on
-  delay(150);
-
-  endTransaction();
-}
-
-void TSD_ILI9341::displayOff()
+void TFT_Driver::displayOff()
 {
   beginTransaction(SETUP_SPEED);
   sendCmd(ILI9341_DISPOFF);
   endTransaction();
 }
 
-void TSD_ILI9341::displayOn()
+void TFT_Driver::displayOn()
 {
   beginTransaction(SETUP_SPEED);
   sendCmd(ILI9341_DISPON);
   endTransaction();
 }
-
 
 /**************************************************************************/
 /*!
@@ -217,7 +144,7 @@ void TSD_ILI9341::displayOn()
     @param    len  The number of bytes to read from register
  */
 /**************************************************************************/
-void TSD_ILI9341::readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
+void TFT_Driver::readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
 {
   beginTransaction(SETUP_SPEED);
   sendCmdByte(ILI9341_RDBYIDX, 0x10 + len);
@@ -234,68 +161,11 @@ void TSD_ILI9341::readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
 
 /**************************************************************************/
 /*!
-   @brief   Set origin of (0,0) and orientation of TFT display
-    @param   m  The index for rotation, from 0-3 inclusive
-*/
-/**************************************************************************/
-void TSD_ILI9341::setRotation(const int8_t rotation)
-{
-# if ILI9341_VERSION < 3 // < v1.2
-  uint8_t m = 0;
-  switch (rotation % 4) { // can't be higher than 3
-  case 0:
-    m = 0x40 | (BGR << 3);
-    setSize(getWIDTH(), getHEIGHT());
-    break;
-  case 1:
-    m = 0x20 | (BGR << 3);
-    setSize(getHEIGHT(), getWIDTH());
-    break;
-  case 2:
-    m = 0x80 | (BGR << 3);
-    setSize(getWIDTH(), getHEIGHT());
-    break;
-  case 3:
-    m = 0xe0 | (BGR << 3);
-    setSize(getHEIGHT(), getWIDTH());
-    break;
-  }
-  beginTransaction(SETUP_SPEED);
-    sendCmdByte(ILI9341_MADCTL, m);
-  endTransaction();
-#else
-  uint8_t g = 0; // v1.3
-  switch (rotation % 4) { // can't be higher than 3
-  case 0:
-    g = 0x01 | (BGR << 5);
-    setSize(getWIDTH(), getHEIGHT());
-    break;
-  case 1:
-    g = 0x02 | (BGR << 5);
-    setSize(getHEIGHT(), getWIDTH());
-    break;
-  case 2:
-    g = 0x08 | (BGR << 5);
-    setSize(getWIDTH(), getHEIGHT());
-    break;
-  case 3:
-    g = 0x0b | (BGR << 5);
-    setSize(getHEIGHT(), getWIDTH());
-    break;
-  }
-  beginTransaction(SETUP_SPEED);
-    sendCmdByte(ILI9341_MADCTL13, g);
-  endTransaction();
-#endif
-}
-
-/**************************************************************************/
-/*!
    @brief   Enable/Disable display color inversion
     @param   invert True to invert, False to have normal color
 */
 /**************************************************************************/
-void TSD_ILI9341::invertDisplay(bool invert)
+void TFT_Driver::invertDisplay(bool invert)
 {
   beginTransaction(SETUP_SPEED);
   sendCmd(invert ? ILI9341_INVON : ILI9341_INVOFF);
@@ -308,7 +178,7 @@ void TSD_ILI9341::invertDisplay(bool invert)
     @param   y How many pixels to scroll display by
 */
 /**************************************************************************/
-void TSD_ILI9341::scrollTo(int16_t y) {
+void TFT_Driver::scrollTo(int16_t y) {
   beginTransaction(SETUP_SPEED);
   sendCmd(ILI9341_VSCRSADD);
   startSending();
@@ -325,7 +195,7 @@ void TSD_ILI9341::scrollTo(int16_t y) {
     @param   bottom The height of the Bottom scroll margin
  */
  /**************************************************************************/
-void TSD_ILI9341::setScrollMargins(int16_t top, int16_t bottom) {
+void TFT_Driver::setScrollMargins(int16_t top, int16_t bottom) {
   // TFA+VSA+BFA must equal 320
   if (top + bottom <= getHEIGHT()) {
     uint16_t middle = getHEIGHT() - (top + bottom);
@@ -354,14 +224,14 @@ void TSD_ILI9341::setScrollMargins(int16_t top, int16_t bottom) {
     @param   h   Height of rectangle
 */
 /**************************************************************************/
-void TSD_ILI9341::setAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
+void TFT_Driver::setAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
 {
   beginTransaction(SETUP_SPEED);
   writeAddrWindow(x, y, w, h);
   endTransaction();
 }
 
-void TSD_ILI9341::sendCmd2x16(const uint8_t cmd, const int16_t i1, const int16_t i2)
+void TFT_Driver::sendCmd2x16(const uint8_t cmd, const int16_t i1, const int16_t i2)
 {
   sendCmd(cmd);
   startSending();
@@ -372,21 +242,21 @@ void TSD_ILI9341::sendCmd2x16(const uint8_t cmd, const int16_t i1, const int16_t
   endSending();
 }
 
-void TSD_ILI9341::writeAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
+void TFT_Driver::writeAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
 {
   sendCmd2x16(ILI9341_CASET, x, x + w - 1);
   sendCmd2x16(ILI9341_PASET, y, y + h - 1);
   sendCmd(ILI9341_RAMWR);
 }
 
-void TSD_ILI9341::readAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
+void TFT_Driver::readAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
 {
   sendCmd2x16(ILI9341_CASET, x, x + w - 1);
   sendCmd2x16(ILI9341_PASET, y, y + h - 1);
   sendCmd(ILI9341_RAMRD);
 }
 
-rgb_t TSD_ILI9341::readPixel(clip_t* clip, int16_t x, int16_t y)
+rgb_t TFT_Driver::readPixel(clip_t* clip, int16_t x, int16_t y)
 {
   if (x >= clip->x1 && y >= clip->y1 && x < clip->x2 && y < clip->y2) {
     beginTransaction(TFT_SPI_READ_SPEED);
@@ -404,7 +274,7 @@ rgb_t TSD_ILI9341::readPixel(clip_t* clip, int16_t x, int16_t y)
   return 0;
 }
 
-void TSD_ILI9341::storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t)
+void TFT_Driver::storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t)
 {
   endTransaction();
   beginTransaction(TFT_SPI_READ_SPEED);
@@ -436,7 +306,7 @@ void TSD_ILI9341::storePixels(const int16_t x, const int16_t y, const int16_t w,
   beginTransaction(TFT_SPI_WRITE_SPEED);
 }
 
-void TSD_ILI9341::writeColor(const int16_t w, const int16_t h, const rgb_t color)
+void TFT_Driver::writeColor(const int16_t w, const int16_t h, const rgb_t color)
 {
   uint8_t buf[8];
   mdt_color(buf, color, 1);
@@ -451,7 +321,7 @@ void TSD_ILI9341::writeColor(const int16_t w, const int16_t h, const rgb_t color
   endSending();
 }
 
-void TSD_ILI9341::writePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
+void TFT_Driver::writePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
 {
   // very dubious method to detect pointer in rgb_t type
   // in rp2040 pointers are 4 byte:
@@ -481,14 +351,14 @@ void TSD_ILI9341::writePixels(const int16_t x, const int16_t y, const int16_t w,
   }
 }
 
-void TSD_ILI9341::writePixel(clip_t* clip, int16_t x, int16_t y, const rgb_t color)
+void TFT_Driver::writePixel(clip_t* clip, int16_t x, int16_t y, const rgb_t color)
 {
   if (x >= clip->x1 && y >= clip->y1 && x < clip->x2 && y < clip->y2) {
     writePixels(x, y, 1, 1, color);
   }
 }
 
-void TSD_ILI9341::writeFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, const rgb_t color)
+void TFT_Driver::writeFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, const rgb_t color)
 {
   if (x < clip->x1) {
     w -= clip->x1 - x;
@@ -502,7 +372,7 @@ void TSD_ILI9341::writeFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, 
   }
 }
 
-void TSD_ILI9341::writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, const rgb_t color)
+void TFT_Driver::writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, const rgb_t color)
 {
   if (y < clip->y1) {
     h -= clip->y1 - y;
@@ -516,7 +386,7 @@ void TSD_ILI9341::writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, 
   }
 }
 
-void TSD_ILI9341::writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color)
+void TFT_Driver::writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color)
 {
   if (x < clip->x1) {
     w -= clip->x1 - x;
@@ -563,7 +433,7 @@ static rgb_t RGB14toColor(int16_t r, int16_t g, int16_t b)
 //#endif
 }
 
-void TSD_ILI9341::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
+void TFT_Driver::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
 {
   int16_t r1, g1, b1;
   RGB14fromColor(z->color1, r1, g1, b1);
@@ -629,7 +499,7 @@ void TSD_ILI9341::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_
   }
 }
 
-void TSD_ILI9341::writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
+void TFT_Driver::writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
 {
   int16_t r1, g1, b1;
   RGB14fromColor(z->color1, r1, g1, b1);
@@ -701,7 +571,7 @@ void TSD_ILI9341::writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_
   endSending();
 }
 
-void TSD_ILI9341::writeFillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
+void TFT_Driver::writeFillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
 {
   if (x < clip->x1) {
     w -= clip->x1 - x;

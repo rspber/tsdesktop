@@ -15,4 +15,5 @@ target_link_libraries(setup INTERFACE
   hardware_spi
   hardware_i2c
   tft
+  drivers
 )
