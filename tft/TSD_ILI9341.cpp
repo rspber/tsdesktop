@@ -224,9 +224,11 @@ void TSD_ILI9341::readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
   int i = 0;
   buf[i++] = reg;
   sendCmd(reg);
+  startTransferring();
   while (--len >= 0) {
     buf[i++] = transfer(0);
   }
+  endTransferring();
   endTransaction();
 }
 
