@@ -61,8 +61,8 @@ void RP2040_TFT_SPI::spiBegin()
 
 void RP2040_TFT_SPI::spiEnd()
 {
-  _spi->endTransaction();
   cs(1);
+  _spi->endTransaction();
 }
 
 void RP2040_TFT_SPI::startSending()
