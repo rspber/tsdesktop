@@ -33,6 +33,19 @@
 #define ILI9341_PTLAR       0x30    // Partial area
 #define ILI9341_VSCRDEF     0x33    // Vertical scrolling definition
 #define ILI9341_MADCTL      0x36    // Memory access control
+//  YXLVRH00
+//  V - vertical refresh order,
+//  R - 0:RGB, 1:BGR,
+//  H - horizontal refresh order,
+//  YXL.....
+//  000      0 <--        0x00
+//  001     90 -->        0x20
+//  010    180 -->        0x40
+//  011    270 <--        0x60
+//  100      0 -->        0x80
+//  101     90 <--        0xa0
+//  110    180 <--        0xc0
+//  111    270 -->        0xe0
 #define ILI9341_VSCRSADD    0x37    // Vertical scrolling start address
 #define ILI9341_PIXFMT      0x3A    // COLMOD: Pixel format set
 #define ILI9341_WRITE_DISPLAY_BRIGHTNESS 0x51    // Brightness hardware dependent!

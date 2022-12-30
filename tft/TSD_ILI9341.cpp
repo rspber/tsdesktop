@@ -244,19 +244,19 @@ void TSD_ILI9341::setRotation(const int8_t rotation)
   uint8_t m = 0;
   switch (rotation % 4) { // can't be higher than 3
   case 0:
-    m = 0x40 | (BGR << 3); // MX
+    m = 0x40 | (BGR << 3);
     setSize(getWIDTH(), getHEIGHT());
     break;
   case 1:
-    m = 0x20 | (BGR << 3); // MV
+    m = 0x20 | (BGR << 3);
     setSize(getHEIGHT(), getWIDTH());
     break;
   case 2:
-    m = 0x80 | (BGR << 3); // MY
+    m = 0x80 | (BGR << 3);
     setSize(getWIDTH(), getHEIGHT());
     break;
   case 3:
-    m = 0xe0 | (BGR << 3); // MX | MY | MV
+    m = 0xe0 | (BGR << 3);
     setSize(getHEIGHT(), getWIDTH());
     break;
   }
