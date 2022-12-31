@@ -7,7 +7,7 @@
 
 differences:
 - Adafruit_SPITFT is missed, all spi functions are abstract
-- this is a ILIxxxx abstract driver
+- this is the ILIxxxx abstract driver
 
 2. chapter 2 further
 
