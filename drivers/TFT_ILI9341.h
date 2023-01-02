@@ -76,7 +76,7 @@ public:
     sendCmdByte(TFT_MADCTL,   0x48);
     sendCmdByte(TFT_VSCRSADD, 0x00);
     sendCmdByte(TFT_PIXFMT, TFT_PIXFMT_VALUE);
-    sendCmdData(ILI9341_FRMCTR1, (uint8_t*)"\x00\x18", 2);
+    sendCmdData(ILI9341_FRMCTR1, (uint8_t*)"\x00\x18", 2);   // 0x18 79Hz, 0x1B default 70Hz, 0x13 100Hz
     sendCmdData(ILI9341_DFUNCTR, (uint8_t*)"\x08\x82\x27", 3);
     sendCmdByte(ILI9341_ENABLE3G, 0x00);                                 // retired in v.1.02
     sendCmdByte(ILI9341_GAMMASET, 0x01);
