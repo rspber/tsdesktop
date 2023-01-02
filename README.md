@@ -5,8 +5,6 @@
 - https://youtu.be/W1wCEIwkDYY
 - https://www.youtube.com/watch?v=2_8hvvxUR1c
 
-2.4" TFT SPI 240X320 v1.3 is supported (see Setup.h)
-
 ### News
 
 * available TFT SPI drivers:
