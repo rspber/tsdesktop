@@ -11,6 +11,7 @@
 
 #include <TSD_SCREEN.h>
 #include <TFT_SPI.h>
+#include <Setup.h>
 
 // common ILIxxxx commands
 
@@ -51,7 +52,7 @@
 #define TFT_RDCABCMIN   0x5F    // Read CABC Minimum Brightness
 #define TFT_IDXRD       0xD9    // undocumented
 
-#if defined COLOR_565
+#if defined(COLOR_565)
   #define TFT_PIXFMT_VALUE 0x55
 #else
   #define TFT_PIXFMT_VALUE 0x66
