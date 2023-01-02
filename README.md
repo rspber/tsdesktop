@@ -20,7 +20,7 @@
   - SSD1963
   - ST7789
   - ST7796
-  
+
 * overlaid objects
 
   GFXButton's objects can 'flow' over others thanks to setOverlaid property.
@@ -155,4 +155,4 @@
 
 2. If not all colors are displayed, try reduce tft speed first
 
-3. If touch does not follow display (does not apply to ILI9341 and ST7789, which are already matched) find in code: defined(ILI9341) or defined(ST7789) and try to place your driver name respectively.
+3. If touch does not follow the display (does not apply to ILI9341 and ST7789, which are already matched) find in code: defined(ILI9341) or defined(ST7789) and try to place your driver name respectively.
