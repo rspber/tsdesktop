@@ -36,7 +36,6 @@
   - scroller: see examples: scroll1, menu1, menu2, menu3
 * Modified gamma for ILI9341 to reflect better color vibrancy.
 * 565/666 color support
-  - for ILI9341
 * Gradient with percentage
   - see examples: canvas1, menu3, checkboxes
 * Flexible font format
