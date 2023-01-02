@@ -29,7 +29,6 @@ add_subdirectory(libs/flash)
 add_subdirectory(libs/pcf8575)
 add_subdirectory(libs/ds3231)
 add_subdirectory(libs/utils)
-add_subdirectory(libs/drivers)
 
 add_subdirectory(examples/calculator)
 add_subdirectory(examples/checkboxes)

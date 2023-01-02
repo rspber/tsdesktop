@@ -1,13 +1,12 @@
 /*
   TFT abstract driver
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2023, rspber (https://github.com/rspber)
 
 1. This is a modified Adafruit's ILI9341 driver: Adafruit_ILI9341
 
 differences:
 - Adafruit_SPITFT is missed, all spi functions are abstract
-- this is the ILIxxxx abstract driver
 
 2. chapter 2 further
 
@@ -83,14 +82,11 @@ Original license below.
   MIT license, all text above must be included in any redistribution
  ****************************************************/
 
-#include "TFT_Commands.h"
 #include "TFT_Driver.h"
 #include <Setup.h>
 
-#define SETUP_SPEED 2 * 1000 * 1000   // 2 MHz
-
-#define beginTransaction(Hz) spi->spiBegin(Hz)
-#define endTransaction() spi->spiEnd()
+#define beginTransact(Hz) spi->spiBegin(Hz)
+#define endTransact() spi->spiEnd()
 #define startSending() spi->startSending()
 #define send(data) spi->send(data)
 #define endSending() spi->endSending()
@@ -98,9 +94,10 @@ Original license below.
 #define sendData(data, size) spi->sendData(data, size)
 #define sendCmdData(cmd, data, size) spi->sendCmdData(cmd, data, size)
 #define sendCmdByte(cmd, data) spi->sendCmdByte(cmd, data)
-#define startTransferring() spi->startTransferring()
+#define startTransfer() spi->startTransfer()
 #define transfer(cmd) spi->transfer(cmd)
-#define endTransferring() spi->endTransferring()
+#define transfer16(cmd) spi->transfer16(cmd)
+#define endTransfer() spi->endTransfer()
 
 void TFT_Driver::hardReset()
 {
@@ -115,24 +112,24 @@ void TFT_Driver::hardReset()
 void TFT_Driver::reset()
 {
   hardReset();
-  beginTransaction(SETUP_SPEED);   // slow down
-  sendCmd(ILI9341_SWRESET); // Engage software reset
-  endTransaction();
+  beginTransact(TFT_SETUP_SPEED);   // slow down
+  sendCmd(TFT_SWRESET); // Engage software reset
+  endTransact();
   sleep_ms(150);
 }
 
 void TFT_Driver::displayOff()
 {
-  beginTransaction(SETUP_SPEED);
-  sendCmd(ILI9341_DISPOFF);
-  endTransaction();
+  beginTransact(TFT_SETUP_SPEED);
+  sendCmd(TFT_DISPOFF);
+  endTransact();
 }
 
 void TFT_Driver::displayOn()
 {
-  beginTransaction(SETUP_SPEED);
-  sendCmd(ILI9341_DISPON);
-  endTransaction();
+  beginTransact(TFT_SETUP_SPEED);
+  sendCmd(TFT_DISPON);
+  endTransact();
 }
 
 /**************************************************************************/
@@ -146,17 +143,17 @@ void TFT_Driver::displayOn()
 /**************************************************************************/
 void TFT_Driver::readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
 {
-  beginTransaction(SETUP_SPEED);
-  sendCmdByte(ILI9341_RDBYIDX, 0x10 + len);
+  beginTransact(TFT_SETUP_SPEED);
+  sendCmdByte(TFT_IDXRD, 0x10 + len);
   int i = 0;
   buf[i++] = reg;
   sendCmd(reg);
-  startTransferring();
+  startTransfer();
   while (--len >= 0) {
     buf[i++] = transfer(0);
   }
-  endTransferring();
-  endTransaction();
+  endTransfer();
+  endTransact();
 }
 
 /**************************************************************************/
@@ -167,9 +164,9 @@ void TFT_Driver::readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
 /**************************************************************************/
 void TFT_Driver::invertDisplay(bool invert)
 {
-  beginTransaction(SETUP_SPEED);
-  sendCmd(invert ? ILI9341_INVON : ILI9341_INVOFF);
-  endTransaction();
+  beginTransact(TFT_SETUP_SPEED);
+  sendCmd(invert ? TFT_INVON : TFT_INVOFF);
+  endTransact();
 }
 
 /**************************************************************************/
@@ -179,13 +176,13 @@ void TFT_Driver::invertDisplay(bool invert)
 */
 /**************************************************************************/
 void TFT_Driver::scrollTo(int16_t y) {
-  beginTransaction(SETUP_SPEED);
-  sendCmd(ILI9341_VSCRSADD);
+  beginTransact(TFT_SETUP_SPEED);
+  sendCmd(TFT_VSCRSADD);
   startSending();
   send(y >> 8);
   send(y & 0xff);
   endSending();
-  endTransaction();
+  endTransact();
 }
 
 /**************************************************************************/
@@ -199,8 +196,8 @@ void TFT_Driver::setScrollMargins(int16_t top, int16_t bottom) {
   // TFA+VSA+BFA must equal 320
   if (top + bottom <= getHEIGHT()) {
     uint16_t middle = getHEIGHT() - (top + bottom);
-    beginTransaction(SETUP_SPEED);
-    sendCmd(ILI9341_VSCRDEF);
+    beginTransact(TFT_SETUP_SPEED);
+    sendCmd(TFT_VSCRDEF);
     startSending();
     send(top >> 8);
     send(top & 0xff);
@@ -209,7 +206,7 @@ void TFT_Driver::setScrollMargins(int16_t top, int16_t bottom) {
     send(bottom >> 8);
     send(bottom & 0xff);
     endSending();
-    endTransaction();
+    endTransact();
   }
 }
 
@@ -226,9 +223,9 @@ void TFT_Driver::setScrollMargins(int16_t top, int16_t bottom) {
 /**************************************************************************/
 void TFT_Driver::setAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
 {
-  beginTransaction(SETUP_SPEED);
+  beginTransact(TFT_SETUP_SPEED);
   writeAddrWindow(x, y, w, h);
-  endTransaction();
+  endTransact();
 }
 
 void TFT_Driver::sendCmd2x16(const uint8_t cmd, const int16_t i1, const int16_t i2)
@@ -244,31 +241,31 @@ void TFT_Driver::sendCmd2x16(const uint8_t cmd, const int16_t i1, const int16_t 
 
 void TFT_Driver::writeAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
 {
-  sendCmd2x16(ILI9341_CASET, x, x + w - 1);
-  sendCmd2x16(ILI9341_PASET, y, y + h - 1);
-  sendCmd(ILI9341_RAMWR);
+  sendCmd2x16(TFT_CASET, x, x + w - 1);
+  sendCmd2x16(TFT_PASET, y, y + h - 1);
+  sendCmd(TFT_RAMWR);
 }
 
 void TFT_Driver::readAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
 {
-  sendCmd2x16(ILI9341_CASET, x, x + w - 1);
-  sendCmd2x16(ILI9341_PASET, y, y + h - 1);
-  sendCmd(ILI9341_RAMRD);
+  sendCmd2x16(TFT_CASET, x, x + w - 1);
+  sendCmd2x16(TFT_PASET, y, y + h - 1);
+  sendCmd(TFT_RAMRD);
 }
 
 rgb_t TFT_Driver::readPixel(clip_t* clip, int16_t x, int16_t y)
 {
   if (x >= clip->x1 && y >= clip->y1 && x < clip->x2 && y < clip->y2) {
-    beginTransaction(TFT_SPI_READ_SPEED);
+    beginTransact(TFT_SPI_READ_SPEED);
     readAddrWindow(x, y, 1, 1);
-    startTransferring();
+    startTransfer();
     transfer(0);  // the first is thorough
     // Read the 3 RGB bytes, color is in the top 6 bits of each byte
     uint8_t r = transfer(0);
     uint8_t g = transfer(0);
     uint8_t b = transfer(0);
-    endTransferring();
-    endTransaction();
+    endTransfer();
+    endTransact();
     return RGB(r,g,b);
   }
   return 0;
@@ -276,10 +273,10 @@ rgb_t TFT_Driver::readPixel(clip_t* clip, int16_t x, int16_t y)
 
 void TFT_Driver::storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t)
 {
-  endTransaction();
-  beginTransaction(TFT_SPI_READ_SPEED);
+  endTransact();
+  beginTransact(TFT_SPI_READ_SPEED);
   readAddrWindow(x, y, w, h);
-  startTransferring();
+  startTransfer();
   transfer(0);  // the first is thorough
   for (int i = w * h; --i >= 0; ) {
     // Read the 3 RGB bytes, color is in the top 6 bits of each byte
@@ -301,9 +298,9 @@ void TFT_Driver::storePixels(const int16_t x, const int16_t y, const int16_t w, 
       t->buf[t->len++] = c & 0xff;
     }
   }
-  endTransferring();
-  endTransaction();
-  beginTransaction(TFT_SPI_WRITE_SPEED);
+  endTransfer();
+  endTransact();
+  beginTransact(TFT_SPI_WRITE_SPEED);
 }
 
 void TFT_Driver::writeColor(const int16_t w, const int16_t h, const rgb_t color)

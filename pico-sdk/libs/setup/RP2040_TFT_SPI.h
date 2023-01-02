@@ -1,7 +1,7 @@
 /*
   RP2040 TFT SPI for pico-sdk
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2023, rspber (https://github.com/rspber)
 
 */
 
@@ -22,7 +22,6 @@ public:
   void spiBegin();
   void spiEnd();
 
-  void startSending();
   void send(const uint8_t b);
   void endSending();
 

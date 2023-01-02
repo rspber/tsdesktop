@@ -8,7 +8,22 @@
 #include <Setup.h>
 #include <Display.h>
 #include <Touch.h>
-#include <ILI9341_Regs.h>
+//#include <TFT_ILI9341.h>  temporary defines must be copied
+#define ILI9341_RDDIDINF    0x04    // Read display identification information, returns non standard SPI 3 bytes
+#define ILI9341_RDDSTAT     0x09    // Read display status, returns non standard SPI 4 bytes
+#define ILI9341_RDDPWMODE   0x0A    // Read display power mode
+#define ILI9341_RDMADCTL    0x0B    // Read display MADCTL
+#define ILI9341_RDPIXFMT    0x0C    // Read display pixel format
+#define ILI9341_RDIMGFMT    0x0D    // Read display image format
+#define ILI9341_RDSELFDIAG  0x0F    // Read display self-diagnostic
+#define ILI9341_RDID1       0xDA    // Read ID 1
+#define ILI9341_RDID2       0xDB    // Read ID 2
+#define ILI9341_RDID3       0xDC    // Read ID 3
+#define ILI9341_RDID4       0xD3    // Read ID 4
+#define ILI9341_RD_0xDD     0xDD    // undocumented
+#define ILI9341_RD_0xDE     0xDE    // undocumented
+#define ILI9341_RD_0xDF     0xDF    // undocumented
+#define ILI9341_INTFCCTR    0xF6    // Interface control
 
 #define ROTATION ROTATION_HLR
 
@@ -54,7 +69,7 @@ void setup()   {
 
 void loop()
 {
-  display.clearDisplay();
+//  display.clearDisplay();
   y = 0;
 
   diag_reg(ILI9341_RDDIDINF, 4);     // 0x04
@@ -84,7 +99,7 @@ void loop()
 
 // if after reading register there is a problem (dislocation) with print it, it means, that not all register values were read
 
-  sleep_ms(500);
+  sleep_ms(50);
 
   pin13state = 1 - pin13state;
   digitalWrite(LED_PIN, pin13state);

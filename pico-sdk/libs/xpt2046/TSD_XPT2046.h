@@ -1,7 +1,7 @@
 /*
   Touch Screen handler for TSDesktop
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2023, rspber (https://github.com/rspber)
 
   More information in TSD_XPT2046.cpp
 
@@ -17,8 +17,9 @@ class TSD_XPT2046 {
 public:
   TSD_XPT2046() {}
 
-  void setRotation(uint8_t n) { rotation = n % 4; }
-  int8_t getRotation() { return rotation; }
+  void setRotation(const uint8_t rot, const bool rev = false) { rotation = rot % 4; reverse = rev;}
+  uint8_t getRotation() { return rotation; }
+  bool getReverseMode() { return reverse; }
 
   bool begin(TFT_SPI* aspi, const int16_t atirq = -1);
 
@@ -42,5 +43,6 @@ private:
   TFT_SPI* spi;
   int16_t tirq;
   int _pressTime;
-  int8_t rotation = 1;
+  uint8_t rotation = 1;
+  bool reverse = false;
 };

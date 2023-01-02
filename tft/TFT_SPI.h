@@ -1,13 +1,14 @@
 /*
   TFT SPI
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2023, rspber (https://github.com/rspber)
 
 */
 
 #pragma once
 
 #include <sys/types.h>
+//#include <Setup.h>
 
 class TFT_SPI {
 public:
@@ -35,6 +36,10 @@ public:
 
   virtual void startSending()
   {
+//#if defined(ST7789) || defined(ST7796)
+    cs(1);
+    cs(0);
+//#endif
   }
 
   virtual void send(const uint8_t b) = 0;
@@ -80,14 +85,14 @@ public:
     sendData(data);
   }
 
-  virtual void startTransferring()
+  virtual void startTransfer()
   {
   }
 
   virtual const uint8_t transfer(const uint8_t cmd) = 0;
   virtual const uint16_t transfer16(const uint8_t cmd) = 0;
 
-  virtual void endTransferring()
+  virtual void endTransfer()
   {
   }
 

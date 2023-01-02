@@ -1,16 +1,14 @@
 /*
   Setup for TSDesktop
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2023, rspber (https://github.com/rspber)
 
 */
 
 #include "Setup.h"
 #include <pico/stdio.h>
-
 #include <Display.h>
 #include <Touch.h>
-
 #include <RP2040_TFT_SPI.h>
 
 void init_hardware()
@@ -21,17 +19,39 @@ void init_hardware()
 RP2040_TFT_SPI displaySPI(TFT_CS, SPI0_DC, TFT_SPI_WRITE_SPEED);
 RP2040_TFT_SPI touchSPI(TOUCH_CS, SPI0_DC, TOUCH_SPI_SPEED);
 
-void media_begin(int8_t rotation)
+#define MAD_MY 0x80
+#define MAD_MX 0x40
+#define MAD_MV 0x20
+#define MAD_SS 0x02
+#define MAD_GS 0x01
+
+void media_begin(uint8_t rotation)
 {
-#if ILI9341_VERSION < 3     // < v1.2
-    rotation = rotation & 1 ? rotation : (rotation + 2) % 4;
-#endif
   display.begin(&displaySPI, TFT_RST);
-  display.setRotation(rotation);
+
+#if defined(GC9A01)
+  uint8_t rev = 1 - REVERSE_MODE;
+#else
+  uint8_t rev = REVERSE_MODE;
+#endif
+
+#if defined(HX8357D)
+  uint8_t REV = rev ? 0 : MAD_MY;
+#else
+  uint8_t REV = rev ? MAD_MX : 0;
+#endif
+
+  display.setRotation(rotation, REV);
+
 //  display.invertDisplay(true);    // invert display colors  WHITE <-> BLACK
 
   touch.begin(&touchSPI);
-  touch.setRotation(rotation & 1 ? rotation : (2 - rotation) % 4);
+
+#if defined(ILI9341) || defined(ILI9481) || defined(ILI9486) || defined(ILI9488)
+  rotation = rotation & 1 ? rotation : ((rotation + 2) % 4);
+#endif  
+
+  touch.setRotation(rotation, rev);
 
   display.clearDisplay();
 }

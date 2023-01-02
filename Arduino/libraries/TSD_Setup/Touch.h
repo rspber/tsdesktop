@@ -2,7 +2,7 @@
   Touch Screen for TSDesktop
   implemented on XPT2046_Touchscreen
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2023, rspber (https://github.com/rspber)
 
 */
 
@@ -20,12 +20,14 @@ class Touch : public XPT2046_Touchscreen {
 public:
   Touch() : XPT2046_Touchscreen(TOUCH_CS) {}
 
-  void setRotation(int8_t aRotation);
-  int8_t getRotation();
+  void setRotation(const uint8_t aRotation, const bool aReverseMode);
+  uint8_t getRotation() { return rotation; };
+  bool getReverseMode() { return reverse; };
   bool getTouch(point_t* p);
 
 private:
-  int8_t rotation;
+  uint8_t rotation;
+  bool reverse;
 };
 
 extern Touch touch;
