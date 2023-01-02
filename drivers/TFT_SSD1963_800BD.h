@@ -56,7 +56,7 @@ public:
       // 2: 0x01 GPIO0 normal
 
     sendCmdByte(0xBA, 0x01);
-      // 1: 0x05 GPIO[3:0] out 1 --- LCD display on/off control PIN
+      // 1: 0x01 GPIO[3:0] out 1 --- LCD display on/off control PIN
 
     sendCmdByte(0x36, 0x21 | (BGR << 3));
 
