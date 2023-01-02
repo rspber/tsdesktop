@@ -15,7 +15,8 @@ public:
 
   void init()
   {
-    sendCmdData(0xE2, (uint8_t*)"\x23\x02\x54", 3);     //PLL multiplier, set PLL clock to 120M      // 1: 0x23 N=0x36 for 6.5M, 0x23 for 10M crystal
+    sendCmdData(0xE2, (uint8_t*)"\x23\x02\x54", 3);     //PLL multiplier, set PLL clock to 120M
+      // 1: 0x23 N=0x36 for 6.5M, 0x23 for 10M crystal
 
     // PLL enable
     sendCmdByte(0xE0, 0x01);
@@ -47,7 +48,7 @@ public:
     sendCmdData(0xB6, (uint8_t*)"\x02\x0C\x00\x22\x00\x00\x00", 7);     //VSYNC
       // 1: 0x02 Set VT
       // 3: 0x00 Set VPS
-      // 5: 0x10 Set VPW
+      // 5: 0x00 Set VPW
       // 6: 0x00 Set FPS
 
     sendCmdData(0xB8, (uint8_t*)"\x0F\x01", 2);
