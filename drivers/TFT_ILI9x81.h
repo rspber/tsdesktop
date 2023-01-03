@@ -1,5 +1,5 @@
 /*
-  ILI9481 abstract driver 
+  ILI9481 abstract driver
 
   Copyright (c) 2023, rspber (https://github.com/rspber)
 
@@ -47,10 +47,10 @@
 #define MAD_MY  0x80
 #define MAD_MX  0x40
 #define MAD_MV  0x20
-#define MAD_ML  0x10
-#define MAD_RGB 0x00
-#define MAD_BGR 0x08
-#define MAD_MH  0x04
+//#define MAD_ML  0x10
+//#define MAD_RGB 0x00
+//#define MAD_BGR 0x08
+//#define MAD_MH  0x04
 #define MAD_SS  0x02
 #define MAD_GS  0x01
 
