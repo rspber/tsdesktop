@@ -58,11 +58,11 @@
 /*
 #define MAD_MY  0x80
 #define MAD_MX  0x40
-#define MAD_MV  0x20
-#define MAD_ML  0x10
+#define MAD_YX  0x20  // it means that X and Y are exchanged, wrongly called MV
+#define MAD_MV  0x10  // vertical refresh direction, wrongly called ML
 #define MAD_RGB 0x00
 #define MAD_BGR 0x08
-#define MAD_MH  0x04
+#define MAD_MH  0x04 // horizontal refresh direction, 
 #define MAD_SS  0x02
 #define MAD_GS  0x01
 */
