@@ -3,84 +3,7 @@
 
   Copyright (c) 2023, rspber (https://github.com/rspber)
 
-1. This is a modified Adafruit's ILI9341 driver: Adafruit_ILI9341
-
-differences:
-- Adafruit_SPITFT is missed, all spi functions are abstract
-
-2. chapter 2 further
-
-Original Adafruit's license attached below.
 */
-
-/*!
- * @file Adafruit_ILI9341.cpp
- *
- * @mainpage Adafruit ILI9341 TFT Displays
- *
- * @section intro_sec Introduction
- *
- * This is the documentation for Adafruit's ILI9341 driver for the
- * Arduino platform.
- *
- * This library works with the Adafruit 2.8" Touch Shield V2 (SPI)
- *    http://www.adafruit.com/products/1651
- *
- * Adafruit 2.4" TFT LCD with Touchscreen Breakout w/MicroSD Socket - ILI9341
- *    https://www.adafruit.com/product/2478
- *
- * 2.8" TFT LCD with Touchscreen Breakout Board w/MicroSD Socket - ILI9341
- *    https://www.adafruit.com/product/1770
- *
- * 2.2" 18-bit color TFT LCD display with microSD card breakout - ILI9340
- *    https://www.adafruit.com/product/1770
- *
- * TFT FeatherWing - 2.4" 320x240 Touchscreen For All Feathers
- *    https://www.adafruit.com/product/3315
- *
- * These displays use SPI to communicate, 4 or 5 pins are required
- * to interface (RST is optional).
- *
- * Adafruit invests time and resources providing this open source code,
- * please support Adafruit and open-source hardware by purchasing
- * products from Adafruit!
- *
- * @section dependencies Dependencies
- *
- * This library depends on <a href="https://github.com/adafruit/Adafruit_GFX">
- * Adafruit_GFX</a> being present on your system. Please make sure you have
- * installed the latest version before using this library.
- *
- * @section author Author
- *
- * Written by Limor "ladyada" Fried for Adafruit Industries.
- *
- * @section license License
- *
- * BSD license, all text here must be included in any redistribution.
- *
- */
-
-/*
-2. writeFillRectGradient: based on https://github.com/PaulStoffregen/ILI9341_t3
-
-Original license below.
-*/
-
-/***************************************************
-  This is our library for the Adafruit  ILI9341 Breakout and Shield
-  ----> http://www.adafruit.com/products/1651
-
-  Check out the links above for our tutorials and wiring diagrams
-  These displays use SPI to communicate, 4 or 5 pins are required to
-  interface (RST is optional)
-  Adafruit invests time and resources providing this open source code,
-  please support Adafruit and open-source hardware by purchasing
-  products from Adafruit!
-
-  Written by Limor Fried/Ladyada for Adafruit Industries.
-  MIT license, all text above must be included in any redistribution
- ****************************************************/
 
 #include "TFT_Driver.h"
 #include <Setup.h>
@@ -156,12 +79,6 @@ void TFT_Driver::readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
   endTransact();
 }
 
-/**************************************************************************/
-/*!
-   @brief   Enable/Disable display color inversion
-    @param   invert True to invert, False to have normal color
-*/
-/**************************************************************************/
 void TFT_Driver::invertDisplay(bool invert)
 {
   beginTransact(TFT_SETUP_SPEED);
@@ -169,12 +86,7 @@ void TFT_Driver::invertDisplay(bool invert)
   endTransact();
 }
 
-/**************************************************************************/
-/*!
-   @brief   Scroll display memory
-    @param   y How many pixels to scroll display by
-*/
-/**************************************************************************/
+// actually not used
 void TFT_Driver::scrollTo(int16_t y) {
   beginTransact(TFT_SETUP_SPEED);
   sendCmd(TFT_VSCRSADD);
@@ -185,13 +97,7 @@ void TFT_Driver::scrollTo(int16_t y) {
   endTransact();
 }
 
-/**************************************************************************/
-/*!
-   @brief   Set the height of the Top and Bottom Scroll Margins
-    @param   top The height of the Top scroll margin
-    @param   bottom The height of the Bottom scroll margin
- */
- /**************************************************************************/
+// actually not used
 void TFT_Driver::setScrollMargins(int16_t top, int16_t bottom) {
   // TFA+VSA+BFA must equal 320
   if (top + bottom <= getHEIGHT()) {
@@ -210,17 +116,7 @@ void TFT_Driver::setScrollMargins(int16_t top, int16_t bottom) {
   }
 }
 
-/**************************************************************************/
-/*!
-    @brief   Set the "address window" - the rectangle we will write to RAM with
-   the next chunk of      SPI data writes. The ILI9341 will automatically wrap
-   the data as each row is filled
-    @param   x1  TFT memory 'x' origin
-    @param   y1  TFT memory 'y' origin
-    @param   w   Width of rectangle
-    @param   h   Height of rectangle
-*/
-/**************************************************************************/
+// actually not used
 void TFT_Driver::setAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
 {
   beginTransact(TFT_SETUP_SPEED);
@@ -345,62 +241,6 @@ void TFT_Driver::writePixels(const int16_t x, const int16_t y, const int16_t w, 
   else {
     writeAddrWindow(x, y, w, h);
     writeColor(w, h, color);
-  }
-}
-
-void TFT_Driver::writePixel(clip_t* clip, int16_t x, int16_t y, const rgb_t color)
-{
-  if (x >= clip->x1 && y >= clip->y1 && x < clip->x2 && y < clip->y2) {
-    writePixels(x, y, 1, 1, color);
-  }
-}
-
-void TFT_Driver::writeFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, const rgb_t color)
-{
-  if (x < clip->x1) {
-    w -= clip->x1 - x;
-    x = clip->x1;
-  }
-  if (x + w > clip->x2) {
-    w = clip->x2 - x;
-  }
-  if (y >= clip->y1 && y < clip->y2 && w > 0) {
-    writePixels(x, y, w, 1, color);
-  }
-}
-
-void TFT_Driver::writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, const rgb_t color)
-{
-  if (y < clip->y1) {
-    h -= clip->y1 - y;
-    y = clip->y1;
-  }
-  if (y + h > clip->y2) {
-    h = clip->y2 - y;
-  }
-  if (x >= clip->x1 && x < clip->x2 && h > 0) {
-    writePixels(x, y, 1, h, color);
-  }
-}
-
-void TFT_Driver::writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color)
-{
-  if (x < clip->x1) {
-    w -= clip->x1 - x;
-    x = clip->x1;
-  }
-  if (x + w > clip->x2) {
-    w = clip->x2 - x;
-  }
-  if (y < clip->y1) {
-    h -= clip->y1 - y;
-    y = clip->y1;
-  }
-  if (y + h > clip->y2) {
-    h = clip->y2 - y;
-  }
-  if (w > 0 && h > 0) {
-    writePixels(x, y, w, h, color);
   }
 }
 

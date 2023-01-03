@@ -40,14 +40,15 @@ class TSD_GFX {
 
 public:
   virtual void startWrite(void);
-  virtual void writePixel(clip_t* clip, int16_t x, int16_t y, rgb_t color) = 0;
-  virtual void writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, rgb_t color);
-  virtual void writeFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, rgb_t color);
-  virtual void writeLine(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color);
-  virtual void writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color);
+  virtual void writePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color) = 0;
   virtual void writeFillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
   virtual void endWrite(void);
 
+  void writePixel(clip_t* clip, int16_t x, int16_t y, rgb_t color);
+  void writeLine(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color);
+  void writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, rgb_t color);
+  void writeFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, rgb_t color);
+  void writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color);
   void writeRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color);
   void writeCircle(clip_t* clip, int16_t x0, int16_t y0, int16_t r, rgb_t color);
   void writeCircleHelper(clip_t* clip, int16_t x0, int16_t y0, int16_t r, uint8_t corners, rgb_t color);

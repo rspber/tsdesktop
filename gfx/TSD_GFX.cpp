@@ -98,8 +98,23 @@ const int16_t clip_t::height()
 
 void TSD_GFX::startWrite() {}
 
+void TSD_GFX::writePixel(clip_t* clip, int16_t x, int16_t y, const rgb_t color)
+{
+  if (x >= clip->x1 && y >= clip->y1 && x < clip->x2 && y < clip->y2) {
+    writePixels(x, y, 1, 1, color);
+  }
+}
 void TSD_GFX::writeLine(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color)
 {
+  if (x0 == x1) {
+    writeFastVLine(clip, x0, y0, y1 - y0, color);
+    return;
+  }
+  if (y0 == y1)  {
+    writeFastHLine(clip, x0, y0, x1 - x0, color);
+    return;
+  }
+
   int16_t steep = abs(y1 - y0) > abs(x1 - x0);
   if (steep) {
     _swap_int16_t(x0, y0);
@@ -140,20 +155,52 @@ void TSD_GFX::writeLine(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_
   }
 }
 
-void TSD_GFX::writeFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, rgb_t color)
+void TSD_GFX::writeFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, const rgb_t color)
 {
-  writeLine(clip, x, y, x + w - 1, y, color);
+  if (x < clip->x1) {
+    w -= clip->x1 - x;
+    x = clip->x1;
+  }
+  if (x + w > clip->x2) {
+    w = clip->x2 - x;
+  }
+  if (y >= clip->y1 && y < clip->y2 && w > 0) {
+    writePixels(x, y, w, 1, color);
+  }
 }
 
-void TSD_GFX::writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, rgb_t color)
+void TSD_GFX::writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, const rgb_t color)
 {
-  writeLine(clip, x, y, x, y + h - 1, color);
+  if (y < clip->y1) {
+    h -= clip->y1 - y;
+    y = clip->y1;
+  }
+  if (y + h > clip->y2) {
+    h = clip->y2 - y;
+  }
+  if (x >= clip->x1 && x < clip->x2 && h > 0) {
+    writePixels(x, y, 1, h, color);
+  }
 }
 
-void TSD_GFX::writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color)
+void TSD_GFX::writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color)
 {
-  for (int16_t i = 0; i < h; i++) {
-    writeFastHLine(clip, x, y + i, w, color);
+  if (x < clip->x1) {
+    w -= clip->x1 - x;
+    x = clip->x1;
+  }
+  if (x + w > clip->x2) {
+    w = clip->x2 - x;
+  }
+  if (y < clip->y1) {
+    h -= clip->y1 - y;
+    y = clip->y1;
+  }
+  if (y + h > clip->y2) {
+    h = clip->y2 - y;
+  }
+  if (w > 0 && h > 0) {
+    writePixels(x, y, w, h, color);
   }
 }
 

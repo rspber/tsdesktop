@@ -13,7 +13,7 @@ class TFT_DRIVER : public TFT_ILI9x81 {
 public:
   TFT_DRIVER(const int16_t w, const int16_t h) : TFT_ILI9x81(w, h) {}
 
-  virtual void init()
+  void init()
   {
     sendCmd(TFT_SLPOUT);
     delay(20);

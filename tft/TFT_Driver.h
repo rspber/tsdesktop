@@ -3,8 +3,6 @@
 
   Copyright (c) 2023, rspber (https://github.com/rspber)
 
-  More information in TFT_Driver.cpp
-
 */
 
 #pragma once
@@ -102,10 +100,7 @@ public:
     spi->spiEnd();
   }
 
-  void writePixel(clip_t* clip, int16_t x, int16_t y, const rgb_t color);
-  void writeFastHLine(clip_t* clip, int16_t x, int16_t y, int16_t w, const rgb_t color);
-  void writeFastVLine(clip_t* clip, int16_t x, int16_t y, int16_t h, const rgb_t color);
-  void writeFillRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, const rgb_t color);
+  void writePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color);
   void writeFillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
 
   virtual rgb_t readPixel(clip_t* clip, int16_t x, int16_t y);
@@ -116,7 +111,6 @@ protected:
   void writeAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h);
   void readAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h);
 
-  void writePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color);
   void storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t);
 
   void writeColor(const int16_t w, const int16_t h, const rgb_t color);
