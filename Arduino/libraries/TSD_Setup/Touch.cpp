@@ -21,11 +21,13 @@ bool Touch::getTouch(point_t* p)
 {
   if (XPT2046_Touchscreen::touched()) {
     // A point objects holds x, y, and z coordinates
-    TS_Point tsp = XPT2046_Touchscreen::getPoint();
+    TS_Point t_ = XPT2046_Touchscreen::getPoint();
+    int16_t x = t_.x;
+    int16_t y = t_.y;
     uint8_t m = getRotation();
     bool r = getReverseMode();
 #if defined(ILI9341) || defined(ILI9481) || defined(ILI9486) || defined(ILI9488)
-      tsp.x = 4095 - tsp.x;
+      x = 4095 - x;
       m = m & 1 ? m : ((2 + m) % 4);
 #endif
     int16_t minx = 0;
@@ -35,7 +37,7 @@ bool Touch::getTouch(point_t* p)
     switch (m) {
       case 0:                 // VBT
         if (r) {
-          tsp.x = 4095 - tsp.x;
+          x = 4095 - x;
         }
         minx += TS_RIGHT;
         maxx -= TS_LEFT;
@@ -44,7 +46,7 @@ bool Touch::getTouch(point_t* p)
         break;
       case 1:                 // HLR
         if (r) {
-          tsp.y = 4095 - tsp.y;
+          y = 4095 - y;
         }
         minx += TS_BOTTOM;
         maxx -= TS_TOP;
@@ -53,7 +55,7 @@ bool Touch::getTouch(point_t* p)
         break;
       case 2:                 // VTB
         if (r) {
-          tsp.x = 4095 - tsp.x;
+          x = 4095 - x;
         }
         minx += TS_LEFT;
         maxx -= TS_RIGHT;
@@ -62,7 +64,7 @@ bool Touch::getTouch(point_t* p)
         break;
       case 3:                 // HRL
         if (r) {
-          tsp.y = 4095 - tsp.y;
+          y = 4095 - y;
         }
         minx += TS_TOP;
         maxx -= TS_BOTTOM;
@@ -70,8 +72,8 @@ bool Touch::getTouch(point_t* p)
         maxy -= TS_LEFT;
         break;
     }
-    p->x = map(tsp.x, minx, maxx, 0, display.width());
-    p->y = map(tsp.y, miny, maxy, 0, display.height());
+    p->x = map(x, minx, maxx, 0, display.width());
+    p->y = map(y, miny, maxy, 0, display.height());
     return true;
   }
   return false;

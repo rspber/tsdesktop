@@ -16,12 +16,12 @@ int16_t inline map(int16_t x, int16_t in_min, int16_t in_max, int16_t out_min, i
 
 bool Touch::getTouch(point_t* p)
 {
-  int16_t tx, ty;
-  if (TSD_XPT2046::getTouch(&tx, &ty)) {
+  int16_t x, y;
+  if (TSD_XPT2046::getTouch(&x, &y)) {
     uint8_t m = getRotation();
     bool r = getReverseMode();
 #if defined(ILI9341) || defined(ILI9481) || defined(ILI9486) || defined(ILI9488)
-      tx = 4095 - tx;
+      x = 4095 - x;
       m = m & 1 ? m : ((2 + m) % 4);
 #endif
     int16_t minx = 0;
@@ -31,7 +31,7 @@ bool Touch::getTouch(point_t* p)
     switch (m) {
       case 0:                 // VBT
         if (r) {
-          tx = 4095 - tx;
+          x = 4095 - x;
         }
         minx += TS_RIGHT;
         maxx -= TS_LEFT;
@@ -40,7 +40,7 @@ bool Touch::getTouch(point_t* p)
         break;
       case 1:                 // HLR
         if (r) {
-          ty = 4095 - ty;
+          y = 4095 - y;
         }
         minx += TS_BOTTOM;
         maxx -= TS_TOP;
@@ -49,7 +49,7 @@ bool Touch::getTouch(point_t* p)
         break;
       case 2:                 // VTB
         if (r) {
-          tx = 4095 - tx;
+          x = 4095 - x;
         }
         minx += TS_LEFT;
         maxx -= TS_RIGHT;
@@ -58,7 +58,7 @@ bool Touch::getTouch(point_t* p)
         break;
       case 3:                 // HRL
         if (r) {
-          ty = 4095 - ty;
+          y = 4095 - y;
         }
         minx += TS_TOP;
         maxx -= TS_BOTTOM;
@@ -66,8 +66,8 @@ bool Touch::getTouch(point_t* p)
         maxy -= TS_LEFT;
         break;
     }
-    p->x = map(tx, minx, maxx, 0, display.width());
-    p->y = map(ty, miny, maxy, 0, display.height());
+    p->x = map(x, minx, maxx, 0, display.width());
+    p->y = map(y, miny, maxy, 0, display.height());
     return true;
   }
   return false;
