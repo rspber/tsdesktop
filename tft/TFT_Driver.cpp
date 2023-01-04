@@ -176,22 +176,30 @@ void TFT_Driver::storePixels(const int16_t x, const int16_t y, const int16_t w, 
   transfer(0);  // the first is thorough
   for (int i = w * h; --i >= 0; ) {
     // Read the 3 RGB bytes, color is in the top 6 bits of each byte
-    uint8_t r = transfer(0);
-    uint8_t g = transfer(0);
-    uint8_t b = transfer(0);
     if (t->len + 3 > t->size) {
       t->size += 100;
       t->buf = (uint8_t*)realloc(t->buf, t->size);
     }
     if (MDT_SIZE > 2) {
-      t->buf[t->len++] = r;
-      t->buf[t->len++] = g;
-      t->buf[t->len++] = b;
+      // PIXFMT >= 0x?6
+      t->buf[t->len++] = transfer(0);
+      t->buf[t->len++] = transfer(0);
+      t->buf[t->len++] = transfer(0);
     }
     else {
+#if defined(ST7796)
+      // PIXFMT related transfer
+      t->buf[t->len++] = transfer(0);
+      t->buf[t->len++] = transfer(0);
+#else
+      // always 3 byte transfer
+      uint8_t r = transfer(0);
+      uint8_t g = transfer(0);
+      uint8_t b = transfer(0);
       uint16_t c = RGB565(r,g,b);
       t->buf[t->len++] = c >> 8;
       t->buf[t->len++] = c & 0xff;
+#endif
     }
   }
   endTransfer();
