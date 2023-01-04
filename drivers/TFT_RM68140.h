@@ -41,31 +41,29 @@ public:
     delay(25);
   }
 
-// TODO REV is not fully implemented
-
   void setRotation(const uint8_t rotation, const uint8_t REV)
   {
-    uint8_t T[] {0x00, 0xff, 0x3B};
+    uint8_t T[] {0x00, 0x02, 0x3B};
     beginTransact(TFT_SETUP_SPEED);
     switch (rotation % 4) {
       case 0: // Portrait
         sendCmdByte(TFT_MADCTL, (0x00 ^ REV) | (BGR << 3));
-        T[1] = 0x22;
+        T[1] |= ((MAD_SS ^ REV) << 4);
         setSize(getWIDTH(), getHEIGHT());
       break;
       case 1: // Landscape (Portrait + 90)
         sendCmdByte(TFT_MADCTL, (MAD_YX ^ REV) | (BGR << 3));
-        T[1] = 0x02;
+        T[1] |= 0x00;
         setSize(getHEIGHT(), getWIDTH());
       break;
       case 2: // Inverter portrait
         sendCmdByte(TFT_MADCTL, (0x00 ^ REV) | (BGR << 3));
-        T[1] = 0x42;
+        T[1] |= ((MAD_GS ^ REV) << 6);
         setSize(getWIDTH(), getHEIGHT());
       break;
       case 3: // Inverted landscape
         sendCmdByte(TFT_MADCTL, (MAD_YX ^ REV) | (BGR << 3));
-        T[1] = 0x62;
+        T[1] |= ((MAD_SS ^ REV) << 4) | ((MAD_GS ^ REV) << 6);
         setSize(getHEIGHT(), getWIDTH());
       break;
     }
