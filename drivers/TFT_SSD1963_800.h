@@ -39,7 +39,7 @@ public:
       // 0xDF
       // 0x00
 
-    sendCmdData(set_hori_period, (uint8_t*)"\x03\xA0\x00\x2E\x30\x00\x0F\x00", 8);
+    sendCmdData(set_hori_period, (uint8_t*)"\x03\xA0\x00\x2E\x30\x00\x0F\x00", 8); // HSYNC
       // 0x03 Set HT  928
       // 0xA0
       // 0x00 Set HPS 46
@@ -49,7 +49,7 @@ public:
       // 0x0F
       // 0x00
 
-    sendCmdData(set_vert_period, (uint8_t*)"\x02\x0D\x00\x10\x10\x00\x08", 7);
+    sendCmdData(set_vert_period, (uint8_t*)"\x02\x0D\x00\x10\x10\x00\x08", 7); // VSYNC
       // 0x02 Set VT  525
       // 0x0D
       // 0x00 Set VPS 16
