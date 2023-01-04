@@ -156,13 +156,27 @@ rgb_t TFT_Driver::readPixel(clip_t* clip, int16_t x, int16_t y)
     readAddrWindow(x, y, 1, 1);
     startTransfer();
     transfer(0);  // the first is thorough
-    // Read the 3 RGB bytes, color is in the top 6 bits of each byte
-    uint8_t r = transfer(0);
-    uint8_t g = transfer(0);
-    uint8_t b = transfer(0);
+    rgb_t color;
+#if defined(ST7796)
+    if (MDT_SIZE <= 2) {
+    // Read 2 byte 565 color
+      uint8_t b0 = transfer(0);
+      uint8_t b1 = transfer(0);
+      color = rgb((b0 << 8) | b1);
+    }
+    else {
+#else
+    {
+#endif
+    // Read the 3 RGB bytes
+      uint8_t r = transfer(0);
+      uint8_t g = transfer(0);
+      uint8_t b = transfer(0);
+      color = RGB(r,g,b);
+    }
     endTransfer();
     endTransact();
-    return RGB(r,g,b);
+    return color;
   }
   return 0;
 }
