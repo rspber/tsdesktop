@@ -19,10 +19,11 @@
 #define HX8357_SETPANEL  0xCC
 #define HX8357D_SETGAMMA 0xE0
 
-class TFT_DRIVER : public TFT_ILI9xxx {
+class TFT_HX8357D : public TFT_ILI9xxx {
 public:
-  TFT_DRIVER(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
+  TFT_HX8357D(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
 
+protected:
   void init()
   {
     sendCmdData(HX8357D_SETC, (uint8_t*)"\xFF\x83\x57", 3);

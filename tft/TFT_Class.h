@@ -8,7 +8,6 @@
 #pragma once
 
 #include <TSD_SCREEN.h>
-#include <TFT_SPI.h>
 #include <Setup.h>
 
 // common ILIxxxx commands
@@ -67,13 +66,28 @@
 #define MAD_GS  0x01 // vertical flip
 */
 
-class TFT_Driver : public TSD_SCREEN {
+class TFT_Class : public TSD_SCREEN {
 public:
-  TFT_Driver(const int16_t w, const int16_t h)
+  TFT_Class(const int16_t w, const int16_t h)
    : TSD_SCREEN(w, h) {}
 
-  virtual void begin(TFT_SPI* aspi, const int16_t aRST = -1) = 0;
-  virtual void setRotation(const uint8_t rotation, const uint8_t REV) = 0;
+  virtual void begin()
+  {
+    if (RST >= 0) {
+      pinMode(RST, OUTPUT);
+    }
+    hardReset();
+    beginTransaction(TFT_SETUP_SPEED);
+    init();
+    endTransaction();
+  }
+
+  void setRotation(const uint8_t r, const uint8_t REV)
+  {
+    beginTransaction(TFT_SETUP_SPEED);
+    rotation(r, REV);
+    endTransaction();
+  }
 
   virtual void readRegister(uint8_t* buf, const uint8_t reg, int8_t len);
 
@@ -82,44 +96,123 @@ public:
   virtual void hardReset();
   virtual void reset();
 
+// actually not used
   virtual void scrollTo(int16_t y);
   virtual void setScrollMargins(int16_t top, int16_t bottom);
-
-  virtual void setAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h);
 
   virtual void displayOff();
   virtual void displayOn();
 
   void startWrite()
   {
-    spi->spiBegin();
+    beginTransaction();
   }
 
   void endWrite()
   {
-    spi->spiEnd();
+    endTransaction();
   }
+
+  virtual rgb_t readPixel(clip_t* clip, int16_t x, int16_t y);
+
+// override by the driver
+protected:
+  virtual void init() = 0;
+  virtual void rotation(const uint8_t r, const uint8_t REV) = 0;
+
+// override by the transfer protocol
+protected:
+
+  virtual void cs(const uint8_t mode) {}
+  virtual void dc(const uint8_t mode) {}
+
+  virtual void beginTransaction(uint Hz)
+  {
+    cs(0);
+  }
+
+  virtual void beginTransaction()
+  {
+    cs(0);
+  }
+
+  virtual void endTransaction()
+  {
+    cs(1);
+  }
+
+  virtual void startSending()
+  {
+//#if defined(ST7789) || defined(ST7796)
+    cs(1);
+    cs(0);
+//#endif
+  }
+
+  virtual void send(const uint8_t data) = 0;
+  virtual void endSending() {}
+
+  virtual void sendData(const uint8_t data)
+  {
+    startSending();
+    send(data);
+    endSending();
+  }
+
+  virtual void sendCmd(const uint8_t cmd)
+  {
+    dc(0);
+    sendData(cmd);
+    dc(1);
+  }
+
+  virtual void sendData(const uint8_t* data, const int16_t size)
+  {
+    startSending();
+    for (int i = 0; i < size; ++i) {
+      send(data[i]);
+    }
+    endSending();
+  }
+
+  virtual void sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size)
+  {
+    sendCmd(cmd);
+    if (size > 0) {
+      sendData(data, size);
+    }
+  }
+
+  virtual void sendCmdByte(const uint8_t cmd, const uint8_t data)
+  {
+    sendCmd(cmd);
+    sendData(data);
+  }
+
+  virtual void startTransfer() {}
+  virtual const uint8_t transfer(const uint8_t cmd) = 0;
+  virtual const uint16_t transfer16(const uint8_t cmd) = 0;
+  virtual void endTransfer() {}
+
+protected:
+  virtual void setAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h);
 
   void writePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color);
   void writeFillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
 
-  virtual rgb_t readPixel(clip_t* clip, int16_t x, int16_t y);
+  virtual void sendCmd2x16(const uint8_t cmd, const int16_t i1, const int16_t i2);
+
+  virtual void writeAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h);
+  virtual void readAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h);
+
+  virtual void storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t);
+
+  virtual void writeColor(const int16_t w, const int16_t h, const rgb_t color);
 
 protected:
-  void sendCmd2x16(const uint8_t cmd, const int16_t i1, const int16_t i2);
-
-  void writeAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h);
-  void readAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h);
-
-  void storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t);
-
-  void writeColor(const int16_t w, const int16_t h, const rgb_t color);
+  virtual void writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
+  virtual void writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
 
 protected:
-  void writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
-  void writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z);
-
-protected:
-  TFT_SPI* spi;
-  int16_t RST;
+  int16_t RST = -1;
 };

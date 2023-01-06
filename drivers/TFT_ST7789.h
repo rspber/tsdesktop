@@ -53,10 +53,11 @@
 #define ST7789_NVMSET     0xFC      // NVM setting
 #define ST7789_PROMACT    0xFE      // Program action
 
-class TFT_DRIVER : public TFT_ILI9xxx {
+class TFT_ST7789 : public TFT_ILI9xxx {
 public:
-  TFT_DRIVER(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
+  TFT_ST7789(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
 
+protected:
   void init()
   {
     sendCmd(TFT_SWRESET);

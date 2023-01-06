@@ -70,10 +70,10 @@
 #define REVERSE_MODE 0    // 0 or other display & touch orientation
 
 //SPI0
-//#define TFT_MISO 16  // RX
+#define TFT_MISO 16  // RX
 #define TFT_CS   17    // Chip select control pin
-//#define TFT_CLK  18  // SCK
-//#define TFT_MOSI 19  // TX
+#define TFT_CLK  18  // SCK
+#define TFT_MOSI 19  // TX
 #define TFT_RST  20    // Reset pin (could connect to Arduino RESET pin)
 #define SPI0_DC  21    // Data Command control pin
 //#define TFT_BL       // LED back-light
@@ -91,8 +91,4 @@
 #endif
 
 #define TOUCH_SPI_SPEED         2 * 1000 * 1000          //  2 MHz
-
-void init_hardware();
-
-void media_begin(uint8_t rotation);
 

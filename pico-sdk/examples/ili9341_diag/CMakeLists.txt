@@ -3,8 +3,8 @@ add_executable(ili9341_diag
 )
 
 target_link_libraries(ili9341_diag
-  setup
-  xpt2046
+  media
+  tsdesktop
 )
 
 pico_enable_stdio_usb(ili9341_diag 1)

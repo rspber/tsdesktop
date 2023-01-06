@@ -16,10 +16,11 @@
 #define HX8357_VCOMCTL    0xD1    // W/R (3) VCOM Control
 #define HX8357_POWNORMD   0xD2    // W/R (2) Power Setting for Normal Mode
 
-class TFT_DRIVER : public TFT_ILI9xxx {
+class TFT_HX8357B : public TFT_ILI9xxx {
 public:
-  TFT_DRIVER(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
+  TFT_HX8357B(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
 
+protected:
   void init()
   {
     sendCmd(TFT_SLPOUT);

@@ -5,9 +5,8 @@ add_executable(programmer
 )
 
 target_link_libraries(programmer
-  setup
-  desktop
-  xpt2046
+  media
+  tsdesktop
   ds3231
   pcf8575
   flash

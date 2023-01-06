@@ -50,10 +50,11 @@
 #define ST7796_CMDSETCTL   0xF0    // Command Set Control
 #define ST7796_RDSPISET    0xFB    // SPI read command setting
 
-class TFT_DRIVER : public TFT_ILI9xxx {
+class TFT_ST7796 : public TFT_ILI9xxx {
 public:
-  TFT_DRIVER(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
+  TFT_ST7796(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
 
+protected:
   void init()
   {
     delay(120);

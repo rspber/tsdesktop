@@ -21,10 +21,11 @@ add_compile_options(-Wall
         )
 
 add_subdirectory(libs/setup)
-add_subdirectory(libs/desktop)
+add_subdirectory(libs/tsdesktop)
 add_subdirectory(libs/gfx)
 add_subdirectory(libs/tft)
 add_subdirectory(libs/xpt2046)
+add_subdirectory(libs/media)
 add_subdirectory(libs/flash)
 add_subdirectory(libs/pcf8575)
 add_subdirectory(libs/ds3231)

@@ -7,20 +7,22 @@
 
 #pragma once
 
-#include <TFT_SPI.h>
+#include <TFT_Class.h>
 #include <SPI.h>
 
-class RP2040_TFT_SPI : public TFT_SPI {
+class RP2040_TFT_SPI : public TFT_Class {
 public:
-  RP2040_TFT_SPI(const int16_t aCS, const int16_t aDC, const uint Hz, SPIClass* aspi = &SPI);
+  RP2040_TFT_SPI(const int16_t w, const int16_t h)
+   : TFT_Class(w, h) {}
 
   void begin();
 
+protected:
   void cs(const uint8_t mode);
   void dc(const uint8_t mode);
-  void spiBegin(const uint Hz);
-  void spiBegin();
-  void spiEnd();
+  void beginTransaction(const uint Hz);
+  void beginTransaction();
+  void endTransaction();
 
   void send(const uint8_t b);
   void endSending();

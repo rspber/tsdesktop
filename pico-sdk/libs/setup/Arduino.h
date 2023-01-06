@@ -58,6 +58,10 @@ typedef uint16_t word;
 #define max(a,b) ((a)>(b)?(a):(b))
 #define abs(x) ((x)>0?(x):-(x))
 
+// ----------------------------- Init hardware --------------------------------
+
+void init_hardware();
+
 // ------------------------------- Interrupts ---------------------------------
 
 uint32_t noInterrupts(void);
@@ -77,6 +81,13 @@ unsigned long micros(void);
 void delay(const int ms);
 
 // ----------------------------------- SPI ------------------------------------
+
+void inline cs_select(const uint8_t CS, const uint8_t mode)
+{
+  asm volatile("nop \n nop \n nop");
+  gpio_put(CS, mode);
+  asm volatile("nop \n nop \n nop");
+}
 
 void init_spi(const uint8_t RX, const uint8_t SCK, const uint8_t TX, spi_inst_t* spi = spi0);
 void init_spi1(const uint8_t RX, const uint8_t SCK, const uint8_t TX);

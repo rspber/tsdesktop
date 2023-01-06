@@ -9,8 +9,7 @@
 
 #define GRAY_A0  RGB(0xA0, 0xA0, 0xA0)
 
-#include <Display.h>
-#include <Touch.h>
+#include <Media.h>
 #include <TSDesktop.h>
 #include <Fonts/TSD_FreeSerif_18pt.h>
 

@@ -5,10 +5,7 @@
 
 */
 
-#include <Setup.h>
-
-#include <Display.h>
-#include <Touch.h>
+#include <Media.h>
 #include <TSDesktop.h>
 #include <Fonts/TSD_FreeSans_9pt.h>
 

@@ -71,10 +71,11 @@
 #define ILI9488_ADJCTL6     0xFC    // Adjust Control 6
 #define ILI9488_ADJCTL7     0xFF    // Adjust Control 7
 
-class TFT_DRIVER : public TFT_ILI9xxx {
+class TFT_ILI9488 : public TFT_ILI9xxx {
 public:
-  TFT_DRIVER(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
+  TFT_ILI9488(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
 
+protected:
   void init()
   {
     sendCmdData(ILI9488_PVGAMMA, (uint8_t*)"\x00\x03\x09\x08\x16\x0A\x3F\x78\x4C\x09\x0A\x08\x16\x1A\x0F", 15);

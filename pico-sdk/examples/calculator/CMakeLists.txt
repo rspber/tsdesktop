@@ -3,9 +3,8 @@ add_executable(calculator
 )
 
 target_link_libraries(calculator
-  setup
-  desktop
-  xpt2046
+  media
+  tsdesktop
   utils
 )
 

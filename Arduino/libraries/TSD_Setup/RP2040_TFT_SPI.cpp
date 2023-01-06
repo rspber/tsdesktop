@@ -6,29 +6,30 @@
 */
 
 #include "RP2040_TFT_SPI.h"
-#include "Arduino.h"
+#include "Setup.h"
 #include "hardware/spi.h"
-
-RP2040_TFT_SPI::RP2040_TFT_SPI(const int16_t aCS, const int16_t aDC, const uint Hz, SPIClass* aspi)
-  : TFT_SPI()
-{
-  CS = aCS;
-  DC = aDC;
-  _spi = aspi;
-  settings = SPISettings(Hz, MSBFIRST, spiMode);
-}
 
 void RP2040_TFT_SPI::begin()
 {
+  CS = TFT_CS;
   if (CS >= 0) {
     pinMode(CS, OUTPUT);
     digitalWrite(CS, HIGH);
   }
+
+  DC = SPI0_DC;
   if (DC >= 0) {
     pinMode(DC, OUTPUT);
     digitalWrite(DC, HIGH);
   }
+
+  _spi = &SPI;
+  settings = SPISettings(TFT_SPI_WRITE_SPEED, MSBFIRST, spiMode);
+
   _spi->begin();
+
+  RST = TFT_RST;
+  TFT_Class::begin();
 }
 
 void RP2040_TFT_SPI::cs(const uint8_t mode)
@@ -45,20 +46,20 @@ void RP2040_TFT_SPI::dc(const uint8_t mode)
   }
 }
 
-void RP2040_TFT_SPI::spiBegin(const uint Hz)
+void RP2040_TFT_SPI::beginTransaction(const uint Hz)
 {
   SPISettings tmp(Hz, MSBFIRST, spiMode);
   _spi->beginTransaction(tmp);
   cs(0);
 }
 
-void RP2040_TFT_SPI::spiBegin()
+void RP2040_TFT_SPI::beginTransaction()
 {
   _spi->beginTransaction(settings);
   cs(0);
 }
 
-void RP2040_TFT_SPI::spiEnd()
+void RP2040_TFT_SPI::endTransaction()
 {
   _spi->endTransaction();
   cs(1);

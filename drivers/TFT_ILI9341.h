@@ -54,10 +54,11 @@
 #define ILI9341_POSC        0xED    // Power on sequence control
 #define ILI9341_ENABLE3G    0xF2    // Enable 3 gamma control
 
-class TFT_DRIVER : public TFT_ILI9xxx {
+class TFT_ILI9341 : public TFT_ILI9xxx {
 public:
-  TFT_DRIVER(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
+  TFT_ILI9341(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
 
+protected:
   void init()
   {
     sendCmd(TFT_SWRESET); // Engage software reset

@@ -9,10 +9,11 @@
 
 #include <TFT_SSD196x.h>
 
-class TFT_DRIVER : public TFT_SSD196x {
+class TFT_SSD1963_800ALT : public TFT_SSD196x {
 public:
-  TFT_DRIVER(const int16_t w, const int16_t h) : TFT_SSD196x(w, h) {}
+  TFT_SSD1963_800ALT(const int16_t w, const int16_t h) : TFT_SSD196x(w, h) {}
 
+protected:
   void init()
   {
     sendCmdData(set_pll_mn, (uint8_t*)"\x23\x02\x04", 3);     //PLL multiplier, set PLL clock to 120M

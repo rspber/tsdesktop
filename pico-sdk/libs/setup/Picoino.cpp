@@ -7,6 +7,7 @@
 
 #include "Arduino.h"
 
+#include <pico/stdio.h>
 #include "pico/binary_info.h"
 #include "hardware/sync.h"
 
@@ -22,6 +23,13 @@ void debug(const char *buf)
   }
 }
 */
+
+// ----------------------------- Init hardware --------------------------------
+
+void init_hardware()
+{
+  stdio_init_all();
+}
 
 // ------------------------------- Interrupts ---------------------------------
 

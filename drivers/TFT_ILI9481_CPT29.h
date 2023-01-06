@@ -9,10 +9,11 @@
 
 #include "TFT_ILI9x81.h"
 
-class TFT_DRIVER : public TFT_ILI9x81 {
+class TFT_ILI9481_CPT29 : public TFT_ILI9x81 {
 public:
-  TFT_DRIVER(const int16_t w, const int16_t h) : TFT_ILI9x81(w, h) {}
+  TFT_ILI9481_CPT29(const int16_t w, const int16_t h) : TFT_ILI9x81(w, h) {}
 
+protected:
   void init()
   {
     sendCmd(TFT_SLPOUT);

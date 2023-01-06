@@ -3,9 +3,8 @@ add_executable(menu2
 )
 
 target_link_libraries(menu2
-  setup
-  desktop
-  xpt2046
+  media
+  tsdesktop
 )
 
 pico_enable_stdio_usb(menu2 1)

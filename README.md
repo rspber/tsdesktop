@@ -123,7 +123,7 @@
 3. `download` or `git clone` this repository
 
 4. Copy Arduino/libraries to Arduino's libraries, pay attention on
-    TSDesktop, TSD_GFX, TSD_TFT, TSD_Drivers and TSD_Utils folders
+    TSD_Media, TSD_GFX, TSD_TFT, TSD_Drivers, TSDesktop and TSD_Utils folders
   * and dependenciens:
 
     https://github.com/PaulStoffregen/XPT2046_Touchscreen

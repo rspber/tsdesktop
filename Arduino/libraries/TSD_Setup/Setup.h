@@ -108,5 +108,3 @@ void init_i2c0();
 
 void init_i2c1();
 
-void media_begin(uint8_t rotation);
-

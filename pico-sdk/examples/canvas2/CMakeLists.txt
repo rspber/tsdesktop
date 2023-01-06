@@ -3,9 +3,8 @@ add_executable(canvas2
 )
 
 target_link_libraries(canvas2
-  setup
-  desktop
-  xpt2046
+  media
+  tsdesktop
 )
 
 pico_enable_stdio_usb(canvas2 1)

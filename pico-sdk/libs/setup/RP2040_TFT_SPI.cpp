@@ -6,32 +6,25 @@
 */
 
 #include "RP2040_TFT_SPI.h"
-#include <Arduino.h>
-
-void inline cs_select(const uint8_t CS, const uint8_t mode)
-{
-  asm volatile("nop \n nop \n nop");
-  gpio_put(CS, mode);
-  asm volatile("nop \n nop \n nop");
-}
-
-RP2040_TFT_SPI::RP2040_TFT_SPI(const int16_t aCS, const int16_t aDC, const uint Hz, spi_inst_t* aspi)
-  : TFT_SPI()
-{
-  CS = aCS;
-  DC = aDC;
-  spi = aspi;
-  spi_speed = Hz;
-}
+#include <Setup.h>
 
 void RP2040_TFT_SPI::begin()
 {
+  CS = TFT_CS;
   if (CS >= 0) {
     pinMode(CS, OUTPUT);
   }
+
+  DC = SPI0_DC;
   if (DC >= 0) {
     pinMode(DC, OUTPUT);
   }
+
+  spi = spi0;
+  spi_speed = TFT_SPI_WRITE_SPEED;
+
+  RST = TFT_RST;
+  TFT_Class::begin();
 }
 
 void RP2040_TFT_SPI::cs(const uint8_t mode)
@@ -48,18 +41,18 @@ void RP2040_TFT_SPI::dc(const uint8_t mode)
   }
 }
 
-void RP2040_TFT_SPI::spiBegin(const uint Hz)
+void RP2040_TFT_SPI::beginTransaction(const uint Hz)
 {
   set_spi_speed(spi, Hz);
   cs(0);
 }
 
-void RP2040_TFT_SPI::spiBegin()
+void RP2040_TFT_SPI::beginTransaction()
 {
-  spiBegin(spi_speed);
+  beginTransaction(spi_speed);
 }
 
-void RP2040_TFT_SPI::spiEnd()
+void RP2040_TFT_SPI::endTransaction()
 {
   cs(1);
 }

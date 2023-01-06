@@ -5,24 +5,10 @@
 
 */
 
-#include "TFT_Driver.h"
+#include "TFT_Class.h"
 #include <Setup.h>
 
-#define beginTransact(Hz) spi->spiBegin(Hz)
-#define endTransact() spi->spiEnd()
-#define startSending() spi->startSending()
-#define send(data) spi->send(data)
-#define endSending() spi->endSending()
-#define sendCmd(cmd) spi->sendCmd(cmd)
-#define sendData(data, size) spi->sendData(data, size)
-#define sendCmdData(cmd, data, size) spi->sendCmdData(cmd, data, size)
-#define sendCmdByte(cmd, data) spi->sendCmdByte(cmd, data)
-#define startTransfer() spi->startTransfer()
-#define transfer(cmd) spi->transfer(cmd)
-#define transfer16(cmd) spi->transfer16(cmd)
-#define endTransfer() spi->endTransfer()
-
-void TFT_Driver::hardReset()
+void TFT_Class::hardReset()
 {
   if (RST >= 0) {
     digitalWrite(RST, LOW);
@@ -32,27 +18,27 @@ void TFT_Driver::hardReset()
   }
 }
 
-void TFT_Driver::reset()
+void TFT_Class::reset()
 {
   hardReset();
-  beginTransact(TFT_SETUP_SPEED);   // slow down
+  beginTransaction(TFT_SETUP_SPEED);   // slow down
   sendCmd(TFT_SWRESET); // Engage software reset
-  endTransact();
+  endTransaction();
   sleep_ms(150);
 }
 
-void TFT_Driver::displayOff()
+void TFT_Class::displayOff()
 {
-  beginTransact(TFT_SETUP_SPEED);
+  beginTransaction(TFT_SETUP_SPEED);
   sendCmd(TFT_DISPOFF);
-  endTransact();
+  endTransaction();
 }
 
-void TFT_Driver::displayOn()
+void TFT_Class::displayOn()
 {
-  beginTransact(TFT_SETUP_SPEED);
+  beginTransaction(TFT_SETUP_SPEED);
   sendCmd(TFT_DISPON);
-  endTransact();
+  endTransaction();
 }
 
 /**************************************************************************/
@@ -64,9 +50,9 @@ void TFT_Driver::displayOn()
     @param    len  The number of bytes to read from register
  */
 /**************************************************************************/
-void TFT_Driver::readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
+void TFT_Class::readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
 {
-  beginTransact(TFT_SETUP_SPEED);
+  beginTransaction(TFT_SETUP_SPEED);
   sendCmdByte(TFT_IDXRD, 0x10 + len);
   int i = 0;
   buf[i++] = reg;
@@ -76,33 +62,33 @@ void TFT_Driver::readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
     buf[i++] = transfer(0);
   }
   endTransfer();
-  endTransact();
+  endTransaction();
 }
 
-void TFT_Driver::invertDisplay(bool invert)
+void TFT_Class::invertDisplay(bool invert)
 {
-  beginTransact(TFT_SETUP_SPEED);
+  beginTransaction(TFT_SETUP_SPEED);
   sendCmd(invert ? TFT_INVON : TFT_INVOFF);
-  endTransact();
+  endTransaction();
 }
 
 // actually not used
-void TFT_Driver::scrollTo(int16_t y) {
-  beginTransact(TFT_SETUP_SPEED);
+void TFT_Class::scrollTo(int16_t y) {
+  beginTransaction(TFT_SETUP_SPEED);
   sendCmd(TFT_VSCRSADD);
   startSending();
   send(y >> 8);
   send(y & 0xff);
   endSending();
-  endTransact();
+  endTransaction();
 }
 
 // actually not used
-void TFT_Driver::setScrollMargins(int16_t top, int16_t bottom) {
+void TFT_Class::setScrollMargins(int16_t top, int16_t bottom) {
   // TFA+VSA+BFA must equal 320
   if (top + bottom <= getHEIGHT()) {
     uint16_t middle = getHEIGHT() - (top + bottom);
-    beginTransact(TFT_SETUP_SPEED);
+    beginTransaction(TFT_SETUP_SPEED);
     sendCmd(TFT_VSCRDEF);
     startSending();
     send(top >> 8);
@@ -112,19 +98,19 @@ void TFT_Driver::setScrollMargins(int16_t top, int16_t bottom) {
     send(bottom >> 8);
     send(bottom & 0xff);
     endSending();
-    endTransact();
+    endTransaction();
   }
 }
 
 // actually not used
-void TFT_Driver::setAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
+void TFT_Class::setAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
 {
-  beginTransact(TFT_SETUP_SPEED);
+  beginTransaction(TFT_SETUP_SPEED);
   writeAddrWindow(x, y, w, h);
-  endTransact();
+  endTransaction();
 }
 
-void TFT_Driver::sendCmd2x16(const uint8_t cmd, const int16_t i1, const int16_t i2)
+void TFT_Class::sendCmd2x16(const uint8_t cmd, const int16_t i1, const int16_t i2)
 {
   sendCmd(cmd);
   startSending();
@@ -135,24 +121,24 @@ void TFT_Driver::sendCmd2x16(const uint8_t cmd, const int16_t i1, const int16_t 
   endSending();
 }
 
-void TFT_Driver::writeAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
+void TFT_Class::writeAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
 {
   sendCmd2x16(TFT_CASET, x, x + w - 1);
   sendCmd2x16(TFT_PASET, y, y + h - 1);
   sendCmd(TFT_RAMWR);
 }
 
-void TFT_Driver::readAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
+void TFT_Class::readAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
 {
   sendCmd2x16(TFT_CASET, x, x + w - 1);
   sendCmd2x16(TFT_PASET, y, y + h - 1);
   sendCmd(TFT_RAMRD);
 }
 
-rgb_t TFT_Driver::readPixel(clip_t* clip, int16_t x, int16_t y)
+rgb_t TFT_Class::readPixel(clip_t* clip, int16_t x, int16_t y)
 {
   if (x >= clip->x1 && y >= clip->y1 && x < clip->x2 && y < clip->y2) {
-    beginTransact(TFT_SPI_READ_SPEED);
+    beginTransaction(TFT_SPI_READ_SPEED);
     readAddrWindow(x, y, 1, 1);
     startTransfer();
     transfer(0);  // the first is thorough
@@ -175,16 +161,16 @@ rgb_t TFT_Driver::readPixel(clip_t* clip, int16_t x, int16_t y)
       color = RGB(r,g,b);
     }
     endTransfer();
-    endTransact();
+    endTransaction();
     return color;
   }
   return 0;
 }
 
-void TFT_Driver::storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t)
+void TFT_Class::storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t)
 {
-  endTransact();
-  beginTransact(TFT_SPI_READ_SPEED);
+  endTransaction();
+  beginTransaction(TFT_SPI_READ_SPEED);
   readAddrWindow(x, y, w, h);
   startTransfer();
   transfer(0);  // the first is thorough
@@ -223,11 +209,11 @@ void TFT_Driver::storePixels(const int16_t x, const int16_t y, const int16_t w, 
     }
   }
   endTransfer();
-  endTransact();
-  beginTransact(TFT_SPI_WRITE_SPEED);
+  endTransaction();
+  beginTransaction(TFT_SPI_WRITE_SPEED);
 }
 
-void TFT_Driver::writeColor(const int16_t w, const int16_t h, const rgb_t color)
+void TFT_Class::writeColor(const int16_t w, const int16_t h, const rgb_t color)
 {
   uint8_t buf[8];
   mdt_color(buf, color, 1);
@@ -242,7 +228,7 @@ void TFT_Driver::writeColor(const int16_t w, const int16_t h, const rgb_t color)
   endSending();
 }
 
-void TFT_Driver::writePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
+void TFT_Class::writePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
 {
   // very dubious method to detect pointer in rgb_t type
   // in rp2040 pointers are 4 byte:
@@ -298,7 +284,7 @@ static rgb_t RGB14toColor(int16_t r, int16_t g, int16_t b)
 //#endif
 }
 
-void TFT_Driver::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
+void TFT_Class::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
 {
   int16_t r1, g1, b1;
   RGB14fromColor(z->color1, r1, g1, b1);
@@ -364,7 +350,7 @@ void TFT_Driver::writeFillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t
   }
 }
 
-void TFT_Driver::writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
+void TFT_Class::writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
 {
   int16_t r1, g1, b1;
   RGB14fromColor(z->color1, r1, g1, b1);
@@ -436,7 +422,7 @@ void TFT_Driver::writeFillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t
   endSending();
 }
 
-void TFT_Driver::writeFillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
+void TFT_Class::writeFillRectGradient(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t* z)
 {
   if (x < clip->x1) {
     w -= clip->x1 - x;

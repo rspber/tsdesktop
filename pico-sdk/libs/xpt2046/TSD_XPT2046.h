@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <TFT_SPI.h>
+#include "hardware/spi.h"
 
 #define Z_THRESHOLD 350 // Touch pressure threshold for validating touches
 
@@ -21,7 +21,7 @@ public:
   uint8_t getRotation() { return rotation; }
   bool getReverseMode() { return reverse; }
 
-  bool begin(TFT_SPI* aspi, const int16_t atirq = -1);
+  bool begin();
 
   // Get raw x,y ADC values from touch controller
   bool getTouchRaw(int16_t* x, int16_t* y);
@@ -36,11 +36,19 @@ public:
   bool getTouch(int16_t* x, int16_t* y, uint16_t threshold = Z_THRESHOLD);
 
 private:
+  void beginTransaction();
+  void endTransaction();
+  void cs(const bool state);
+  const uint8_t transfer(const uint8_t cmd);
+  const uint16_t transfer16(const uint8_t cmd);
+
   // Private function to validate a touch, allow settle time and reduce spurious coordinates
   bool validTouch(int16_t* x, int16_t* y, uint16_t threshold = Z_THRESHOLD);
 
 private:
-  TFT_SPI* spi;
+  int16_t CS;
+  spi_inst_t* spi;
+  uint spi_speed;
   int16_t tirq;
   int _pressTime;
   uint8_t rotation = 1;

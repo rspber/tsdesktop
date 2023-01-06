@@ -5,17 +5,14 @@
 
 */
 
-#include <Setup.h>
 #include <eval.h>
+#include <Media.h>
+#include <TSDesktop.h>
+#include <Editable.h>
 
 #define TX_COLOR  GREEN_YELLOW
 #define BG_COLOR  DODGER_BLUE
 #define CBG_COLOR  RGB(0x40, 0x40, 0xC0)
-
-#include <Display.h>
-#include <Touch.h>
-#include <TSDesktop.h>
-#include <Editable.h>
 
 Display display;
 bool screenEnabled = false;
@@ -228,7 +225,7 @@ void setup() {
   e0FSet.setAlignClientHoriz();
   e0FSet.setTransparent(true);
   e0FSet.setBorderSize(0);
-  
+
 //  r4FSet.setAlignClientHoriz();
 //  r3FSet.setAlignClientHoriz();
 //  r2FSet.setAlignClientHoriz();

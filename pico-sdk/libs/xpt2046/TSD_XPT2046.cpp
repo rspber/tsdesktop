@@ -62,20 +62,22 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 #include "TSD_XPT2046.h"
-#include <Arduino.h>
+#include <Setup.h>
 
-#define beginTransact(Hz) spi->spiBegin(Hz)
-#define endTransact() spi->spiEnd()
-#define startTransfer() spi->startTransfer()
-#define transfer(cmd) spi->transfer(cmd)
-#define transfer16(cmd) spi->transfer16(cmd)
-#define endTransfer() spi->endTransfer()
+#define startTransfer()
+#define endTransfer()
 
-bool TSD_XPT2046::begin(TFT_SPI* aspi, const int16_t atirq)
+bool TSD_XPT2046::begin()
 {
-  spi = aspi;
-  spi->begin();
-  tirq = atirq;
+  CS = TOUCH_CS;
+  if (CS >= 0) {
+    pinMode(CS, OUTPUT);
+  }
+
+  spi_speed = TOUCH_SPI_SPEED;
+
+  spi = spi0;
+  tirq = -1;
 
   if (tirq >= 0) {
     //    pinMode( tirqPin, INPUT );
@@ -86,6 +88,37 @@ bool TSD_XPT2046::begin(TFT_SPI* aspi, const int16_t atirq)
   return true;
 }
 
+void TSD_XPT2046::beginTransaction()
+{
+  set_spi_speed(spi, spi_speed);
+  cs(0);
+}
+
+void TSD_XPT2046::endTransaction()
+{
+  cs(1);
+}
+
+void TSD_XPT2046::cs(const bool state)
+{
+  if (CS >= 0) {
+    cs_select(CS, state);
+  }
+}
+
+const uint8_t TSD_XPT2046::transfer(const uint8_t cmd)
+{
+  uint8_t data;
+  spi_read_blocking(spi, cmd, &data, 1);
+  return data;
+}
+
+const uint16_t TSD_XPT2046::transfer16(const uint8_t cmd)
+{
+  uint8_t data[2];
+  spi_read_blocking(spi, cmd, data, 2);
+  return (data[0] << 8) | data[1];
+}
 
 /***************************************************************************************
 ** Function name:           getTouchRaw
@@ -94,7 +127,7 @@ bool TSD_XPT2046::begin(TFT_SPI* aspi, const int16_t atirq)
 bool TSD_XPT2046::getTouchRaw(int16_t* x, int16_t* y) {
   int16_t tmp;
 
-  beginTransact();
+  beginTransaction();
   startTransfer();
 
   // Start YP sample request for y position, read 4 times and keep last sample
@@ -127,7 +160,7 @@ bool TSD_XPT2046::getTouchRaw(int16_t* x, int16_t* y) {
   *x = tmp;
 
   endTransfer();
-  endTransact();
+  endTransaction();
 
   return true;
 }
@@ -137,7 +170,7 @@ bool TSD_XPT2046::getTouchRaw(int16_t* x, int16_t* y) {
 ** Description:             read raw pressure on touchpad and return Z value.
 ***************************************************************************************/
 int16_t TSD_XPT2046::getTouchRawZ(void) {
-  beginTransact();
+  beginTransaction();
   startTransfer();
 
   // Z sample request
@@ -147,7 +180,7 @@ int16_t TSD_XPT2046::getTouchRawZ(void) {
   tz -= transfer16(0x00) >> 3;  // Read Z2
 
   endTransfer();
-  endTransact();
+  endTransaction();
 
   if (tz == 4095) tz = 0;
 

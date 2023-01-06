@@ -3,9 +3,8 @@ add_executable(checkboxes
 )
 
 target_link_libraries(checkboxes
-  setup
-  desktop
-  xpt2046
+  media
+  tsdesktop
   pcf8575
 )
 

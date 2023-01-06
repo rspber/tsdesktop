@@ -63,8 +63,6 @@ public:
   void fillScreen(const rgb_t color = BLACK);
   void clearDisplay();
 
-  void writeLine(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color, int16_t ts, uint8_t mode);
-
   void drawLine(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color, int16_t ts, uint8_t mode); // thickness, mode:1 cut
   void drawRect(clip_t* clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color, int16_t ts); // thickness
   void drawTriangle(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts, uint8_t mode); // thickness, mode:1 cut
@@ -131,6 +129,9 @@ public:
   using TSD_GFX::drawRGBBitmap;
   using TSD_GFX::drawChar;
   using TSD_GFX::drawTextLine;
+
+protected:
+  void writeLine(clip_t* clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color, int16_t ts, uint8_t mode);
 
 private:
   int16_t WIDTH, HEIGHT;

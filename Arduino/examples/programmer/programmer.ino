@@ -5,13 +5,8 @@
 
 */
 
-#include <Setup.h>
 
-#define GRAY_88  RGB( 0x88, 0x88, 0x88)
-#define BG_COLOR OLIVE
-
-#include <Display.h>
-#include <Touch.h>
+#include <Media.h>
 #include <TSDesktop.h>
 
 #include <TSD_DS3231.h>
@@ -23,6 +18,9 @@
 #include <Fonts/TSD_FreeSans_9pt.h>
 
 #define FONT FreeSans_9pt
+
+#define GRAY_88  RGB( 0x88, 0x88, 0x88)
+#define BG_COLOR OLIVE
 
 #define ROTATION ROTATION_VTB
 

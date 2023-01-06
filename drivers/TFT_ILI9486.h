@@ -59,10 +59,11 @@
 #define ILI9486_DIGGAMC2    0xE3    // Digital gamma control 2
 #define ILI9486_RDSPISET    0xFB    // SPI read command setting
 
-class TFT_DRIVER : public TFT_ILI9xxx {
+class TFT_ILI9486 : public TFT_ILI9xxx {
 public:
-  TFT_DRIVER(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
+  TFT_ILI9486(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
 
+protected:
   void init()
   {
     sendCmd(TFT_SWRESET);

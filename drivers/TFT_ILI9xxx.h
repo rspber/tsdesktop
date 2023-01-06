@@ -7,9 +7,7 @@
 
 #pragma once
 
-#include <TFT_Driver.h>
-
-#include <Setup.h>
+#include <TFT_Protocol.h>
 
 #define BGR 1
 
@@ -23,42 +21,14 @@
 #define MAD_SS  0x02 // horizontal flip
 #define MAD_GS  0x01 // vertical flip
 
-#define beginTransact(Hz) spi->spiBegin(Hz)
-#define endTransact() spi->spiEnd()
-#define sendCmd(cmd) spi->sendCmd(cmd)
-#define sendData(data, size) spi->sendData(data, size)
-#define sendCmdData(cmd, data, size) spi->sendCmdData(cmd, data, size)
-#define sendCmdByte(cmd, data) spi->sendCmdByte(cmd, data)
-
-class TFT_ILI9xxx : public TFT_Driver {
+class TFT_ILI9xxx : public TFT_Protocol {
 public:
-  TFT_ILI9xxx(const int16_t w, const int16_t h) : TFT_Driver(w, h) {}
+  TFT_ILI9xxx(const int16_t w, const int16_t h) : TFT_Protocol(w, h) {}
 
-  void begin(TFT_SPI* aspi, const int16_t aRST = -1)
+protected:
+  void rotation(const uint8_t r, const uint8_t REV)
   {
-    spi = aspi;
-    spi->begin();
-
-    RST = aRST;
-    if (RST >= 0) {
-      pinMode(RST, OUTPUT);
-    }
-
-    hardReset();
-
-    beginTransact(TFT_SETUP_SPEED);
-
-    init();
-
-    endTransact();
-  }
-
-  virtual void init() = 0;
-
-  void setRotation(const uint8_t rotation, const uint8_t REV)
-  {
-    beginTransact(TFT_SETUP_SPEED);
-    switch (rotation % 4) {
+    switch (r % 4) {
     case 0:
       sendCmdByte(TFT_MADCTL, (MAD_MX ^ REV) | (BGR << 3));
       setSize(getWIDTH(), getHEIGHT());
@@ -76,7 +46,6 @@ public:
       setSize(getHEIGHT(), getWIDTH());
       break;
     }
-    endTransact();
   }
 
 };

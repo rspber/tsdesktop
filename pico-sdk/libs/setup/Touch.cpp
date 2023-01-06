@@ -7,6 +7,7 @@
 */
 
 #include "Touch.h"
+#include "Display.h"
 #include "Setup.h"
 
 int16_t inline map(int16_t x, int16_t in_min, int16_t in_max, int16_t out_min, int16_t out_max)

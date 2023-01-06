@@ -7,7 +7,9 @@
 
 #pragma once
 
-#include <TFT_ILI9xxx.h>
+#include <TFT_Protocol.h>
+
+#define BGR 1
 
 #define MAD_MY  0x80  // 00 top to botom, 80 bottom to top
 #define MAD_MX  0x40  // 00 left to right, 40 right to left
@@ -19,10 +21,11 @@
 #define MAD_SS  0x02 // horizontal flip
 #define MAD_GS  0x01 // vertical flip
 
-class TFT_DRIVER : public TFT_ILI9xxx {
+class TFT_RM68140 : public TFT_Protocol {
 public:
-  TFT_DRIVER(const int16_t w, const int16_t h) : TFT_ILI9xxx(w, h) {}
+  TFT_RM68140(const int16_t w, const int16_t h) : TFT_Protocol(w, h) {}
 
+protected:
   void init()
   {
     sendCmd(TFT_SLPOUT);
@@ -41,11 +44,10 @@ public:
     delay(25);
   }
 
-  void setRotation(const uint8_t rotation, const uint8_t REV)
+  void rotation(const uint8_t r, const uint8_t REV)
   {
     uint8_t T[] {0x00, 0x02, 0x3B};
-    beginTransact(TFT_SETUP_SPEED);
-    switch (rotation % 4) {
+    switch (r % 4) {
       case 0: // Portrait
         sendCmdByte(TFT_MADCTL, (0x00 ^ REV) | (BGR << 3));
         T[1] |= ((MAD_SS ^ REV) << 4);
@@ -68,7 +70,6 @@ public:
       break;
     }
     sendCmdData(0xB6, T, 3);
-    endTransact();
   }
 
 };
