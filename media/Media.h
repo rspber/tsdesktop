@@ -1,7 +1,7 @@
 /*
   Media
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2023, rspber (https://github.com/rspber)
 
 */
 
