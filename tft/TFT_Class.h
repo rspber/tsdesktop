@@ -103,16 +103,6 @@ public:
   virtual void displayOff();
   virtual void displayOn();
 
-  void startWrite()
-  {
-    beginTransaction();
-  }
-
-  void endWrite()
-  {
-    endTransaction();
-  }
-
   virtual rgb_t readPixel(clip_t* clip, int16_t x, int16_t y);
 
 // override by the driver
@@ -139,6 +129,16 @@ protected:
   virtual void endTransaction()
   {
     cs(1);
+  }
+
+  void startWrite()
+  {
+    beginTransaction();
+  }
+
+  void endWrite()
+  {
+    endTransaction();
   }
 
   virtual void startSending()
