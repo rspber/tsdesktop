@@ -89,7 +89,6 @@ void inline cs_select(const uint8_t CS, const uint8_t mode)
   asm volatile("nop \n nop \n nop");
 }
 
-// short init_spi function
 // section 0:  spi0 gpio's: RX(MISO)  0, CS(available)  1, SCK(CLK)  2, TX(MOSI)  3
 // section 1:  spi0 gpio's: RX(MISO)  4, CS(available)  5, SCK(CLK)  6, TX(MOSI)  7
 // section 2:  spi1 gpio's: RX(MISO)  8, CS(available)  9, SCK(CLK) 10, TX(MOSI) 11
