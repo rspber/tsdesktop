@@ -12,22 +12,22 @@ void init_hardware()
 {
 }
 
-void init_spi()
-{
-}
+#define I2C_SPEED 100 * 1000
 
-void init_i2c0()
+TwoWire* init_i2c(const uint8_t i2c_nr)
 {
-  Wire.setSDA(I2C0_SDA_PIN);
-  Wire.setSCL(I2C0_SCL_PIN);
-  Wire.begin();
-  Wire.setClock(I2C0_SPEED);
-}
-
-void init_i2c1()
-{
-  Wire1.setSDA(I2C1_SDA_PIN);
-  Wire1.setSCL(I2C1_SCL_PIN);
-  Wire1.begin();
-  Wire1.setClock(I2C1_SPEED);
+  if (i2c_nr == 0) {
+    Wire.setSDA(I2C0_SDA_PIN);
+    Wire.setSCL(I2C0_SCL_PIN);
+    Wire.begin();
+    Wire.setClock(I2C_SPEED);
+    return &Wire;
+  }
+  else {
+    Wire1.setSDA(I2C1_SDA_PIN);
+    Wire1.setSCL(I2C1_SCL_PIN);
+    Wire1.begin();
+    Wire1.setClock(I2C_SPEED);
+    return &Wire1;
+  }
 }

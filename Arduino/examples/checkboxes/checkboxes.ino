@@ -18,7 +18,7 @@ bool screenEnabled = false;
 
 Touch touch;
 
-TSD_PCF8575 pcf8575(&Wire1);
+TSD_PCF8575 pcf8575(1);
 
 #define ROTATION ROTATION_HLR
 
@@ -214,11 +214,6 @@ uint8_t LED_PIN = PICO_DEFAULT_LED_PIN;
 int pin13state = LOW;
 
 void setup() {
-
-  init_hardware();
-  init_spi();
-
-  init_i2c1();
 
   pcf8575.begin();
 

@@ -124,8 +124,10 @@ void btn_click(Container* c)
     break;
   }
   case 2:
+    operBtn.moveCursor(+1);
+    break;
   case 4:
-    operBtn.moveCursor(id == 4 ? -1 : +1);
+    operBtn.moveCursor(-1);
     break;
   case -4:  // Ins
     operBtn.swapCursorInsMode();
@@ -176,9 +178,6 @@ int pin13state = LOW;
 
 void setup() {
 
-  init_hardware();
-  init_spi();
-
   media_begin(ROTATION);
 
   pinMode(LED_PIN, OUTPUT);
@@ -223,7 +222,7 @@ void setup() {
   e0FSet.setAlignClientHoriz();
   e0FSet.setTransparent(true);
   e0FSet.setBorderSize(0);
-  
+
 //  r4FSet.setAlignClientHoriz();
 //  r3FSet.setAlignClientHoriz();
 //  r2FSet.setAlignClientHoriz();

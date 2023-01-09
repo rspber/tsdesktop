@@ -92,19 +92,18 @@ void delay(const int ms)
 
 // ----------------------------------- SPI ------------------------------------
 
-#define INIT_SPI_SPEED 40 * 1000 * 1000
+uint current_spi0_speed = 0;
+uint current_spi1_speed = 0;
 
-uint current_spi0_speed;
-uint current_spi1_speed;
-
-#define RX_OFFSET 0
-#define CS_OFFSET 1
-#define SCK_OFFSET 2
-#define TX_OFFSET 3
-
-void init_spi(const uint8_t RX, const uint8_t SCK, const uint8_t TX, spi_inst_t* spi)
+spi_inst_t* init_spi(const uint8_t RX, const uint8_t SCK, const uint8_t TX, const uint8_t spi_nr, const uint Hz)
 {
-  spi_init(spi, INIT_SPI_SPEED);
+  spi_inst_t* spi = spi_nr == 0 ? spi0 : spi1;
+
+  if (current_spi0_speed || current_spi1_speed) {
+    return spi;
+  }
+
+  spi_init(spi, Hz);
   //    spi_set_format(spi, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);  - default
   //    spi_set_format(spi, 16, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);  - problematic
   gpio_set_function(RX, GPIO_FUNC_SPI);    // MISO
@@ -113,20 +112,8 @@ void init_spi(const uint8_t RX, const uint8_t SCK, const uint8_t TX, spi_inst_t*
   // Make the SPI pins available to picotool
   bi_decl(bi_3pins_with_func(RX, TX, SCK, GPIO_FUNC_SPI));
 
-  (spi == spi0 ? current_spi0_speed : current_spi1_speed) = INIT_SPI_SPEED;
-}
-
-void init_spi(spi_section_t section)
-{
-  int8_t n = section.section;
-  if (n >= 0) {
-    init_spi(n * 4 + RX_OFFSET, n * 4 + SCK_OFFSET, n * 4 + TX_OFFSET, n & 0x2 ? spi1 : spi0);
-  }
-}
-
-void init_spi1(const uint8_t RX, const uint8_t SCK, const uint8_t TX)
-{
-  init_spi(RX, SCK, TX, spi1);
+  (spi_nr == 0 ? current_spi0_speed : current_spi1_speed) = Hz;
+  return spi;
 }
 
 void set_spi_speed(spi_inst_t* spi, const uint Hz)
@@ -147,41 +134,15 @@ void set_spi_speed(spi_inst_t* spi, const uint Hz)
 
 // ----------------------------------- I2C ------------------------------------
 
-#define SDA_OFFSET 0
-#define SCL_OFFSET 1
-
-void init_i2c(const uint8_t SDA, const uint8_t SCL, i2c_inst_t* i2c, const uint Hz)
+i2c_inst_t* init_i2c(const uint8_t SDA, const uint8_t SCL, const uint8_t i2c_nr, const uint Hz)
 {
   // I2C is "open drain", pull ups to keep signal high when no data is being sent
+  i2c_inst_t* i2c = i2c_nr == 0 ? i2c0 : i2c1;
   i2c_init(i2c, Hz);
   gpio_set_function(SDA, GPIO_FUNC_I2C);
   gpio_set_function(SCL, GPIO_FUNC_I2C);
   gpio_pull_up(SDA);
   gpio_pull_up(SCL);
+  return i2c;
 }
 
-void init_i2c0(i2c_section_t section, const uint Hz)
-{
-  int8_t n = section.section;
-  if (n >= 0) {
-    init_i2c(n * 4 + SDA_OFFSET, n * 4 + SCL_OFFSET, i2c0, Hz);
-  }
-}
-
-void init_i2c0(const uint8_t SDA, const uint8_t SCL, const uint Hz)
-{
-  init_i2c(SDA, SCL, i2c0, Hz);
-}
-
-void init_i2c1(i2c_section_t section, const uint Hz)
-{
-  int8_t n = section.section;
-  if (n >= 0) {
-    init_i2c(n * 4 + 2 + SDA_OFFSET, n * 4 + 2 + SCL_OFFSET, i2c1, Hz);
-  }
-}
-
-void init_i2c1(const uint8_t SDA, const uint8_t SCL, const uint Hz)
-{
-  init_i2c(SDA, SCL, i2c1, Hz);
-}

@@ -35,10 +35,7 @@ FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, TMT, 1, AQUA);
 uint8_t LED_PIN = PICO_DEFAULT_LED_PIN;
 int pin13state = LOW;
 
-void setup()   {
-
-  init_hardware();
-  init_spi();
+void setup() {
 
   media_begin(ROTATION);
 

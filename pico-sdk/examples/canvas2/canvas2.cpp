@@ -41,9 +41,6 @@ GFXCircle* cr;
 
 void setup()   {
 
-  init_hardware();
-  init_spi();
-
   media_begin(ROTATION);
 
   pinMode(LED_PIN, OUTPUT);

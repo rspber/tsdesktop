@@ -5,22 +5,20 @@
 
 */
 
-#include <Setup.h>
-
-#define GRAY_A0  RGB(0xA0, 0xA0, 0xA0)
-
 #include <Media.h>
 #include <TSDesktop.h>
 #include <Fonts/TSD_FreeSerif_18pt.h>
 
 #include <TSD_PCF8575.h>
 
+#define GRAY_A0  RGB(0xA0, 0xA0, 0xA0)
+
 Display display;
 bool screenEnabled = false;
 
 Touch touch;
 
-TSD_PCF8575 pcf8575(i2c1);
+TSD_PCF8575 pcf8575(1);
 
 #define ROTATION ROTATION_HLR
 
@@ -216,11 +214,6 @@ uint8_t LED_PIN = PICO_DEFAULT_LED_PIN;
 int pin13state = LOW;
 
 void setup() {
-
-  init_hardware();
-  init_spi();
-
-  init_i2c1();
 
   pcf8575.begin();
 

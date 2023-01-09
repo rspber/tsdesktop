@@ -75,20 +75,27 @@
 #define TFT_CLK  18  // SCK
 #define TFT_MOSI 19  // TX
 #define TFT_RST  20    // Reset pin (could connect to Arduino RESET pin)
-#define SPI0_DC  21    // Data Command control pin
+#define TFT_DC   21    // Data Command control pin
 //#define TFT_BL       // LED back-light
 
 #define TOUCH_CS 22     // Chip select pin (T_CS) of touch screen
 
 #define TFT_SETUP_SPEED         2 * 1000 * 1000          // 2 MHz
 
-#define TFT_SPI_WRITE_SPEED    60 * 1000 * 1000          // 60 MHz
+  #define TFT_WRITE_SPEED    60 * 1000 * 1000          // 60 MHz
 
-#if defined ST7789
-  #define TFT_SPI_READ_SPEED    2 * 1000 * 1000          //  2 MHz
-#else
-  #define TFT_SPI_READ_SPEED   20 * 1000 * 1000          // 20 MHz
-#endif
+  #if defined ST7789
+    #define TFT_READ_SPEED    2 * 1000 * 1000          //  2 MHz
+  #else
+    #define TFT_READ_SPEED   20 * 1000 * 1000          // 20 MHz
+  #endif
 
-#define TOUCH_SPI_SPEED         2 * 1000 * 1000          //  2 MHz
+#define TOUCH_SPEED         2 * 1000 * 1000          //  2 MHz
+
+#define I2C0_SDA_PIN 4
+#define I2C0_SCL_PIN 5
+
+#define I2C1_SDA_PIN 6
+#define I2C1_SCL_PIN 7
+
 

@@ -38,9 +38,6 @@ void diag_reg(const uint8_t reg, const int8_t len)
 
 void setup()   {
 
-  init_hardware();
-  init_spi();
-
   media_begin(ROTATION);
 
   pinMode(LED_PIN, OUTPUT);

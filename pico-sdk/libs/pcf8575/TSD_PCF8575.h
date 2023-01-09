@@ -14,8 +14,10 @@
 
 class TSD_PCF8575 : public TwoWire {
 public:
-  TSD_PCF8575(i2c_inst_t* i2c = i2c0, const uint8_t deviceAddress = PCF8575_ADDRESS)
-    : TwoWire(deviceAddress, i2c) {}
+  TSD_PCF8575(const uint8_t i2c_nr = 0, const uint8_t deviceAddress = PCF8575_ADDRESS)
+    : TwoWire(deviceAddress, i2c_nr)
+  {
+  }
 
   const bool begin(const uint16_t out16bits = 0xFFFF);
   const bool read16(uint16_t& out16bits);

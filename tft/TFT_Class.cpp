@@ -138,7 +138,7 @@ void TFT_Class::readAddrWindow(int16_t x, int16_t y, int16_t w, int16_t h)
 rgb_t TFT_Class::readPixel(clip_t* clip, int16_t x, int16_t y)
 {
   if (x >= clip->x1 && y >= clip->y1 && x < clip->x2 && y < clip->y2) {
-    beginTransaction(TFT_SPI_READ_SPEED);
+    beginTransaction(TFT_READ_SPEED);
     readAddrWindow(x, y, 1, 1);
     startTransfer();
     transfer(0);  // the first is thorough
@@ -170,7 +170,7 @@ rgb_t TFT_Class::readPixel(clip_t* clip, int16_t x, int16_t y)
 void TFT_Class::storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t)
 {
   endTransaction();
-  beginTransaction(TFT_SPI_READ_SPEED);
+  beginTransaction(TFT_READ_SPEED);
   readAddrWindow(x, y, w, h);
   startTransfer();
   transfer(0);  // the first is thorough
@@ -210,7 +210,7 @@ void TFT_Class::storePixels(const int16_t x, const int16_t y, const int16_t w, c
   }
   endTransfer();
   endTransaction();
-  beginTransaction(TFT_SPI_WRITE_SPEED);
+  beginTransaction(TFT_WRITE_SPEED);
 }
 
 void TFT_Class::writeColor(const int16_t w, const int16_t h, const rgb_t color)

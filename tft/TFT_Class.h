@@ -121,10 +121,7 @@ protected:
     cs(0);
   }
 
-  virtual void beginTransaction()
-  {
-    cs(0);
-  }
+  virtual void beginTransaction() = 0;
 
   virtual void endTransaction()
   {

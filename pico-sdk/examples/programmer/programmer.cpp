@@ -33,7 +33,7 @@ from_to_t PGMS[N_OF_PGMS];
 uint8_t flash_buffer[FLASH_PAGE_SIZE];
 
 TSD_DS3231 ds3231;
-TSD_PCF8575 pcf8575(i2c1);
+TSD_PCF8575 pcf8575(1);
 
 dttm_t tm;
 dttm_t oldDT;
@@ -391,11 +391,6 @@ uint8_t LED_PIN = PICO_DEFAULT_LED_PIN;
 int pin13state = LOW;
 
 void setup() {
-
-  init_hardware();
-  init_spi();
-  init_i2c0();
-  init_i2c1();
 
   media_begin(ROTATION);
 

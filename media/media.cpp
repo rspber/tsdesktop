@@ -21,19 +21,21 @@
 
 void media_begin(uint8_t rotation)
 {
+  init_hardware();
+
   display.begin();
 
-#if defined(GC9A01)
-  uint8_t rev = 1 - REVERSE_MODE;
-#else
-  uint8_t rev = REVERSE_MODE;
-#endif
+  #if defined(GC9A01)
+    uint8_t rev = 1 - REVERSE_MODE;
+  #else
+    uint8_t rev = REVERSE_MODE;
+  #endif
 
-#if defined(HX8357D)
-  uint8_t REV = rev ? 0 : MAD_MY;
-#else
-  uint8_t REV = rev ? MAD_MX : 0;
-#endif
+  #if defined(HX8357D)
+    uint8_t REV = rev ? 0 : MAD_MY;
+  #else
+    uint8_t REV = rev ? MAD_MX : 0;
+  #endif
 
   display.setRotation(rotation, REV);
 
@@ -41,9 +43,9 @@ void media_begin(uint8_t rotation)
 
   touch.begin();
 
-#if defined(ILI9341) || defined(ILI9481) || defined(ILI9486) || defined(ILI9488)
-  rotation = rotation & 1 ? rotation : ((rotation + 2) % 4);
-#endif
+  #if defined(ILI9341) || defined(ILI9481) || defined(ILI9486) || defined(ILI9488)
+    rotation = rotation & 1 ? rotation : ((rotation + 2) % 4);
+  #endif
 
   touch.setRotation(rotation, rev);
 

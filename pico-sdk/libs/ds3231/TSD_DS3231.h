@@ -29,8 +29,10 @@ typedef struct
 
 class TSD_DS3231 : public TwoWire {
 public:
-  TSD_DS3231(i2c_inst_t* i2c = i2c0, const uint8_t deviceAddress = DS3231_ADDRESS)
-    : TwoWire(deviceAddress, i2c) {}
+  TSD_DS3231(const uint8_t i2c_nr = 0, const uint8_t deviceAddress = DS3231_ADDRESS)
+    : TwoWire(deviceAddress, i2c_nr)
+  {
+  }
 
   void setDateTime(const dttm_t* dttm);
   void getDateTime(dttm_t* dttm);

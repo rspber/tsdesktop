@@ -7,13 +7,18 @@
 
 #pragma once
 
-#include "hardware/i2c.h"
+#include <Setup.h>
 
 class TwoWire {
 public:
-  TwoWire(const uint8_t addr, i2c_inst_t* i2c = i2c0)
+  TwoWire(const uint8_t addr, const uint8_t i2c_nr = 0)
   {
-    _i2c = i2c;
+    if (i2c_nr == 0) {
+      _i2c = init_i2c(I2C0_SDA_PIN, I2C0_SCL_PIN, i2c_nr);
+    }
+    else {
+      _i2c = init_i2c(I2C1_SDA_PIN, I2C1_SCL_PIN, i2c_nr);
+    }  
     _addr = addr;
   }
 

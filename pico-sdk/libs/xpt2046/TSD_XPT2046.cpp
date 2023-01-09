@@ -74,9 +74,9 @@ bool TSD_XPT2046::begin()
     pinMode(CS, OUTPUT);
   }
 
-  spi_speed = TOUCH_SPI_SPEED;
+  spi_speed = TOUCH_SPEED;
+  spi = init_spi(TFT_MISO, TFT_CLK, TFT_MOSI, 0, TOUCH_SPEED);
 
-  spi = spi0;
   tirq = -1;
 
   if (tirq >= 0) {

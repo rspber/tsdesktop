@@ -15,13 +15,13 @@ void RP2040_TFT_SPI::begin()
     pinMode(CS, OUTPUT);
   }
 
-  DC = SPI0_DC;
+  DC = TFT_DC;
   if (DC >= 0) {
     pinMode(DC, OUTPUT);
   }
 
-  spi = spi0;
-  spi_speed = TFT_SPI_WRITE_SPEED;
+  spi = init_spi(TFT_MISO, TFT_CLK, TFT_MOSI, 0, TFT_WRITE_SPEED);
+  spi_speed = TFT_WRITE_SPEED;
 
   RST = TFT_RST;
   TFT_Class::begin();

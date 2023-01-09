@@ -8,6 +8,7 @@
 #pragma once
 
 #include "Wire.h"
+#include "Setup.h"
 
 typedef struct
 {
@@ -29,10 +30,10 @@ typedef struct
 
 class TSD_DS3231 {
 public:
-  TSD_DS3231(TwoWire* wire = &Wire, const uint8_t deviceAddress = DS3231_ADDRESS)
+  TSD_DS3231(const uint8_t i2c_nr = 0, const uint8_t deviceAddress = DS3231_ADDRESS)
   {
     _addr = deviceAddress;
-    _wire = wire;
+    _wire = init_i2c(i2c_nr);
   }
   void setDateTime(const dttm_t* dttm);
   void getDateTime(dttm_t* dttm);

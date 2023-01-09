@@ -5,7 +5,6 @@
 
 */
 
-
 #include <Media.h>
 #include <TSDesktop.h>
 
@@ -34,7 +33,7 @@ from_to_t PGMS[N_OF_PGMS];
 uint8_t flash_buffer[FLASH_PAGE_SIZE];
 
 TSD_DS3231 ds3231;
-TSD_PCF8575 pcf8575(&Wire1);
+TSD_PCF8575 pcf8575(1);
 
 dttm_t tm;
 dttm_t oldDT;
@@ -214,7 +213,6 @@ void dttm_btn(TextButton* b, const int id, const int fontSize)
   b->setId(id);
   b->setOnClick(dttm_select_click);
   b->setTextColor(GRAY_88);
-  b->setBottomMargin(2);
   b->setFont(FONT);
   b->setFontSize(fontSize);
 //  b->setFontSize(fontSize + 1);
@@ -291,7 +289,6 @@ void rpgm_radio_btn(RadioButton* b)
 {
   b->setMargin(4);
   b->setTextColor(GRAY);
-  b->setBottomMargin(2);
   b->setBorderSize(0);
   b->setDecorInActiveColor(GRAY);
   b->setOnClick(pgm_radio_click);
@@ -310,7 +307,6 @@ void tpgm_btn(ValueButton* b, const int id)
   b->setId(id);
   b->setOnClick(pgm_select_click);
   b->setTextColor(GRAY_88);
-  b->setBottomMargin(2);
   b->setFont(FONT);
   b->setFontSize(2);
   b->setBorderColor(GRAY);
@@ -395,11 +391,6 @@ uint8_t LED_PIN = PICO_DEFAULT_LED_PIN;
 int pin13state = LOW;
 
 void setup() {
-
-  init_hardware();
-  init_spi();
-  init_i2c0();
-  init_i2c1();
 
   media_begin(ROTATION);
 

@@ -17,14 +17,14 @@ void RP2040_TFT_SPI::begin()
     digitalWrite(CS, HIGH);
   }
 
-  DC = SPI0_DC;
+  DC = TFT_DC;
   if (DC >= 0) {
     pinMode(DC, OUTPUT);
     digitalWrite(DC, HIGH);
   }
 
   _spi = &SPI;
-  settings = SPISettings(TFT_SPI_WRITE_SPEED, MSBFIRST, spiMode);
+  settings = SPISettings(TFT_WRITE_SPEED, MSBFIRST, spiMode);
 
   _spi->begin();
 
