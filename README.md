@@ -34,6 +34,7 @@
   - easy way to place objects on the screen: all examples
   - integrated touch screen: almost all examples
   - scroller: see examples: scroll1, menu1, menu2, menu3
+* TFT Stack (TFT_Class -> TFT_Protocol -> TFT_DRIVER -> Display) to easy implement protocols and drivers for tft
 * Modified gamma for ILI9341 to reflect better color vibrancy.
 * 565/666 color support
 * Gradient with percentage
