@@ -1,0 +1,1 @@
+cc bootselBoot.c -o bootselBoot -I/usr/include/libusb-1.0 -L/usr/lib64 -lusb-1.0

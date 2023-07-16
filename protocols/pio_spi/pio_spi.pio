@@ -1,0 +1,144 @@
+/*
+  pio spi read/write
+
+  Copyright (c) 2023, rspber (https://github.com/rspber)
+
+  Based on
+
+  https://github.com/Bodmer/TFT_eSPI/Processors/pio_SPI.pio.h
+
+  Bodmer's license.txt in file /licenses/Bodmer_license.txt
+*/
+
+.program pio_spi
+.side_set 1 opt
+
+  // set is TFT_DC
+  // out is TFT_MOSI
+  // in is TFT_MISO
+  // sideset is TFT_CLK
+
+  // in the 'out' configuration:
+  // shift for OSR is configured to LEFT
+  // auto pull from TX_FIFO to OSR is switched OFF
+  // OSR count is set to 32
+
+  // in the 'in' configuration:
+  // shift for ISR is configured to LEFT
+  // auto push from ISR to RX_FIFO is switched ON
+  // ISR count is set to 8
+
+.wrap_target
+start_tx_8:
+        // send byte command or byte data
+        // we stay somewhere between TX_FIFO and OSR,
+        // as soon as any data will appear in TX_FIFO, OSR pulls one 32 bit value, our data are in the lowest 8 bits,
+    pull block
+        // shift OSR left by 24, output is directed to the one pin: TFT_MOSI, so shifted bits are lost
+    out pins, 24
+
+loop_tx_8:
+        // shift OSR left by 1 and load falling out bit to TFT_MOSI
+        // at the and, flop TFT_CLK to 0
+    out pins, 1           side 0
+        // if not all 32 bits where shifted in OSR jump to loop_tx_8:
+        // (1)
+        // but first, flop TFT_CLK to 1, it generates rising clock edge on TFT_CLK bus,
+        // the receiver is allergic to it (assuming we are working in SPI_MODE0) and reads the bit from TFT_MOSI
+    jmp !osre loop_tx_8   side 1
+.wrap
+
+start_tx_16:
+        // send 565 color or 16 bit data
+        // pull block from TX_FIFO to OSR, our data are in the lowest 16 bits of OSR,
+    pull block
+        // truncate bits (31..16)
+    out pins, 16
+
+loop_tx_16:
+        // shift OSR left by 1 and load falling out bit to TFT_MOSI
+        // at the and, flop TFT_CLK to 0
+    out pins, 1           side 0
+        // if not all 32 bits where shifted in OSR jump to loop_16:
+        // but first, read (1)
+    jmp !osre loop_tx_16  side 1
+    jmp start_tx_16
+
+start_tx_24:
+        // send 666 color
+        // pull block from TX_FIFO to OSR, our data are in the lowest 24 bits of OSR,
+    pull block
+        // truncate bits (31..24)
+    out pins, 8
+
+loop_tx_24:
+        // shift OSR left by 1 and load falling out bit to TFT_MOSI
+        // at the and, flop TFT_CLK to 0
+    out pins, 1           side 0
+        // if not all 32 bits where shifted in OSR jump to loop_tx_24:
+        // but first, read (1)
+    jmp !osre loop_tx_24  side 1
+    jmp start_tx_24
+
+
+
+  // the code snippet below assumes that one of the READ commands has just been sent to the display
+  // this caused the display to switch to reading mode (looking at the sender's side)
+
+start_rd_8:
+      // after sending anything the clock bus (TFT_CLK) stays high
+      // flop TFT_CLK to 0,
+      // (0)
+      // low state of TFT_CLK bus (when reading) encourages the receiver to put the next bit on TFT_MISO bus
+      // the receiver also checks low state of TFT_CS bus to see sender expects the data
+      // the exposed data must also stabilize on TFT_MISO bus (author's digressions),
+      // so the switching speed of the clock bus (when reading) should be slightly reduced
+    nop              side 0
+      // flop TFT_CLK to 1
+      // (1)
+      // the high state of the clock informs the receiver not to disturb
+      // because we are reading the data from TFT_MISO
+    nop              side 1
+
+loop_rd_8:
+      // shift ISR left by 1 and set bit from TFT_MISO at ISR 0 position
+      // because auto push is ON, if the count of shifted bits in ISR reached 8 push ISR to RX_FIFO and reset ISR
+      // at the end flop TFT_CLK to 0, read (0)
+    in pins, 1       side 0
+      // jump, but first flop TFT_CLK to 1, read (1)
+    jmp loop_rd_8    side 1
+
+  // after sending last bit in reading mode, receiver returns to writing mode
+
+
+// chunk_offset = 18
+// chunks area
+// the code below will be reloaded as needed
+// code sources are in separate *.pio.h files
+
+addr_window:
+loop_a_3x:
+      // cmd 8 bit
+    pull   block
+      // DC_C
+    set    pins, 0
+      // truncate (31..8)
+    out    pins, 24
+
+loop_a_cmd:
+      // shift OSR left, to MOSI
+    out    pins, 1         side 0
+      // jmp if not all
+    jmp    !osre, loop_a_cmd side 1
+      // DC_D
+    set    pins, 1
+      // after the 3-rd command here it will stop because there will be no more data in tx_fifo
+      // 2 x 16 bit coordinate
+    pull   block
+
+loop_a_2x16:
+      // shift OSR left, to MOSI
+    out    pins, 1         side 0
+      // jmp if not all
+    jmp    !osre, loop_a_2x16 side 1
+    jmp    loop_a_3x

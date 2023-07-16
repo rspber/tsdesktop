@@ -1,0 +1,53 @@
+/*
+  Copyright (c) 2023, rspber (https://github.com/rspber)
+
+  Based on
+
+  https://github.com/Bodmer/TFT_eSPI/Processors/pio_SPI.pio.h
+
+  Bodmer's license.txt in file /licenses/Bodmer_license.txt
+*/
+
+.program pio_spi_mdt_block_16
+.side_set 1 opt
+
+start_tx:
+    jmp start_tx
+    jmp start_tx
+    jmp start_tx
+    jmp start_tx
+
+    jmp start_tx
+    jmp start_tx
+    jmp start_tx
+    jmp start_tx
+
+    jmp start_tx
+    jmp start_tx
+    jmp start_tx
+    jmp start_tx
+
+    jmp start_tx
+    jmp start_tx
+    jmp start_tx
+    jmp start_tx
+
+    jmp start_tx
+    jmp start_tx
+
+// !!! must be offset 18 here !!!
+
+start_mdt_block_16:
+    pull   block
+    mov    x, osr                     
+    pull   block                      
+    mov    y, osr                     
+loop_count:
+    mov    osr, x
+      // truncate (31..16)
+    out    pins, 16
+loopo:
+    out    pins, 1         side 0     
+    jmp    !osre, loopo    side 1     
+    jmp    y--, loop_count
+    jmp start_tx    

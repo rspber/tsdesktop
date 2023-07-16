@@ -1,0 +1,92 @@
+/*
+  PIO 8BITP WRITE
+
+  Copyright (c) 2023, rspber (https://github.com/rspber)
+
+  Based on
+
+  https://github.com/Bodmer/TFT_eSPI/Processors/pio_8bit_parallel.pio.h
+
+  Bodmer's license.txt in file /licenses/Bodmer_license.txt
+*/
+
+.program pio_8bitp
+.side_set 1 opt
+
+  // set is TFT_DC
+  // sideset is TFT_WR
+  // out pins: TFT_D0 .. TFT_D7
+
+  // in output configuration:
+  // OSR register shifts to the left,
+  // auto pull from TX_FIFO to OSR is OFF
+  // OSR count is 32
+
+.wrap_target
+        // TFT_WR stays HIGH
+start_tx_8:
+        // pull block from TX_FIFO to OSR, our data are in the lowest 8 bits of OSR
+    pull   block
+        // shift OSR left by 24 - truncate bits (31..8)
+    out    pins, 24
+loop_tx_8:
+        // shift OSR left by 8 - 8 highest bits of OSR go into D7 .. D0
+        // at the end, flop TFT_WR to 0,
+    out    pins, 8            side 0 [1]
+        // if not all 32 bits were shifted in OSR jump to loop_tx_8
+        // but first, flop TFT_WR to 1
+        // a rising edge on TFT_WR triggers the receiver to read the data
+    jmp    !osre loop_tx_8    side 1 [1]
+.wrap
+
+start_tx_16:
+        // pull block from TX_FIFO to OSR, our data are in the lowest 16 bits of OSR
+    pull   block
+        // shift OSR left by 16 - truncate bits (31..16)
+    out    pins, 16
+loop_tx_16:
+    out    pins, 8            side 0 [1]
+    jmp    !osre loop_tx_16   side 1 [1]
+    jmp    start_tx_16
+
+start_tx_24:
+        // pull block from TX_FIFO to OSR, our data are in the lowest 24 bits of OSR
+    pull   block
+        // shift OSR left by 8 - truncate bits (31..24)
+    out    pins, 8
+loop_tx_24:
+    out    pins, 8            side 0 [1]
+    jmp    !osre loop_tx_24   side 1 [1]
+    jmp    start_tx_24
+
+
+    nop
+    nop
+    nop
+    nop
+
+// chunk_offset = 18
+// chunks area
+// the code below will be reloaded as needed
+// code sources are in separate *.pio.h files
+
+addr_window:
+loop_a_3x:
+        // cmd
+    pull   block
+        // DC_C
+    set    pins, 0
+        // cmd -> D7.. D0
+    out    pins, 32           side 0 [1]
+    nop                       side 1 [1] 
+        // DC_D
+    set    pins, 1
+        // after the 3-rd command here it will stop because there will be no more data in tx_fifo
+        // 2 x 16 bit
+    pull   block
+loop_a_2x16:
+        // (31..24) -> D7..D0
+    out    pins, 8            side 0 [1]
+        // if not all OSR jmp loop_a_2x16
+    jmp    !osre, loop_a_2x16 side 1 [1]
+    jmp    loop_a_3x
