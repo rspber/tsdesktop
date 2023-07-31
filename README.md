@@ -1,3 +1,7 @@
+
+All the examples work and the basis is solid connections,
+do not spare time to make them (it takes many hours, but without it nothing will work)
+
 <p dir="auto">
   <a href="https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md">
     <img src="https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct.svg" alt="SWUbanner" style="max-width: 100%;">
