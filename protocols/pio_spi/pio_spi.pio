@@ -35,11 +35,12 @@ start_tx_8:
         // as soon as any data will appear in TX_FIFO, OSR pulls one 32 bit value, our data are in the lowest 8 bits,
     pull block
         // shift OSR left by 24, output is directed to the one pin: TFT_MOSI, so shifted bits are lost
+        // bits 7..0 remain in 31..24 positions
     out pins, 24
 
 loop_tx_8:
         // shift OSR left by 1 and load falling out bit to TFT_MOSI
-        // at the and, flop TFT_CLK to 0
+        // at the end, flop TFT_CLK to 0
     out pins, 1           side 0
         // if not all 32 bits where shifted in OSR jump to loop_tx_8:
         // (1)
@@ -57,7 +58,7 @@ start_tx_16:
 
 loop_tx_16:
         // shift OSR left by 1 and load falling out bit to TFT_MOSI
-        // at the and, flop TFT_CLK to 0
+        // at the end, flop TFT_CLK to 0
     out pins, 1           side 0
         // if not all 32 bits where shifted in OSR jump to loop_16:
         // but first, read (1)
@@ -73,7 +74,7 @@ start_tx_24:
 
 loop_tx_24:
         // shift OSR left by 1 and load falling out bit to TFT_MOSI
-        // at the and, flop TFT_CLK to 0
+        // at the end, flop TFT_CLK to 0
     out pins, 1           side 0
         // if not all 32 bits where shifted in OSR jump to loop_tx_24:
         // but first, read (1)
