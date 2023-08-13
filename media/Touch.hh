@@ -43,3 +43,18 @@ uint8_t touch_7789(const uint8_t rotation)
   }
   return 0;
 }
+
+uint8_t touch_7796(const uint8_t rotation)
+{
+    switch (rotation % 4) {
+        case 0:
+            return MAD_YX | MAD_MY;
+        case 1:
+            return MAD_MY | MAD_MX;
+        case 2:
+            return MAD_YX | MAD_MX;
+        case 3:
+            return 0;
+    }
+    return 0;
+}
