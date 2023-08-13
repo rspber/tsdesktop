@@ -34,7 +34,7 @@
 
 //  #define ST7789        // 2.4" TFT SPI 240x320 v1.0, v1.1, v1.2, (v1.3 - tested)
 
-//  #define ST7796            // -- not tested
+//  #define ST7796            // 4" TFT SPI 480x320 v1.0 - tested
 
 // -------------------------------TFT params ----------------------------------
 

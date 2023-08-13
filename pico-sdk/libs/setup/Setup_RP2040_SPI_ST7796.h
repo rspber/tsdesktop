@@ -1,5 +1,5 @@
 /*
-  User setup for RP2040 SPI ST7789 with touch
+  User setup for RP2040 SPI ST7796 with touch
 */
 
 // -------------------------------TFT driver ----------------------------------
@@ -32,9 +32,9 @@
 //  #define SSD1963_800ALT    // -- not tested
 //  #define SSD1963_800BD     // -- not tested
 
-  #define ST7789        // 2.4" TFT SPI 240x320 v1.0, v1.1, v1.2, (v1.3 - tested)
+//  #define ST7789        // 2.4" TFT SPI 240x320 v1.0, v1.1, v1.2, (v1.3 - tested)
 
-//  #define ST7796            // -- not tested
+  #define ST7796            // 4" TFT SPI 480x320 v1.0 - tested
 
 // -------------------------------TFT params ----------------------------------
 
@@ -59,8 +59,8 @@
 //  #define TFT_NO_READ
 
 // Display screen size
-  #define TFT_WIDTH  240
-  #define TFT_HEIGHT 320
+  #define TFT_WIDTH  320
+  #define TFT_HEIGHT 480
 
 // SPI0
   #define TFT_SPI_MISO   16  // RX - default
@@ -87,13 +87,13 @@
   #define TOUCH_SPI_CS   22     // Chip select pin (T_CS) of touch screen
 
   #define TOUCH_REV 0
-  #define TOUCH_ROTATION touch_7789
+  #define TOUCH_ROTATION touch_7796
 
 // TouchScreen edges of the display in range of 0..4095
-  #define TS_LEFT 200
-  #define TS_TOP 350
-  #define TS_RIGHT 200
-  #define TS_BOTTOM 150
+  #define TS_LEFT 0
+  #define TS_TOP 200
+  #define TS_RIGHT 150
+  #define TS_BOTTOM 100
 
 // -------------------------------I2C params ----------------------------------
 
