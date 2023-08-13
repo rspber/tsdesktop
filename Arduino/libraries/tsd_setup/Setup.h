@@ -39,4 +39,4 @@
 
   #include <Setup_RP2040_SPI_ILI9341.h>
 //  #include <Setup_RP2040_SPI_ST7789.h>
-
+//  #include <Setup_RP2040_SPI_ST7796.h>

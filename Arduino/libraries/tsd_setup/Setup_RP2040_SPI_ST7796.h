@@ -1,5 +1,5 @@
 /*
-  User setup for RP2040 PIO SPI ST7789
+  User setup for RP2040 SPI ST7796 with touch
 */
 
 // -------------------------------TFT driver ----------------------------------
@@ -32,9 +32,9 @@
 //  #define SSD1963_800ALT    // -- not tested
 //  #define SSD1963_800BD     // -- not tested
 
-  #define ST7789        // 2.4" TFT SPI 240x320 v1.0, v1.1, v1.2, (v1.3 - tested)
+//  #define ST7789        // 2.4" TFT SPI 240x320 v1.0, v1.1, v1.2, (v1.3 - tested)
 
-//  #define ST7796            // 4" TFT SPI 480x320 v1.0 - tested
+  #define ST7796            // 4" TFT SPI 480x320 v1.0 - tested
 
 // -------------------------------TFT params ----------------------------------
 
@@ -48,19 +48,19 @@
 //  #define TFT_PIO_16BITP_WRITE    // TODO
 //  #define TFT_PIO_8BITP_WRITE
 //  #define TFT_GPIO_8BITP_WRITE
-  #define TFT_PIO_SPI_WRITE
-//  #define TFT_SPI_WRITE
+//  #define TFT_PIO_SPI_WRITE
+  #define TFT_SPI_WRITE
 //  #define TFT_NO_WRITE
 
 // select one of
 //  #define TFT_GPIO_8BITP_READ        cannot be mixed with spi
-  #define TFT_PIO_SPI_READ
-//  #define TFT_SPI_READ
+//  #define TFT_PIO_SPI_READ
+  #define TFT_SPI_READ
 //  #define TFT_NO_READ
 
 // Display screen size
-  #define TFT_WIDTH  240
-  #define TFT_HEIGHT 320
+  #define TFT_WIDTH  320
+  #define TFT_HEIGHT 480
 
 // SPI0
   #define TFT_SPI_MISO   16  // RX - default
@@ -71,34 +71,29 @@
   #define TFT_SPI_DC     21    // Data Command control pin
 //  #define TFT_SPI_BL       // LED back-light
 
-// below dividers div cpu speed given by a set_sys_clock_khz(133Mhz / 1000, true) by default,
-// often 125Mhz is given as a reference because it looks nice, but even 160Mhz works fine (read license first).
-
-  #define TFT_PIO_SPI_WRITE_DIV   2          // 1 = 125 MHz, 2 = 62,5 MHz, 3 = that's even less
-  #define TFT_PIO_SPI_READ_DIV   20          // and that's even less
+  #define TFT_SPI_SETUP_SPEED     2 * 1000 * 1000          // 2 MHz
+  #define TFT_SPI_WRITE_SPEED    60 * 1000 * 1000          // 60 MHz
+  #define TFT_SPI_READ_SPEED      2 * 1000 * 1000          //  2 MHz
 
   #define TFT_REV 0
 
 // ---------------------------- Touch Screen ----------------------------------
 
 // select one of or none
-  #define TOUCH_PIO_SPI
-  #define TOUCH_PIO_SPI_READ_DIV   80
-
-//  #define TOUCH_SPI
-//  #define TOUCH_SPI_SPEED         2 * 1000 * 1000          //  2 MHz
+  #define TOUCH_SPI
+  #define TOUCH_SPI_SPEED         2 * 1000 * 1000          //  2 MHz
 
 // don't comment it if T.CS is connected to this pin
   #define TOUCH_SPI_CS   22     // Chip select pin (T_CS) of touch screen
 
   #define TOUCH_REV 0
-  #define TOUCH_ROTATION touch_7789
+  #define TOUCH_ROTATION touch_7796
 
 // TouchScreen edges of the display in range of 0..4095
-  #define TS_LEFT 200
-  #define TS_TOP 350
-  #define TS_RIGHT 200
-  #define TS_BOTTOM 150
+  #define TS_LEFT 0
+  #define TS_TOP 200
+  #define TS_RIGHT 150
+  #define TS_BOTTOM 100
 
 // -------------------------------I2C params ----------------------------------
 
