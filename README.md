@@ -162,7 +162,7 @@ If you think that you will get it on a test board, you are wrong, such connectio
 
 ## Arduino
 
-1. Tested on Arduino 1.8.19, Arduino 1.8.5 should works too,
+1. No other libraries are required
 
 2. In Arduino:
 
@@ -184,11 +184,9 @@ If you think that you will get it on a test board, you are wrong, such connectio
 
 4. Resolve links to tsdesktop directories in Arduino/libraries
 
-5. No other libraries are required
+5. Copy Arduino/examples to Arduino's Sketchbook directory
 
-6. Copy Arduino/examples to Arduino's Sketchbook directory
-
-7. For linux users:
+6. For linux users:
 
   * In Arduino:
 
@@ -206,7 +204,7 @@ If you think that you will get it on a test board, you are wrong, such connectio
       sudo usermod -aG dialout $USER
       sudo reboot
     ```
-8. If you want to use SerialUSB in/for tft pio debugging you must comment #include "Arduino.h" in packages/rp2040/hardware/rp2040/2.7.1/cores/rp2040/SerialUSB.h, similarly with SerialUART.h and SerialUART.cpp where you need to add #include "api/Common.h", "hardware/gpio.h", "pins_arduino.h" and copy/paste __bitset from Arduino.h wherever it appears instead.
+7. If you want to use SerialUSB in/for tft pio debugging you must comment #include "Arduino.h" in packages/rp2040/hardware/rp2040/2.7.1/cores/rp2040/SerialUSB.h, similarly with SerialUART.h and SerialUART.cpp where you need to add #include "api/Common.h", "hardware/gpio.h", "pins_arduino.h" and copy/paste __bitset from Arduino.h wherever it appears instead.
 
 ## Hints
 

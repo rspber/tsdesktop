@@ -37,7 +37,7 @@ void diag_reg(const uint8_t reg, const int8_t len)
 void setup()   {
 
   display.begin();
-  display.setRotation(ROTATION);
+  display.setRotation(ROTATION, TFT_REV);
   display.clearDisplay();
 
   pinMode(LED_PIN, OUTPUT);
