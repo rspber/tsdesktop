@@ -178,7 +178,7 @@ If you think that you will get it on a test board, you are wrong, such connectio
 
   * Tools / Board / Raspberry Pi RP2040 Boards / `select your board`
 
-  * If after upgrading system to new version of eabi e.g. to 10.x.x, Invalid -march:armv6-m error occures, it's time to upgrade this library too.
+  * If after upgrading system to a new version of eabi e.g. to 10.x.x, Invalid -march:armv6-m error occures, it's time to upgrade this library too.
 
 3. `download` or `git clone` this repository
 
