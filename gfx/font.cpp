@@ -1,12 +1,12 @@
 /*
   Font container
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
 #include "font.h"
-#include <cstring>
+#include <string.h>
 
 void font_t::setFont(const GFXfont** gfxFont)
 {

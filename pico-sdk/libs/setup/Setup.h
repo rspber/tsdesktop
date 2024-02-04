@@ -1,8 +1,5 @@
 /*
   Setup for TSDesktop
-
-  Copyright (c) 2023, rspber (https://github.com/rspber)
-
 */
 
 #pragma once
@@ -19,12 +16,14 @@
 #define MAD_SS  0x02 // horizontal flip
 #define MAD_GS  0x01 // vertical flip
 
-// ------------------- Constans to use in examples ---------------------------
+// ------------------- Constants to use in examples --------------------------
 
 #define ROTATION_VTB 2    // vertical top to bottom
 #define ROTATION_VBT 0    // vertical bottom to top
 #define ROTATION_HLR 1    // horizontal left to right
 #define ROTATION_HRL 3    // horizontal right to left
+
+#define DEFAULT_LED_PIN   PICO_DEFAULT_LED_PIN
 
 // --------------------------- User Setups -----------------------------------
 

@@ -2,7 +2,7 @@
   Touch Screen for TSDesktop
   implemented on TSD_XPT2046
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
@@ -11,6 +11,7 @@
 #if defined(TOUCH_DRIVER)
 
 #include "Touch.hh"
+#include <Arduino.h>
 
 bool Touch::WhereAreYou(point_t* p)
 {

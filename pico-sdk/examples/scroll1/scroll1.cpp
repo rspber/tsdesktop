@@ -1,7 +1,7 @@
 /*
   Scroll 1 on TSDesktop
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
@@ -32,7 +32,7 @@ Container* TMT[]{
 
 FieldSet desktop(0, 0, ALIGN_CLIENT, ALIGN_CLIENT, TMT, 1, AQUA);
 
-uint8_t LED_PIN = PICO_DEFAULT_LED_PIN;
+uint8_t LED_PIN = DEFAULT_LED_PIN;
 int pin13state = LOW;
 
 void setup() {

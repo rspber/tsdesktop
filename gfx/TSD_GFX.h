@@ -1,7 +1,7 @@
 /*
   Graphics library for TSDesktop
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
   More information in TSD_GFX.cpp
 
@@ -30,11 +30,13 @@ typedef struct {
 //  int8_t gradient = 0;
 } gradient_t;
 
-typedef struct {
+struct t_clip_t {
   int16_t x1, y1, x2, y2;
   const int16_t width();
   const int16_t height();
-} clip_t;
+};
+
+typedef t_clip_t clip_t;
 
 class TSD_GFX {
 public:

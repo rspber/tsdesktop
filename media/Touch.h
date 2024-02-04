@@ -1,15 +1,14 @@
 /*
   Touch Screen for TSDesktop
-  implemented on TSD_XPT2046
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
 #pragma once
 
 #include <Setup.h>
-#include <api/Common.h>
+#include <inttypes.h>
 
 typedef struct {
   int16_t x, y;

@@ -1,13 +1,13 @@
 /*
   GFXButton
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
 #include "GFXButton.h"
 #include "BufferedDisplay.h"
-#include <cstring>
+#include <string.h>
 
 /// @GFXButton
 

@@ -1,7 +1,7 @@
 /*
   Menu 2 on TSDesktop
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
@@ -110,7 +110,7 @@ void tx_btn(TextButton* b, const int id, const char* text)
   b->setOnClick(tx_click);
 }
 
-uint8_t LED_PIN = PICO_DEFAULT_LED_PIN;
+uint8_t LED_PIN = DEFAULT_LED_PIN;
 int pin13state = LOW;
 
 void setup()   {

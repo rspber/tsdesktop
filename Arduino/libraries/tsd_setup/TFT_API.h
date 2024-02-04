@@ -1,8 +1,5 @@
 /*
-  TFT API
-
-  Copyright (c) 2023, rspber (https://github.com/rspber)
-
+  TFT API for RP2040
 */
 
 #pragma once

@@ -1,11 +1,15 @@
 /*
   TSD_SCREEN for TSDesktop
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
 #include "TSD_SCREEN.h"
+
+#ifndef abs
+#define abs(x) ((x)>=0?(x):-(x))
+#endif
 
 /// @TSD_SCREEN
 

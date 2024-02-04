@@ -1,14 +1,14 @@
 /*
   Eval
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
 #include "eval.h"
-#include <math.h>
-#include <cstring>
+#include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 const bool eval_t::is(const char c)
 {
@@ -158,7 +158,7 @@ int eval_t::strong(int64_t* e, int8_t* dec)
           if (e2 == 0) {
             return k;
           } else {
-            int64_t v2 = abs(e2);
+            int64_t v2 = e2 >= 0 ? e2 : -e2;
             while (v2 > 0) {
               *e *= 10;
               ++*dec;

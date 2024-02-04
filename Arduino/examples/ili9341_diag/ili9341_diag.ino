@@ -1,7 +1,7 @@
 /*
   ILI9341 Diagnostics
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
@@ -13,7 +13,7 @@
 Display display;
 bool screenEnabled = false;
 
-uint8_t LED_PIN = PICO_DEFAULT_LED_PIN;
+uint8_t LED_PIN = DEFAULT_LED_PIN;
 int pin13state = LOW;
 
 int y = 0;
@@ -80,7 +80,7 @@ void loop()
 
 // if after reading register there is a problem (dislocation) with print it, it means, that not all register values were read
 
-  sleep_ms(50);
+  delay(50);
 
   pin13state = 1 - pin13state;
   digitalWrite(LED_PIN, pin13state);

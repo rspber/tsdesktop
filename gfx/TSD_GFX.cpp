@@ -1,7 +1,7 @@
 /*
   Graphics library for TSDesktop
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
   Primary code comes from Adafruit's core graphics library: Adafruit_GFX,
   but was significantly modified or replaced by those from TFT_eSP library.
@@ -15,6 +15,7 @@
 #include "TSD_GFX.h"
 #include "glcdfont.c.h"
 #include "overlaid.h"
+#include <stdlib.h>
 
 const int16_t clip_t::width()
 {
@@ -25,6 +26,10 @@ const int16_t clip_t::height()
 {
   return y2 > y1 ? y2 - y1 : 0;
 }
+
+#ifndef abs
+#define abs(x) ((x)>=0?(x):-(x))
+#endif
 
 #ifndef min
 #define min(a, b) (((a) < (b)) ? (a) : (b))

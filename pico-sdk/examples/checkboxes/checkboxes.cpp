@@ -1,7 +1,7 @@
 /*
   CheckBoxes on TSDesktop
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
@@ -210,7 +210,7 @@ void bchk_box(CheckBox* c, const int16_t id, const char* text)
   c->setOnClick(btn_click);
 }
 
-uint8_t LED_PIN = PICO_DEFAULT_LED_PIN;
+uint8_t LED_PIN = DEFAULT_LED_PIN;
 int pin13state = LOW;
 
 void setup() {

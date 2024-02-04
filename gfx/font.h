@@ -1,21 +1,20 @@
 /*
   Font container
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
 #pragma once
 
 #include <stdint.h>
-#include <math.h>
 #include <gfxfont.h>
 
 #ifndef uchar
 typedef unsigned char uchar;
 #endif
 
-typedef struct {
+struct t_font_t {
   const GFXfont** gfx_fonts;  // private
   int8_t fontSizeX, fontSizeY;
 
@@ -79,7 +78,9 @@ typedef struct {
   int8_t  v_n0;    // number of ASCII entries
   uint8_t v_st_1;  // fd - bin,  fe - seq
   uint8_t v_st_2;  // fe - bin,  fd - seq
-} font_t;
+};
+
+typedef t_font_t font_t;
 
 int textLength(const void* textp, const bool unicode);
 const void* textChr(const void* textp, const bool unicode, const char c);

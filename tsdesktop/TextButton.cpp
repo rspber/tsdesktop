@@ -1,7 +1,7 @@
 /*
   TouchScreenDesktop
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
@@ -12,8 +12,9 @@
 */
 
 #include "TSDesktop.h"
-#include<cstring>
-#include <api/Common.h>
+#include <string.h>
+#include <stdlib.h>
+#include <Arduino.h>
 
 static const uint8_t EMPTY[] {0,0,0,0};
 

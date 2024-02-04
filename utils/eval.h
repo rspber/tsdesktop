@@ -1,7 +1,7 @@
 /*
   Eval
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
@@ -9,7 +9,7 @@
 
 #include <inttypes.h>
 
-typedef struct {
+struct t_eval_t {
   const char* s;
   int len;
   int k;
@@ -27,4 +27,6 @@ typedef struct {
   int weak(int64_t* e, int8_t* dec);
   int eval(int64_t* e, int8_t* dec, const char* str, const int8_t prec);
   const char* eval(const char* text);
-} eval_t;
+};
+
+typedef t_eval_t eval_t;

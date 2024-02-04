@@ -1,14 +1,14 @@
 /*
   RGB
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
 #pragma once
 
-#include <stdint.h>
 #include <Setup.h>
+#include <stdint.h>
 
 typedef uint32_t rgb_t;
 inline rgb_t RGB(uint8_t R, uint8_t G, uint8_t B) { return 0xFF000000 | (((uint32_t)(R) << 16)) | ((uint16_t)(G) << 8) | B; }

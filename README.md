@@ -190,7 +190,7 @@ If you think that you will get it on a test board, you are wrong, such connectio
 
   * In Arduino:
 
-    - Tools / Port / `/dev/ttyACM0`
+    - Tools / Port / `/dev/ttyACM0`  or, if it appears instead `/dev/ttyUSB0`
 
   * In console:
 
@@ -198,7 +198,10 @@ If you think that you will get it on a test board, you are wrong, such connectio
     ```
       sudo chmod a+rw /dev/ttyACM0
     ```
-
+    - or
+    ```
+      sudo chmod a+rw /dev/ttyUSB0
+    ```
     - for permanent access:
     ```
       sudo usermod -aG dialout $USER

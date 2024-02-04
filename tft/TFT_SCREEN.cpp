@@ -1,7 +1,7 @@
 /*
   TFT SCREEN
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
@@ -9,6 +9,15 @@
 #include <overlaid.h>
 
 #include <TFT_API.h>
+
+// pio implementation conflict
+#if defined(ARDUINO_ARCH_RP2040)
+  #include <api/Common.h>
+#else
+  #include <Arduino.h>
+#endif
+
+#include <stdlib.h>
 
 const char* TFT_SCREEN::protocol() { return tft_identification(); }
 
