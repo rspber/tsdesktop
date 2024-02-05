@@ -1,7 +1,7 @@
 /*
   Touch Screen handler for TSDesktop
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
   More information in TSD_XPT2046.cpp
 
@@ -13,7 +13,7 @@
 
 #if defined(TOUCH_SPI) || defined(TOUCH_PIO_SPI)
 
-  #include <api/Common.h>
+  #include <inttypes.h>
   
 #define Z_THRESHOLD 350 // Touch pressure threshold for validating touches
 

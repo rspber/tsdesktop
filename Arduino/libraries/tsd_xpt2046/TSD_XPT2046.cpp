@@ -33,11 +33,8 @@ Bodmer's licence.txt in file /licenses/Bodmer_license.txt
 #include "TSD_XPT2046.h"
 //#include "SerialUSB.h"
 
-#if defined(TOUCH_PIO_SPI)
-  #include <RP2040_TOUCH_PIO_SPI.h>
-#else
-  #include <RP2040_TOUCH_SPI.h>
-#endif
+#include <TOUCH.hh>
+#include <Arduino.h>
 
 #define startReading touch_startReading
 #define endReading   touch_endReading
