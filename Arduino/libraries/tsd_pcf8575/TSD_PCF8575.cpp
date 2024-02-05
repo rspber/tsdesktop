@@ -30,7 +30,7 @@ const bool TSD_PCF8575::isConnected()
 
 const bool TSD_PCF8575::read16(uint16_t& in16bits)
 {
-  if (_wire->requestFrom(_addr, 2) == 2) {
+  if (_wire->requestFrom(_addr, (uint8_t)2) == 2) {
     uint8_t b0 = _wire->read();        // low 8 bits
     uint8_t b1 = _wire->read();        // high 8 bits
     in16bits = (b1 << 8) | b0;

@@ -14,7 +14,7 @@ void TSD_DS3231::begin()
   _wire = init_i2c(_i2c_nr);
 }
 
-byte zero = 0x00; //workaround for issue #527
+uint8_t zero = 0x00; //workaround for issue #527
 
 /**
   year     0-99
@@ -105,7 +105,7 @@ const uint8_t TSD_DS3231::getDS3231Reg(const uint8_t reg)
   _wire->beginTransmission(_addr);
   _wire->write(reg);
   _wire->endTransmission();
-  _wire->requestFrom(_addr, 1);
+  _wire->requestFrom(_addr, (uint8_t)1);
   return _wire->read();
 }
 
@@ -130,11 +130,11 @@ const uint8_t TSD_DS3231::setDS3231RegDecToBcd(const uint8_t reg, const uint8_t 
 
 void TSD_DS3231::getDateTime(dttm_t* dttm)
 {
-  _wire->beginTransmission(DS3231_ADDRESS);
+  _wire->beginTransmission(_addr);
   _wire->write(zero);
   _wire->endTransmission();
 
-  if (_wire->requestFrom(DS3231_ADDRESS, 7) == 7) {
+  if (_wire->requestFrom(_addr, (uint8_t)7) == 7) {
     dttm->sec = bcdToDec(_wire->read());
     dttm->min = bcdToDec(_wire->read());
     dttm->hour = bcdToDec(_wire->read() & 0b111111); //24 hour time

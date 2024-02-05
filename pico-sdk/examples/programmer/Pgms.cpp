@@ -1,7 +1,7 @@
 /*
   Programmer project on TSDesktop
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
@@ -11,6 +11,8 @@
 
 #define PGMS_SECTOR  0
 #define PGMS_PAGE    0
+
+uint8_t flash_buffer[FLASH_PAGE_SIZE];
 
 void readPgmsFromEEProm(from_to_t PGMS[])
 {

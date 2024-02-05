@@ -10,9 +10,7 @@
 
 #include <TSD_DS3231.h>
 #include <TSD_PCF8575.h>
-#include <PicoFlash.h>
 #include "Pgms.h"
-#include <cstring>
 
 #include <Fonts/TSD_FreeSans_9pt.h>
 
@@ -29,8 +27,6 @@ bool screenEnabled = false;
 Touch touch;
 
 from_to_t PGMS[N_OF_PGMS];
-
-uint8_t flash_buffer[FLASH_PAGE_SIZE];
 
 TSD_DS3231 ds3231;
 TSD_PCF8575 pcf8575(1);

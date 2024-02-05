@@ -1,14 +1,14 @@
 /*
   Flash for pico-sdk
 
-  Copyright (c) 2022, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
 #include "PicoFlash.h"
-#include <cstring>
+#include <string.h>
 
-#include <api/Common.h>
+#include <Arduino.h>
 
 void clear_flash_buffer()
 {
