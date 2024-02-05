@@ -84,7 +84,7 @@
   #define TOUCH_SPI_SPEED         2 * 1000 * 1000          //  2 MHz
 
 // don't comment it if T.CS is connected to this pin
-  #define TOUCH_SPI_CS    7     // Chip select pin (T_CS) of touch screen , previously used to DS card
+  #define TOUCH_SPI_CS    7
 
   #define TOUCH_REV 0
   #define TOUCH_ROTATION touch_9xxx
