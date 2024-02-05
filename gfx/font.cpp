@@ -342,7 +342,7 @@ const int16_t font_t::textLineSize(const void* textp, const bool unicode, int16_
     const void* p = textp;
     int16_t lh;
     uint16_t uc;
-    while ((uc = unicode ? *(uint16_t*)p : *(char *)p) && uc != '\r' && uc != '\n') {
+    while ((uc = unicode ? *(uint16_t*)p : *(char *)p) && uc != '\0' && uc != '\r' && uc != '\n') {
       w += charSize(&p, unicode, &lh);
       if (lh > h) {
         h = lh;
@@ -404,9 +404,9 @@ const int16_t font_t::textSize(const void* textp, const bool unicode, int16_t* t
 const int16_t font_t::textApproxLineWidth(const void* textp, const bool unicode, int16_t len)
 {
   int16_t h;
-  int16_t nofch;
+  int16_t nofch = 0;
   int16_t w = textLineSize(textp, unicode, &h, &nofch);
-  return w * len / nofch;
+  return w * len / (nofch > 0 ? nofch : 1);
 }
 
 const int16_t font_t::textLineWidth(const void* textp, const bool unicode)
