@@ -1,4 +1,4 @@
-- chipKIT Uno32, PIC32 MX320F128H, 15 years old processor, support - almost done,
+- PIC32 MX320F128H, I2C, Flash
 - reading by pio 8bitp
 - parallel 16 bit pio
 - unicode 32

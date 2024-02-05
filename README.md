@@ -13,19 +13,9 @@ If you think that you will get it on a test board, you are wrong, such connectio
 </p>
 
 # TSDesktop
-  Touch Screen Desktop for Raspberry pi pico.
+  Touch Screen Desktop for rp2040 & pic32.
 
-  (no overclocked examples)
 - https://www.youtube.com/watch?v=2_8hvvxUR1c
-- https://youtu.be/4ENcbCUJWro       canvas1 overlaid 320x240 PIO SPI 64K
-- https://youtu.be/IN8qoKfxF0M       canvas1 overlaid 320x240 PIO SPI 256K
-- https://youtu.be/PHK2owDnlNk       canvas3 buffered 320x240 PIO SPI 64K
-- https://youtu.be/49iehFhhrsU       canvas3 buffered 320x240 PIO SPI 256K
-- https://youtu.be/Pa9H-aLCpmY       canvas3 buffered 480x320 PIO 8BITP 64K
-- https://youtu.be/E2C1jvAtG-U       canvas3 buffered 480x320 PIO 8BITP 256K
-- https://youtu.be/UUobwTMtHng       canvas3 buffered 480x320 GPIO 8BITP 64K
-- https://youtu.be/-yLM6ibkhxQ       canvas1 overlaid 480x320 GPIO 8BITP 64K
-- https://youtu.be/gJZjT5y9lvY       resistive touch  480x320 GPIO 8BITP
 
 ### News
 * Resistive touch was misinterpreted
@@ -166,27 +156,44 @@ If you think that you will get it on a test board, you are wrong, such connectio
 
 2. In Arduino:
 
-  * File / Preferences / Settings
+  * File / Preferences / Settings / Additional boards manager URLs:
 
-    Additional boards manager URLs: https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
+    - rp2040
+
+      https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
+
+    - pic32
+
+      https://raw.githubusercontent.com/chipKIT32/chipKIT-core/master/package_chipkit_index.json
 
     - Hit OK to close the dialog.
 
   * Tools / Board / Boards Manager ...
 
-    - Type "pico" in the search box, you should see: Raspberry Pi Pico/RP2040, and select "Install"
+    - rp2040
 
-  * Tools / Board / Raspberry Pi RP2040 Boards / `select your board`
+      Type "pico" in the search box, you should see: Raspberry Pi Pico/RP2040, and select "Install"
 
-  * If after upgrading system to a new version of eabi e.g. to 10.x.x, Invalid -march:armv6-m error occures, it's time to upgrade this library too.
+      If after upgrading system to a new version of eabi e.g. to 10.x.x, Invalid -march:armv6-m error occures, it's time to upgrade this library too.
+
+    - pic32
+
+      Type "chipKIT" ...
+
+  * Tools / Board / ... Boards / `select your board`
+
 
 3. `download` or `git clone` this repository
 
-4. Resolve links to tsdesktop directories in Arduino/libraries
+4. Copy Arduino/libraries to Arduino's directory
 
-5. Copy Arduino/examples to Arduino's Sketchbook directory
+5. Copy selected (1) Arduino/libraries_??? to Arduino/libraries
 
-6. For linux users:
+6. Resolve links to tsdesktop directories in Arduino/libraries
+
+7. Copy Arduino/examples to Arduino's Sketchbook directory
+
+8. For linux users:
 
   * In Arduino:
 
@@ -207,7 +214,7 @@ If you think that you will get it on a test board, you are wrong, such connectio
       sudo usermod -aG dialout $USER
       sudo reboot
     ```
-7. If you want to use SerialUSB in/for tft pio debugging you must comment #include "Arduino.h" in packages/rp2040/hardware/rp2040/2.7.1/cores/rp2040/SerialUSB.h, similarly with SerialUART.h and SerialUART.cpp where you need to add #include "api/Common.h", "hardware/gpio.h", "pins_arduino.h" and copy/paste __bitset from Arduino.h wherever it appears instead.
+9. rp2040: If you want to use SerialUSB in/for tft pio debugging you must comment #include "Arduino.h" in packages/rp2040/hardware/rp2040/2.7.1/cores/rp2040/SerialUSB.h, similarly with SerialUART.h and SerialUART.cpp where you need to add #include "api/Common.h", "hardware/gpio.h", "pins_arduino.h" and copy/paste __bitset from Arduino.h wherever it appears instead.
 
 ## Hints
 

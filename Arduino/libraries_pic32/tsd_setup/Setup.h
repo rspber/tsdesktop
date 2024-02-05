@@ -23,19 +23,18 @@
 #define ROTATION_HLR 1    // horizontal left to right
 #define ROTATION_HRL 3    // horizontal right to left
 
-#define DEFAULT_LED_PIN   PICO_DEFAULT_LED_PIN
+#define LD4_PIN 13
+#define LD5_PIN 43
+
+#define DEFAULT_LED_PIN   LD4_PIN
 
 // --------------------------- User Setups -----------------------------------
 
-//  #include <Setup_RP2040_GPIO_8BITP_ILI9488.h>
-//  #include <Setup_RP2040_GPIO_8BITP_ILI9488_1.h>
-//  #include <Setup_RP2040_GPIO_8BITP_RM68140.h>
+//  #include <Setup_PIC32_GPIO_8BITP_ILI9488.h>
+//  #include <Setup_PIC32_GPIO_8BITP_ILI9488_1.h>
+//  #include <Setup_PIC32_GPIO_8BITP_RM68140.h>
 
-//  #include <Setup_RP2040_PIO_8BITP_ILI9488.h>
-
-//  #include <Setup_RP2040_PIO_SPI_ILI9341.h>
-//  #include <Setup_RP2040_PIO_SPI_ST7789.h>
-
-//  #include <Setup_RP2040_SPI_ILI9341.h>
-  #include <Setup_RP2040_SPI_ST7789.h>
-//  #include <Setup_RP2040_SPI_ST7796.h>
+//  #include <Setup_PIC32_SPI_ILI9341.h>
+//  #include <Setup_PIC32_SPI_ILI9341.h>
+  #include <Setup_PIC32_SPI_ST7789.h>
+//  #include <Setup_PIC32_SPI_ST7796.h>
