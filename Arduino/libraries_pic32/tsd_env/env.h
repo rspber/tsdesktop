@@ -1,3 +1,9 @@
+/*
+  env
+
+  Copyright (c) 2024, rspber (https://github.com/rspber)
+
+*/
 
 #pragma once
 

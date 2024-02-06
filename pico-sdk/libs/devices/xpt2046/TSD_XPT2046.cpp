@@ -1,7 +1,7 @@
 /*
   Touch Screen handler for TSDesktop
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 
   Code comes from https://github.com/Bodmer/TFT_eSPI/Extensions:
