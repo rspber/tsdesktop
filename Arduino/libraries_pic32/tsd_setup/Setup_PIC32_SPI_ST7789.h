@@ -42,7 +42,7 @@
 
 // don't enable OVERLAID if you are not shure that absolutelly
 // all colors comes from RGB macro, even 0 is not a BLACK
-//  #define OVERLAID      // enable overlaid in writeColor and writeChar
+  #define OVERLAID      // enable overlaid in writeColor and writeChar
 
 // select one of
 //  #define TFT_PIO_16BITP_WRITE    // TODO
@@ -73,7 +73,7 @@
 
   #define TFT_SPI_SETUP_SPEED     2 * 1000 * 1000          //  2 MHz
   #define TFT_SPI_WRITE_SPEED    40 * 1000 * 1000          // 40 MHz
-  #define TFT_SPI_READ_SPEED      2 * 1000 * 1000          //  2 MHz
+  #define TFT_SPI_READ_SPEED      5 * 1000 * 1000          //  5 MHz
 
   #define TFT_REV 0
 
