@@ -1,7 +1,7 @@
 /*
   Snakes
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
   These are hidden Print and String classes from Arduino.
 
@@ -53,8 +53,8 @@
 
 #include "Snakes.h"
 
-#include <api/itoa.h>
-#include <avr/dtostrf.h>
+//#include <api/itoa.h>
+//#include <avr/dtostrf.h>
 
 /*********************************************/
 /*  Constructors                             */

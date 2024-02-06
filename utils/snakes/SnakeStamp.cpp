@@ -1,7 +1,7 @@
 /*
   SnakeStamp
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
   These are hidden Print and String classes from Arduino.
 
@@ -57,7 +57,7 @@
 #include <string.h>
 #include <math.h>
 
-#include <api/itoa.h>
+//#include <api/itoa.h>
 
 #include "SnakeStamp.h"
 

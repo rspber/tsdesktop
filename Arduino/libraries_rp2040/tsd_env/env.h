@@ -1,7 +1,7 @@
 /*
   env
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
@@ -9,6 +9,8 @@
 
 //#define ARDUINO_ARCH_RP2040
 
-#if defined(ARDUINO_ARCH_RP2040)
-#define PROGMEM
-#endif
+#include <avr/pgmspace.h>
+#include <api/Common.h>
+#include <avr/dtostrf.h>
+#include <api/itoa.h>
+
