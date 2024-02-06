@@ -18,6 +18,9 @@ If you think that you will get it on a test board, you are wrong, such connectio
 - https://www.youtube.com/watch?v=2_8hvvxUR1c
 
 ### News
+
+* pic32 support
+
 * Resistive touch was misinterpreted
 
 * Touch over PIO SPI
