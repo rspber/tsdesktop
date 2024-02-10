@@ -19,6 +19,8 @@ If you think that you will get it on a test board, you are wrong, such connectio
 
 ### News
 
+* esp32 support
+
 * pic32 support
 
 * Resistive touch was misinterpreted
@@ -159,7 +161,7 @@ If you think that you will get it on a test board, you are wrong, such connectio
 
 2. In Arduino:
 
-  * File / Preferences / Settings / Additional boards manager URLs:
+  * File / Preferences / Settings / Additional boards manager URLs (can be comma separated):
 
     - rp2040
 
@@ -168,6 +170,10 @@ If you think that you will get it on a test board, you are wrong, such connectio
     - pic32
 
       https://raw.githubusercontent.com/chipKIT32/chipKIT-core/master/package_chipkit_index.json
+
+    - esp32
+
+      https://dl.espressif.com/dl/package_esp32_index.json
 
     - Hit OK to close the dialog.
 
@@ -183,8 +189,11 @@ If you think that you will get it on a test board, you are wrong, such connectio
 
       Type "chipKIT" ...
 
-  * Tools / Board / ... Boards / `select your board`
+    - esp32
 
+      Look for "esp32" by Espressif
+
+  * Tools / Board / ... Boards / `select your board`
 
 3. `download` or `git clone` this repository
 
