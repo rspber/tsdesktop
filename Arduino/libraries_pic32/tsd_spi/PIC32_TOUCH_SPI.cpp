@@ -1,5 +1,5 @@
 /*
-  PIC TOUCH SPI READ for Arduino
+  PIC32 TOUCH SPI READ for Arduino
 
   Copyright (c) 2024, rspber (https://github.com/rspber)
 

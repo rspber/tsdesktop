@@ -45,16 +45,12 @@
   #define OVERLAID      // enable overlaid in writeColor and writeChar
 
 // select one of
-//  #define TFT_PIO_16BITP_WRITE    // TODO
-//  #define TFT_PIO_8BITP_WRITE
 //  #define TFT_GPIO_8BITP_WRITE
-//  #define TFT_PIO_SPI_WRITE
   #define TFT_SPI_WRITE
 //  #define TFT_NO_WRITE
 
 // select one of
 //  #define TFT_GPIO_8BITP_READ        cannot be mixed with spi
-//  #define TFT_PIO_SPI_READ
   #define TFT_SPI_READ
 //  #define TFT_NO_READ
 

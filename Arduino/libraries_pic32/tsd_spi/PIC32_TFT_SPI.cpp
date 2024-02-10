@@ -90,8 +90,6 @@ void spi_send16(const uint16_t w)
   spi_send(w);
 }
 
-#define spi_endSending()
-
 #endif
 
 
@@ -119,7 +117,6 @@ void tft_sendCmd(const uint8_t cmd)
   SPI_CS_L;
   SPI_DC_C;
   spi_send(cmd);
-  spi_endSending();
   SPI_DC_D;
 }
 
@@ -129,12 +126,10 @@ void tft_sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size)
   SPI_CS_L;
   SPI_DC_C;
   spi_send(cmd);
-  spi_endSending();
   SPI_DC_D;
   for (int16_t i = 0; i < size; ++i) {
     spi_send(data[i]);
   }
-  spi_endSending();
 }
 
 void tft_startWrite()
@@ -153,21 +148,16 @@ void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, cons
 {
   SPI_DC_C;
   spi_send(TFT_CASET);
-  spi_endSending();
   SPI_DC_D;
   spi_send16(x);
   spi_send16(x + w - 1);
-  spi_endSending();
   SPI_DC_C;
   spi_send(TFT_PASET);
-  spi_endSending();
   SPI_DC_D;
   spi_send16(y);
   spi_send16(y + h - 1);
-  spi_endSending();
   SPI_DC_C;
   spi_send(TFT_RAMWR);
-  spi_endSending();
   SPI_DC_D;
 }
 
@@ -182,7 +172,6 @@ void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, cons
 
 void tft_endWriteColor()
 {
-  spi_endSending();
 }
 
 void tft_sendMDTColor(const mdt_t c, int32_t len)
@@ -200,7 +189,6 @@ void tft_sendMDTBuffer16(const uint8_t* p, int32_t len)
     spi_send(*p++);
     spi_send(*p++);
   }
-  spi_endSending();
 }
 
 void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
@@ -210,7 +198,6 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
     spi_send(*p++);
     spi_send(*p++);
   }
-  spi_endSending();
 }
 
 #endif
@@ -247,21 +234,16 @@ void tft_readAddrWindow(const int16_t x, const int16_t y, const int16_t w, const
 {
   SPI_DC_C;
   spi_send(TFT_CASET);
-  spi_endSending();
   SPI_DC_D;
   spi_send16(x);
   spi_send16(x + w - 1);
-  spi_endSending();
   SPI_DC_C;
   spi_send(TFT_PASET);
-  spi_endSending();
   SPI_DC_D;
   spi_send16(y);
   spi_send16(y + h - 1);
-  spi_endSending();
   SPI_DC_C;
   spi_send(TFT_RAMRD);
-  spi_endSending();
   SPI_DC_D;
 }
 
@@ -292,10 +274,8 @@ void tft_readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
     SPI_CS_L;
     SPI_DC_C;
     spi_send(TFT_IDXRD);
-    spi_endSending();
     SPI_DC_D;
     spi_send(0x10 + len);
-    spi_endSending();
   }
   int i = 0;
   buf[i++] = reg;
@@ -303,7 +283,6 @@ void tft_readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
   SPI_CS_L;
   SPI_DC_C;
   spi_send(reg);
-  spi_endSending();
   SPI_DC_D;
 //  delay(1);
   while (--len >= 0) {
