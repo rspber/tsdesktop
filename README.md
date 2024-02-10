@@ -13,7 +13,7 @@ If you think that you will get it on a test board, you are wrong, such connectio
 </p>
 
 # TSDesktop
-  Touch Screen Desktop for rp2040 & pic32.
+  Touch Screen Desktop for Raspberry pi pico.
 
 - https://www.youtube.com/watch?v=2_8hvvxUR1c
 
