@@ -13,7 +13,7 @@ If you think that you will get it on a test board, you are wrong, such connectio
 </p>
 
 # TSDesktop
-  Touch Screen Desktop for Raspberry pi pico.
+  Touch Screen Desktop for Raspberry Pi Pico.
 
 - https://www.youtube.com/watch?v=2_8hvvxUR1c
 
