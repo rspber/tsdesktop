@@ -100,12 +100,12 @@ protected:
 
   rgb_t innerReadPixel(int16_t x, int16_t y);
 
-  void v_startWrite() override;
-  void v_endWrite() override;
-  void v_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h) override;
-  void v_sendMDTColor1(const mdt_t c) override;
-  void v_sendMDTColor(const mdt_t c, const int32_t len) override;
-  void v_drawPixel1(const int16_t x, const int16_t y, const rgb_t color) override;
-  void v_drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color) override;
-  void v_drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) override;
+  void startWrite() override;
+  void endWrite() override;
+  void writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h) override;
+  void sendMDTColor1(const mdt_t c) override;
+  void sendMDTColor(const mdt_t c, const int32_t len) override;
+  void drawPixel1(const int16_t x, const int16_t y, const rgb_t color) override;
+  void drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color) override;
+  void drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) override;
 };

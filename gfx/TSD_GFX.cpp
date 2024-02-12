@@ -47,7 +47,7 @@ const int16_t clip_t::height()
 void TSD_GFX::drawPixel(clip_t& clip, int16_t x, int16_t y, rgb_t color)
 {
   if (x >= clip.x1 && y >= clip.y1 && x < clip.x2 && y < clip.y2) {
-    v_drawPixel1(x, y, color);
+    drawPixel1(x, y, color);
   }
 }
 
@@ -61,7 +61,7 @@ void TSD_GFX::drawFastHLine(clip_t& clip, int16_t x, int16_t y, int16_t w, rgb_t
     w = clip.x2 - x;
   }
   if (y >= clip.y1 && y < clip.y2 && w > 0) {
-    v_drawPixels(x, y, w, 1, color);
+    drawPixels(x, y, w, 1, color);
   }
 }
 
@@ -75,20 +75,24 @@ void TSD_GFX::drawFastVLine(clip_t& clip, int16_t x, int16_t y, int16_t h, rgb_t
     h = clip.y2 - y;
   }
   if (x >= clip.x1 && x < clip.x2 && h > 0) {
-    v_drawPixels(x, y, 1, h, color);
+    drawPixels(x, y, 1, h, color);
   }
 }
 
 void TSD_GFX::drawRect(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color)
 {
+  startWrite();
+
   drawFastHLine(clip, x, y, w, color);
   drawFastHLine(clip, x, y + h - 1, w, color);
   // Avoid drawing corner pixels twice
   drawFastVLine(clip, x, y+1, h-2, color);
   drawFastVLine(clip, x + w - 1, y+1, h-2, color);
+
+  endWrite();
 }
 
-void TSD_GFX::fillRect(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color)
+void TSD_GFX::fillRectHelper(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color)
 {
   if (x < clip.x1) {
     w -= clip.x1 - x;
@@ -105,32 +109,47 @@ void TSD_GFX::fillRect(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h,
     h = clip.y2 - y;
   }
   if (w > 0 && h > 0) {
-    v_drawPixels(x, y, w, h, color);
+    drawPixels(x, y, w, h, color);
   }
+}
+
+void TSD_GFX::fillRect(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color)
+{
+  startWrite();
+  fillRectHelper(clip, x, y, w, h, color);
+  endWrite();
 }
 
 void TSD_GFX::drawRoundRect(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, rgb_t color)
 {
+  startWrite();
+
   // smarter version
   drawFastHLine(clip, x + r  , y    , w - r - r, color); // Top
   drawFastHLine(clip, x + r  , y + h - 1, w - r - r, color); // Bottom
   drawFastVLine(clip, x    , y + r  , h - r - r, color); // Left
   drawFastVLine(clip, x + w - 1, y + r  , h - r - r, color); // Right
   // draw four corners
-  drawCircleFragment(clip, x + r    , y + r    , r, 1, color);
-  drawCircleFragment(clip, x + w - r - 1, y + r    , r, 2, color);
-  drawCircleFragment(clip, x + w - r - 1, y + h - r - 1, r, 4, color);
-  drawCircleFragment(clip, x + r    , y + h - r - 1, r, 8, color);
+  drawCircleHelper(clip, x + r    , y + r    , r, 1, color);
+  drawCircleHelper(clip, x + w - r - 1, y + r    , r, 2, color);
+  drawCircleHelper(clip, x + w - r - 1, y + h - r - 1, r, 4, color);
+  drawCircleHelper(clip, x + r    , y + h - r - 1, r, 8, color);
+
+  endWrite();
 }
 
 void TSD_GFX::fillRoundRect(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, rgb_t color)
 {
+  startWrite();
+
   // smarter version
-  fillRect(clip, x, y + r, w, h - r - r, color);
+  fillRectHelper(clip, x, y + r, w, h - r - r, color);
 
   // draw four corners
-  fillCircleFragment(clip, x + r, y + h - r - 1, r, 1, w - r - r - 1, color);
-  fillCircleFragment(clip, x + r    , y + r, r, 2, w - r - r - 1, color);
+  fillCircleHelper(clip, x + r, y + h - r - 1, r, 1, w - r - r - 1, color);
+  fillCircleHelper(clip, x + r    , y + r, r, 2, w - r - r - 1, color);
+
+  endWrite();
 }
 
 
@@ -138,6 +157,8 @@ void TSD_GFX::fillRoundRect(clip_t& clip, int16_t x, int16_t y, int16_t w, int16
 // an efficient FastH/V Line draw routine for line segments of 2 pixels or more
 void TSD_GFX::drawLine(clip_t& clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, rgb_t color)
 {
+  startWrite();
+
   bool steep = abs(y1 - y0) > abs(x1 - x0);
   if (steep) {
     SWAP_INT(x0, y0);
@@ -191,10 +212,13 @@ void TSD_GFX::drawLine(clip_t& clip, int16_t x0, int16_t y0, int16_t x1, int16_t
     }
     if (dlen) drawFastHLine(clip, xs, y0, dlen, color);
   }
+  endWrite();
 }
 
 void TSD_GFX::drawEllipse(clip_t& clip, int16_t x0, int16_t y0, int16_t rx, int16_t ry, rgb_t color)
 {
+  startWrite();
+
   int a2 = rx * rx;
   int b2 = ry * ry;
   int a2b2 = a2 * b2;
@@ -223,10 +247,13 @@ void TSD_GFX::drawEllipse(clip_t& clip, int16_t x0, int16_t y0, int16_t rx, int1
     }
     px = x;
   }
+  endWrite();
 }
 
 void TSD_GFX::fillEllipse(clip_t& clip, int16_t x0, int16_t y0, int16_t rx, int16_t ry, rgb_t color)
 {
+  startWrite();
+
   int a2 = rx * rx;
   int b2 = ry * ry;
   int a2b2 = a2 * b2;
@@ -245,12 +272,15 @@ void TSD_GFX::fillEllipse(clip_t& clip, int16_t x0, int16_t y0, int16_t rx, int1
     drawFastHLine(clip, x0 - x, y0 - y, 2*x, color);
     drawFastHLine(clip, x0 - x, y0 + y, 2*x, color);
   }
+  endWrite();
 }
 
 // Optimised midpoint circle algorithm
 void TSD_GFX::drawCircle(clip_t& clip, int16_t x0, int16_t y0, int16_t r, rgb_t color)
 {
   if ( r <= 0 ) return;
+
+    startWrite();
 
     int16_t f     = 1 - r;
     int16_t ddF_y = -2 * r;
@@ -303,11 +333,14 @@ void TSD_GFX::drawCircle(clip_t& clip, int16_t x0, int16_t y0, int16_t r, rgb_t 
       }
       xs = xe;
     } while (xe < --r);
+
+    endWrite();
 }
 
-void TSD_GFX::drawCircleFragment(clip_t& clip, int16_t x0, int16_t y0, int16_t rr, uint8_t corners, rgb_t color)
+void TSD_GFX::drawCircleHelper(clip_t& clip, int16_t x0, int16_t y0, int16_t rr, uint8_t corners, rgb_t color)
 {
   if (rr <= 0) return;
+
   int16_t f     = 1 - rr;
   int16_t ddF_x = 1;
   int16_t ddF_y = -2 * rr;
@@ -364,9 +397,18 @@ void TSD_GFX::drawCircleFragment(clip_t& clip, int16_t x0, int16_t y0, int16_t r
   }
 }
 
+void TSD_GFX::drawCircleFragment(clip_t& clip, int16_t x0, int16_t y0, int16_t rr, uint8_t corners, rgb_t color)
+{
+  startWrite();
+  drawCircleHelper(clip, x0, y0, rr, corners, color);
+  endWrite();
+}
+
 // Improved algorithm avoids repetition of lines
 void TSD_GFX::fillCircle(clip_t& clip, int16_t x0, int16_t y0, int16_t r, rgb_t color)
 {
+  startWrite();
+
   int16_t  x  = 0;
   int16_t  dx = 1;
   int16_t  dy = r+r;
@@ -392,9 +434,10 @@ void TSD_GFX::fillCircle(clip_t& clip, int16_t x0, int16_t y0, int16_t r, rgb_t 
     drawFastHLine(clip, x0 - r, y0 - x, dy+1, color);
 
   }
+  endWrite();
 }
 
-void TSD_GFX::fillCircleFragment(clip_t& clip, int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, rgb_t color)
+void TSD_GFX::fillCircleHelper(clip_t& clip, int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, rgb_t color)
 {
   int16_t f     = 1 - r;
   int16_t ddF_x = 1;
@@ -419,6 +462,13 @@ void TSD_GFX::fillCircleFragment(clip_t& clip, int16_t x0, int16_t y0, int16_t r
     if (corners & 0x1) drawFastHLine(clip, x0 - r, y0 + y, r + r + delta, color);
     if (corners & 0x2) drawFastHLine(clip, x0 - r, y0 - y, r + r + delta, color);
   }
+}
+
+void TSD_GFX::fillCircleFragment(clip_t& clip, int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, rgb_t color)
+{
+  startWrite();
+  fillCircleHelper(clip, x0, y0, r, corners, delta, color);
+  endWrite();
 }
 
 void TSD_GFX::drawTriangle(clip_t& clip, int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color)
@@ -453,9 +503,15 @@ void TSD_GFX::fillTriangle(clip_t& clip, int16_t x0, int16_t y0, int16_t x1, int
     else if (x1 > b) b = x1;
     if (x2 < a)      a = x2;
     else if (x2 > b) b = x2;
+
+    startWrite();
     drawFastHLine(clip, a, y0, b - a + 1, color);
+    endWrite();
+
     return;
   }
+
+  startWrite();
 
   int16_t
   dx01 = x1 - x0,
@@ -499,12 +555,16 @@ void TSD_GFX::fillTriangle(clip_t& clip, int16_t x0, int16_t y0, int16_t x1, int
     if (a > b) SWAP_INT(a, b);
     drawFastHLine(clip, a, y, b - a + 1, color);
   }
+
+  endWrite();
 }
 
 // BITMAP / XBITMAP / GRAYSCALE / RGB BITMAP FUNCTIONS ---------------------
 
 void TSD_GFX::drawBitmap(clip_t& clip, int16_t x, int16_t y, const uint8_t* bitmap, int16_t w, int16_t h, rgb_t color)
 {
+  startWrite();
+
   int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
   uint8_t b = 0;
 
@@ -518,10 +578,14 @@ void TSD_GFX::drawBitmap(clip_t& clip, int16_t x, int16_t y, const uint8_t* bitm
         drawPixel(clip, x + i, y, color);
     }
   }
+
+  endWrite();
 }
 
 void TSD_GFX::drawBitmap(clip_t& clip, int16_t x, int16_t y, const uint8_t* bitmap, int16_t w, int16_t h, rgb_t color, rgb_t bg)
 {
+  startWrite();
+
   int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
   uint8_t b = 0;
 
@@ -534,19 +598,26 @@ void TSD_GFX::drawBitmap(clip_t& clip, int16_t x, int16_t y, const uint8_t* bitm
       drawPixel(clip, x + i, y, (b & 0x80) ? color : bg);
     }
   }
+
+  endWrite();
 }
 
 void TSD_GFX::drawGrayscaleBitmap(clip_t& clip, int16_t x, int16_t y, const uint8_t* bitmap, int16_t w, int16_t h)
 {
+  startWrite();
+
   for (int16_t j = 0; j < h; j++, y++) {
     for (int16_t i = 0; i < w; i++) {
       drawPixel(clip, x + i, y, bitmap[j * w + i] ? WHITE : BLACK);
     }
   }
+  endWrite();
 }
 
 void TSD_GFX::drawGrayscaleBitmap(clip_t& clip, int16_t x, int16_t y, const uint8_t* bitmap, const uint8_t* mask, int16_t w, int16_t h)
 {
+  startWrite();
+
   int16_t bw = (w + 7) / 8; // Bitmask scanline pad = whole byte
   uint8_t b = 0;
   for (int16_t j = 0; j < h; j++, y++) {
@@ -560,19 +631,26 @@ void TSD_GFX::drawGrayscaleBitmap(clip_t& clip, int16_t x, int16_t y, const uint
       }
     }
   }
+  endWrite();
 }
 
 void TSD_GFX::drawRGBBitmap(clip_t& clip, int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h)
 {
+  startWrite();
+
   for (int16_t j = 0; j < h; j++, y++) {
     for (int16_t i = 0; i < w; i++) {
       drawPixel(clip, x + i, y, rgb(bitmap[j * w + i]));
     }
   }
+
+  endWrite();
 }
 
 void TSD_GFX::drawRGBBitmap(clip_t& clip, int16_t x, int16_t y, const uint16_t* bitmap, const uint8_t* mask, int16_t w, int16_t h)
 {
+  startWrite();
+
   int16_t bw = (w + 7) / 8; // Bitmask scanline pad = whole byte
   uint8_t b = 0;
   for (int16_t j = 0; j < h; j++, y++) {
@@ -586,19 +664,25 @@ void TSD_GFX::drawRGBBitmap(clip_t& clip, int16_t x, int16_t y, const uint16_t* 
       }
     }
   }
+  endWrite();
 }
 
 void TSD_GFX::drawRGBBitmap(clip_t& clip, int16_t x, int16_t y, const uint32_t* bitmap, int16_t w, int16_t h)
 {
+  startWrite();
+
   for (int16_t j = 0; j < h; j++, y++) {
     for (int16_t i = 0; i < w; i++) {
       drawPixel(clip, x + i, y, bitmap[j * w + i] | 0xFF000000);
     }
   }
+  endWrite();
 }
 
 void TSD_GFX::drawRGBBitmap(clip_t& clip, int16_t x, int16_t y, const uint32_t* bitmap, const uint8_t* mask, int16_t w, int16_t h)
 {
+  startWrite();
+
   int16_t bw = (w + 7) / 8; // Bitmask scanline pad = whole byte
   uint8_t b = 0;
   for (int16_t j = 0; j < h; j++, y++) {
@@ -612,6 +696,7 @@ void TSD_GFX::drawRGBBitmap(clip_t& clip, int16_t x, int16_t y, const uint32_t* 
       }
     }
   }
+  endWrite();
 }
 
 // TEXT- AND CHARACTER-HANDLING FUNCTIONS ----------------------------------
@@ -674,6 +759,8 @@ rgb_t alphaBlend(uint8_t bpp, uint8_t bits, uint8_t b80, rgb_t colorh, rgb_t col
 /**************************************************************************/
 void TSD_GFX::drawChar(clip_t& clip, cursor_t& cursor, font_t& font, char** c, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
+  startWrite();
+
   uint8_t size_x = font.fontSizeX;
   uint8_t size_y = font.fontSizeY;
 
@@ -692,10 +779,10 @@ void TSD_GFX::drawChar(clip_t& clip, cursor_t& cursor, font_t& font, char** c, r
     lw = 6;
     lhz = 8 * size_y;
     if (drawbg && x - cursor.x > 0) {
-      fillRect(clip, cursor.x, cursor.y, x - cursor.x, lhz, bg);
+      fillRectHelper(clip, cursor.x, cursor.y, x - cursor.x, lhz, bg);
     }
     if (drawbg && y - cursor.y > 0) {
-      fillRect(clip, cursor.x, cursor.y, lw * size_x, y - cursor.y, bg);
+      fillRectHelper(clip, cursor.x, cursor.y, lw * size_x, y - cursor.y, bg);
     }
     for (int8_t i = 0; i < 5; i++) { // Char bitmap = 5 columns
       uint8_t line = default_font[**c * 5 + i];
@@ -704,12 +791,12 @@ void TSD_GFX::drawChar(clip_t& clip, cursor_t& cursor, font_t& font, char** c, r
           if (size_x == 1 && size_y == 1)
             drawPixel(clip, x + i, y + j, colorh);
           else
-            fillRect(clip, x + i * size_x, y + j * size_y, size_x, size_y, colorh);
+            fillRectHelper(clip, x + i * size_x, y + j * size_y, size_x, size_y, colorh);
         } else if (drawbg) {
           if (size_x == 1 && size_y == 1)
             drawPixel(clip, x + i, y + j, bg);
           else
-            fillRect(clip, x + i * size_x, y + j * size_y, size_x, size_y, bg);
+            fillRectHelper(clip, x + i * size_x, y + j * size_y, size_x, size_y, bg);
         }
       }
     }
@@ -717,7 +804,7 @@ void TSD_GFX::drawChar(clip_t& clip, cursor_t& cursor, font_t& font, char** c, r
       if (size_x == 1 && size_y == 1)
         drawFastVLine(clip, x + 5, y, 8, bg);
       else
-        fillRect(clip, x + 5 * size_x, y, size_x, 8 * size_y, bg);
+        fillRectHelper(clip, x + 5 * size_x, y, size_x, 8 * size_y, bg);
     }
     *c += 1;
   }
@@ -731,10 +818,10 @@ void TSD_GFX::drawChar(clip_t& clip, cursor_t& cursor, font_t& font, char** c, r
        yo = 1 - glyph->yOffset; // yOffset is positive
 
     if (drawbg && x - cursor.x + xo * size_x > 0) {
-      fillRect(clip, cursor.x, cursor.y, x - cursor.x + xo * size_x, lhz, bg);
+      fillRectHelper(clip, cursor.x, cursor.y, x - cursor.x + xo * size_x, lhz, bg);
     }
     if (drawbg && y - cursor.y + yo * size_y > 0) {
-      fillRect(clip, cursor.x, cursor.y, lw * size_x, y - cursor.y + yo * size_y, bg);
+      fillRectHelper(clip, cursor.x, cursor.y, lw * size_x, y - cursor.y + yo * size_y, bg);
     }
 
     uint8_t xx, yy, bits = 0, bit = 0;
@@ -766,7 +853,7 @@ void TSD_GFX::drawChar(clip_t& clip, cursor_t& cursor, font_t& font, char** c, r
             drawPixel(clip, x + xo + xx, y + yo + yy, color);
           }
           else {
-            fillRect(clip, x + (xo + xx) * size_x, y + (yo + yy) * size_y, size_x, size_y, color);
+            fillRectHelper(clip, x + (xo + xx) * size_x, y + (yo + yy) * size_y, size_x, size_y, color);
           }
         }
         bits <<= shu;
@@ -778,17 +865,19 @@ void TSD_GFX::drawChar(clip_t& clip, cursor_t& cursor, font_t& font, char** c, r
     int16_t y2 = y + (yo + h) * size_y;
     int16_t h2 = cursor.y + lhz - y2;
     if (drawbg && h2 > 0) {
-      fillRect(clip, cursor.x, y2, lw * size_x, h2, bg);
+      fillRectHelper(clip, cursor.x, y2, lw * size_x, h2, bg);
     }
     int16_t w2 = lw - (xo + w);
     if (drawbg && w2 > 0) {
-      fillRect(clip, cursor.x + (xo + w) * size_x, cursor.y, w2 * size_x, lhz, bg);
+      fillRectHelper(clip, cursor.x + (xo + w) * size_x, cursor.y, w2 * size_x, lhz, bg);
     }
   } // End classic vs custom font
   if (drawbg && spacing > 0) {
-    fillRect(clip, cursor.x + lw * size_x, cursor.y, spacing * size_x, lhz, bg);
+    fillRectHelper(clip, cursor.x + lw * size_x, cursor.y, spacing * size_x, lhz, bg);
   }
   cursor.x += (lw + spacing) * size_x;
+
+  endWrite();
 }
 
 
@@ -880,8 +969,7 @@ void TSD_GFX::fillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, grad
   int16_t r2, g2, b2;
   RGB14fromColor(z.color2, r2, g2, b2);
   if (z.deg == 2) {
-    v_startWrite();
-    v_writeAddrWindow(x, y, w, h);
+    writeAddrWindow(x, y, w, h);
   }
   int16_t r = r1;
   int16_t g = g1;
@@ -896,14 +984,13 @@ void TSD_GFX::fillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, grad
   for (int j = 0; j < h; ++j) {
 
     if (z.deg == 4) {
-      v_startWrite();
-      v_writeAddrWindow(x, y + h - 1 - j, w, 1);
+      writeAddrWindow(x, y + h - 1 - j, w, 1);
     }
 
-    v_sendMDTColor(mdt_color(RGB14toColor(r, g, b)), w);
+    sendMDTColor(mdt_color(RGB14toColor(r, g, b)), w);
 
     if (z.deg == 4) {
-      v_endWrite();
+//      endWrite();
     }
 
     int adj = prc - 50;
@@ -929,7 +1016,7 @@ void TSD_GFX::fillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, grad
       q = 0;
   }
   if (z.deg == 2) {
-    v_endWrite();
+//    endWrite();
   }
 }
 
@@ -939,8 +1026,9 @@ void TSD_GFX::fillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, grad
   RGB14fromColor(z.color1, r1, g1, b1);
   int16_t r2, g2, b2;
   RGB14fromColor(z.color2, r2, g2, b2);
-  v_startWrite();
-  v_writeAddrWindow(x, y, w, h);
+
+  writeAddrWindow(x, y, w, h);
+
   int8_t prc = z.percent;
   if (prc < 0) {
     prc = 0;
@@ -964,7 +1052,7 @@ void TSD_GFX::fillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, grad
         tmp[w - 1 - i] = c;
       }
       else {
-        v_sendMDTColor1(c);
+        sendMDTColor1(c);
       }
       int adj = prc - 50;
       if (adj > 45)
@@ -990,7 +1078,7 @@ void TSD_GFX::fillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, grad
     }
     if (z.deg == 3) {
       for (int i = 0; i < w; ++i) {
-        v_sendMDTColor1(tmp[i]);
+        sendMDTColor1(tmp[i]);
       }
     }
   }
@@ -998,12 +1086,12 @@ void TSD_GFX::fillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, grad
   if (z.deg == 3) {
     free(tmp);
   }
-
-  v_endWrite();
 }
 
 void TSD_GFX::fillRectGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t& z)
 {
+  startWrite();
+
   if (x < clip.x1) {
     w -= clip.x1 - x;
     x = clip.x1;
@@ -1026,29 +1114,26 @@ void TSD_GFX::fillRectGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, in
       fillRectVGradient(x, y, w, h, z);
     }
   }
+  endWrite();
 }
 
 
 
-void TSD_GFX::v_sendMDTColor(const mdt_t c, int32_t len)
+void TSD_GFX::sendMDTColor(const mdt_t c, int32_t len)
 {
   while (--len >= 0) {
-    v_sendMDTColor1(c);
+    sendMDTColor1(c);
   }
 }
 
-void TSD_GFX::v_drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
+void TSD_GFX::drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
 {
-  v_startWrite();
-  v_writeAddrWindow(x, y, 1, 1);
-  v_sendMDTColor1(mdt_color(color));
-  v_endWrite();
+  writeAddrWindow(x, y, 1, 1);
+  sendMDTColor1(mdt_color(color));
 }
 
-void TSD_GFX::v_drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
+void TSD_GFX::drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
 {
-  v_startWrite();
-  v_writeAddrWindow(x, y, w, h);
-  v_sendMDTColor(mdt_color(color), w * h);
-  v_endWrite();
+  writeAddrWindow(x, y, w, h);
+  sendMDTColor(mdt_color(color), w * h);
 }

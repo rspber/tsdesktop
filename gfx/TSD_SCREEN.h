@@ -67,7 +67,7 @@ public:
   void fillScreen(const rgb_t color = BLACK);
   void clearDisplay() { fillScreen(BLACK); }
 
-  virtual void v_drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) = 0;
+  virtual void drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) = 0;
 
   void drawLine(clip_t& clip, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts, uint8_t mode); // thickness, mode:1 cut
   void drawRect(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color, int16_t ts); // thickness

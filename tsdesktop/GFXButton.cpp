@@ -6,7 +6,6 @@
 */
 
 #include "GFXButton.h"
-#include "BufferedDisplay.h"
 #include <string.h>
 
 /// @GFXButton

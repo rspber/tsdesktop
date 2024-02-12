@@ -38,27 +38,22 @@ void TFT_SCREEN::setRotation(const uint8_t r, const uint8_t REV)
   tft_endWrite();
 }
 
-void tft_drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
+void v_drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
 {
-  tft_startWrite();
   tft_writeAddrWindow(x, y, 1, 1);
   tft_startWriteColor();
   tft_writeMDTColor(mdt_color(color));
   tft_endWriteColor();
-  tft_endWrite();
 }
 
-void tft_drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
+void v_drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
 {
-  tft_startWrite();
   tft_writeAddrWindow(x, y, w, h);
   tft_sendMDTColor(mdt_color(color), w * h);
-  tft_endWrite();
 }
 
-void tft_drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer)
+void v_drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer)
 {
-  tft_startWrite();
   tft_writeAddrWindow(x, y, w, h);
   if (MDT_SIZE > 2) {
     tft_sendMDTBuffer24(buffer, w * h);
@@ -66,36 +61,62 @@ void tft_drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const 
   else {
     tft_sendMDTBuffer16(buffer, w * h);
   }
+}
+
+void TFT_SCREEN::startWrite()
+{
+  tft_startWrite();
+}
+
+void TFT_SCREEN::endWrite()
+{
   tft_endWrite();
 }
 
-void TFT_SCREEN::v_startWrite() { tft_startWrite(); }
+void TFT_SCREEN::sendCmd(const uint8_t cmd)
+{
+  tft_sendCmd(cmd);
+}
 
-void TFT_SCREEN::v_endWrite() { tft_endWrite(); }
+void TFT_SCREEN::sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size)
+{
+  tft_sendCmdData(cmd, data, size);
+}
 
-void TFT_SCREEN::sendCmd(const uint8_t cmd) { tft_sendCmd(cmd); }
+void TFT_SCREEN::sendCmdByte(const uint8_t cmd, const uint8_t b)
+{
+  tft_sendCmdData(cmd, &b, 1);
+}
 
-void TFT_SCREEN::sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size) { tft_sendCmdData(cmd, data, size); }
+void TFT_SCREEN::writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h)
+{
+  tft_writeAddrWindow(x, y, w, h);
+}
 
-void TFT_SCREEN::sendCmdByte(const uint8_t cmd, const uint8_t b) { tft_sendCmdData(cmd, &b, 1); }
-
-void TFT_SCREEN::v_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h) { tft_writeAddrWindow(x, y, w, h); }
-
-void TFT_SCREEN::v_sendMDTColor1(const mdt_t c)
+void TFT_SCREEN::sendMDTColor1(const mdt_t c)
 {
   tft_startWriteColor();
   tft_writeMDTColor(c);
   tft_endWriteColor();
 }
 
-void TFT_SCREEN::v_sendMDTColor(const mdt_t c, const int32_t len) { tft_sendMDTColor(c, len); }
-
-void TFT_SCREEN::v_drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) { tft_drawMDTBuffer(x, y, w, h, buffer); }
-
-#ifdef OVERLAID
-void tft_storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t);
-void drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
+void TFT_SCREEN::sendMDTColor(const mdt_t c, const int32_t len)
 {
+  tft_sendMDTColor(c, len);
+}
+
+void TFT_SCREEN::drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer)
+{
+  tft_startWrite();
+  v_drawMDTBuffer(x, y, w, h, buffer);
+  tft_endWrite();
+}
+
+void v_storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t);
+
+void TFT_SCREEN::drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
+{
+#ifdef OVERLAID
   // very dubious method to detect pointer in rgb_t type
   // in rp2040 pointers are 4 byte:
   // code: 1x xx xx xx
@@ -104,29 +125,26 @@ void drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
   if ((color & 0xFF000000) != 0xFF000000) {	// not a RGB color
     over_t* t = (over_t*)color;
     if (t->mode == 1) {   // store underlaing pixels
-      tft_storePixels(x, y, 1, 1, t);
+      v_storePixels(x, y, 1, 1, t);
     }
     if (t->mode == 2) {   // restore background from buf
-      tft_drawMDTBuffer(x, y, 1, 1, &t->buf[t->len]);
+      v_drawMDTBuffer(x, y, 1, 1, &t->buf[t->len]);
       t->len += MDT_SIZE;
       return;
     }
-    tft_drawPixel1(x, y, t->color);
+    v_drawPixel1(x, y, t->color);
   }
   else {
-    tft_drawPixel1(x, y, color);
+    v_drawPixel1(x, y, color);
   }
-}
 #else
-  #define drawPixel1 tft_drawPixel1
+  v_drawPixel1(x, y, color);
 #endif
+}
 
-void TFT_SCREEN::v_drawPixel1(const int16_t x, const int16_t y, const rgb_t color) { drawPixel1(x, y, color); }
-
-#ifdef OVERLAID
-void tft_storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t);
-void drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
+void TFT_SCREEN::drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
 {
+#ifdef OVERLAID
   // very dubious method to detect pointer in rgb_t type
   // in rp2040 pointers are 4 byte:
   // code: 1x xx xx xx
@@ -135,26 +153,22 @@ void drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t
   if ((color & 0xFF000000) != 0xFF000000) {	// not a RGB color
     over_t* t = (over_t*)color;
     if (t->mode == 1) {   // store underlaing pixels
-      tft_storePixels(x, y, w, h, t);
+      v_storePixels(x, y, w, h, t);
     }
     if (t->mode == 2) {   // restore background from buf
-      tft_drawMDTBuffer(x, y, w, h, &t->buf[t->len]);
+      v_drawMDTBuffer(x, y, w, h, &t->buf[t->len]);
       t->len += w * h * MDT_SIZE;
       return;
     }
-    tft_drawPixels(x, y, w, h, t->color);
+    v_drawPixels(x, y, w, h, t->color);
   }
   else {
-    tft_drawPixels(x, y, w, h, color);
+    v_drawPixels(x, y, w, h, color);
   }
-}
 #else
-  #define drawPixels tft_drawPixels
+  v_drawPixels(x, y, w, h, color);
 #endif
-
-void TFT_SCREEN::v_drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color) { drawPixels(x, y, w, h, color); }
-
-
+}
 
 
 
@@ -275,8 +289,10 @@ rgb_t TFT_SCREEN::innerReadPixel(int16_t x, int16_t y)
   return color;
 }
 
-void tft_storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t)
+void v_storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t)
 {
+  tft_endWrite();
+
   tft_startReading();
   tft_readAddrWindow(x, y, w, h);
   tft_transfer(0);  // the first is thorough
@@ -319,4 +335,6 @@ void tft_storePixels(const int16_t x, const int16_t y, const int16_t w, const in
     }
   }
   tft_endReading();
+
+  tft_startWrite();
 }

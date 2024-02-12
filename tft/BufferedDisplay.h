@@ -23,11 +23,11 @@ public:
     buf = 0;
   }
 
-  void v_startWrite() override {}
-  void v_endWrite() override {}
-  void v_drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) override {}
+  void startWrite() override {}
+  void endWrite() override {}
+  void drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) override {}
 
-  void v_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h) override
+  void writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h) override
   {
     ax = x - x1;
     ay = y - y1;
@@ -36,7 +36,7 @@ public:
     ip = 0;
   }
 
-  void v_sendMDTColor1(const mdt_t c) override
+  void sendMDTColor1(const mdt_t c) override
   {
     uint8_t* p = &buf[(ay * w + ax + ip) * MDT_SIZE];
     if (MDT_SIZE > 2) {
@@ -85,7 +85,7 @@ public:
 
   void outMeTo(TSD_SCREEN* screen)
   {
-    screen->v_drawMDTBuffer(x1, y1, w, h, (const uint8_t*)buf);
+    screen->drawMDTBuffer(x1, y1, w, h, (const uint8_t*)buf);
   }
 
 };
