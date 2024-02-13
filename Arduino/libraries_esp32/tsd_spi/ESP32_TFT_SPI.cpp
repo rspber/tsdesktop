@@ -93,22 +93,22 @@ SPI3_HOST = 2
 #define TFT_IDXRD       0xD9    // undocumented
 
   #if (TFT_SPI_DC >= 32)
-    #define SPI_DC_C    SPI_32_PIN_LOW(TFT_SPI_DC)
-    #define SPI_DC_D    SPI_32_PIN_HIGH(TFT_SPI_DC)
+    #define SPI_DC_C    GPIO_32_PIN_LOW(TFT_SPI_DC)
+    #define SPI_DC_D    GPIO_32_PIN_HIGH(TFT_SPI_DC)
   #elif (TFT_DC >= 0)
-    #define SPI_DC_C    SPI_00_PIN_LOW(TFT_SPI_DC)
-    #define SPI_DC_D    SPI_00_PIN_HIGH(TFT_SPI_DC)
+    #define SPI_DC_C    GPIO_00_PIN_LOW(TFT_SPI_DC)
+    #define SPI_DC_D    GPIO_00_PIN_HIGH(TFT_SPI_DC)
   #else
     #define SPI_DC_C
     #define SPI_DC_D
   #endif
 
   #if (TFT_SPI_CS >= 32)
-    #define SPI_CS_L    SPI_32_PIN_LOW(TFT_SPI_CS);   SPI_32_PIN_LOW(TFT_SPI_CS)
-    #define SPI_CS_H    SPI_32_PIN_HIGH(TFT_SPI_CS)
+    #define SPI_CS_L    GPIO_32_PIN_LOW(TFT_SPI_CS);   GPIO_32_PIN_LOW(TFT_SPI_CS)
+    #define SPI_CS_H    GPIO_32_PIN_HIGH(TFT_SPI_CS)
   #elif (TFT_SPI_CS >= 0)
-    #define SPI_CS_L    SPI_00_PIN_LOW(TFT_SPI_CS);   SPI_00_PIN_LOW(TFT_SPI_CS)
-    #define SPI_CS_H    SPI_00_PIN_HIGH(TFT_SPI_CS)
+    #define SPI_CS_L    GPIO_00_PIN_LOW(TFT_SPI_CS);   GPIO_00_PIN_LOW(TFT_SPI_CS)
+    #define SPI_CS_H    GPIO_00_PIN_HIGH(TFT_SPI_CS)
   #else
     #define SPI_CS_L
     #define SPI_CS_H
@@ -157,33 +157,27 @@ void esp32_spi_initBus()
 #endif
 }
 
-#define START_WAIT_SPI_USR *_spi_cmd = SPI_USR
-#define END_WAIT_SPI_USR while (*_spi_cmd & SPI_USR)
-
-#define WAIT_SPI_USR \
-  START_WAIT_SPI_USR; \
-  END_WAIT_SPI_USR
-
-#define SET_DATA(W, L) \
+#define SPI_SEND(L) \
   *_spi_mosi_dlen = L-1; \
-  *_spi_w = W
+  *_spi_cmd = SPI_USR; \
+  while (*_spi_cmd & SPI_USR)
 
 inline void spi_send(const uint8_t data)
 {
-  SET_DATA(data, 8);
-  WAIT_SPI_USR;
+  *_spi_w = data;
+  SPI_SEND(8);
 }
 
 inline void spi_send16(const uint16_t w)
 {
-  SET_DATA(w << 8 | w >> 8, 16);
-  WAIT_SPI_USR;
+  *_spi_w = (w << 8 | w >> 8);
+  SPI_SEND(16);
 }
 
 inline void spi_send24(const uint32_t c)
 {
-  SET_DATA( (c & 0xff) << 16 | c & 0xff00 | (c >> 16) & 0xff, 24);
-  WAIT_SPI_USR;
+  *_spi_w = ((c & 0xff) << 16 | c & 0xff00 | (c >> 16) & 0xff);
+  SPI_SEND(24);
 }
 
 

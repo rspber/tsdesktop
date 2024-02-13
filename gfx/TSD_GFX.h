@@ -81,9 +81,10 @@ private:
   void fillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t& z);
   void fillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t& z);
 
-protected:
+public:
   virtual void startWrite() = 0;
   virtual void endWrite() = 0;
+protected:
   virtual void writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h) = 0;
   virtual void sendMDTColor1(const mdt_t c) = 0;
   virtual void sendMDTColor(const mdt_t c, const int32_t len);

@@ -100,8 +100,10 @@ protected:
 
   rgb_t innerReadPixel(int16_t x, int16_t y);
 
+public:
   void startWrite() override;
   void endWrite() override;
+protected:
   void writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h) override;
   void sendMDTColor1(const mdt_t c) override;
   void sendMDTColor(const mdt_t c, const int32_t len) override;

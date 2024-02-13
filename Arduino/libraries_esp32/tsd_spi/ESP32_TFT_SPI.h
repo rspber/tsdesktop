@@ -11,11 +11,11 @@
 
   #include <rgb.h>
 
-  #define SPI_32_PIN_LOW( PIN) GPIO.out1_w1tc.val = (1 << (PIN - 32))
-  #define SPI_32_PIN_HIGH(PIN) GPIO.out1_w1ts.val = (1 << (PIN - 32))
+  #define GPIO_32_PIN_LOW( PIN) GPIO.out1_w1tc.val = (1 << (PIN - 32))
+  #define GPIO_32_PIN_HIGH(PIN) GPIO.out1_w1ts.val = (1 << (PIN - 32))
 
-  #define SPI_00_PIN_LOW( PIN) GPIO.out_w1tc = (1 << PIN)
-  #define SPI_00_PIN_HIGH(PIN) GPIO.out_w1ts = (1 << PIN)
+  #define GPIO_00_PIN_LOW( PIN) GPIO.out_w1tc = (1 << PIN)
+  #define GPIO_00_PIN_HIGH(PIN) GPIO.out_w1ts = (1 << PIN)
 
 
   void tft_write_begin();

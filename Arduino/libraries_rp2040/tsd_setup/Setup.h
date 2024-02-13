@@ -33,7 +33,6 @@
 
 //  #include <Setup_RP2040_PIO_8BITP_ILI9488.h>
 
-
 //  #include <Setup_RP2040_PIO_SPI_ILI9341.h>
 //  #include <Setup_RP2040_PIO_SPI_ST7789.h>
 

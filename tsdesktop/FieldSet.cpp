@@ -568,6 +568,7 @@ void FieldSet::drawVisibleBackground()
     }
     else {
       int16_t j = minj;
+      screen()->startWrite();
       while (j < maxj) {
         int16_t i0 = mini;
         int16_t i = i0;
@@ -588,6 +589,7 @@ void FieldSet::drawVisibleBackground()
         }
         ++j;
       }
+      screen()->endWrite();
     }
   }
   
