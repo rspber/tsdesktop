@@ -74,17 +74,15 @@ public:
   void drawChar(clip_t& clip, cursor_t& cursor, font_t& font, const uint16_t uchar, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing);
   const uint16_t* drawTextLine(clip_t& clip, cursor_t& cursor, font_t& font, const uint16_t* utext, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing);
 
-private:
   void fillRectHelper(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color);
   void drawCircleHelper(clip_t& clip, int16_t x, int16_t y, int16_t r, uint8_t corners, rgb_t color);
   void fillCircleHelper(clip_t& clip, int16_t x, int16_t y, int16_t r, uint8_t corners, int16_t delta, rgb_t color);
+
   void fillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t& z);
   void fillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t& z);
 
-public:
   virtual void startWrite() = 0;
   virtual void endWrite() = 0;
-protected:
   virtual void writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h) = 0;
   virtual void sendMDTColor1(const mdt_t c) = 0;
   virtual void sendMDTColor(const mdt_t c, const int32_t len);

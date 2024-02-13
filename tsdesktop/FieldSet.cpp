@@ -505,6 +505,9 @@ void FieldSet::drawVisibleBackground()
     minj = 0;
   }
 
+  TSD_SCREEN* scr = screen();
+  scr->startWrite();
+
   if (n > 1) {
     clip_t* p = cps;
     int16_t x1 = p->x1, x2 = p->x2, y1 = p->y1, y2 = p->y2;
@@ -541,7 +544,7 @@ void FieldSet::drawVisibleBackground()
           if (y1 < minj) {
             y1 = minj;
           }
-          screen()->fillRect(clip, x + x1, y + y1, x2 - x1, y2 - y1, bg);
+          scr->fillRectHelper(clip, x + x1, y + y1, x2 - x1, y2 - y1, bg);
         }
       }
     }
@@ -562,13 +565,12 @@ void FieldSet::drawVisibleBackground()
           if (x1 < mini) {
             x1 = mini;
           }
-          screen()->fillRect(clip, x + x1, y + y1, x2 - x1, y2 - y1, bg);
+          scr->fillRectHelper(clip, x + x1, y + y1, x2 - x1, y2 - y1, bg);
         }
       }
     }
     else {
       int16_t j = minj;
-      screen()->startWrite();
       while (j < maxj) {
         int16_t i0 = mini;
         int16_t i = i0;
@@ -576,7 +578,7 @@ void FieldSet::drawVisibleBackground()
           int16_t t = innerCovers(cps, n, i, j);
           if (t) {
             if (i > i0) {
-              screen()->drawFastHLine(clip, x + i0, y + j, i - i0, bg);
+              scr->drawFastHLine(clip, x + i0, y + j, i - i0, bg);
             }
             i += t;
             i0 = i;
@@ -585,26 +587,27 @@ void FieldSet::drawVisibleBackground()
           ++i;
         }
         if (i > i0) {
-          screen()->drawFastHLine(clip, x + i0, y + j, i - i0, bg);
+          scr->drawFastHLine(clip, x + i0, y + j, i - i0, bg);
         }
         ++j;
       }
-      screen()->endWrite();
     }
   }
   
   if (mini > 0) {
-    screen()->fillRect(clip, x, y, mini, h, bg);
+    scr->fillRectHelper(clip, x, y, mini, h, bg);
   }
   if (minj > 0) {
-    screen()->fillRect(clip, x + mini, y, maxi - mini, minj, bg);
+    scr->fillRectHelper(clip, x + mini, y, maxi - mini, minj, bg);
   }
   if (maxj < h) {
-    screen()->fillRect(clip, x + mini, y + maxj, maxi - mini, h - maxj, bg);
+    scr->fillRectHelper(clip, x + mini, y + maxj, maxi - mini, h - maxj, bg);
   }
   if (maxi < w) {
-    screen()->fillRect(clip, x + maxi, y, w - maxi, h, bg);
+    scr->fillRectHelper(clip, x + maxi, y, w - maxi, h, bg);
   }
+
+  scr->endWrite();
 
   if (n > 20) {
     free(cps);

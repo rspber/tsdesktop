@@ -76,11 +76,9 @@ public:
   virtual void setRotation(const uint8_t r, const uint8_t REV = 0);
 
  // override by the driver
-protected:
   virtual void init() = 0;
   virtual void rotation(const uint8_t r, const uint8_t REV) = 0;
 
-public:
   void invertDisplay(bool invert);
 
   void displayOff();
@@ -93,17 +91,14 @@ public:
   rgb_t readPixel(clip_t& clip, int16_t x, int16_t y);
   void readRegister(uint8_t* buf, const uint8_t reg, int8_t len);
 
-protected:
   void sendCmd(const uint8_t cmd);
   void sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size);
   void sendCmdByte(const uint8_t cmd, const uint8_t b);
 
   rgb_t innerReadPixel(int16_t x, int16_t y);
 
-public:
   void startWrite() override;
   void endWrite() override;
-protected:
   void writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h) override;
   void sendMDTColor1(const mdt_t c) override;
   void sendMDTColor(const mdt_t c, const int32_t len) override;

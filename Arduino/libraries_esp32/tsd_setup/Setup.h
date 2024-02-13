@@ -31,6 +31,6 @@
 //  #include <Setup_ESP32_GPIO_8BITP_ILI9488_1.h>
 //  #include <Setup_ESP32_GPIO_8BITP_RM68140.h>
 
-//  #include <Setup_ESP32_SPI_ILI9341.h>
-  #include <Setup_ESP32_SPI_ST7789.h>
+  #include <Setup_ESP32_SPI_ILI9341.h>
+//  #include <Setup_ESP32_SPI_ST7789.h>
 //  #include <Setup_ESP32_SPI_ST7796.h>
