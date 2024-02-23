@@ -6,7 +6,7 @@
 */
 
 #include <Display.h>
-#include <TFT_ILI9341.h>
+#include <drivers/TFT_ILI9341.h>
 #include <Arduino.h>
 
 #define ROTATION ROTATION_HLR

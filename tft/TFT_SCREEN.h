@@ -75,10 +75,6 @@ public:
   virtual void begin();
   virtual void setRotation(const uint8_t r, const uint8_t REV = 0);
 
- // override by the driver
-  virtual void init() = 0;
-  virtual void rotation(const uint8_t r, const uint8_t REV) = 0;
-
   void invertDisplay(bool invert);
 
   void displayOff();

@@ -8,5 +8,4 @@ target_sources(tft INTERFACE
 
 target_link_libraries(tft INTERFACE
   gfx
-  drivers
 )

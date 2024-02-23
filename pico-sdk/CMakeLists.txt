@@ -22,7 +22,6 @@ add_compile_options(-Wall
 
 add_subdirectory(libs/env)
 add_subdirectory(libs/tsdesktop)
-add_subdirectory(libs/drivers)
 add_subdirectory(libs/gfx)
 add_subdirectory(libs/tft)
 add_subdirectory(libs/media)

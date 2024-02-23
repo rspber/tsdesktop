@@ -19,6 +19,8 @@
 
 #include <stdlib.h>
 
+#include "TFT_Defines.hh"
+
 const char* TFT_SCREEN::protocol() { return tft_identification(); }
 
 void TFT_SCREEN::begin()
@@ -27,14 +29,20 @@ void TFT_SCREEN::begin()
   tft_read_begin();
 
   tft_startWriteCmd();
-  init();
+  #include "TFT_Init.hh"
   tft_endWrite();
 }
 
 void TFT_SCREEN::setRotation(const uint8_t r, const uint8_t REV)
 {
   tft_startWriteCmd();
-  rotation(r, REV);
+  #include "TFT_Rotation.hh"
+  if (r & 1) {
+    setSize(getHEIGHT(), getWIDTH());
+  }
+  else {
+    setSize(getWIDTH(), getHEIGHT());
+  }
   tft_endWrite();
 }
 

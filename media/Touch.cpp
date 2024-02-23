@@ -10,7 +10,7 @@
 
 #if defined(TOUCH_DRIVER)
 
-#include "Touch.hh"
+#include "Touch_Rotation.hh"
 #include <Arduino.h>
 
 bool Touch::WhereAreYou(point_t* p)

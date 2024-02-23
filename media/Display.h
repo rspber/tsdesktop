@@ -9,6 +9,6 @@
 
 #pragma once
 
-#include <TFT_DRIVER.h>
+#include <TFT_SCREEN.h>
 
-#define Display TFT_DRIVER
+#define Display TFT_SCREEN
