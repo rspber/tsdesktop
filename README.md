@@ -19,7 +19,7 @@ If you think that you will get it on a test board, you are wrong, such connectio
 
 ### News
 
-* graphics modernization, quadrable example https://youtube.com/shorts/bBt4gD-19vk
+* graphics modernization, quadraball example https://youtube.com/shorts/bBt4gD-19vk
 
 * esp32 support
 
