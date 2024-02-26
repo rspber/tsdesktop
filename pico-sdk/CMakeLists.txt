@@ -48,3 +48,5 @@ add_subdirectory(examples/canvas1)
 add_subdirectory(examples/canvas2)
 add_subdirectory(examples/canvas3)
 add_subdirectory(examples/ili9341_diag)
+add_subdirectory(examples/quadraball)
+

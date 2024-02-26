@@ -48,25 +48,25 @@ class TSD_SCREEN : public TSD_GFX {
 public:
   TSD_SCREEN(const int16_t w, const int16_t h)
   {
-    _width = WIDTH = w;
-    _height = HEIGHT = h;
+    clip = {0, 0, WIDTH = w, HEIGHT = h};
   }
 
-  const int16_t width() { return _width; }
-  const int16_t height() { return _height; }
+  const int16_t width() { return clip.width(); }
+  const int16_t height() { return clip.height(); }
 
   const int16_t getWIDTH() { return WIDTH; }
   const int16_t getHEIGHT() { return HEIGHT; }
 
   void setSize(const int16_t w, const int16_t h)
   {
-    _width = w;
-    _height = h;
+    clip.x2 = clip.x1 + w;
+    clip.y2 = clip.y1 + h;
   }
 
   void fillScreen(const rgb_t color = BLACK);
   void clearDisplay() { fillScreen(BLACK); }
 
+  void pushMDTBuffer(clip_t& window, const uint8_t* buffer);
   virtual void drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) = 0;
 
   void drawLine(clip_t& clip, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts, uint8_t mode); // thickness, mode:1 cut
@@ -141,6 +141,6 @@ public:
 
 private:
   int16_t WIDTH, HEIGHT;
-  int16_t _width;       ///< Display width as modified by rotation
-  int16_t _height;      ///< Display height as modified by rotation
+protected:
+  clip_t clip;      ///< Display width/height as modified by rotation
 };

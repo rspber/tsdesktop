@@ -15,24 +15,21 @@
 
 void TSD_SCREEN::fillScreen(const rgb_t color)
 {
-  fillRect(0, 0, _width, _height, color);
+  fillRect(clip, clip.x1, clip.y1, clip.width(), clip.height(), color);
 }
 
 void TSD_SCREEN::drawPixel(int16_t x, int16_t y, rgb_t color)
 {
-  clip_t clip{0, 0, _width, _height};
   drawPixel(clip, x, y, color);
 }
 
 void TSD_SCREEN::drawFastVLine(int16_t x, int16_t y, int16_t h, rgb_t color)
 {
-  clip_t clip{0, 0, _width, _height};
   drawFastVLine(clip, x, y, h, color);
 }
 
 void TSD_SCREEN::drawFastHLine(int16_t x, int16_t y, int16_t w, rgb_t color)
 {
-  clip_t clip{0, 0, _width, _height};
   drawFastHLine(clip, x, y, w, color);
 }
 
@@ -86,7 +83,6 @@ void TSD_SCREEN::drawLine(clip_t& clip, int16_t x1, int16_t y1, int16_t x2, int1
 
 void TSD_SCREEN::drawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts, uint8_t mode)
 {
-  clip_t clip{0, 0, _width, _height};
   drawLine(clip, x1, y1, x2, y2, color, ts, mode);
 }
 
@@ -106,19 +102,16 @@ void TSD_SCREEN::drawRect(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t
 
 void TSD_SCREEN::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color, int16_t ts)
 {
-  clip_t clip{0, 0, _width, _height};
   drawRect(clip, x, y, w, h, color, ts);
 }
 
 void TSD_SCREEN::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color)
 {
-  clip_t clip{0, 0, _width, _height};
   fillRect(clip, x, y, w, h, color);
 }
 
 void TSD_SCREEN::fillRectGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t& z)
 {
-  clip_t clip{0, 0, _width, _height};
   fillRectGradient(clip, x, y, w, h, z);
 }
 
@@ -162,13 +155,11 @@ void TSD_SCREEN::drawRoundRect(clip_t& clip, int16_t x, int16_t y, int16_t w, in
 
 void TSD_SCREEN::drawRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h, int16_t radius, rgb_t color, int16_t ts)
 {
-  clip_t clip{0, 0, _width, _height};
   drawRoundRect(clip, x0, y0, w, h, radius, color, ts);
 }
 
 void TSD_SCREEN::fillRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h, int16_t radius, rgb_t color)
 {
-  clip_t clip{0, 0, _width, _height};
   fillRoundRect(clip, x0, y0, w, h, radius, color);
 }
 
@@ -183,7 +174,6 @@ void TSD_SCREEN::drawCircle(clip_t& clip, int16_t x0, int16_t y0, int16_t r, rgb
 
 void TSD_SCREEN::drawCircle(int16_t x0, int16_t y0, int16_t r, rgb_t color, int16_t ts)
 {
-  clip_t clip{0, 0, _width, _height};
   drawCircle(clip, x0, y0, r, color, ts);
 }
 
@@ -198,31 +188,26 @@ void TSD_SCREEN::drawCircleFragment(clip_t& clip, int16_t x0, int16_t y0, int16_
 
 void TSD_SCREEN::drawCircleFragment(int16_t x, int16_t y, int16_t r, uint8_t corners, rgb_t color, int16_t ts)
 {
-  clip_t clip{0, 0, _width, _height};
   drawCircleFragment(clip, x, y, r, corners, color, ts);
 }
 
 void TSD_SCREEN::fillCircle(int16_t x0, int16_t y0, int16_t r, rgb_t color)
 {
-  clip_t clip{0, 0, _width, _height};
   fillCircle(clip, x0, y0, r, color);
 }
 
 void TSD_SCREEN::fillCircleFragment(int16_t x0, int16_t y0, int16_t r, uint8_t corners, int16_t delta, rgb_t color)
 {
-  clip_t clip{0, 0, _width, _height};
   fillCircleFragment(clip, x0, y0, r, corners, delta, color);
 }
 
 void TSD_SCREEN::drawEllipse(int16_t x0, int16_t y0, int16_t rx, int16_t ry, rgb_t color)
 {
-  clip_t clip{0, 0, _width, _height};
   drawEllipse(clip, x0, y0, rx, ry, color);
 }
 
 void TSD_SCREEN::fillEllipse(int16_t x0, int16_t y0, int16_t rx, int16_t ry, rgb_t color)
 {
-  clip_t clip{0, 0, _width, _height};
   fillEllipse(clip, x0, y0, rx, ry, color);
 }
 
@@ -235,49 +220,41 @@ void TSD_SCREEN::drawTriangle(clip_t& clip, int16_t x0, int16_t y0, int16_t x1, 
 
 void TSD_SCREEN::drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color, int16_t ts, uint8_t mode)
 {
-  clip_t clip{0, 0, _width, _height};
   drawTriangle(clip, x0, y0, x1, y1, x2, y2, color, ts, mode);
 }
 
 void TSD_SCREEN::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, rgb_t color)
 {
-  clip_t clip{0, 0, _width, _height};
   fillTriangle(clip, x0, y0, x1, y1, x2, y2, color);
 }
 
 void TSD_SCREEN::drawBitmap(int16_t x, int16_t y, const uint8_t* bitmap, int16_t w, int16_t h, rgb_t color)
 {
-  clip_t clip{0, 0, _width, _height};
   drawBitmap(clip, x, y, bitmap, w, h, color);
 }
 
 void TSD_SCREEN::drawBitmap(int16_t x, int16_t y, const uint8_t* bitmap, int16_t w, int16_t h, rgb_t color, rgb_t bg)
 {
-  clip_t clip{0, 0, _width, _height};
   drawBitmap(clip, x, y, bitmap, w, h, color, bg);
 }
 
 void TSD_SCREEN::drawGrayscaleBitmap(int16_t x, int16_t y, const uint8_t* bitmap, int16_t w, int16_t h)
 {
-  clip_t clip{0, 0, _width, _height};
   drawGrayscaleBitmap(clip, x, y, bitmap, w, h);
 }
 
 void TSD_SCREEN::drawGrayscaleBitmap(int16_t x, int16_t y, const uint8_t* bitmap, const uint8_t* mask, int16_t w, int16_t h)
 {
-  clip_t clip{0, 0, _width, _height};
   drawGrayscaleBitmap(clip, x, y, bitmap, mask, w, h);
 }
 
 void TSD_SCREEN::drawRGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, int16_t w, int16_t h)
 {
-  clip_t clip{0, 0, _width, _height};
   drawRGBBitmap(clip, x, y, bitmap, w, h);
 }
 
 void TSD_SCREEN::drawRGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, const uint8_t *mask, int16_t w, int16_t h)
 {
-  clip_t clip{0, 0, _width, _height};
   drawRGBBitmap(clip, x, y, bitmap, mask, w, h);
 }
 
@@ -285,13 +262,11 @@ void TSD_SCREEN::drawRGBBitmap(int16_t x, int16_t y, const rgb_t* bitmap, const 
 
 void TSD_SCREEN::drawChar(cursor_t& cursor, font_t& font, const char* c, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
-  clip_t clip{0, 0, _width, _height};
   drawChar(clip, cursor, font, (char **)&c, colorh, bg, colorl, spacing);
 }
 
 void TSD_SCREEN::drawTextLine(cursor_t& cursor, font_t& font, const char* text, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
-  clip_t clip{0, 0, _width, _height};
   drawTextLine(clip, cursor, font, text, colorh, bg, colorl, spacing);
 }
 
@@ -299,7 +274,6 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, co
 {
   if (text) {
     cursor_t cursor{ x, y };
-    clip_t clip{0, 0, _width, _height};
     font_t font{gfxFont, fontSize, fontSize};
     const char* p = text;
     while (*p) {
@@ -321,13 +295,11 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, co
 
 void TSD_SCREEN::drawChar(cursor_t& cursor, font_t& font, const uint16_t uchar, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
-  clip_t clip{0, 0, _width, _height};
   drawChar(clip, cursor, font, uchar, colorh, bg, colorl, spacing);
 }
 
 const uint16_t* TSD_SCREEN::drawTextLine(cursor_t& cursor, font_t& font, const uint16_t* utext, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
-  clip_t clip{0, 0, _width, _height};
   return drawTextLine(clip, cursor, font, utext, colorh, bg, colorl, spacing);
 }
 
@@ -335,7 +307,6 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const uint16_t* utex
 {
   if (utext) {
     cursor_t cursor{ x, y };
-    clip_t clip{0, 0, _width, _height};
     font_t font{gfxFont, fontSize, fontSize};
     const uint16_t* p = utext;
     while (*p) {
@@ -351,4 +322,29 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const uint16_t* utex
 void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const uint16_t* utext, const int8_t fontSize, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
   drawText(x, y, utext, (const GFXfont**)NULL, fontSize, colorh, bg, colorl, spacing);
+}
+
+
+void TSD_SCREEN::pushMDTBuffer(clip_t& window, const uint8_t* buffer)
+{
+  for (int j = window.y1; j < window.y2; ++j ) {
+    if (j >= 0 && j < clip.height()) {
+      int i = window.x1;
+      int w = window.width();
+      int di = 0;
+      if (i < 0) {
+        di -= i;
+        w += i;
+        i = 0;
+      }
+      if (w > 0) {
+        if (i + w > clip.x2) {
+          w = clip.x2 - i;
+        }
+        if (w > 0) {
+          drawMDTBuffer(clip.x1 + i, clip.y1 + j, w, 1, &buffer[((j - window.y1) * window.width() + di) * MDT_SIZE]);
+        }
+      }
+    }
+  }
 }

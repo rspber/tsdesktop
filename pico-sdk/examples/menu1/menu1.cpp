@@ -7,7 +7,7 @@
 
 #include <Media.h>
 #include <TSDesktop.h>
-#include <GFXButton.h>
+#include <GfxButton.h>
 #include <Fonts/TSD_FreeSans_9pt.h>
 
 #define ROTATION ROTATION_HLR
@@ -18,7 +18,7 @@ bool screenEnabled = false;
 Touch touch;
 
 TextButton sel01;
-GFXButton btn01;
+GfxButton btn01;
 
 Container* SELT[]{
   &sel01,

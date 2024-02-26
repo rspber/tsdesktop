@@ -13,6 +13,6 @@ target_sources(tsdesktop INTERFACE
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/Editable.cpp
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/Scroller.cpp
   ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/FieldSet.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/GFXObject.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/GFXButton.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/GfxObject.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/../../../tsdesktop/Canvas.cpp
 )

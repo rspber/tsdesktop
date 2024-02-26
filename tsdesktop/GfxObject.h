@@ -1,5 +1,5 @@
 /*
-  GFXObject
+  GfxObject
 
   Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
@@ -7,32 +7,22 @@
 
 #pragma once
 
-#include <TSDesktop.h>
 #include <overlaid.h>
-#include <stdlib.h>
+#include "Canvas.h"
+#include "TSD_SCREEN.h"
 
-/// @GFXObject
-class GFXObject {
+/// @GfxObject
+
+class Canvas;
+
+class GfxObject {
+
+  friend class Canvas;
+
 public:
-  GFXObject(const int16_t ax1, const int16_t ay1, rgb_t acolor)
-  {
-    x1 = ax1;
-    y1 = ay1;
-    over.color = acolor;
-    over.mode = 0;
-    over.buf = 0;
-    over.len = 0;
-  }
-  virtual ~GFXObject()
-  {
-    if (over.buf) {
-      free(over.buf);
-      over.buf = 0;
-      over.size = 0;
-      over.len = 0;
-      over.mode = 0;
-    }
-  }
+  GfxObject(const int16_t ax1, const int16_t ay1, rgb_t acolor);
+
+  virtual ~GfxObject();
 
   void setVisible(const bool aVisible) { visible = aVisible; }
   const bool getVisible() { return visible; }
@@ -43,24 +33,31 @@ public:
   void setOverlaid(bool aOverlaid);
   rgb_t getOver();
 
+  virtual rgb_t getBackgroundColor() { return BLACK; }
+
   void hide();
   void draw();
 
-  virtual void dodraw(clip_t& clip, int16_t x, int16_t y) = 0;
-  void doDraw(clip_t& clip, int16_t x, int16_t y, bool redraw);
+  virtual void dodraw(clip_t& clip, int16_t left, int16_t top) = 0;
+  void doDraw(clip_t& clip, int16_t left, int16_t top, bool redraw);
 
-  TSD_SCREEN* writer();
+  virtual TSD_SCREEN* screen();
 
+  // parent canvas in which this GfxObject resides
+  Canvas* getCanvas() { return canvas; }
+
+  // this GfxObject dislocation in canvas
   void setX1(int16_t x) { x1 = x; }
   int16_t getX1() { return x1; }
 
+  // this GfxObject dislocation in canvas
   void setY1(int16_t y) { y1 = y; }
   int16_t getY1() { return y1; }
 
-  virtual int16_t lW() { return 0; }
-  virtual int16_t rW() { return 0; }
-  virtual int16_t tH() { return 0; }
-  virtual int16_t bH() { return 0; }
+  virtual int16_t lW() = 0;
+  virtual int16_t rW() = 0;
+  virtual int16_t tH() = 0;
+  virtual int16_t bH() = 0;
 
 protected:
   virtual void setDefaultMaxs(clip_t& clip);
@@ -74,9 +71,9 @@ protected:
   int16_t dx, dy;
   int16_t minx = 0, miny = 0, maxx = 0, maxy = 0;
 
-  friend class GFXButton;
 private:
-  Button* gfxbtnparent;   // set by GFXButton add
+  Canvas* canvas;   // set by Canvas.add
+
   bool visible = true;
   bool wasDrawn = false;
   bool alloc = false;

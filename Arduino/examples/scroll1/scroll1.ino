@@ -66,7 +66,7 @@ void loop()
     /*Container* b =*/ desktop.pressed(p.x, p.y);
   }
 
-  sleep_ms(50);
+  delay(50);
 
   pin13state = 1 - pin13state;
   digitalWrite(LED_PIN, pin13state);

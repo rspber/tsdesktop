@@ -1,7 +1,7 @@
 /*
   Menu 3 on TSDesktop
 
-  Copyright (c) 2024, rspber (https://github.com/rspber)
+  Copyright (c) 2022-2024, rspber (https://github.com/rspber)
 
 */
 
