@@ -19,6 +19,10 @@ If you think that you will get it on a test board, you are wrong, such connectio
 
 ### News
 
+* spider example - video is still uploading ...
+
+* fill gradient modernization - not finshed yet
+
 * graphics modernization, quadraball example https://youtube.com/shorts/bBt4gD-19vk
 
 * esp32 support
