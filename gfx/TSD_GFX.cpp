@@ -1092,7 +1092,7 @@ void TSD_GFX::fillRectHGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, i
 
   mdt_t* tmp;
   if (z.deg == 3) {
-    tmp = (mdt_t*)malloc((w - dx1 - dx2) * sizeof(mdt_t));
+    tmp = (mdt_t*)malloc((w) * sizeof(mdt_t));
   }
 
   for (int j = 0; j < h; ++j) {
@@ -1134,7 +1134,7 @@ void TSD_GFX::fillRectHGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, i
       }
       if (z.deg == 3) {
         for (int i = dx1; i < w - dx2; ++i) {
-          sendMDTColor1(tmp[i - dx1]);
+          sendMDTColor1(tmp[i]);
         }
       }
     }
