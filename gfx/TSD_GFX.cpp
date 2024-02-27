@@ -1010,7 +1010,7 @@ void TSD_GFX::fillRectVGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, i
   for (int j = 0; j < h; ++j) {
     if (j >= clip.y1 && j < clip.y2) {
       if (z.deg == 4) {
-        writeAddrWindow(x, y + (h - dy1 - dy2) - 1 - j, w - dx1 - dx2, 1);
+        writeAddrWindow(x, y + h - 1 - j, w - dx1 - dx2, 1);
       }
       sendMDTColor(mdt_color(RGB14toColor(r, g, b)), w - dx1 - dx2);
     }
@@ -1101,7 +1101,7 @@ void TSD_GFX::fillRectHGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, i
       int16_t g = g1;
       int16_t b = b1;
       for (int i = 0; i < w; ++i) {
-        if (i >= clip.x1 && i < clip.x2) {
+        if (i >= dx1 && i < w - dx2) {
           mdt_t c = mdt_color(RGB14toColor(r, g, b));
           if (z.deg == 3) {
             tmp[w - 1 - i] = c;
