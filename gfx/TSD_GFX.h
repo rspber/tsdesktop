@@ -78,8 +78,8 @@ public:
   void drawCircleHelper(clip_t& clip, int16_t x, int16_t y, int16_t r, uint8_t corners, rgb_t color);
   void fillCircleHelper(clip_t& clip, int16_t x, int16_t y, int16_t r, uint8_t corners, int16_t delta, rgb_t color);
 
-  void fillRectVGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t& z);
-  void fillRectHGradient(int16_t x, int16_t y, int16_t w, int16_t h, gradient_t& z);
+  void fillRectVGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t& z);
+  void fillRectHGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t& z);
 
   virtual void startWrite() = 0;
   virtual void endWrite() = 0;

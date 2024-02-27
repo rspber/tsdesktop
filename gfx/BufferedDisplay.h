@@ -57,9 +57,9 @@ public:
 
   void sendMDTColor1(const mdt_t c) override
   {
-    if (addr_y >= 0 && addr_y < clip.y2 ) {
+    if (addr_y >= 0 && addr_y < clip.height() ) {
       int x = addr_x + ip;
-      if (x >= 0 && x < clip.x2) {
+      if (x >= 0 && x < clip.width()) {
         int i = addr_y * clip.width() + x;
         uint8_t* p = &buf[i * MDT_SIZE];
         if (MDT_SIZE > 2) {
