@@ -19,6 +19,8 @@ If you think that you will get it on a test board, you are wrong, such connectio
 
 ### News
 
+* idyll example https://youtu.be/NPU_-LH7fMA
+
 * spider example https://youtube.com/shorts/JbAyZdpuKMw
 
 * fill gradient modernization - not finshed yet
