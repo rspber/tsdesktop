@@ -19,7 +19,7 @@ If you think that you will get it on a test board, you are wrong, such connectio
 
 ### News
 
-* spider example - video is still uploading ...
+* spider example https://youtube.com/shorts/JbAyZdpuKMw
 
 * fill gradient modernization - not finshed yet
 
