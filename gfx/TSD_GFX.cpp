@@ -970,8 +970,8 @@ void TSD_GFX::fillRectVGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, i
     x = clip.x1;
   }
   int dx2 = 0;
-  if (x + w > clip.x2) {
-    dx2 = (x + w) - clip.x2;
+  if (x + w - dx1 > clip.x2) {
+    dx2 = (x + w - dx1) - clip.x2;
   }
   int dy1 = 0;
   if (y < clip.y1) {
@@ -979,8 +979,8 @@ void TSD_GFX::fillRectVGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, i
     y = clip.y1;
   }
   int dy2 = 0;
-  if (y + h > clip.y2) {
-    dy2 = (y + h) - clip.y2;
+  if (y + h - dy1 > clip.y2) {
+    dy2 = (y + h - dy1) - clip.y2;
   }
   if (w - dx1 - dx2 > 0 && h - dy1 - dy2 > 0) {
   }
@@ -1008,7 +1008,7 @@ void TSD_GFX::fillRectVGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, i
     prc = 100;
   }
   for (int j = 0; j < h; ++j) {
-    if (j >= dy1 && j < h - dy2) {
+    if (j >= clip.y1 && j < clip.y2) {
       if (z.deg == 4) {
         writeAddrWindow(x, y + (h - dy1 - dy2) - 1 - j, w - dx1 - dx2, 1);
       }
@@ -1055,8 +1055,8 @@ void TSD_GFX::fillRectHGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, i
     x = clip.x1;
   }
   int dx2 = 0;
-  if (x + w > clip.x2) {
-    dx2 = (x + w) - clip.x2;
+  if (x + w - dx1 > clip.x2) {
+    dx2 = (x + w - dx1) - clip.x2;
   }
   int dy1 = 0;
   if (y < clip.y1) {
@@ -1064,8 +1064,8 @@ void TSD_GFX::fillRectHGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, i
     y = clip.y1;
   }
   int dy2 = 0;
-  if (y + h > clip.y2) {
-    dy2 = (y + h) - clip.y2;
+  if (y + h - dy1 > clip.y2) {
+    dy2 = (y + h - dy1) - clip.y2;
   }
   if (w - dx1 - dx2 > 0 && h - dy1 - dy2 > 0) {
   }
@@ -1096,12 +1096,12 @@ void TSD_GFX::fillRectHGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, i
   }
 
   for (int j = 0; j < h; ++j) {
-    if (j >= dy1 && j < h - dy2) {
+    if (j >= clip.y1 && j < clip.y2) {
       int16_t r = r1;
       int16_t g = g1;
       int16_t b = b1;
       for (int i = 0; i < w; ++i) {
-        if (i >= dx1 && i < w - dx2) {
+        if (i >= clip.x1 && i < clip.x2) {
           mdt_t c = mdt_color(RGB14toColor(r, g, b));
           if (z.deg == 3) {
             tmp[w - 1 - i] = c;
