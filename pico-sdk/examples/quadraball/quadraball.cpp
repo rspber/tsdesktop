@@ -32,8 +32,8 @@ void setup()   {
 
   pinMode(LED_PIN, OUTPUT);
 
-  // buffered screen is like a window on parent screen
-  // drawing in window refers to absolute positions of parent screen
+  // BufferedDisplay is like a window on full sizes screen
+  // drawing in window refers to absolute positions of full sizes screen
   // below values refer to 0,0 window position
   window.drawRect(20, 20, 50, 50, CYAN);
   window.drawRect(50, 50, 40, 40, RED);
