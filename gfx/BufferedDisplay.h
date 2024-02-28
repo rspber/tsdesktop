@@ -119,6 +119,82 @@ public:
     }
   }
 
+  mdt_t getMDTColor(int x, int y)
+  {
+    mdt_t c = 0;
+    int i = (y * clip.width() + x) * MDT_SIZE;
+    c = buf[i];
+    c |= buf[i+1] << 8;
+    if (MDT_SIZE > 2) {
+      c |= buf[i+2] << 16;
+    }
+    return c;
+  }
+
+  void setMDTColor(int x, int y, mdt_t c)
+  {
+   int i = (y * clip.width() + x) * MDT_SIZE;
+    buf[i] = c;
+    buf[i+1] = c >> 8;
+    if (MDT_SIZE > 2) {
+      buf[i+2] = c >> 16;
+    }
+  }
+
+  // simple square bit to bit rotation
+  // from (x,y) d pixels size
+  void rotateRight(const int16_t x, const int16_t y, int16_t d)
+  {
+    if (x < 0 || y < 0) {
+      return;
+    }
+    if (x + d > clip.width() ) {
+      d = clip.width() - x;
+    }
+    if (y + d > clip.height() ) {
+      d = clip.height() - y;
+    }
+    int h = 0;
+    while (d > 2) {
+      --d;
+      for (int i = h; i <= d; ++i) {
+        mdt_t tmp                       = getMDTColor(x + i, y + h);
+        setMDTColor(x + i, y + h,         getMDTColor(x + h, y + d - (i-h))); 
+        setMDTColor(x + h, y + d - (i-h), getMDTColor(x + d - (i-h), y + d));
+        setMDTColor(x + d - (i-h), y + d, getMDTColor(x + d, y + i));
+        setMDTColor(x + d, y + i, tmp);
+      }
+      ++h;
+    }
+  }
+
+  // simple square bit to bit rotation
+  // from (x,y) d pixels size
+  void rotateLeft(const int16_t x, const int16_t y, int16_t d)
+  {
+    if (x < 0 || y < 0) {
+      return;
+    }
+    if (x + d > clip.width() ) {
+      d = clip.width() - x;
+    }
+    if (y + d > clip.height() ) {
+      d = clip.height() - y;
+    }
+    int h = 0;
+    while (d > 2) {
+      --d;
+      for (int i = h; i <= d; ++i) {
+        mdt_t tmp                       = getMDTColor(x + i, y + h);
+        setMDTColor(x + i, y + h,         getMDTColor(x + d, y + i)); 
+        setMDTColor(x + d, y + i,         getMDTColor(x + d - (i-h), y + d));
+        setMDTColor(x + d - (i-h), y + d, getMDTColor(x + h, y + d - (i-h)) );
+        setMDTColor(x + h, y + d - (i-h), tmp);
+      }
+      ++h;
+    }
+  }
+
   void drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) override
   {
     memcpy(&buf[(y * clip.width() + x) * MDT_SIZE], buffer, w * h * MDT_SIZE);
