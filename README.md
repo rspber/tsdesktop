@@ -90,7 +90,7 @@ If you think that you will get it on a test board, you are wrong, such connectio
 ### Topics on this site
 
 * BufferedDisplay
-  - BufferedDisplay is like a window on full sizes screen
+  - BufferedDisplay is like a window on full sizes, abstract, not existing in this moment, screen
   - Drawing in window refers to absolute positions of full sizes screen
   - What remains on the window after this drawing depends on its position during this drawing
 
