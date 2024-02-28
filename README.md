@@ -25,7 +25,7 @@ If you think that you will get it on a test board, you are wrong, such connectio
 
 * fill gradient modernization - not finshed yet
 
-* BufferedDisplay, graphics modernization, quadraball example https://youtube.com/shorts/bBt4gD-19vk
+* BufferedDisplay, graphics modernization, quadraball example https://youtu.be/G6oUnatzIqQ
 
 * esp32 support
 
