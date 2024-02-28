@@ -41,7 +41,7 @@ void setup()   {
   window.drawRect(20, 20, 50, 50, CYAN);
   window.drawRect(50, 50, 40, 40, RED);
 
-  // this effect is described in tsdeeSPI as Yeti technique
+  // this effect is described in tsdeeSPI README.md
   window.drawRect(0, 0, window.width(), window.height(), TEAL);
 
   // in case to redraw window, set it's positions to 0, 0,
