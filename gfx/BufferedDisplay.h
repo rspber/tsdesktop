@@ -124,9 +124,17 @@ public:
     memcpy(&buf[(y * clip.width() + x) * MDT_SIZE], buffer, w * h * MDT_SIZE);
   }
 
+  // draw this object (BufferedDisplay) on screen at setPos(x,y) position
   void push(TSD_SCREEN* screen)
   {
     screen->pushMDTBuffer(clip, (const uint8_t*)buf);
+  }
+
+  // push transparent
+  // 'transparent' color pixels from this object (BufferedDisplay) will be omitted
+  void pushTransp(TSD_SCREEN* screen, const rgb_t transparent)
+  {
+    screen->pushMDTBuffer(clip, (const uint8_t*)buf, transparent);
   }
 
 };

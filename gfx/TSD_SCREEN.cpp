@@ -327,23 +327,77 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const uint16_t* utex
 
 void TSD_SCREEN::pushMDTBuffer(clip_t& window, const uint8_t* buffer)
 {
-  for (int j = window.y1; j < window.y2; ++j ) {
-    if (j >= 0 && j < clip.height()) {
-      int i = window.x1;
-      int w = window.width();
-      int di = 0;
-      if (i < 0) {
-        di -= i;
-        w += i;
-        i = 0;
+  int i = window.x1;
+  int w = window.width();
+  int di = 0;
+  if (i < 0) {
+    di -= i;
+    w += i;
+    i = 0;
+  }
+  if (w > 0) {
+    if (i + w > clip.x2) {
+      w = clip.x2 - i;
+    }
+    if (w > 0) {
+      int jhw = di;
+      for (int j = window.y1; j < window.y2; ++j ) {
+        if (j >= 0 && j < clip.height()) {
+          drawMDTBuffer(clip.x1 + i, clip.y1 + j, w, 1, &buffer[jhw * MDT_SIZE]);
+        }
+        jhw += window.width();
       }
-      if (w > 0) {
-        if (i + w > clip.x2) {
-          w = clip.x2 - i;
+    }
+  }
+}
+
+void TSD_SCREEN::pushMDTBuffer(clip_t& window, const uint8_t* buffer, const rgb_t transparent)
+{
+  mdt_t b = mdt_color(transparent);
+  int i = window.x1;
+  int w = window.width();
+  int di = 0;
+  if (i < 0) {
+    di -= i;
+    w += i;
+    i = 0;
+  }
+  if (w > 0) {
+    if (i + w > clip.x2) {
+      w = clip.x2 - i;
+    }
+    if (w > 0) {
+      int jhw = di;
+      for (int j = window.y1; j < window.y2; ++j ) {
+        if (j >= 0 && j < clip.height()) {
+          const uint8_t* p = &buffer[jhw * MDT_SIZE];
+          int k0 = 0;
+          int iw = 0;
+          for (int k = 0; k < w; ++k ) {
+            bool ok = true;
+            if (MDT_SIZE > 2) {
+              ok = (*p++ == ((b >> 16) & 0xff));
+            }
+            ok = (*p++ == ((b >> 8) & 0xff)) && ok;
+            ok = (*p++ == (b & 0xff)) && ok;
+            if (ok) {
+              if (iw > 0) {
+                drawMDTBuffer(clip.x1 + k0 + i, clip.y1 + j, iw, 1, &buffer[(jhw + k0) * MDT_SIZE]);
+                iw = 0;
+              }
+            }
+            else {
+              if (iw == 0) {
+                k0 = k;
+              }
+              ++iw;
+            }
+          }
+          if (iw > 0) {
+            drawMDTBuffer(clip.x1 + k0 + i, clip.y1 + j, iw, 1, &buffer[(jhw + k0) * MDT_SIZE]);
+          }
         }
-        if (w > 0) {
-          drawMDTBuffer(clip.x1 + i, clip.y1 + j, w, 1, &buffer[((j - window.y1) * window.width() + di) * MDT_SIZE]);
-        }
+        jhw += window.width();
       }
     }
   }
