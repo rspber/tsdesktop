@@ -34,6 +34,9 @@ void setup()   {
 
   // BufferedDisplay is like a window on full sizes screen
   // drawing in window refers to absolute positions of full sizes screen
+  // what remains on the window after this drawing depends on its position during this drawing
+
+  window.setPos(0, 0);
   // below values refer to 0,0 window position
   window.drawRect(20, 20, 50, 50, CYAN);
   window.drawRect(50, 50, 40, 40, RED);
@@ -55,9 +58,9 @@ int dy = 1;
 
 void loop() {
 
-  window.push(&display);
-
   window.setPos(x, y);
+
+  window.push(&display);
 
 //  delay(50);
 
