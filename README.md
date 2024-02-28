@@ -88,6 +88,12 @@ If you think that you will get it on a test board, you are wrong, such connectio
   See examples canvas1 and canvas2. It is an uresolved problem when several overlaid objects overlap.
 
 ### Topics on this site
+
+* BufferedDisplay
+  - BufferedDisplay is like a window on full sizes screen
+  - Drawing in window refers to absolute positions of full sizes screen
+  - What remains on the window after this drawing depends on its position during this drawing
+
 * TSDesktop
   - easy way to place objects on the screen: all examples
   - integrated touch screen: almost all examples
