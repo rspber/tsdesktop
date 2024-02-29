@@ -68,7 +68,7 @@
 //  #define TFT_SPI_BL       // LED back-light
 
   #define TFT_SPI_SETUP_SPEED     2 * 1000 * 1000          //  2 MHz
-  #define TFT_SPI_WRITE_SPEED    80 * 1000 * 1000          // 40 MHz
+  #define TFT_SPI_WRITE_SPEED    40 * 1000 * 1000          // 40 MHz
   #define TFT_SPI_READ_SPEED     20 * 1000 * 1000          // 20 MHz
 
   #define TFT_REV 0
