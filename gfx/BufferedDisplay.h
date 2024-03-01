@@ -15,7 +15,7 @@ public:
   /**
    * BufferedDisplay constructor
    * @aClip - init display position & sizes,
-   *       this cause the memory (internal buffer) allocation width * height * MDT_SIZE
+   *       this causes the memory (internal buffer) allocation width * height * MDT_SIZE
    */
   BufferedDisplay(clip_t& aClip, const rgb_t aBackgroundColor = BLACK);
 
@@ -25,7 +25,7 @@ public:
    * @y1     - start y position
    * @x2     - width = x2 - x1
    * @y2     - height = y2 - y1
-   *      this cause the memory (internal buffer) allocation width * height * MDT_SIZE
+   *      this causes the memory (internal buffer) allocation width * height * MDT_SIZE
    */
   BufferedDisplay(const int16_t x1, const int16_t y1, const int16_t x2, const int16_t y2, const rgb_t aBackgroundColor = BLACK);
 
