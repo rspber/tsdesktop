@@ -39,8 +39,9 @@ void setup()   {
   window.setPos(0, 0);
   // below values refer to 0,0 window position
   window.drawRect(20, 20, 50, 50, CYAN);
+  window.drawText(25, 25, "Lime", 1, LIME, BLUE);
   window.drawRect(50, 50, 40, 40, RED);
-//  window.drawText(55, 55, "R", 1, TEAL, BLUE);
+  window.drawText(55, 55, "Red", 1, RED, BLUE);
 
   // this effect is described in tsdeeSPI README.md
   window.drawRect(0, 0, window.width(), window.height(), TEAL);
@@ -59,12 +60,21 @@ int dy = 1;
 
 void loop() {
 
-  if ( (x & 0x0f) == 0) {
+  if ( (x & 0x1f) == 0x0f) {
     if (dx > 0) {
       window.rotateRight(0, 0, window.width());
     }
     else {
       window.rotateLeft(0, 0, window.width());
+    }
+  }
+
+  if ( (x & 0x1f) == 0x1f) {
+    if (dx > 0) {
+      window.flipHorizontal(0, 0, window.width(), window.height());
+    }
+    else {
+      window.flipVertical(0, 0, window.width(), window.height());
     }
   }
 

@@ -24,24 +24,28 @@ BufferedDisplay window(0, 0, 43, 43, BLUE);
 uint8_t LED_PIN = DEFAULT_LED_PIN;
 int pin13state = LOW;
 
-void drawSpider(TSD_SCREEN& w) {
-//  w.drawRect(5, 5, 35, 35, SILVER);
-  w.fillEllipse(20, 20, 7, 9, BROWN);
-  w.fillEllipse(14, 14, 2, 4, BLACK);
-  w.fillEllipse(26, 14, 2, 4, BLACK);
-  w.fillEllipse(14, 28, 2, 4, BLACK);
-  w.fillEllipse(26, 28, 2, 4, BLACK);
-  w.fillEllipse(20, 20, 2, 4, BLACK);
+void drawSpider(BufferedDisplay& p, const rgb_t color) {
+//  p.drawRect(5, 5, 35, 35, SILVER);
+  p.fillEllipse(20, 20, 7, 9, color);
+  p.fillEllipse(14, 14, 2, 4, BLACK);
+  p.fillEllipse(26, 14, 2, 4, BLACK);
+  p.fillEllipse(14, 28, 2, 4, BLACK);
+  p.fillEllipse(26, 28, 2, 4, BLACK);
+  p.fillEllipse(20, 20, 2, 4, BLACK);
 }
 
-void drawSpidersWeb(TSD_SCREEN& w) {
-  w.drawLine(0, 0, display.width(), display.height(), RED, 1);
-  w.drawLine(80, 0, display.width() - 80, display.height(), RED, 1);
-  w.drawLine(160, 0, display.width() - 160, display.height(), RED, 1);
-  w.drawLine(240, 0, display.width() - 240, display.height(), RED, 1);
-  w.drawLine(display.width(), 0, 0, display.height(), RED, 1);
-  w.drawLine(0, 80, display.width(), display.height() - 80, RED, 1);
-  w.drawLine(0, 160, display.width(), display.height() - 160, RED, 1);
+void drawSpidersWeb(TSD_SCREEN& p, const rgb_t color) {
+
+  int16_t w = display.width();
+  int16_t h = display.height();
+
+  p.drawLine(   0,    0,       w,       h, color, 1);
+  p.drawLine(  80,    0,  w - 80,       h, color, 1);
+  p.drawLine( 160,    0, w - 160,       h, color, 1);
+  p.drawLine( 240,    0, w - 240,       h, color, 1);
+  p.drawLine(   w,    0,       0,       h, color, 1);
+  p.drawLine(   0,   80,       w,  h - 80, color, 1);
+  p.drawLine(   0,  160,       w, h - 160, color, 1);
 }
 
 void setup()   {
@@ -52,7 +56,7 @@ void setup()   {
 
   pinMode(LED_PIN, OUTPUT);
 
-  drawSpidersWeb(display);
+  drawSpidersWeb(display, RED);
 }
 
 // ----------------------------------------------------------------
@@ -67,10 +71,10 @@ void loop() {
   window.setPos(x, y);
 
   window.clear(TEAL);
-  drawSpidersWeb(window);
+  drawSpidersWeb(window, RED);
 
   window.setPos(0, 0);
-  drawSpider(window);
+  drawSpider(window, BROWN);
   window.setPos(x, y);
 
   window.push(&display);
