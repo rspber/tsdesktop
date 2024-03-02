@@ -272,7 +272,7 @@
     }
     for (int j = 0; j < h; ++j ) {
       int w2 = w/2;
-      for (int i = 0; i < w2; ++i) {
+      for (int i = 0; i <= w2; ++i) {
         mdt_t tmp               = getMDTColor(x + i, y + j);
         setMDTColor(x + i, y + j, getMDTColor(x + w - i - 1, y + j)); 
         setMDTColor(x + w - i - 1, y + j, tmp);
@@ -297,7 +297,7 @@
     }
     for (int i = 0; i < w; ++i) {
       int h2 = h/2;
-      for (int j = 0; j < h2; ++j ) {
+      for (int j = 0; j <= h2; ++j ) {
         mdt_t tmp               = getMDTColor(x + i, y + j);
         setMDTColor(x + i, y + j, getMDTColor(x + i, y + h - j - 1)); 
         setMDTColor(x + i, y + h - j - 1, tmp);
