@@ -30,7 +30,7 @@ void TFT_SCREEN::begin()
 
   tft_startWriteCmd();
 
-  #include "TFT_Init.hh"
+#include "TFT_Init.hh"
 
   tft_endWrite();
 }
@@ -39,7 +39,7 @@ void TFT_SCREEN::setRotation(const uint8_t r, const uint8_t REV)
 {
   tft_startWriteCmd();
 
-  #include "TFT_Rotation.hh"
+#include "TFT_Rotation.hh"
 
   if (r & 1) {
     setSize(getHEIGHT(), getWIDTH());
