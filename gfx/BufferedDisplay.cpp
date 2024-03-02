@@ -311,7 +311,7 @@
   void BufferedDisplay::drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer)
   {
 //    if (buf) {
-      memcpy(&buf[(y * clip.width() + x) * MDT_SIZE], buffer, w * h * MDT_SIZE);
+      memcpy(&buf[((y - clip.y1) * clip.width() + (x - clip.x1)) * MDT_SIZE], buffer, w * h * MDT_SIZE);
 //    }
   }
 
