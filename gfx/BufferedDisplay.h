@@ -3,6 +3,11 @@
 
   Copyright (c) 2023-2024, rspber (https://github.com/rspber)
 
+  ATTENTION
+
+  It may happen that there is not enough memory on the system to allocate BufferedDisplay.
+  And, for example, on ESP32 this will result in a stack trace print to Serial and a system restart.
+
 */
 
 #pragma once

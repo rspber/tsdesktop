@@ -11,10 +11,10 @@
 
 /// @GfxPixel
 
-class GfxPixel : public GfxObject {
+class GfxPixel : public CanvasGfxObject {
 public:
   GfxPixel(int16_t ax1, int16_t ay1, rgb_t color)
-   : GfxObject(ax1, ay1, color) {}
+   : CanvasGfxObject(ax1, ay1, color) {}
 
   void dodraw(clip_t& clip, int16_t left, int16_t top) override
   {
@@ -32,10 +32,10 @@ public:
 
 /// @GfxLine
 
-class GfxLine : public GfxObject {
+class GfxLine : public CanvasGfxObject {
 public:
   GfxLine(int16_t ax1, int16_t ay1, int16_t ax2, int16_t ay2, rgb_t color, int16_t ats = 1)
-   : GfxObject(ax1, ay1, color), x2(ax2), y2(ay2), ts(ats) {}
+   : CanvasGfxObject(ax1, ay1, color), x2(ax2), y2(ay2), ts(ats) {}
 
   void dodraw(clip_t& clip, int16_t left, int16_t top) override
   {
@@ -65,10 +65,10 @@ protected:
 
 /// @GfxXYWH
 
-class GfxXYWH : public GfxObject {
+class GfxXYWH : public CanvasGfxObject {
 public:
   GfxXYWH(int16_t ax1, int16_t ay1, int16_t aw, int16_t ah, rgb_t color)
-   : GfxObject(ax1, ay1, color), w(aw), h(ah) {}
+   : CanvasGfxObject(ax1, ay1, color), w(aw), h(ah) {}
 
   void setW(int16_t aw) { w = aw; }
   int16_t getW() { return w; }
@@ -564,15 +564,16 @@ public:
 
 
 /// @GfxCanvas
-
-class GfxCanvas : public Canvas {
+// not finished yet
+class GfxCanvasCanvas : public Canvas {
 public:
-  GfxCanvas(int16_t ax1, int16_t ay1, int16_t aw, int16_t ah, rgb_t acolor)
-   : Canvas(ax1, ay1, acolor), w(aw), h(ah) {
+  GfxCanvasCanvas()
+   : Canvas(0, 0, BLACK) {
   }
 
   void getOuterClip(clip_t& clip) override
   {
+/*
     getCanvas()->getOuterClip(clip);
 
     clip.x1 += x1;
@@ -583,6 +584,28 @@ public:
     if (clip.y1 + h < clip.y2) {
       clip.y2 = clip.y1 + h;
     }
+*/
+  }
+
+  bool isParentBuffered() override { return true; }
+
+  void dodraw(clip_t& clip, int16_t left, int16_t top) override {}
+
+  TSD_SCREEN* screen() override { return 0; }
+
+  TSD_SCREEN* superScreen() override { return 0; }
+
+  int16_t lW() override { return 0; }
+  int16_t rW() override { return 0; }
+  int16_t tH() override { return 0; }
+  int16_t bH() override { return 0; }
+};
+
+// not finished yet
+class GfxCanvas : public CanvasGfxObject {
+public:
+  GfxCanvas(int16_t ax1, int16_t ay1, int16_t aw, int16_t ah, rgb_t acolor)
+   : CanvasGfxObject(ax1, ay1, acolor), w(aw), h(ah) {
   }
 
   void setW(int16_t aw) { w = aw; }
@@ -597,5 +620,7 @@ public:
   int16_t bH() override { return h; }
 
 protected:
+  GfxCanvasCanvas canvas;
+
   int16_t w, h;
 };

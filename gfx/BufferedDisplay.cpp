@@ -3,11 +3,18 @@
 
   Copyright (c) 2023-2024, rspber (https://github.com/rspber)
 
+  ATTENTION
+
+  It may happen that there is not enough memory on the system to allocate BufferedDisplay.
+  And, for example, on ESP32 this will result in a stack trace print to Serial and a system restart.
+
 */
 
 #include "BufferedDisplay.h"
 #include <stdlib.h>
 #include <string.h>
+
+//#include <Arduino.h>
 
   /**
    * BufferedDisplay constructor
@@ -49,6 +56,11 @@
   {
     bgcolor = aBgColor;
     buf = (uint8_t*)malloc(clip.width() * clip.height() * MDT_SIZE);
+/*
+    if (!buf) {
+      Serial.println("No memory for BufferedDisplay\");
+    }
+*/
     clear(bgcolor);
   }
 
@@ -66,6 +78,11 @@
     else {
       clip = aClip;
       buf = (uint8_t*)realloc(buf, clip.width() * clip.height() * MDT_SIZE);
+/*
+      if (!buf) {
+        Serial.println("No memory for BufferedDisplay\");
+      }
+*/
       clear(bgcolor);
     }
   }
@@ -119,6 +136,9 @@
    */
   void BufferedDisplay::sendMDTColor1(const mdt_t c)
   {
+//    if (!buf) {
+//    return;
+//    }
     if (addr_y >= 0 && addr_y < clip.height() ) {
       int x = addr_x + ip;
       if (x >= 0 && x < clip.width()) {
@@ -144,6 +164,10 @@
    */
   mdt_t BufferedDisplay::getMDTColor(const int x, const int y)
   {
+//    if (!buf) {
+//    return 0;
+//    }
+
     mdt_t c = 0;
     int i = (y * clip.width() + x) * MDT_SIZE;
     c = buf[i];
@@ -161,6 +185,10 @@
    */
   void BufferedDisplay::setMDTColor(const int x, const int y, const mdt_t c)
   {
+//    if (!buf) {
+//    return;
+//    }
+
     int i = (y * clip.width() + x) * MDT_SIZE;
     buf[i] = c;
     buf[i+1] = c >> 8;
@@ -282,7 +310,9 @@
    */
   void BufferedDisplay::drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer)
   {
-    memcpy(&buf[(y * clip.width() + x) * MDT_SIZE], buffer, w * h * MDT_SIZE);
+//    if (buf) {
+      memcpy(&buf[(y * clip.width() + x) * MDT_SIZE], buffer, w * h * MDT_SIZE);
+//    }
   }
 
   /**
@@ -291,7 +321,9 @@
    */
   void BufferedDisplay::push(TSD_SCREEN* screen)
   {
-    screen->pushMDTBuffer(clip, (const uint8_t*)buf);
+//    if (buf) {
+      screen->pushMDTBuffer(clip, (const uint8_t*)buf);
+//    }
   }
 
   /**
@@ -299,5 +331,7 @@
    */
   void BufferedDisplay::pushTransp(TSD_SCREEN* screen, const rgb_t transparent)
   {
-    screen->pushMDTBuffer(clip, (const uint8_t*)buf, transparent);
+//    if (buf) {
+      screen->pushMDTBuffer(clip, (const uint8_t*)buf, transparent);
+//    }
   }

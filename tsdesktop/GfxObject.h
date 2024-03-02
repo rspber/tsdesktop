@@ -8,20 +8,13 @@
 #pragma once
 
 #include <overlaid.h>
-#include "Canvas.h"
 #include "TSD_SCREEN.h"
 
 /// @GfxObject
 
-class Canvas;
-
 class GfxObject {
-
-  friend class Canvas;
-
 public:
   GfxObject(const int16_t ax1, const int16_t ay1, rgb_t acolor);
-
   virtual ~GfxObject();
 
   void setVisible(const bool aVisible) { visible = aVisible; }
@@ -41,10 +34,11 @@ public:
   virtual void dodraw(clip_t& clip, int16_t left, int16_t top) = 0;
   void doDraw(clip_t& clip, int16_t left, int16_t top, bool redraw);
 
-  virtual TSD_SCREEN* screen();
+  virtual TSD_SCREEN* screen() = 0;
 
-  // parent canvas in which this GfxObject resides
-  Canvas* getCanvas() { return canvas; }
+  virtual void parentDrawMePlease(GfxObject* g, bool redraw) = 0;
+
+  virtual bool isParentBuffered() = 0;
 
   // this GfxObject dislocation in canvas
   void setX1(int16_t x) { x1 = x; }
@@ -59,6 +53,8 @@ public:
   virtual int16_t tH() = 0;
   virtual int16_t bH() = 0;
 
+  bool alloc = false;
+
 protected:
   virtual void setDefaultMaxs(clip_t& clip);
   virtual void animate1(clip_t& clip);
@@ -72,12 +68,8 @@ protected:
   int16_t minx = 0, miny = 0, maxx = 0, maxy = 0;
 
 private:
-  Canvas* canvas;   // set by Canvas.add
-
   bool visible = true;
   bool wasDrawn = false;
-  bool alloc = false;
 
   over_t over;
 };
-

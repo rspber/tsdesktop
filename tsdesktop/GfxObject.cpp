@@ -50,17 +50,13 @@ rgb_t GfxObject::getOver()
 
 void GfxObject::draw()
 {
-  clip_t clip;
-  canvas->getOuterClip(clip);
-  int16_t left = canvas->getX1();
-  int16_t top = canvas->getY1();
-  dodraw(clip, left, top);
+  parentDrawMePlease(this, false);
   wasDrawn = true;
 }
 
 void GfxObject::hide()
 {
-  const bool buffered = canvas->getBuffered();
+  const bool buffered = isParentBuffered();
   if (!buffered && wasDrawn) {
     rgb_t color = over.color;
     if (over.mode == 1) {
@@ -134,11 +130,5 @@ void GfxObject::doDraw(clip_t& clip, int16_t left, int16_t top, bool redraw)
       dodraw(clip, left, top);
       wasDrawn = true;
   }
-}
-
-
-TSD_SCREEN* GfxObject::screen()
-{
-  return canvas->screen();
 }
 
