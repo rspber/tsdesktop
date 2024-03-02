@@ -6,6 +6,7 @@
 */
 
 #include "Canvas.h"
+#include <stdlib.h>
 
 /// @GfxObject
 

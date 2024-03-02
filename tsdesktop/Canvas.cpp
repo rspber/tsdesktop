@@ -7,6 +7,7 @@
 
 #include "GfxButton.h"
 #include <string.h>
+#include <stdlib.h>
 
 /// @Canvas
 
