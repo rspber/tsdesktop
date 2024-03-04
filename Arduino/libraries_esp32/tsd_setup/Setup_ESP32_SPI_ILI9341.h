@@ -96,5 +96,5 @@
   #define I2C0_SDA_PIN 21
   #define I2C0_SCL_PIN 22
 
-//  #define I2C1_SDA_PIN ?
-//  #define I2C1_SCL_PIN ?
+  #define I2C1_SDA_PIN 33
+  #define I2C1_SCL_PIN 32

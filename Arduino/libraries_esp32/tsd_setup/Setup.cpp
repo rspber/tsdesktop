@@ -12,9 +12,12 @@
 
 TwoWire* init_i2c(const uint8_t i2c_nr)
 {
-//  if (i2c_nr == 0) {
-    Wire.begin();
-    Wire.setClock(I2C_SPEED);
+  if (i2c_nr == 0) {
+    Wire.begin(I2C0_SDA_PIN, I2C0_SCL_PIN, I2C_SPEED);
     return &Wire;
-//  }
+  }
+  else {
+    Wire1.begin(I2C1_SDA_PIN, I2C1_SCL_PIN, I2C_SPEED);
+    return &Wire1;
+  }
 }
