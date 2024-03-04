@@ -1,10 +1,8 @@
 
-All the examples work and the basis is solid connections,
-do spare time to make them (it takes many hours, but without it nothing will work).
+All the examples work and the basis is solid connections, do spare time to make them (it takes many hours, but without it nothing will work).
 
-Of course, you can use the factory ones, but do not separate the wires from the band, just group them according to purpose. And why I don't use them, because they are too thick and clumsy.
+The connections should be made straight from A to B with the wires in the protective sleeves, as in the factory, and then it will work.
 
-If you think that you will get it on a test board, you are wrong, such connections may work by accident, but any interference will destroy it irretrievably. The connections should be made straight from A to B with the wires in the protective sleeves, as in the factory, and then it will work.
 <!--
 <p dir="auto">
   <a href="https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md">
@@ -12,6 +10,7 @@ If you think that you will get it on a test board, you are wrong, such connectio
   </a>
 </p>
 -->
+
 # TSDesktop
   Touch Screen Desktop for Raspberry Pi Pico.
 
