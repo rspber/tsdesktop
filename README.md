@@ -1,7 +1,7 @@
 
 All the examples work and the basis is solid connections, do spare time to make them (it takes many hours, but without it nothing will work).
 
-The connections should be made straight from A to B with the wires in the protective sleeves, as in the factory, and then it will work.
+The connections should be made straight from A to B with the wires in the protective sleeves, the factory ones are the best, and then it will work.
 
 <!--
 <p dir="auto">
