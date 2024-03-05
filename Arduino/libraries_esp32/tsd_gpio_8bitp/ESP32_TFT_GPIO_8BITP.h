@@ -1,6 +1,11 @@
 /*
   ESP32 TFT GPIO 8BITP
 
+  based on
+
+  https://github.com/Bodmer/TFT_eSPI/Processors/TFT_eSPI_ESP32.h
+  https://github.com/Bodmer/TFT_eSPI/Processors/TFT_eSPI_ESP32.c
+
   Copyright (c) 2024, rspber (https://github.com/rspber)
 
 */
