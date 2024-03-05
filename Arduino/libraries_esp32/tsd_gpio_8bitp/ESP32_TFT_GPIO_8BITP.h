@@ -10,10 +10,6 @@
 
 */
 
-/*
-  esp32:\> Is the compiler of running code still present, I have a few questions for it.
-*/
-
 #pragma once
 
 #if defined(TFT_GPIO_8BITP_WRITE)
