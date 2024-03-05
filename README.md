@@ -18,6 +18,8 @@ The connections should be made straight from A to B with the wires in the protec
 
 ### News
 
+* ESP32 8bit parallel
+
 * idyll example https://youtu.be/NPU_-LH7fMA
 
 * spider example https://youtube.com/shorts/JbAyZdpuKMw
