@@ -333,6 +333,7 @@ void tft_read_begin()
 void tft_startReading()
 {
   GPIO_CS_L;
+  setBUSRead();
 }
 
 void tft_endReading()
@@ -401,24 +402,13 @@ const uint16_t tft_transfer16(const uint8_t cmd)
 /***********************+***************************************************/
 void tft_readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
 {
-  tft_startReading();
-  if (reg) {
-    GPIO_DC_C;
-    GPIO_CS_H;
-    GPIO_CS_L;
-    GPIO_SEND_8(TFT_IDXRD);
-    GPIO_DC_D;
-    GPIO_SEND_8(0x10 + len);
-  }
+  tft_startWriteCmd();
   int i = 0;
   buf[i++] = reg;
-  GPIO_DC_C;
-  GPIO_CS_H;
-  GPIO_CS_L;
-  GPIO_SEND_8(reg);
-  GPIO_DC_D;
-  setBUSRead();
+  tft_sendCmd(reg);
+  tft_endWrite();
 //  delay(1);
+  tft_startReading();
   while (--len >= 0) {
     buf[i++] = tft_transfer(0);
   }

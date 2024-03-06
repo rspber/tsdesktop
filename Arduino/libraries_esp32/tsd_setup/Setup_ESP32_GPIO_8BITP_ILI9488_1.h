@@ -65,9 +65,11 @@
   #define TFT_8BITP_RST  12  // Reset pin
 
   #define TFT_8BITP_WR    4  // Write strobe control pin - must use a pin in the range 0-31
-  #define TFT_8BITP_RD    2
+  #define TFT_8BITP_RD   32
 
-  // There are more configurations available but 12 cannot be INPUT due to flash can take offence
+  // There are more configurations available but:
+  //   12 cannot be INPUT due to flash can take offence
+  //    2 is DEFAULT_LED_PIN
 
   #define TFT_8BITP_D0   17  // Must use pins in the range 0-31 for the data bus
   #define TFT_8BITP_D1   16  // so a single register write sets/clears all bits
