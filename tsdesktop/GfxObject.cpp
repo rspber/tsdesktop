@@ -50,7 +50,7 @@ rgb_t GfxObject::getOver()
 
 void GfxObject::draw()
 {
-  parentDrawMePlease(this, false);
+  parentDrawMePlease(this);
   wasDrawn = true;
 }
 

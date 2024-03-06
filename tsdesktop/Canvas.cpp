@@ -17,9 +17,9 @@ TSD_SCREEN* CanvasGfxObject::screen()
   return canvas->screen();
 }
 
-void CanvasGfxObject::parentDrawMePlease(GfxObject* g, bool redraw)
+void CanvasGfxObject::parentDrawMePlease(GfxObject* g)
 {
-  canvas->parentDrawMePlease(g, redraw);
+  canvas->parentDrawMePlease(g);
 }
 
 bool CanvasGfxObject::isParentBuffered()
@@ -136,14 +136,14 @@ void Canvas::animate(CanvasGfxObject& item, const int16_t dx, int16_t dy)
   add(item);
 }
 
-void Canvas::parentDrawMePlease(GfxObject* g, bool redraw)
+void Canvas::parentDrawMePlease(GfxObject* g)
 {
   clip_t clip;
-  getOuterClip(clip);
+  getInnerClip(clip);
   int16_t left = getX1();
   int16_t top = getY1();
   if (g->getVisible()) {
-    g->doDraw(clip, left, top, redraw);
+    g->dodraw(clip, left, top);
   }
 }
 

@@ -27,7 +27,7 @@ public:
 
   TSD_SCREEN* screen() override;
 
-  void parentDrawMePlease(GfxObject* g, bool redraw) override;
+  void parentDrawMePlease(GfxObject* g) override;
 
   bool isParentBuffered() override;
 
@@ -57,11 +57,12 @@ public:
   void animate(CanvasGfxObject& item, const int16_t dx, int16_t dy);
 
   // absolute location of canvas in screen()
+  virtual void getInnerClip(clip_t& clip) = 0;
   virtual void getOuterClip(clip_t& clip) = 0;
 
   void dodraw(clip_t& clip, int16_t left, int16_t top) override;
 
-  void parentDrawMePlease(GfxObject* g, bool redraw) override;
+  void parentDrawMePlease(GfxObject* g) override;
 
   void innerDraw(bool redraw = false);
 

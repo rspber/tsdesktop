@@ -564,11 +564,15 @@ public:
 
 
 /// @GfxCanvas
-// not finished yet
+// TODO
 class GfxCanvasCanvas : public Canvas {
 public:
   GfxCanvasCanvas()
    : Canvas(0, 0, BLACK) {
+  }
+
+  void getInnerClip(clip_t& clip) override
+  {
   }
 
   void getOuterClip(clip_t& clip) override

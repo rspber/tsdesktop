@@ -17,6 +17,7 @@ class GFXButtonCanvas : public Canvas {
 public:
   GFXButtonCanvas() : Canvas(0, 0, BLACK) {}
 
+  void getInnerClip(clip_t& clip) override { gfxbtn->getInnerClip(clip); }
   void getOuterClip(clip_t& clip) override { gfxbtn->getOuterClip(clip); }
 
   rgb_t getBackgroundColor() override { return gfxbtn->getBackgroundColor(); }

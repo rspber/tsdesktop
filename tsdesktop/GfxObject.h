@@ -36,7 +36,7 @@ public:
 
   virtual TSD_SCREEN* screen() = 0;
 
-  virtual void parentDrawMePlease(GfxObject* g, bool redraw) = 0;
+  virtual void parentDrawMePlease(GfxObject* g) = 0;
 
   virtual bool isParentBuffered() = 0;
 
