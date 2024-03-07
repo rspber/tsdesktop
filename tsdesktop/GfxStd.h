@@ -573,12 +573,8 @@ public:
 
   void getInnerClip(clip_t& clip) override
   {
-  }
-
-  void getOuterClip(clip_t& clip) override
-  {
 /*
-    getCanvas()->getOuterClip(clip);
+    getCanvas()->getInnerClip(clip);
 
     clip.x1 += x1;
     clip.y1 += y1;

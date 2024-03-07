@@ -58,7 +58,6 @@ public:
 
   // absolute location of canvas in screen()
   virtual void getInnerClip(clip_t& clip) = 0;
-  virtual void getOuterClip(clip_t& clip) = 0;
 
   void dodraw(clip_t& clip, int16_t left, int16_t top) override;
 

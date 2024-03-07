@@ -43,7 +43,7 @@ void Canvas::setBuffered(const bool aBuffered)
 BufferedDisplay* Canvas::bf()
 {
   clip_t clip;
-  getOuterClip(clip);
+  getInnerClip(clip);
   if (!bf_) {
     bf_ = new BufferedDisplay(clip);
   }
@@ -150,7 +150,7 @@ void Canvas::parentDrawMePlease(GfxObject* g)
 void Canvas::innerDraw(bool redraw)
 {
   clip_t clip;
-  getOuterClip(clip);
+  getInnerClip(clip);
   int16_t left = getX1();   // rather unused, default is 0
   int16_t top = getY1();   // rather unused, default is 0
   dodraw(clip, left, top);
