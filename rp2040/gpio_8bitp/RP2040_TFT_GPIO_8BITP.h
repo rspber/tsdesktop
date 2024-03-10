@@ -1,7 +1,7 @@
 /*
   RP2040 TFT GPIO 8BITP
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2023-2024, rspber (https://github.com/rspber)
 
 */
 
@@ -15,20 +15,6 @@
 
   #include "hardware/gpio.h"
   #include <rgb.h>
-
-  extern uint32_t gpio_oe;
-
-  inline void setBUSWrite()
-  {
-    gpio_oe |= (0xff << TFT_8BITP_D0);
-    sio_hw->gpio_oe = gpio_oe;
-  }
-
-  inline void setBUSRead()
-  {
-    gpio_oe &= ~(0xff << TFT_8BITP_D0);
-    sio_hw->gpio_oe = gpio_oe;
-  }
 
   extern uint32_t gpio_out;
 
@@ -122,16 +108,7 @@
 
   void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h);
 
-  #define tft_startWriteColor()
-
-  #if defined(COLOR_565)
-    #define tft_writeMDTColor(c) GPIO_SEND_16(c)
-  #else
-    #define tft_writeMDTColor(c) GPIO_SEND_24(c)
-  #endif
-
-  #define tft_endWriteColor()
-
+  void tft_sendMDTColor(const mdt_t c);
   void tft_sendMDTColor(const mdt_t c, int32_t len);
   void tft_sendMDTBuffer16(const uint8_t* buffer, int32_t len);
   void tft_sendMDTBuffer24(const uint8_t* buffer, int32_t len);
@@ -159,11 +136,23 @@
 
   void tft_readAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h);
 
+  extern uint32_t gpio_oe;
+
+  inline void tft_setBUSWriteMode()
+  {
+    gpio_oe |= (0xff << TFT_8BITP_D0);
+    sio_hw->gpio_oe = gpio_oe;
+  }
+
+  inline void tft_setBUSReadMode()
+  {
+    gpio_oe &= ~(0xff << TFT_8BITP_D0);
+    sio_hw->gpio_oe = gpio_oe;
+  }
+
   inline uint32_t whatsUp_gpio() { return sio_hw->gpio_in; }
 
   const uint8_t tft_transfer(const uint8_t cmd);
   const uint16_t tft_transfer16(const uint8_t cmd);
-
-  void tft_readRegister(uint8_t* buf, const uint8_t reg, int8_t len);
 
 #endif

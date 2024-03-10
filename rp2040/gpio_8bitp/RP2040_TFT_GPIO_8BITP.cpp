@@ -1,7 +1,7 @@
 /*
   RP2040 TFT GPIO 8BITP
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2023-2024, rspber (https://github.com/rspber)
 
 */
 
@@ -23,40 +23,25 @@
   uint32_t gpio_out = -1; // bus high default
   uint32_t gpio_oe = -1;  // all pins output dafault
 
-void tft_hardReset(const int16_t RST);
+extern void initPin(const int16_t pin, PinMode mode);
+extern void tft_hardReset(const int16_t RST);
 
 void rp2040_gpio_8bitp_initBus()
 {
 #ifdef TFT_8BITP_CS
-  if (TFT_8BITP_CS >= 0) {
-    pinMode(TFT_8BITP_CS, OUTPUT);
-    GPIO_SET(TFT_8BITP_CS);
-  }
+  initPin(TFT_8BITP_CS, OUTPUT);
 #endif
 #ifdef TFT_8BITP_DC
-  if (TFT_8BITP_DC >= 0) {
-    pinMode(TFT_8BITP_DC, OUTPUT);
-    GPIO_SET(TFT_8BITP_DC);
-  }
+  initPin(TFT_8BITP_DC, OUTPUT);
 #endif
 #ifdef TFT_8BITP_WR
-  if (TFT_8BITP_WR >= 0) {
-    pinMode(TFT_8BITP_WR, OUTPUT);
-    GPIO_SET(TFT_8BITP_WR);
-  }
+  initPin(TFT_8BITP_WR, OUTPUT);
 #endif
 #ifdef TFT_8BITP_RD
-  if (TFT_8BITP_RD >= 0) {
-    pinMode(TFT_8BITP_RD, OUTPUT);
-    GPIO_SET(TFT_8BITP_RD);
-  }
+  initPin(TFT_8BITP_RD, OUTPUT);
 #endif
 #ifdef TFT_8BITP_RST
-  if (TFT_8BITP_RST >= 0) {
-    pinMode(TFT_8BITP_RST, OUTPUT);
-    GPIO_SET(TFT_8BITP_RST);
-    digitalWrite(TFT_8BITP_RST, HIGH);
-  }
+  initPin(TFT_8BITP_RST, OUTPUT);
   tft_hardReset(TFT_8BITP_RST);
 #endif
 
@@ -131,6 +116,15 @@ void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, cons
   GPIO_DC_D;
 }
 
+void tft_sendMDTColor(const mdt_t c)
+{
+  #if defined(COLOR_565)
+    GPIO_SEND_16(c);
+  #else
+    GPIO_SEND_24(c);
+  #endif
+}
+
 void tft_sendMDTColor(const mdt_t c, int32_t len)
 {
   while (--len >= 0) {
@@ -189,7 +183,7 @@ void tft_startReading()
 
 void tft_endReading()
 {
-  setBUSWrite();
+  tft_setBUSWriteMode();
   GPIO_CS_H;
 #ifdef TFT_PIO_8BITP_WRITE
   rp2040_pio_8bitp_enable(true);
@@ -211,7 +205,6 @@ void tft_readAddrWindow(const int16_t x, const int16_t y, const int16_t w, const
   GPIO_DC_C;
   GPIO_SEND_8(TFT_RAMRD);
   GPIO_DC_D;
-  setBUSRead();
 }
 
 const uint8_t tft_transfer(const uint8_t cmd)
@@ -225,10 +218,11 @@ const uint8_t tft_transfer(const uint8_t cmd)
 
   // in pico-sdk the speed is much faster ???
   // some delay is needed, but error color reading stays
-//  GPIO_RD_H;
-//  GPIO_RD_H;
-//  GPIO_RD_H;
-
+#ifndef ARDUINO
+    GPIO_RD_H;
+    GPIO_RD_H;
+    GPIO_RD_H;
+#endif
   uint32_t d = whatsUp_gpio();
   return d >> TFT_8BITP_D0;
 }
@@ -238,41 +232,6 @@ const uint16_t tft_transfer16(const uint8_t cmd)
   uint8_t b0 = tft_transfer(cmd);
   uint8_t b1 = tft_transfer(cmd);
   return (b0 << 8) | b1;
-}
-
-/**************************************************************************/
-/*!
-    @brief  Read len * 8 bits of data from ILI9341 register.
-       This is highly undocumented, it's really a hack but kinda works?
-    @param    buf  The result, first byte is the reg, rest is a data read
-    @param    reg  The command register to read data from
-    @param    len  The number of bytes to read from register
- */
-/***********************+***************************************************/
-void tft_readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
-{
-  tft_startReading();
-  if (reg) {
-    GPIO_DC_C;
-    GPIO_CS_H;
-    GPIO_CS_L;
-    GPIO_SEND_8(TFT_IDXRD);
-    GPIO_DC_D;
-    GPIO_SEND_8(0x10 + len);
-  }
-  int i = 0;
-  buf[i++] = reg;
-  GPIO_DC_C;
-  GPIO_CS_H;
-  GPIO_CS_L;
-  GPIO_SEND_8(reg);
-  GPIO_DC_D;
-  setBUSRead();
-//  delay(1);
-  while (--len >= 0) {
-    buf[i++] = tft_transfer(0);
-  }
-  tft_endReading();
 }
 
 #endif

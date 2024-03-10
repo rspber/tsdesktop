@@ -1,7 +1,7 @@
 /*
   RP2040 TOUCH PIO_SPI READ
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2023-2024, rspber (https://github.com/rspber)
 
 */
 
@@ -46,12 +46,12 @@ const uint16_t touch_transfer16(const uint8_t cmd)
   PIO_SEND(cmd);
   PIO_DC_D;
   PIO_DC_C;   // according to XPT2046 datasheet, but it's not needed
-  PIO_START_READ_8();
+  tft_setBUSReadMode();
   while (PIO_RX_FIFO_IS_EMPTY);
   uint8_t b1 = PIO_RX_FIFO;
   while (PIO_RX_FIFO_IS_EMPTY);
   uint8_t b0 = PIO_RX_FIFO;
-  PIO_END_READ_8();
+  tft_setBUSWriteMode();
   PIO_DC_D;
   return (b1 << 8) | b0;
 }

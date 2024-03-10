@@ -1,7 +1,7 @@
 /*
   RP2040 TFT PIO SPI
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2023-2024, rspber (https://github.com/rspber)
 
   Based on
 
@@ -97,9 +97,6 @@
   #define PIO_RX_FIFO_IS_EMPTY RX_FIFO_IS_EMPTY(pio_spi_0.pio, pio_spi_0.sm)
   #define PIO_RX_FIFO RX_FIFO(pio_spi_0.pio, pio_spi_0.sm)
 
-  void PIO_START_READ_8();
-  void PIO_END_READ_8();
-
 // write
 
   void rp2040_pio_spi_enable(bool state);
@@ -126,16 +123,7 @@
 
   void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h);
 
-  #if defined(COLOR_565)
-    #define tft_startWriteColor() PIO_START_SEND_16
-  #else
-    #define tft_startWriteColor() PIO_START_SEND_24
-  #endif
-
-  #define tft_writeMDTColor(c) { PIO_SEND(c); }
-
-  #define tft_endWriteColor()
-
+  void tft_sendMDTColor(const mdt_t c);
   void tft_sendMDTColor(const mdt_t c, int32_t len);
   void tft_sendMDTBuffer16(const uint8_t* buffer, int32_t len);
   void tft_sendMDTBuffer24(const uint8_t* buffer, int32_t len);
@@ -153,10 +141,11 @@
 
   void tft_readAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h);
 
+  void tft_setBUSWriteMode();
+  void tft_setBUSReadMode();
+
   const uint8_t tft_transfer(const uint8_t cmd);
   const uint16_t tft_transfer16(const uint8_t cmd);
-
-  void tft_readRegister(uint8_t* buf, const uint8_t reg, int8_t len);
 
 #endif
 

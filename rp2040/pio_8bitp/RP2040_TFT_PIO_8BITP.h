@@ -1,7 +1,7 @@
 /*
   RP2040 TFT PIO 8BITP WRITE ONLY
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2023-2024, rspber (https://github.com/rspber)
 
   Based on
 
@@ -113,18 +113,16 @@
 
   void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h);
 
-  #if defined(COLOR_565)
-    #define tft_startWriteColor() PIO_START_SEND_16
-  #else
-    #define tft_startWriteColor() PIO_START_SEND_24
-  #endif
-
-  #define tft_writeMDTColor(c) { PIO_SEND(c); }
-
-  #define tft_endWriteColor()
-
+  void tft_sendMDTColor(const mdt_t c);
   void tft_sendMDTColor(const mdt_t c, int32_t len);
   void tft_sendMDTBuffer16(const uint8_t* buffer, int32_t len);
   void tft_sendMDTBuffer24(const uint8_t* buffer, int32_t len);
+
+#ifndef TFT_GPIO_8BITP_READ
+
+  #define tft_setBUSWriteMode()
+  #define tft_setBUSReadMode()
+
+#endif
 
 #endif

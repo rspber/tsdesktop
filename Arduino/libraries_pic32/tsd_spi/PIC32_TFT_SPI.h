@@ -27,10 +27,7 @@
   void tft_endWrite();
   void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h);
 
-  #define tft_startWriteColor()
-  void tft_writeMDTColor(const mdt_t c);
-  void tft_endWriteColor();
-
+  void tft_sendMDTColor(const mdt_t c);
   void tft_sendMDTColor(const mdt_t c, int32_t len);
   void tft_sendMDTBuffer16(const uint8_t* buffer, int32_t len);
   void tft_sendMDTBuffer24(const uint8_t* buffer, int32_t len);
@@ -47,9 +44,11 @@
   void tft_endReading();
 
   void tft_readAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h);
+
+  #define tft_setBUSWriteMode()
+  #define tft_setBUSReadMode()
+
   const uint8_t tft_transfer(const uint8_t cmd);
   const uint16_t tft_transfer16(const uint8_t cmd);
-
-  void tft_readRegister(uint8_t* buf, const uint8_t reg, int8_t len);
 
 #endif

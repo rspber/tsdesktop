@@ -1,7 +1,7 @@
 /*
   RP2040 TOUCH SPI READ for Arduino
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2023-2024, rspber (https://github.com/rspber)
 
 */
 

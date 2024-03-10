@@ -18,12 +18,29 @@
 
 #define yield()
 
-#define HIGH 0x1
-#define LOW  0x0
+typedef enum {
+  LOW     = 0,
+  HIGH    = 1,
+  CHANGE  = 2,
+  FALLING = 3,
+  RISING  = 4,
+} PinStatus;
 
-#define INPUT 0x0
-#define OUTPUT 0x1
-#define INPUT_PULLUP 0x2
+typedef enum {
+  INPUT           = 0x0,
+  OUTPUT          = 0x1,
+  INPUT_PULLUP    = 0x2,
+  INPUT_PULLDOWN  = 0x3,
+  OUTPUT_2MA      = 0x4,
+  OUTPUT_4MA      = 0x5,
+  OUTPUT_8MA      = 0x6,
+  OUTPUT_12MA     = 0x7,
+} PinMode;
+
+typedef enum {
+  LSBFIRST = 0,
+  MSBFIRST = 1,
+} BitOrder;
 
 //void debug(const char *buf);
 

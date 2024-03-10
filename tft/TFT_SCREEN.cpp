@@ -53,9 +53,7 @@ void TFT_SCREEN::setRotation(const uint8_t r, const uint8_t REV)
 void v_drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
 {
   tft_writeAddrWindow(x, y, 1, 1);
-  tft_startWriteColor();
-  tft_writeMDTColor(mdt_color(color));
-  tft_endWriteColor();
+  tft_sendMDTColor(mdt_color(color));
 }
 
 void v_drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
@@ -107,9 +105,7 @@ void TFT_SCREEN::writeAddrWindow(const int16_t x, const int16_t y, const int16_t
 
 void TFT_SCREEN::sendMDTColor1(const mdt_t c)
 {
-  tft_startWriteColor();
-  tft_writeMDTColor(c);
-  tft_endWriteColor();
+  tft_sendMDTColor(c);
 }
 
 void TFT_SCREEN::sendMDTColor(const mdt_t c, const int32_t len)
@@ -183,6 +179,14 @@ void TFT_SCREEN::drawPixels(const int16_t x, const int16_t y, const int16_t w, c
 }
 
 
+
+void initPin(const int16_t pin, PinMode mode)
+{
+  if (pin >= 0) {
+    pinMode(pin, mode);
+    digitalWrite(pin, HIGH);
+  }
+}
 
 void tft_hardReset(const int16_t RST)
 {
@@ -258,6 +262,37 @@ void TFT_SCREEN::setScrollMargins(int16_t top, int16_t bottom) {
 
 // read
 
+/**************************************************************************/
+/*!
+    @brief  Read len * 8 bits of data from ILI9341 register.
+       This is highly undocumented, it's really a hack but kinda works?
+    @param    buf  The result, first byte is the reg, rest is a data read
+    @param    reg  The command register to read data from
+    @param    len  The number of bytes to read from register
+ */
+/***********************+***************************************************/
+void tft_readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
+{
+  tft_startReading();
+  if (reg) {
+    const uint8_t buf = 0x10 + len;
+    tft_sendCmdData(TFT_IDXRD, &buf, 1);
+  }
+  tft_sendCmd(reg);
+
+  tft_setBUSReadMode();
+//  delay(1);
+
+  int i = 0;
+  buf[i++] = reg;
+  while (--len >= 0) {
+    buf[i++] = tft_transfer(0);
+  }
+  tft_endReading();
+}
+
+
+
 rgb_t TFT_SCREEN::readPixel(clip_t& clip, int16_t x, int16_t y)
 {
   if (x >= clip.x1 && y >= clip.y1 && x < clip.x2 && y < clip.y2) {
@@ -278,6 +313,7 @@ rgb_t TFT_SCREEN::innerReadPixel(int16_t x, int16_t y)
 {
   tft_startReading();
   tft_readAddrWindow(x, y, 1, 1);
+  tft_setBUSReadMode();
   tft_transfer(0);  // the first is thorough
   rgb_t color;
 #if defined(ST7796)
@@ -307,6 +343,7 @@ void v_storePixels(const int16_t x, const int16_t y, const int16_t w, const int1
 
   tft_startReading();
   tft_readAddrWindow(x, y, w, h);
+  tft_setBUSReadMode();
   tft_transfer(0);  // the first is thorough
   for (int i = w * h; --i >= 0; ) {
     if (!t->buf) {

@@ -1,12 +1,12 @@
 /*
   ESP32 TFT GPIO 8BITP
 
+  Copyright (c) 2024, rspber (https://github.com/rspber)
+
   based on
 
   https://github.com/Bodmer/TFT_eSPI/Processors/TFT_eSPI_ESP32.h
   https://github.com/Bodmer/TFT_eSPI/Processors/TFT_eSPI_ESP32.c
-
-  Copyright (c) 2024, rspber (https://github.com/rspber)
 
 */
 
@@ -133,47 +133,39 @@ void esp32_gpio_8bitp_busDir(const uint8_t mode)
   pinMode(TFT_8BITP_D7, mode);
 }
 
-#define setBUSWrite() esp32_gpio_8bitp_busDir(OUTPUT)
-#define setBUSRead() esp32_gpio_8bitp_busDir(INPUT)
-
-void tft_hardReset(const int16_t RST);
-
-void gpioMode(uint8_t gpio, uint8_t mode)
+void tft_setBUSWriteMode()
 {
-  pinMode(gpio, mode);
-  digitalWrite(gpio, HIGH);
+  esp32_gpio_8bitp_busDir(OUTPUT);
 }
+
+void tft_setBUSReadMode()
+{
+  esp32_gpio_8bitp_busDir(INPUT);
+}
+
+extern void initPin(const int16_t pin, PinMode mode);
+extern void tft_hardReset(const int16_t RST);
 
 void rp2040_gpio_8bitp_initBus()
 {
 #ifdef TFT_8BITP_CS
-  if (TFT_8BITP_CS >= 0) {
-    gpioMode(TFT_8BITP_CS, OUTPUT);
-  }
+  initPin(TFT_8BITP_CS, OUTPUT);
 #endif
 #ifdef TFT_8BITP_DC
-  if (TFT_8BITP_DC >= 0) {
-    gpioMode(TFT_8BITP_DC, OUTPUT);
-  }
+  initPin(TFT_8BITP_DC, OUTPUT);
 #endif
 #ifdef TFT_8BITP_WR
-  if (TFT_8BITP_WR >= 0) {
-    gpioMode(TFT_8BITP_WR, OUTPUT);
-  }
+  initPin(TFT_8BITP_WR, OUTPUT);
 #endif
 #ifdef TFT_8BITP_RD
-  if (TFT_8BITP_RD >= 0) {
-    gpioMode(TFT_8BITP_RD, OUTPUT);
-  }
+  initPin(TFT_8BITP_RD, OUTPUT);
 #endif
 #ifdef TFT_8BITP_RST
-  if (TFT_8BITP_RST >= 0) {
-    gpioMode(TFT_8BITP_RST, OUTPUT);
-  }
+  initPin(TFT_8BITP_RST, OUTPUT);
   tft_hardReset(TFT_8BITP_RST);
 #endif
 
-  setBUSWrite();
+  tft_setBUSWriteMode();
 }
 
 inline void GPIO_SEND_16(uint16_t d)
@@ -210,22 +202,6 @@ void tft_endWrite()
 #if defined(TFT_GPIO_8BITP_WRITE)
 
   const char* tft_identification() { return "RP2040 GPIO 8BITP"; }
-
-void tft_writeMDTColor(mdt_t c)
-{
-  #if defined(COLOR_565)
-    #if defined (SSD1963_DRIVER)
-      // Write 18 bit color to TFT
-      GPIO_SEND_8((c & 0xF800) >> 8);
-      GPIO_SEND_8((c & 0x07E0) >> 3);
-      GPIO_SEND_8((c & 0x001F) << 3);
-    #else
-      GPIO_SEND_16(c);
-    #endif
-  #else
-    GPIO_SEND_24(c);
-  #endif
-}
 
 void tft_write_begin()
 {
@@ -278,6 +254,22 @@ void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, cons
   GPIO_DC_D;
 }
 
+void tft_sendMDTColor(const mdt_t c)
+{
+  #if defined(COLOR_565)
+    #if defined (SSD1963_DRIVER)
+      // Write 18 bit color to TFT
+      GPIO_SEND_8((c & 0xF800) >> 8);
+      GPIO_SEND_8((c & 0x07E0) >> 3);
+      GPIO_SEND_8((c & 0x001F) << 3);
+    #else
+      GPIO_SEND_16(c);
+    #endif
+  #else
+    GPIO_SEND_24(c);
+  #endif
+}
+
 void tft_sendMDTColor(const mdt_t c, int32_t len)
 {
   while (--len >= 0) {
@@ -300,7 +292,7 @@ void tft_sendMDTBuffer16(const uint8_t* p, int32_t len)
 {
   while (--len >= 0) {
   #if defined (SSD1963_DRIVER)
-    tft_writeMDTColor((*p++ >> 8) | *p++);
+    tft_sendMDTColor((*p++ >> 8) | *p++);
   #else
     GPIO_SEND_8(*p++);
     GPIO_SEND_8(*p++);
@@ -333,12 +325,11 @@ void tft_read_begin()
 void tft_startReading()
 {
   GPIO_CS_L;
-  setBUSRead();
 }
 
 void tft_endReading()
 {
-  setBUSWrite();
+  tft_setBUSWriteMode();
   GPIO_CS_H;
 }
 
@@ -357,7 +348,6 @@ void tft_readAddrWindow(const int16_t x, const int16_t y, const int16_t w, const
   GPIO_DC_C;
   GPIO_SEND_8(TFT_RAMRD);
   GPIO_DC_D;
-  setBUSRead();
 }
 
 const uint8_t tft_transfer(const uint8_t cmd)
@@ -389,30 +379,6 @@ const uint16_t tft_transfer16(const uint8_t cmd)
   uint8_t b0 = tft_transfer(cmd);
   uint8_t b1 = tft_transfer(cmd);
   return (b0 << 8) | b1;
-}
-
-/**************************************************************************/
-/*!
-    @brief  Read len * 8 bits of data from ILI9341 register.
-       This is highly undocumented, it's really a hack but kinda works?
-    @param    buf  The result, first byte is the reg, rest is a data read
-    @param    reg  The command register to read data from
-    @param    len  The number of bytes to read from register
- */
-/***********************+***************************************************/
-void tft_readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
-{
-  tft_startWriteCmd();
-  int i = 0;
-  buf[i++] = reg;
-  tft_sendCmd(reg);
-  tft_endWrite();
-//  delay(1);
-  tft_startReading();
-  while (--len >= 0) {
-    buf[i++] = tft_transfer(0);
-  }
-  tft_endReading();
 }
 
 #endif

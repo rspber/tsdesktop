@@ -1,7 +1,7 @@
 /*
   RP2040 TFT PIO SPI
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2023-2024, rspber (https://github.com/rspber)
 
   Based on
 
@@ -136,30 +136,17 @@ void rp2040_pio_spi_setClockDiv(const uint8_t clock_div)
   }
 }
 
+extern void initPin(const int16_t pin, PinMode mode);
 extern void tft_hardReset(const int16_t RST);
 
 void rp2040_pio_spi_initBus()
 {
 #ifdef TOUCH_SPI_CS
-  if (TOUCH_SPI_CS >= 0) {
-    pinMode(TOUCH_SPI_CS, OUTPUT);
-    digitalWrite(TOUCH_SPI_CS, HIGH);
-  }
+  initPin(TOUCH_SPI_CS, OUTPUT);
 #endif
-  if (TFT_SPI_CS >= 0) {
-    pinMode(TFT_SPI_CS, OUTPUT);
-    digitalWrite(TFT_SPI_CS, HIGH);
-  }
-
-  if (TFT_SPI_DC >= 0) {
-    pinMode(TFT_SPI_DC, OUTPUT);
-    digitalWrite(TFT_SPI_DC, HIGH);
-  }
-
-  if (TFT_SPI_RST >= 0) {
-    pinMode(TFT_SPI_RST, OUTPUT);
-    digitalWrite(TFT_SPI_RST, HIGH);
-  }
+  initPin(TFT_SPI_CS, OUTPUT);
+  initPin(TFT_SPI_DC, OUTPUT);
+  initPin(TFT_SPI_RST, OUTPUT);
   tft_hardReset(TFT_SPI_RST);
 }
 
@@ -215,7 +202,6 @@ void tft_sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t len)
   for (int i = 0; i < len; ++i) {
     PIO_SEND(data[i]);
   }
-  PIO_WAIT_FOR_STALL; 
 }
 
 void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h)
@@ -242,6 +228,16 @@ void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, cons
   PIO_SEND_8(TFT_RAMWR);
   PIO_DC_D;
 */
+}
+
+void tft_sendMDTColor(const mdt_t c)
+{
+  #if defined(COLOR_565)
+    PIO_START_SEND_16;
+  #else
+    PIO_START_SEND_24;
+  #endif
+  PIO_SEND(c);
 }
 
 void tft_sendMDTColor(const mdt_t c, int32_t len)
@@ -355,13 +351,13 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
 
 #if defined(TFT_PIO_SPI_READ)
 
-void PIO_START_READ_8()
+void tft_setBUSReadMode()
 {
   use_fifo_for_reading(*pio_spi_0.pio_sm);
   pio_spi_0.START_READ_8();
 }
 
-void PIO_END_READ_8()
+void tft_setBUSWriteMode()
 {
   use_fifo_for_writing(*pio_spi_0.pio_sm);
   pio_spi_0.START_SEND_8();
@@ -379,7 +375,7 @@ void tft_startReading()
 
 void tft_endReading()
 {
-  PIO_END_READ_8();
+  tft_setBUSWriteMode();
   PIO_CS_H;
 }
 
@@ -407,7 +403,6 @@ void tft_readAddrWindow(const int16_t x, const int16_t y, const int16_t w, const
   PIO_SEND_8(TFT_RAMRD);
   PIO_DC_D;
 */
-  PIO_START_READ_8();
 }
 
 const uint8_t tft_transfer(const uint8_t cmd)
@@ -421,42 +416,6 @@ const uint16_t tft_transfer16(const uint8_t cmd)
   uint8_t b0 = tft_transfer(cmd);
   uint8_t b1 = tft_transfer(cmd);
   return (b0 << 8) | b1;
-}
-
-/**************************************************************************/
-/*!
-    @brief  Read len * 8 bits of data from ILI9341 register.
-       This is highly undocumented, it's really a hack but kinda works?
-    @param    buf  The result, first byte is the reg, rest is a data read
-    @param    reg  The command register to read data from
-    @param    len  The number of bytes to read from register
- */
-/***********************+***************************************************/
-void tft_readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
-{
-  tft_startReading();
-  if (reg) {
-    PIO_CS_H;
-    PIO_CS_L;
-    PIO_DC_C;
-    PIO_START_SEND_8;
-    PIO_SEND(TFT_IDXRD);
-    PIO_DC_D;
-    PIO_SEND(0x10 + len);
-  }
-  int i = 0;
-  buf[i++] = reg;
-  PIO_CS_H;
-  PIO_CS_L;
-  PIO_DC_C;
-  PIO_SEND(reg);
-  PIO_DC_D;
-  PIO_START_READ_8();
-//  delay(1);
-  while (--len >= 0) {
-    buf[i++] = tft_transfer(0);
-  }
-  tft_endReading();
 }
 
 #endif

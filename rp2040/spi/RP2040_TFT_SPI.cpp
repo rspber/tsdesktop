@@ -1,7 +1,7 @@
 /*
   RP2040 TFT SPI for pico-sdk
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2023-2024, rspber (https://github.com/rspber)
 
 */
 
@@ -36,62 +36,54 @@
   #define SPI_DC_D
 #endif
 
-#define SPI_I rp2040_spi
+#define SPI_X rp2040_spi
 
 spi_inst_t* rp2040_spi = 0;
 
+extern void initPin(const int16_t pin, PinMode mode);
 extern void tft_hardReset(const int16_t RST);
 
 void rp2040_spi_initBus()
 {
 #ifdef TOUCH_SPI_CS 
-  if (TOUCH_SPI_CS >= 0) {
-    pinMode(TOUCH_SPI_CS, OUTPUT);
-    digitalWrite(TOUCH_SPI_CS, HIGH);
-  }
+  initPin(TOUCH_SPI_CS, OUTPUT);
 #endif
-  if (TFT_SPI_CS >= 0) {
-    pinMode(TFT_SPI_CS, OUTPUT);
-    digitalWrite(TFT_SPI_CS, HIGH);
-  }
-
-  if (TFT_SPI_DC >= 0) {
-    pinMode(TFT_SPI_DC, OUTPUT);
-    digitalWrite(TFT_SPI_DC, HIGH);
-  }
-#if defined(TFT_SPI_WRITE)
-  if (TFT_SPI_RST >= 0) {
-    pinMode(TFT_SPI_RST, OUTPUT);
-    digitalWrite(TFT_SPI_RST, HIGH);
-  }
+#ifdef TFT_SPI_CS
+  initPin(TFT_SPI_CS, OUTPUT);
+#endif
+#ifdef TFT_SPI_DC
+  initPin(TFT_SPI_DC, OUTPUT);
+#endif
+#ifdef TFT_SPI_RST
+  initPin(TFT_SPI_RST, OUTPUT);
   tft_hardReset(TFT_SPI_RST);
 #endif
 
   setup_spi(TFT_SPI_MISO, TFT_SPI_CLK, TFT_SPI_MOSI, 0);
 }
 
-void spi_send(const uint8_t b)
+inline void spi_send(const uint8_t b)
 {
-  while (!spi_is_writable(SPI_I)) tight_loop_contents();
-  spi_get_hw(SPI_I)->dr = (uint32_t)b;
+  while (!spi_is_writable(SPI_X)) tight_loop_contents();
+  spi_get_hw(SPI_X)->dr = (uint32_t)b;	// TX_FIFO
 }
 
-void spi_send16(const uint16_t w)
+inline void spi_send16(const uint16_t w)
 {
   spi_send(w >> 8);
   spi_send(w);
 }
 
-void spi_endSending()
+inline void spi_endSending()
 {
   // Drain RX FIFO, then wait for shifting to finish (which may be *after*
   // TX FIFO drains), then drain RX FIFO again
-  while (spi_is_readable(SPI_I)) (void)spi_get_hw(SPI_I)->dr;
-  while (spi_is_busy(SPI_I)) tight_loop_contents();
-  while (spi_is_readable(SPI_I)) (void)spi_get_hw(SPI_I)->dr;
+  while (spi_is_readable(SPI_X)) (void)spi_get_hw(SPI_X)->dr;
+  while (spi_is_busy(SPI_X)) tight_loop_contents();
+  while (spi_is_readable(SPI_X)) (void)spi_get_hw(SPI_X)->dr;
 
   // Don't leave overrun flag set
-  spi_get_hw(SPI_I)->icr = SPI_SSPICR_RORIC_BITS;
+  spi_get_hw(SPI_X)->icr = SPI_SSPICR_RORIC_BITS;
 }
 
 #endif
@@ -175,27 +167,27 @@ void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, cons
   SPI_DC_D;
 }
 
-  void tft_writeMDTColor(const mdt_t c)
-  {
+void tft_sendMDTColor(const mdt_t c)
+{
+  #if MDT_SIZE > 2
+    spi_send(c >> 16);
+  #endif
+    spi_send(c >> 8);
+    spi_send(c);
+
+  spi_endSending();
+}
+
+void tft_sendMDTColor(const mdt_t c, int32_t len)
+{
+  while (--len >= 0) {
   #if MDT_SIZE > 2
     spi_send(c >> 16);
   #endif
     spi_send(c >> 8);
     spi_send(c);
   }
-
-void tft_endWriteColor()
-{
   spi_endSending();
-}
-
-void tft_sendMDTColor(const mdt_t c, int32_t len)
-{
-  tft_startWriteColor();
-  while (--len >= 0) {
-    tft_writeMDTColor(c);
-  }
-  tft_endWriteColor();
 }
 
 void tft_sendMDTBuffer16(const uint8_t* p, int32_t len)
@@ -291,43 +283,6 @@ const uint16_t tft_transfer16(const uint8_t cmd)
   uint8_t data[2];
   spi_read_blocking(rp2040_spi, cmd, data, 2);
   return ((int)data[0] << 8) | data[1];
-}
-
-/**************************************************************************/
-/*!
-    @brief  Read len * 8 bits of data from ILI9341 register.
-       This is highly undocumented, it's really a hack but kinda works?
-    @param    buf  The result, first byte is the reg, rest is a data read
-    @param    reg  The command register to read data from
-    @param    len  The number of bytes to read from register
- */
-/***********************+***************************************************/
-void tft_readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
-{
-  tft_startReading();
-  if (reg) {
-    SPI_CS_H;
-    SPI_CS_L;
-    SPI_DC_C;
-    spi_send(TFT_IDXRD);
-    spi_endSending();
-    SPI_DC_D;
-    spi_send(0x10 + len);
-    spi_endSending();
-  }
-  int i = 0;
-  buf[i++] = reg;
-  SPI_CS_H;
-  SPI_CS_L;
-  SPI_DC_C;
-  spi_send(reg);
-  spi_endSending();
-  SPI_DC_D;
-//  delay(1);
-  while (--len >= 0) {
-    buf[i++] = tft_transfer(0);
-  }
-  tft_endReading();
 }
 
 #endif

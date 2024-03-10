@@ -1,7 +1,7 @@
 /*
   RP2040 TFT PIO 8BITP WRITE ONLY
 
-  Copyright (c) 2023, rspber (https://github.com/rspber)
+  Copyright (c) 2023-2024, rspber (https://github.com/rspber)
 
   Based on
 
@@ -136,36 +136,23 @@ void rp2040_pio_8bitp_setFreq()
   }
 }
 
+extern void initPin(const int16_t pin, PinMode mode);
 extern void tft_hardReset(const int16_t RST);
 
 void rp2040_pio_8bitp_initBus()
 {
 #ifdef TFT_8BITP_CS
-  if (TFT_8BITP_CS >= 0) {
-    pinMode(TFT_8BITP_CS, OUTPUT);
-    digitalWrite(TFT_8BITP_CS, HIGH);
-  }
+  initPin(TFT_8BITP_CS, OUTPUT);
 #endif
-  if (TFT_8BITP_DC >= 0) {
-    pinMode(TFT_8BITP_DC, OUTPUT);
-    digitalWrite(TFT_8BITP_DC, HIGH);
-  }
-
-  if (TFT_8BITP_WR >= 0) {
-    pinMode(TFT_8BITP_WR, OUTPUT);
-    digitalWrite(TFT_8BITP_WR, HIGH);
-  }
+  initPin(TFT_8BITP_DC, OUTPUT);
+  initPin(TFT_8BITP_WR, OUTPUT);
 #ifdef TFT_8BITP_RD
-  if (TFT_8BITP_RD >= 0) {
-    pinMode(TFT_8BITP_RD, OUTPUT);
-    digitalWrite(TFT_8BITP_RD, HIGH);
-  }
+  initPin(TFT_8BITP_RD, OUTPUT);
 #endif
-  if (TFT_8BITP_RST >= 0) {
-    pinMode(TFT_8BITP_RST, OUTPUT);
-    digitalWrite(TFT_8BITP_RST, HIGH);
-  }
+#ifdef TFT_8BITP_RST
+  initPin(TFT_8BITP_RST, OUTPUT);
   tft_hardReset(TFT_8BITP_RST);
+#endif
 }
 
 
@@ -220,7 +207,6 @@ void tft_sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t len)
   for (int i = 0; i < len; ++i) {
     PIO_SEND(data[i]);
   }
-  PIO_WAIT_FOR_STALL; 
 }
 
 void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h)
@@ -247,6 +233,16 @@ void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, cons
   PIO_SEND_8(TFT_RAMWR);
   PIO_DC_D;
 */
+}
+
+void tft_sendMDTColor(const mdt_t c)
+{
+  #if defined(COLOR_565)
+    PIO_START_SEND_16;
+  #else
+    PIO_START_SEND_24;
+  #endif
+  PIO_SEND(c);
 }
 
 void tft_sendMDTColor(const mdt_t c, int32_t len)

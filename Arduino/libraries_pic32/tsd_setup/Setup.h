@@ -4,6 +4,10 @@
 
 #pragma once
 
+// ---------------- Compatibilities ----------------------
+
+#define PinMode   uint8_t
+
 // ---------------- Constans to use in REV and ROTATION ----------------------
 
 #define MAD_MY  0x80  // 00 top to botom, 80 bottom to top
