@@ -146,7 +146,7 @@ void tft_setBUSReadMode()
 extern void initPin(const int16_t pin, PinMode mode);
 extern void tft_hardReset(const int16_t RST);
 
-void rp2040_gpio_8bitp_initBus()
+void esp32_gpio_8bitp_initBus()
 {
 #ifdef TFT_8BITP_CS
   initPin(TFT_8BITP_CS, OUTPUT);
@@ -201,12 +201,12 @@ void tft_endWrite()
 
 #if defined(TFT_GPIO_8BITP_WRITE)
 
-  const char* tft_identification() { return "RP2040 GPIO 8BITP"; }
+  const char* tft_identification() { return "ESP32 GPIO 8BITP"; }
 
 void tft_write_begin()
 {
   esp32_gpio_8bitp_init_mask();
-  rp2040_gpio_8bitp_initBus();
+  esp32_gpio_8bitp_initBus();
 }
 
 void tft_startWriteCmd()
