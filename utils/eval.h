@@ -30,3 +30,5 @@ struct t_eval_t {
 };
 
 typedef t_eval_t eval_t;
+
+const char* evalToStr(int64_t e, int8_t dec);

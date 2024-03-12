@@ -253,6 +253,32 @@ int eval_t::eval(int64_t* e, int8_t* dec, const char* str, const int8_t prec)
 
 char buf[80];
 
+const char* evalToStr(int64_t e, int8_t dec)
+{
+  char*p = &buf[40];
+  int l = snprintf(p, 40, "%lld", e);
+  if (dec > 0 ) {
+    if (dec < l) {
+      char *q = p + l;
+      q[1] = 0;
+      while (--dec >= 0) {
+        *q = q[-1];
+        --q;
+      }
+      *q = '.';
+    }
+    else {
+      dec -= l;
+      while (--dec > 0) {
+        *--p = '0';
+      }
+      *--p = '.';
+      *--p = '0';
+    }
+  }
+  return p;
+}
+
 const char* eval_t::eval(const char* text)
 {
   if (!text || *text == 0) {
@@ -261,31 +287,10 @@ const char* eval_t::eval(const char* text)
   int64_t e; int8_t d;
   int r = eval(&e, &d, text, 8);
   if (r == 0) {
-    char*p = &buf[40];
-    int l = snprintf(p, 40, "%lld", e);
-    if (d > 0 ) {
-      if (d < l) {
-        char *q = p + l;
-        q[1] = 0;
-        while (--d >= 0) {
-          *q = q[-1];
-          --q;
-        }
-        *q = '.';
-      }
-      else {
-        d -= l;
-        while (--d > 0) {
-          *--p = '0';
-        }
-        *--p = '.';
-        *--p = '0';
-      }
-    }
-    return p;
+    return evalToStr(e, d);
   }
   else {
     snprintf(buf, 40, "error at pos: %d", r);
+    return buf;
   }
-  return buf;
 }
