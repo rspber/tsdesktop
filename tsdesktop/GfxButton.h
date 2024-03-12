@@ -23,8 +23,6 @@ public:
 
   TSD_SCREEN* superScreen() override { return gfxbtn->screen(); }
 
-  bool isParentBuffered() override { return getBuffered(); }
-
   // irrelevant in this object
   int16_t lW() override  { return 0; }
   int16_t rW() override  { return 0; }

@@ -25,11 +25,10 @@ public:
   // parent canvas in which this GfxObject resides
   Canvas* getCanvas() { return canvas; }
 
+  void hide() override;
+  void draw() override;
+
   TSD_SCREEN* screen() override;
-
-  void parentDrawMePlease(GfxObject* g) override;
-
-  bool isParentBuffered() override;
 
 private:
   Canvas* canvas;   // set by Canvas.add
@@ -61,7 +60,10 @@ public:
 
   void dodraw(clip_t& clip, int16_t left, int16_t top) override;
 
-  void parentDrawMePlease(GfxObject* g) override;
+  void drawObject(GfxObject* g);
+
+  void hide() override;
+  void draw() override;
 
   void innerDraw(bool redraw = false);
 

@@ -469,7 +469,7 @@ protected:
 };
 
 
-/// @GFXfontAndColor
+/// @GfxFontAndColor
 
 class GfxCursorFontColor : public GfxPixel {
 public:
@@ -586,8 +586,6 @@ public:
     }
 */
   }
-
-  bool isParentBuffered() override { return true; }
 
   void dodraw(clip_t& clip, int16_t left, int16_t top) override {}
 

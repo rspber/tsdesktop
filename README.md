@@ -39,7 +39,7 @@ The connections should be made straight from A to B with the wires in the protec
 * More sensitive touch for Arduino SPI (taken from pico-sdk)
 
 * Touch rotation has been finally mastered.
-  One of the touch_??? procedure from Touch.hh is responsible for touch rotation.
+  One of the touch_??? procedure from Touch_Rotation.hh is responsible for touch rotation.
   If none of the available procedures work properly, we have two options:
   1. if one of the procedures could be suitable but has the same deviation in all 4 cases, we can correct it using the TOUCH_REV parameter.
   2. Define another routine for touch rotation.

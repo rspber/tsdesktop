@@ -48,34 +48,6 @@ rgb_t GfxObject::getOver()
   return over.color;
 }
 
-void GfxObject::draw()
-{
-  parentDrawMePlease(this);
-  wasDrawn = true;
-}
-
-void GfxObject::hide()
-{
-  const bool buffered = isParentBuffered();
-  if (!buffered && wasDrawn) {
-    rgb_t color = over.color;
-    if (over.mode == 1) {
-      over.mode = 2;
-    }
-    else {
-      over.color = getBackgroundColor();
-    }
-    draw();
-    if (over.mode == 2) {
-      over.mode = 1;
-    }
-    else {
-      over.color = color;
-    }
-    wasDrawn = false;
-  }
-}
-
 void GfxObject::setDefaultMaxs(clip_t& clip)
 {
   if (maxx == 0) {

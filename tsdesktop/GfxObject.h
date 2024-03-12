@@ -28,17 +28,13 @@ public:
 
   virtual rgb_t getBackgroundColor() { return BLACK; }
 
-  void hide();
-  void draw();
+  virtual void hide() = 0;
+  virtual void draw() = 0;
 
   virtual void dodraw(clip_t& clip, int16_t left, int16_t top) = 0;
   void doDraw(clip_t& clip, int16_t left, int16_t top, bool redraw);
 
   virtual TSD_SCREEN* screen() = 0;
-
-  virtual void parentDrawMePlease(GfxObject* g) = 0;
-
-  virtual bool isParentBuffered() = 0;
 
   // this GfxObject dislocation in canvas
   void setX1(int16_t x) { x1 = x; }
@@ -67,7 +63,6 @@ protected:
   int16_t dx, dy;
   int16_t minx = 0, miny = 0, maxx = 0, maxy = 0;
 
-private:
   bool visible = true;
   bool wasDrawn = false;
 

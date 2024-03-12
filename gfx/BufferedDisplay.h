@@ -38,8 +38,8 @@ public:
 
   /**
    * set window (this BufferedDisplay object) position on absolute screen
-   * x      - x (left)
-   * y      - y (top)
+   * @x     - x (left)
+   * @y     - y (top)
    */
   void setPos(const int16_t x, const int16_t y);
 

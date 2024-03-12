@@ -17,14 +17,32 @@ TSD_SCREEN* CanvasGfxObject::screen()
   return canvas->screen();
 }
 
-void CanvasGfxObject::parentDrawMePlease(GfxObject* g)
+void CanvasGfxObject::draw()
 {
-  canvas->parentDrawMePlease(g);
+  canvas->drawObject(this);
+  wasDrawn = true;
 }
 
-bool CanvasGfxObject::isParentBuffered()
+void CanvasGfxObject::hide()
 {
-  return canvas->getBuffered();
+  const bool buffered = canvas->getBuffered();
+  if (!buffered && wasDrawn) {
+    rgb_t color = over.color;
+    if (over.mode == 1) {
+      over.mode = 2;
+    }
+    else {
+      over.color = getBackgroundColor();
+    }
+    draw();
+    if (over.mode == 2) {
+      over.mode = 1;
+    }
+    else {
+      over.color = color;
+    }
+    wasDrawn = false;
+  }
 }
 
 
@@ -136,7 +154,7 @@ void Canvas::animate(CanvasGfxObject& item, const int16_t dx, int16_t dy)
   add(item);
 }
 
-void Canvas::parentDrawMePlease(GfxObject* g)
+void Canvas::drawObject(GfxObject* g)
 {
   clip_t clip;
   getInnerClip(clip);
@@ -175,6 +193,15 @@ void Canvas::dodraw(clip_t& clip, int16_t left, int16_t top)
   if (buffered && bf_) {
     bf_->push(superScreen());
   }
+}
+
+void Canvas::hide()
+{
+}
+
+void Canvas::draw()
+{
+  innerDraw(false);
 }
 
 /*
