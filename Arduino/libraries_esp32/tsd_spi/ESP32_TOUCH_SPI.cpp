@@ -35,12 +35,11 @@ extern SPIClass* esp32_SPI;
 
   SPISettings settings_touch;
 
+extern void initPin(const int16_t pin, PinMode mode);
+
 void esp32_touch_spi_initBus()
 {
-  if (TOUCH_SPI_CS >= 0) {
-    pinMode(TOUCH_SPI_CS, OUTPUT);
-    digitalWrite(TOUCH_SPI_CS, HIGH);
-  }
+  initPin(TOUCH_SPI_CS, OUTPUT);
   settings_touch = SPISettings(TOUCH_SPI_SPEED, MSBFIRST, SPI_MODE0);
 }
 

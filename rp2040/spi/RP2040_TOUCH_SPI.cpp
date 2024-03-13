@@ -29,12 +29,11 @@
 
   spi_inst_t* rp2040_touch_spi = 0;
 
+extern void initPin(const int16_t pin, PinMode mode);
+
 void rp2040_touch_spi_initBus()
 {
-  if (TOUCH_SPI_CS >= 0) {
-    pinMode(TOUCH_SPI_CS, OUTPUT);
-    digitalWrite(TOUCH_SPI_CS, HIGH);
-  }
+  initPin(TOUCH_SPI_CS, OUTPUT);
   setup_spi(TFT_SPI_MISO, TFT_SPI_CLK, TFT_SPI_MOSI, 0);
 }
 
