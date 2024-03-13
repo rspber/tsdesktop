@@ -1,5 +1,5 @@
 
-https://arduino.esp8266.com/staging/package_esp8266com_index.json
+https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json
 
 
 It doesn't seem to be working yet
