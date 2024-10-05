@@ -1,6 +1,8 @@
 /*
   hardware/pio.h simplified version: no config, claims, interrupts handling
 
+  rp2040
+
   Copyright (c) 2023-2024, rspber (https://github.com/rspber)
 
   originally notes below:
