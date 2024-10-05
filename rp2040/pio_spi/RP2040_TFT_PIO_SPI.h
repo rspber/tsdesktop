@@ -14,7 +14,7 @@
 
 #if defined(TFT_PIO_SPI_WRITE)
 
-  #include "rp2040_pio.h"
+  #include "rp2350_pio.h"
   #include <rgb.h>
 
   typedef struct
