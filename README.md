@@ -18,6 +18,8 @@ The connections should be made straight from A to B with the wires in the protec
 
 ### News
 
+* rp2350 pio compatibility
+
 * ESP32 8bit parallel
 
 * idyll example https://youtu.be/NPU_-LH7fMA

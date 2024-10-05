@@ -169,6 +169,7 @@ static inline void check_pio_param(__unused PIO pio) {
  * \param c Pointer to the configuration structure to modify
  * \param out_base 0-31 First pin to set as output
  * \param out_count 0-32 Number of pins to set.
+
 static inline void sm_config_set_out_pins(pio_sm_config *c, uint out_base, uint out_count) {
     valid_params_if(PIO, out_base < 32);
     valid_params_if(PIO, out_count <= 32);
@@ -186,6 +187,7 @@ static inline void sm_config_set_out_pins(pio_sm_config *c, uint out_base, uint 
  * \param c Pointer to the configuration structure to modify
  * \param set_base 0-31 First pin to set as
  * \param set_count 0-5 Number of pins to set.
+
 static inline void sm_config_set_set_pins(pio_sm_config *c, uint set_base, uint set_count) {
     valid_params_if(PIO, set_base < 32);
     valid_params_if(PIO, set_count <= 5);
@@ -202,6 +204,7 @@ static inline void sm_config_set_set_pins(pio_sm_config *c, uint set_base, uint 
  *
  * \param c Pointer to the configuration structure to modify
  * \param in_base 0-31 First pin to use as input
+
 static inline void sm_config_set_in_pins(pio_sm_config *c, uint in_base) {
     valid_params_if(PIO, in_base < 32);
     c->pinctrl = (c->pinctrl & ~PIO_SM0_PINCTRL_IN_BASE_BITS) |
@@ -216,6 +219,7 @@ static inline void sm_config_set_in_pins(pio_sm_config *c, uint in_base) {
  *
  * \param c Pointer to the configuration structure to modify
  * \param sideset_base 0-31 base pin for 'side set'
+
 static inline void sm_config_set_sideset_pins(pio_sm_config *c, uint sideset_base) {
     valid_params_if(PIO, sideset_base < 32);
     c->pinctrl = (c->pinctrl & ~PIO_SM0_PINCTRL_SIDESET_BASE_BITS) |
@@ -230,6 +234,7 @@ static inline void sm_config_set_sideset_pins(pio_sm_config *c, uint sideset_bas
  * \param bit_count Number of bits to steal from delay field in the instruction for use of side set (max 5)
  * \param optional True if the topmost side set bit is used as a flag for whether to apply side set on that instruction
  * \param pindirs True if the side set affects pin directions rather than values
+
 static inline void sm_config_set_sideset(pio_sm_config *c, uint bit_count, bool optional, bool pindirs) {
     valid_params_if(PIO, bit_count <= 5);
     valid_params_if(PIO, !optional || bit_count >= 1);
@@ -254,6 +259,7 @@ static inline void sm_config_set_sideset(pio_sm_config *c, uint bit_count, bool 
  * \param div_int Integer part of the divisor
  * \param div_frac Fractional part in 1/256ths
  * \sa sm_config_set_clkdiv()
+
 static inline void sm_config_set_clkdiv_int_frac(pio_sm_config *c, uint16_t div_int, uint8_t div_frac) {
     invalid_params_if(PIO, div_int == 0 && div_frac != 0);
     c->clkdiv =
@@ -286,6 +292,7 @@ static inline void pio_calculate_clkdiv_from_float(float div, uint16_t *div_int,
  *  will cause the state machine to run 1 cycle in every n.
  *  Note that for small n, the jitter introduced by a fractional divider (e.g. 2.5) may be unacceptable
  *  although it will depend on the use case.
+
 static inline void sm_config_set_clkdiv(pio_sm_config *c, float div) {
     uint16_t div_int;
     uint8_t div_frac;
@@ -301,6 +308,7 @@ static inline void sm_config_set_clkdiv(pio_sm_config *c, float div) {
  * \param wrap_target the instruction memory address to wrap to
  * \param wrap        the instruction memory address after which to set the program counter to wrap_target
  *                    if the instruction does not itself update the program_counter
+
 static inline void sm_config_set_wrap(pio_sm_config *c, uint wrap_target, uint wrap) {
     valid_params_if(PIO, wrap < PIO_INSTRUCTION_COUNT);
     valid_params_if(PIO, wrap_target < PIO_INSTRUCTION_COUNT);
@@ -315,6 +323,7 @@ static inline void sm_config_set_wrap(pio_sm_config *c, uint wrap_target, uint w
  *
  * \param c Pointer to the configuration structure to modify
  * \param pin The raw GPIO pin number to use as the source for a `jmp pin` instruction
+
 static inline void sm_config_set_jmp_pin(pio_sm_config *c, uint pin) {
     valid_params_if(PIO, pin < 32);
     c->execctrl = (c->execctrl & ~PIO_SM0_EXECCTRL_JMP_PIN_BITS) |
@@ -329,6 +338,7 @@ static inline void sm_config_set_jmp_pin(pio_sm_config *c, uint pin) {
  * \param shift_right true to shift ISR to right, false to shift ISR to left
  * \param autopush whether autopush is enabled
  * \param push_threshold threshold in bits to shift in before auto/conditional re-pushing of the ISR
+
 static inline void sm_config_set_in_shift(pio_sm_config *c, bool shift_right, bool autopush, uint push_threshold) {
     valid_params_if(PIO, push_threshold <= 32);
     c->shiftctrl = (c->shiftctrl &
@@ -348,6 +358,7 @@ static inline void sm_config_set_in_shift(pio_sm_config *c, bool shift_right, bo
  * \param shift_right true to shift OSR to right, false to shift OSR to left
  * \param autopull whether autopull is enabled
  * \param pull_threshold threshold in bits to shift out before auto/conditional re-pulling of the OSR
+
 static inline void sm_config_set_out_shift(pio_sm_config *c, bool shift_right, bool autopull, uint pull_threshold) {
     valid_params_if(PIO, pull_threshold <= 32);
     c->shiftctrl = (c->shiftctrl &
@@ -365,6 +376,7 @@ static inline void sm_config_set_out_shift(pio_sm_config *c, bool shift_right, b
  *
  * \param c Pointer to the configuration structure to modify
  * \param join Specifies the join type. \see enum pio_fifo_join
+
 static inline void sm_config_set_fifo_join(pio_sm_config *c, enum pio_fifo_join join) {
     valid_params_if(PIO, join == PIO_FIFO_JOIN_NONE || join == PIO_FIFO_JOIN_TX || join == PIO_FIFO_JOIN_RX);
     c->shiftctrl = (c->shiftctrl & (uint)~(PIO_SM0_SHIFTCTRL_FJOIN_TX_BITS | PIO_SM0_SHIFTCTRL_FJOIN_RX_BITS)) |
@@ -379,6 +391,7 @@ static inline void sm_config_set_fifo_join(pio_sm_config *c, enum pio_fifo_join 
  * \param sticky to enable 'sticky' output (i.e. re-asserting most recent OUT/SET pin values on subsequent cycles)
  * \param has_enable_pin true to enable auxiliary OUT enable pin
  * \param enable_pin_index pin index for auxiliary OUT enable
+
 static inline void sm_config_set_out_special(pio_sm_config *c, bool sticky, bool has_enable_pin, uint enable_pin_index) {
     c->execctrl = (c->execctrl &
                    (uint)~(PIO_SM0_EXECCTRL_OUT_STICKY_BITS | PIO_SM0_EXECCTRL_INLINE_OUT_EN_BITS |
@@ -395,6 +408,7 @@ static inline void sm_config_set_out_special(pio_sm_config *c, bool sticky, bool
  * \param c Pointer to the configuration structure to modify
  * \param status_sel the status operation selector. \see enum pio_mov_status_type
  * \param status_n parameter for the mov status operation (currently a bit count)
+
 static inline void sm_config_set_mov_status(pio_sm_config *c, enum pio_mov_status_type status_sel, uint status_n) {
     valid_params_if(PIO, status_sel == STATUS_TX_LESSTHAN || status_sel == STATUS_RX_LESSTHAN);
     c->execctrl = (c->execctrl
@@ -423,6 +437,7 @@ static inline void sm_config_set_mov_status(pio_sm_config *c, enum pio_mov_statu
  * Mov Status | status_sel=STATUS_TX_LESSTHAN, n=0
  *
  * \return the default state machine configuration which can then be modified.
+
 static inline pio_sm_config pio_get_default_sm_config(void) {
     pio_sm_config c = {0, 0, 0, 0};
     sm_config_set_clkdiv_int_frac(&c, 1, 0);
@@ -438,6 +453,7 @@ static inline pio_sm_config pio_get_default_sm_config(void) {
  *
  * \param sm pio_sm_hw_t
  * \param config the configuration to apply
+
 static inline void pio_sm_set_config(pio_sm_hw_t& sm, const pio_sm_config *config) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -453,6 +469,7 @@ static inline void pio_sm_set_config(pio_sm_hw_t& sm, const pio_sm_config *confi
  *
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \return the PIO instance number (either 0 or 1)
+
 static inline uint pio_get_index(PIO pio) {
     check_pio_param(pio);
     return pio == pio1 ? 1 : 0;
@@ -470,6 +487,7 @@ static inline uint pio_get_index(PIO pio) {
  *
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param pin the GPIO pin whose function select to set
+
 static inline void pio_gpio_init(PIO pio, uint pin) {
     check_pio_param(pio);
     valid_params_if(PIO, pin < 32);
@@ -483,6 +501,7 @@ static inline void pio_gpio_init(PIO pio, uint pin) {
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param sm State machine index (0..3)
  * \param is_tx true for sending data to the state machine, false for receiving data from the state machine
+
 static inline uint pio_get_dreq(PIO pio, uint sm, bool is_tx) {
     static_assert(DREQ_PIO0_TX1 == DREQ_PIO0_TX0 + 1, "");
     static_assert(DREQ_PIO0_TX2 == DREQ_PIO0_TX0 + 2, "");
@@ -513,6 +532,7 @@ static inline void pio_load_program(PIO pio, const uint16_t instructions[], uint
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param program the program definition
  * \return true if the program can be loaded; false if there is not suitable space in the instruction memory
+
 bool pio_can_add_program(PIO pio, const pio_program_t *program);
  */
 
@@ -523,6 +543,7 @@ bool pio_can_add_program(PIO pio, const pio_program_t *program);
  * \param program the program definition
  * \param offset the instruction memory offset wanted for the start of the program
  * \return true if the program can be loaded at that location; false if there is not space in the instruction memory
+
 bool pio_can_add_program_at_offset(PIO pio, const pio_program_t *program, uint offset);
  */
 
@@ -534,6 +555,7 @@ bool pio_can_add_program_at_offset(PIO pio, const pio_program_t *program, uint o
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param program the program definition
  * \return the instruction memory offset the program is loaded at
+
 uint pio_add_program(PIO pio, const pio_program_t *program);
  */
 
@@ -545,6 +567,7 @@ uint pio_add_program(PIO pio, const pio_program_t *program);
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param program the program definition
  * \param offset the instruction memory offset wanted for the start of the program
+
 void pio_add_program_at_offset(PIO pio, const pio_program_t *program, uint offset);
  */
 
@@ -554,6 +577,7 @@ void pio_add_program_at_offset(PIO pio, const pio_program_t *program, uint offse
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param program the program definition
  * \param loaded_offset the loaded offset returned when the program was added
+
 void pio_remove_program(PIO pio, const pio_program_t *program, uint loaded_offset);
  */
 
@@ -561,6 +585,7 @@ void pio_remove_program(PIO pio, const pio_program_t *program, uint loaded_offse
  *  \ingroup hardware_pio
  *
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
+
 void pio_clear_instruction_memory(PIO pio);
  */
 
@@ -580,6 +605,7 @@ void pio_clear_instruction_memory(PIO pio);
  * \param sm State machine index (0..3)
  * \param initial_pc the initial program memory offset to run from
  * \param config the configuration to apply (or NULL to apply defaults)
+
 void pio_sm_init(pio_sm_hw_t& sm, uint initial_pc, const pio_sm_config *config);
  */
 
@@ -588,6 +614,7 @@ void pio_sm_init(pio_sm_hw_t& sm, uint initial_pc, const pio_sm_config *config);
  *
  * \param sm pio_sm_hw_t
  * \param enabled true to enable the state machine; false to disable
+
 static inline void pio_sm_set_enabled(pio_sm_hw_t& sm, bool enabled) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -607,6 +634,7 @@ static inline void pio_sm_set_enabled(pio_sm_hw_t& sm, bool enabled) {
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param mask bit mask of state machine indexes to modify the enabled state of
  * \param enabled true to enable the state machines; false to disable
+
 static inline void pio_set_sm_mask_enabled(PIO pio, uint32_t mask, bool enabled) {
     check_pio_param(pio);
     check_sm_mask(mask);
@@ -621,6 +649,7 @@ static inline void pio_set_sm_mask_enabled(PIO pio, uint32_t mask, bool enabled)
  * pin write flags, delay counter, latched EXEC instruction, and IRQ wait condition.
  *
  * \param sm pio_sm_hw_t
+
 static inline void pio_sm_restart(pio_sm_hw_t& sm) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -636,6 +665,7 @@ static inline void pio_sm_restart(pio_sm_hw_t& sm) {
  *
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param mask bit mask of state machine indexes to modify the enabled state of
+
 static inline void pio_restart_sm_mask(PIO pio, uint32_t mask) {
     check_pio_param(pio);
     check_sm_mask(mask);
@@ -662,6 +692,7 @@ static inline void pio_restart_sm_mask(PIO pio, uint32_t mask) {
  * clocks of multiple state machines -- see pio_clkdiv_restart_sm_mask().
  *
  * \param sm pio_sm_hw_t
+
 static inline void pio_sm_clkdiv_restart(pio_sm_hw_t& sm) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -697,6 +728,7 @@ static inline void pio_sm_clkdiv_restart(pio_sm_hw_t& sm) {
  *
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param mask bit mask of state machine indexes to modify the enabled state of
+
 static inline void pio_clkdiv_restart_sm_mask(PIO pio, uint32_t mask) {
     check_pio_param(pio);
     check_sm_mask(mask);
@@ -714,6 +746,7 @@ static inline void pio_clkdiv_restart_sm_mask(PIO pio, uint32_t mask) {
  *
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param mask bit mask of state machine indexes to modify the enabled state of
+
 static inline void pio_enable_sm_mask_in_sync(PIO pio, uint32_t mask) {
     check_pio_param(pio);
     check_sm_mask(mask);
@@ -746,6 +779,7 @@ enum pio_interrupt_source {
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param source the source number (see \ref pio_interrupt_source)
  * \param enabled true to enable IRQ 0 for the source, false to disable.
+
 static inline void pio_set_irq0_source_enabled(PIO pio, enum pio_interrupt_source source, bool enabled) {
     check_pio_param(pio);
     invalid_params_if(PIO, source >= 12);
@@ -762,6 +796,7 @@ static inline void pio_set_irq0_source_enabled(PIO pio, enum pio_interrupt_sourc
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param source the source number (see \ref pio_interrupt_source)
  * \param enabled true to enable IRQ 0 for the source, false to disable.
+
 static inline void pio_set_irq1_source_enabled(PIO pio, enum pio_interrupt_source source, bool enabled) {
     check_pio_param(pio);
     invalid_params_if(PIO, source >= 12);
@@ -778,6 +813,7 @@ static inline void pio_set_irq1_source_enabled(PIO pio, enum pio_interrupt_sourc
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param source_mask Mask of bits, one for each source number (see \ref pio_interrupt_source) to affect
  * \param enabled true to enable all the sources specified in the mask on IRQ 0, false to disable all the sources specified in the mask on IRQ 0
+
 static inline void pio_set_irq0_source_mask_enabled(PIO pio, uint32_t source_mask, bool enabled) {
     check_pio_param(pio);
     invalid_params_if(PIO, source_mask > PIO_INTR_BITS);
@@ -795,6 +831,7 @@ static inline void pio_set_irq0_source_mask_enabled(PIO pio, uint32_t source_mas
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param source_mask Mask of bits, one for each source number (see \ref pio_interrupt_source) to affect
  * \param enabled true to enable all the sources specified in the mask on IRQ 1, false to disable all the source specified in the mask on IRQ 1
+
 static inline void pio_set_irq1_source_mask_enabled(PIO pio, uint32_t source_mask, bool enabled) {
     check_pio_param(pio);
     invalid_params_if(PIO, source_mask > PIO_INTR_BITS);
@@ -813,6 +850,7 @@ static inline void pio_set_irq1_source_mask_enabled(PIO pio, uint32_t source_mas
  * \param irq_index the IRQ index; either 0 or 1
  * \param source the source number (see \ref pio_interrupt_source)
  * \param enabled true to enable the source on the specified IRQ, false to disable.
+
 static inline void pio_set_irqn_source_enabled(PIO pio, uint irq_index, enum pio_interrupt_source source, bool enabled) {
     invalid_params_if(PIO, irq_index > 1);
     if (irq_index) {
@@ -830,6 +868,7 @@ static inline void pio_set_irqn_source_enabled(PIO pio, uint irq_index, enum pio
  * \param irq_index the IRQ index; either 0 or 1
  * \param source_mask Mask of bits, one for each source number (see \ref pio_interrupt_source) to affect
  * \param enabled true to enable all the sources specified in the mask on the specified IRQ, false to disable all the sources specified in the mask on the specified IRQ
+
 static inline void pio_set_irqn_source_mask_enabled(PIO pio, uint irq_index, uint32_t source_mask, bool enabled) {
     invalid_params_if(PIO, irq_index > 1);
     if (irq_index) {
@@ -846,6 +885,7 @@ static inline void pio_set_irqn_source_mask_enabled(PIO pio, uint irq_index, uin
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param pio_interrupt_num the PIO interrupt number 0-7
  * \return true if corresponding PIO interrupt is currently set
+
 static inline bool pio_interrupt_get(PIO pio, uint pio_interrupt_num) {
     check_pio_param(pio);
     invalid_params_if(PIO, pio_interrupt_num >= 8);
@@ -858,6 +898,7 @@ static inline bool pio_interrupt_get(PIO pio, uint pio_interrupt_num) {
  *
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param pio_interrupt_num the PIO interrupt number 0-7
+
 static inline void pio_interrupt_clear(PIO pio, uint pio_interrupt_num) {
     check_pio_param(pio);
     invalid_params_if(PIO, pio_interrupt_num >= 8);
@@ -870,6 +911,7 @@ static inline void pio_interrupt_clear(PIO pio, uint pio_interrupt_num) {
  *
  * \param sm pio_sm_hw_t
  * \return the program counter
+
 static inline uint8_t pio_sm_get_pc(pio_sm_hw_t& sm) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -887,6 +929,7 @@ static inline uint8_t pio_sm_get_pc(pio_sm_hw_t& sm) {
  *
  * \param sm pio_sm_hw_t
  * \param instr the encoded PIO instruction
+
 inline static void pio_sm_exec(pio_sm_hw_t& sm, uint instr) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -899,6 +942,7 @@ inline static void pio_sm_exec(pio_sm_hw_t& sm, uint instr) {
  *
  * \param sm pio_sm_hw_t
  * \return true if the executed instruction is still running (stalled)
+
 static inline bool pio_sm_is_exec_stalled(pio_sm_hw_t& sm) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -916,6 +960,7 @@ static inline bool pio_sm_is_exec_stalled(pio_sm_hw_t& sm) {
  *
  * \param sm pio_sm_hw_t
  * \param instr the encoded PIO instruction
+
 static inline void pio_sm_exec_wait_blocking(pio_sm_hw_t& sm, uint instr) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -931,6 +976,7 @@ static inline void pio_sm_exec_wait_blocking(pio_sm_hw_t& sm, uint instr) {
  * \param wrap_target the instruction memory address to wrap to
  * \param wrap        the instruction memory address after which to set the program counter to wrap_target
  *                    if the instruction does not itself update the program_counter
+
 static inline void pio_sm_set_wrap(pio_sm_hw_t& sm, uint wrap_target, uint wrap) {
     valid_params_if(PIO, wrap < PIO_INSTRUCTION_COUNT);
     valid_params_if(PIO, wrap_target < PIO_INSTRUCTION_COUNT);
@@ -950,8 +996,7 @@ static inline void pio_sm_set_wrap(pio_sm_hw_t& sm, uint wrap_target, uint wrap)
  * \param out_base 0-31 First pin to set as output
  * \param out_count 0-32 Number of pins to set.
  */
-static inline void pio_sm_set_out_pins(pio_sm_hw_t& sm, uint out_base, uint out_count)
-{
+static inline void pio_sm_set_out_pins(pio_sm_hw_t& sm, uint out_base, uint out_count) {
   sm.pinctrl = (sm.pinctrl & ~(PIO_SM0_PINCTRL_OUT_BASE_BITS | PIO_SM0_PINCTRL_OUT_COUNT_BITS)) |
     (out_base << PIO_SM0_PINCTRL_OUT_BASE_LSB) |
     (out_count << PIO_SM0_PINCTRL_OUT_COUNT_LSB);
@@ -967,8 +1012,7 @@ static inline void pio_sm_set_out_pins(pio_sm_hw_t& sm, uint out_base, uint out_
  * \param set_base 0-31 First pin to set as
  * \param set_count 0-5 Number of pins to set.
  */
-static inline void pio_sm_set_set_pins(pio_sm_hw_t& sm, uint set_base, uint set_count)
-{
+static inline void pio_sm_set_set_pins(pio_sm_hw_t& sm, uint set_base, uint set_count) {
   sm.pinctrl = (sm.pinctrl & ~(PIO_SM0_PINCTRL_SET_BASE_BITS | PIO_SM0_PINCTRL_SET_COUNT_BITS)) |
     (set_base << PIO_SM0_PINCTRL_SET_BASE_LSB) |
     (set_count << PIO_SM0_PINCTRL_SET_COUNT_LSB);
@@ -982,8 +1026,7 @@ static inline void pio_sm_set_set_pins(pio_sm_hw_t& sm, uint set_base, uint set_
  * \param sm pio_sm_hw_t
  * \param in_base 0-31 First pin to use as input
  */
-static inline void pio_sm_set_in_pins(pio_sm_hw_t& sm, uint in_base)
-{
+static inline void pio_sm_set_in_pins(pio_sm_hw_t& sm, uint in_base) {
   sm.pinctrl = (sm.pinctrl & ~PIO_SM0_PINCTRL_IN_BASE_BITS) |
     (in_base << PIO_SM0_PINCTRL_IN_BASE_LSB);
 }
@@ -1001,7 +1044,8 @@ static inline void pio_sm_set_sideset(pio_sm_hw_t& sm, uint bit_count, bool opti
   sm.pinctrl = (sm.pinctrl & ~(PIO_SM0_PINCTRL_SIDESET_COUNT_BITS)) |
     (bit_count << PIO_SM0_PINCTRL_SIDESET_COUNT_LSB);
 
-  sm.execctrl = (sm.execctrl & ~(PIO_SM0_EXECCTRL_SIDE_EN_BITS | PIO_SM0_EXECCTRL_SIDE_PINDIR_BITS)) |
+  sm.execctrl =
+    (sm.execctrl & ~(PIO_SM0_EXECCTRL_SIDE_EN_BITS | PIO_SM0_EXECCTRL_SIDE_PINDIR_BITS)) |
     (bool_to_bit(optional) << PIO_SM0_EXECCTRL_SIDE_EN_LSB) |
     (bool_to_bit(pindirs) << PIO_SM0_EXECCTRL_SIDE_PINDIR_LSB);
 }
@@ -1014,8 +1058,7 @@ static inline void pio_sm_set_sideset(pio_sm_hw_t& sm, uint bit_count, bool opti
  * \param sm pio_sm_hw_t
  * \param sideset_base 0-31 base pin for 'side set'
  */
-static inline void pio_sm_set_sideset_pins(pio_sm_hw_t& sm, uint sideset_base)
-{
+static inline void pio_sm_set_sideset_pins(pio_sm_hw_t& sm, uint sideset_base) {
   sm.pinctrl = (sm.pinctrl & ~PIO_SM0_PINCTRL_SIDESET_BASE_BITS) |
     (sideset_base << PIO_SM0_PINCTRL_SIDESET_BASE_LSB);
 }
@@ -1032,6 +1075,7 @@ static inline void pio_sm_set_sideset_pins(pio_sm_hw_t& sm, uint sideset_base)
  * \param data the 32 bit data value
  *
  * \sa pio_sm_put_blocking()
+
 static inline void pio_sm_put(pio_sm_hw_t& sm, uint32_t data) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -1052,6 +1096,7 @@ static inline void pio_sm_put(pio_sm_hw_t& sm, uint32_t data) {
  * \param sm pio_sm_hw_t
  *
  * \sa pio_sm_get_blocking()
+
 static inline uint32_t pio_sm_get(pio_sm_hw_t& sm) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -1064,6 +1109,7 @@ static inline uint32_t pio_sm_get(pio_sm_hw_t& sm) {
  *
  * \param sm pio_sm_hw_t
  * \return true if the RX FIFO is full
+
 static inline bool pio_sm_is_rx_fifo_full(pio_sm_hw_t& sm) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -1076,6 +1122,7 @@ static inline bool pio_sm_is_rx_fifo_full(pio_sm_hw_t& sm) {
  *
  * \param sm pio_sm_hw_t
  * \return true if the RX FIFO is empty
+
 static inline bool pio_sm_is_rx_fifo_empty(pio_sm_hw_t& sm) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -1088,6 +1135,7 @@ static inline bool pio_sm_is_rx_fifo_empty(pio_sm_hw_t& sm) {
  *
  * \param sm pio_sm_hw_t
  * \return the number of elements in the RX FIFO
+
 static inline uint pio_sm_get_rx_fifo_level(pio_sm_hw_t& sm) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -1102,6 +1150,7 @@ static inline uint pio_sm_get_rx_fifo_level(pio_sm_hw_t& sm) {
  *
  * \param sm pio_sm_hw_t
  * \return true if the TX FIFO is full
+
 static inline bool pio_sm_is_tx_fifo_full(pio_sm_hw_t& sm) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -1114,6 +1163,7 @@ static inline bool pio_sm_is_tx_fifo_full(pio_sm_hw_t& sm) {
  *
  * \param sm pio_sm_hw_t
  * \return true if the TX FIFO is empty
+
 static inline bool pio_sm_is_tx_fifo_empty(pio_sm_hw_t& sm) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -1126,6 +1176,7 @@ static inline bool pio_sm_is_tx_fifo_empty(pio_sm_hw_t& sm) {
  *
  * \param sm pio_sm_hw_t
  * \return the number of elements in the TX FIFO
+
 static inline uint pio_sm_get_tx_fifo_level(pio_sm_hw_t& sm) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -1140,6 +1191,7 @@ static inline uint pio_sm_get_tx_fifo_level(pio_sm_hw_t& sm) {
  *
  * \param sm pio_sm_hw_t
  * \param data the 32 bit data value
+
 static inline void pio_sm_put_blocking(pio_sm_hw_t& sm, uint32_t data) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -1152,6 +1204,7 @@ static inline void pio_sm_put_blocking(pio_sm_hw_t& sm, uint32_t data) {
  *  \ingroup hardware_pio
  *
  * \param sm pio_sm_hw_t
+
 static inline uint32_t pio_sm_get_blocking(pio_sm_hw_t& sm) {
     check_pio_param(pio);
     check_sm_param(sm);
@@ -1171,6 +1224,7 @@ static inline uint32_t pio_sm_get_blocking(pio_sm_hw_t& sm) {
  * \param sm pio_sm_hw_t
  *
  * \sa pio_sm_clear_fifos()
+
 void pio_sm_drain_tx_fifo(pio_sm_hw_t& sm);
 */
 
@@ -1181,11 +1235,10 @@ void pio_sm_drain_tx_fifo(pio_sm_hw_t& sm);
  * \param div_int the integer part of the clock divider
  * \param div_frac the fractional part of the clock divider in 1/256s
  */
-inline void pio_sm_set_clkdiv_int_frac(pio_sm_hw_t& sm, uint16_t div_int, uint8_t div_frac)
-{
-  sm.clkdiv =
-            (((uint)div_frac) << PIO_SM0_CLKDIV_FRAC_LSB) |
-            (((uint)div_int) << PIO_SM0_CLKDIV_INT_LSB);
+static inline void pio_sm_set_clkdiv_int_frac(pio_sm_hw_t& sm, uint16_t div_int, uint8_t div_frac) {
+    sm.clkdiv =
+        (((uint)div_frac) << PIO_SM0_CLKDIV_FRAC_LSB) |
+        (((uint)div_int) << PIO_SM0_CLKDIV_INT_LSB);
 }
 
 static inline void pio_calculate_clkdiv_from_float(float div, uint16_t *div_int, uint8_t *div_frac) {
@@ -1394,6 +1447,7 @@ static inline void pio_sm_set_pindir(pio_sm_hw_t& sm, uint pin, bool is_out) {
  *
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param sm State machine index (0..3)
+
 void pio_sm_claim(PIO pio, uint sm);
  */
 
@@ -1406,6 +1460,7 @@ void pio_sm_claim(PIO pio, uint sm);
  *
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param sm_mask Mask of state machine indexes
+
 void pio_claim_sm_mask(PIO pio, uint sm_mask);
  */
 
@@ -1416,6 +1471,7 @@ void pio_claim_sm_mask(PIO pio, uint sm_mask);
  *
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param sm State machine index (0..3)
+
 void pio_sm_unclaim(PIO pio, uint sm);
  */
 
@@ -1425,6 +1481,7 @@ void pio_sm_unclaim(PIO pio, uint sm);
  * \param pio The PIO instance; either \ref pio0 or \ref pio1
  * \param required if true the function will panic if none are available
  * \return the state machine index or -1 if required was false, and none were free
+
 int pio_claim_unused_sm(PIO pio, bool required);
  */
 
@@ -1436,6 +1493,7 @@ int pio_claim_unused_sm(PIO pio, bool required);
  * \return true if claimed, false otherwise
  * \see pio_sm_claim
  * \see pio_claim_sm_mask
+
 bool pio_sm_is_claimed(PIO pio, uint sm);
  */
 
