@@ -44,7 +44,7 @@
 
 // don't enable OVERLAID if you are not shure that absolutelly
 // all colors comes from RGB macro, even 0 is not a BLACK
-  #define OVERLAID      // enable overlaid in writeColor and writeChar
+//  #define OVERLAID      // enable overlaid in writeColor and writeChar
 
 // select one of
   #define TFT_GPIO_8BITP_WRITE

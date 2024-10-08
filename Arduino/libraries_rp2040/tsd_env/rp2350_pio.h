@@ -86,7 +86,7 @@ static_assert(PIO_SM0_SHIFTCTRL_FJOIN_RX_LSB == PIO_SM0_SHIFTCTRL_FJOIN_TX_LSB +
   #define PIO_SM_RESTART(pio, sm)        pio->ctrl |= 1u << (PIO_CTRL_SM_RESTART_LSB + sm)
   #define PIO_SM_RESTART_CLKDIV(pio, sm) pio->ctrl |= 1u << (PIO_CTRL_CLKDIV_RESTART_LSB + sm)
 
-  #define TX_FIFO(pio, sm, d) pio->txf[sm] = d
+  #define TX_FIFO(pio, sm) pio->txf[sm]
 
   // Wait until at least "S" locations free
   #define WAIT_FOR_FIFO_FREE(pio, sm, S) { while (((pio->flevel >> (sm * 8)) & 0x000F) > (uint8_t)(8-S)); }
@@ -288,19 +288,14 @@ typedef struct {
 } pio_sm_config;
  */
 
-/*
 static inline void check_sm_param(__unused uint sm) {
     valid_params_if(HARDWARE_PIO, sm < NUM_PIO_STATE_MACHINES);
 }
- */
 
-/*
 static inline void check_sm_mask(__unused uint mask) {
     valid_params_if(HARDWARE_PIO, mask < (1u << NUM_PIO_STATE_MACHINES));
 }
- */
 
-/*
 static inline void check_pio_param(__unused PIO pio) {
 #if NUM_PIOS == 2
     valid_params_if(HARDWARE_PIO, pio == pio0 || pio == pio1);
@@ -308,7 +303,7 @@ static inline void check_pio_param(__unused PIO pio) {
     valid_params_if(HARDWARE_PIO, pio == pio0 || pio == pio1 || pio == pio2);
 #endif
 }
- */
+
 
 /*
 static inline void check_pio_pin_param(__unused uint pin) {
@@ -866,19 +861,19 @@ static inline void pio_gpio_init(PIO pio, uint pin) {
 }
  */
 
-/* ! \brief Return the DREQ to use for pacing transfers to/from a particular state machine FIFO
+/*! \brief Return the DREQ to use for pacing transfers to/from a particular state machine FIFO
  *  \ingroup hardware_pio
  *
  * \param pio The PIO instance; e.g. \ref pio0 or \ref pio1
  * \param sm State machine index (0..3)
  * \param is_tx true for sending data to the state machine, false for receiving data from the state machine
-
+ */
 static inline uint pio_get_dreq(PIO pio, uint sm, bool is_tx) {
     check_pio_param(pio);
     check_sm_param(sm);
     return PIO_DREQ_NUM(pio, sm, is_tx);
 }
- */
+
 
 typedef struct pio_program {
     const uint16_t *instructions;

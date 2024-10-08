@@ -12,7 +12,8 @@
 #include "RP2040_TFT_SPI.h"
 #include "SPI.h"
 #include "hardware/spi.h"
-#include <api/Common.h>
+#include "hardware/dma.h"
+#include "TFT_SCREEN.h"
 
 #define TFT_CASET       0x2A    // Column address set
 #define TFT_PASET       0x2B    // Page address set
@@ -21,16 +22,16 @@
 #define TFT_IDXRD       0xD9    // undocumented
 
 #if defined(TFT_SPI_CS) && (TFT_SPI_CS >= 0)
-  #define SPI_CS_L digitalWrite(TFT_SPI_CS, 0)
-  #define SPI_CS_H digitalWrite(TFT_SPI_CS, 1)
+  #define SPI_CS_L sio_hw->gpio_clr = (1ul << TFT_SPI_CS)
+  #define SPI_CS_H sio_hw->gpio_set = (1ul << TFT_SPI_CS)
 #else
   #define SPI_CS_L
   #define SPI_CS_H
 #endif
 
 #if defined(TFT_SPI_DC) && (TFT_SPI_DC >= 0)
-  #define SPI_DC_C digitalWrite(TFT_SPI_DC, 0)
-  #define SPI_DC_D digitalWrite(TFT_SPI_DC, 1)
+  #define SPI_DC_C sio_hw->gpio_clr = (1ul << TFT_SPI_DC)
+  #define SPI_DC_D sio_hw->gpio_set = (1ul << TFT_SPI_DC)
 #else
   #define SPI_DC_C
   #define SPI_DC_D
@@ -100,6 +101,14 @@ inline void spi_endSending()
   spi_get_hw(SPI_X)->icr = SPI_SSPICR_RORIC_BITS;
 }
 
+void setBUSWriteMode() {
+  spi_set_format(SPI_X,  8, (spi_cpol_t)(SPI_MODE0 >> 1), (spi_cpha_t)(SPI_MODE0 & 0x1), SPI_MSB_FIRST);
+}
+
+void setBUSReadMode() {
+  spi_set_format(SPI_X,  8, (spi_cpol_t)0, (spi_cpha_t)0, SPI_MSB_FIRST);
+}
+
 #endif
 
 
@@ -123,6 +132,7 @@ void tft_startWriteCmd()
 {
   rp2040_SPI->beginTransaction(settings_cmd);
   SPI_CS_L;
+  setBUSWriteMode();
 }
 
 void tft_sendCmd(const uint8_t cmd)
@@ -153,11 +163,14 @@ void tft_startWrite()
 {
   rp2040_SPI->beginTransaction(settings_write);
   SPI_CS_L;
+  setBUSWriteMode();
 }
 
 void tft_endWrite()
 {
+  spi_endSending();
   SPI_CS_H;
+  setBUSReadMode();
   rp2040_SPI->endTransaction();
 }
 
@@ -224,6 +237,76 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
   }
   spi_endSending();
 }
+
+// ---- the DMA --------------------------------------------------------------
+
+// For SPI must also wait for FIFO to flush and reset format
+void DMA_END_WRITTING() {
+  while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
+  hw_write_masked(&spi_get_hw(SPI_X)->cr0, (16 - 1) << SPI_SSPCR0_DSS_LSB, SPI_SSPCR0_DSS_BITS);
+}
+
+volatile void* DMA_WRITE_ADDR() {
+  return &spi_get_hw(SPI_X)->dr;
+}
+
+uint DMA_DREQ() {
+  return spi_get_index(SPI_X) ? DREQ_SPI1_TX : DREQ_SPI0_TX;
+}
+
+
+// ---- the DMA --------------------------------------------------------------
+
+  bool                dma_enabled;
+  int32_t             dma_tx_channel;
+  dma_channel_config  dma_tx_config;
+
+bool TFT_SCREEN::dmaBusy() {
+  if (!dma_enabled) return false;
+  if (dma_channel_is_busy(dma_tx_channel)) return true;
+  DMA_END_WRITTING();
+  return false;
+}
+
+void TFT_SCREEN::dmaWait() {
+  while (dma_channel_is_busy(dma_tx_channel));
+  DMA_END_WRITTING();
+}
+
+void TFT_SCREEN::dma_sendMDTBuffer16(const uint8_t* buff, const int32_t len)
+{
+  if (!dma_enabled) return;
+  if (len <= 0) return;
+  dmaWait(); // In case we did not wait earlier
+  channel_config_set_bswap(&dma_tx_config, true); // !_swapBytes
+  dma_channel_configure(dma_tx_channel, &dma_tx_config, DMA_WRITE_ADDR(), (uint16_t*)buff, len, true);
+}
+
+bool TFT_SCREEN::initDMA()
+{
+  if (dma_enabled) return false;
+
+  dma_tx_channel = dma_claim_unused_channel(false);
+
+  if (dma_tx_channel < 0) return false;
+
+  dma_tx_config = dma_channel_get_default_config(dma_tx_channel);
+
+  channel_config_set_transfer_data_size(&dma_tx_config, DMA_SIZE_16);
+  channel_config_set_dreq(&dma_tx_config, DMA_DREQ());
+
+  dma_enabled = true;
+  return true;
+}
+
+void TFT_SCREEN::deInitDMA()
+{
+  if (!dma_enabled) return;
+  dma_channel_unclaim(dma_tx_channel);
+  dma_enabled = false;
+}
+
+
 
 #endif
 

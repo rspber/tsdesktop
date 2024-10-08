@@ -18,6 +18,22 @@ The connections should be made straight from A to B with the wires in the protec
 
 ### News
 
+## WARNING, due to DMA revival, Raspberry Pi Pico currently only works.
+
+
+- Managed to run the "'Boing' ball demo" example in SPI from TFT_eSPI repository.
+
+- The key elements turned out to be the bus control procedures: setBUSWriteMode and setBUSReadMode.
+
+- For other processors DMA should be commented.
+
+- The default Overlaid setting has been commented out so that it doesn't get in the way.
+
+- to be continued...
+
+
+
+
 * rp2350 pio compatibility
 
 * ESP32 8bit parallel

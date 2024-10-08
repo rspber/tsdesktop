@@ -140,6 +140,8 @@ public:
   using TSD_GFX::drawChar;
   using TSD_GFX::drawTextLine;
 
+  const clip_t& getClip() { return clip; }
+
 private:
   int16_t WIDTH, HEIGHT;
 protected:

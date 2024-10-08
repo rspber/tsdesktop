@@ -50,26 +50,28 @@ void TFT_SCREEN::setRotation(const uint8_t r, const uint8_t REV)
   tft_endWrite();
 }
 
-void v_drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
+void TFT_SCREEN::sendMDTBuffer16(const uint8_t* buffer, const int32_t len)
 {
-  tft_writeAddrWindow(x, y, 1, 1);
-  tft_sendMDTColor(mdt_color(color));
-}
-
-void v_drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
-{
-  tft_writeAddrWindow(x, y, w, h);
-  tft_sendMDTColor(mdt_color(color), w * h);
-}
-
-void v_drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer)
-{
-  tft_writeAddrWindow(x, y, w, h);
-  if (MDT_SIZE > 2) {
-    tft_sendMDTBuffer24(buffer, w * h);
+  if( useDMA ) {
+    dma_sendMDTBuffer16(buffer, len);
   }
   else {
-    tft_sendMDTBuffer16(buffer, w * h);
+    tft_sendMDTBuffer16(buffer, len);
+  }
+}
+
+void TFT_SCREEN::sendMDTBuffer24(const uint8_t* buffer, int32_t len) {
+  tft_sendMDTBuffer24(buffer, len);
+}
+
+void TFT_SCREEN::writeMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer)
+{
+  writeAddrWindow(x, y, w, h);
+  if (MDT_SIZE > 2) {
+    sendMDTBuffer24(buffer, w * h);
+  }
+  else {
+    sendMDTBuffer16(buffer, w * h);
   }
 }
 
@@ -80,6 +82,9 @@ void TFT_SCREEN::startWrite()
 
 void TFT_SCREEN::endWrite()
 {
+  if( useDMA ) {
+    dmaWait();
+  }
   tft_endWrite();
 }
 
@@ -103,6 +108,13 @@ void TFT_SCREEN::writeAddrWindow(const int16_t x, const int16_t y, const int16_t
   tft_writeAddrWindow(x, y, w, h);
 }
 
+void TFT_SCREEN::setAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h)
+{
+  tft_startWrite();
+  tft_writeAddrWindow(x, y, w, h);
+  tft_endWrite();
+}
+
 void TFT_SCREEN::sendMDTColor1(const mdt_t c)
 {
   tft_sendMDTColor(c);
@@ -116,7 +128,7 @@ void TFT_SCREEN::sendMDTColor(const mdt_t c, const int32_t len)
 void TFT_SCREEN::drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer)
 {
   tft_startWrite();
-  v_drawMDTBuffer(x, y, w, h, buffer);
+  writeMDTBuffer(x, y, w, h, buffer);
   tft_endWrite();
 }
 
@@ -136,17 +148,20 @@ void TFT_SCREEN::drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
       v_storePixels(x, y, 1, 1, t);
     }
     if (t->mode == 2) {   // restore background from buf
-      v_drawMDTBuffer(x, y, 1, 1, &t->buf[t->len]);
+      writeMDTBuffer(x, y, 1, 1, &t->buf[t->len]);
       t->len += MDT_SIZE;
       return;
     }
-    v_drawPixel1(x, y, t->color);
+    tft_writeAddrWindow(x, y, 1, 1);
+    tft_sendMDTColor(mdt_color(t->color));
   }
   else {
-    v_drawPixel1(x, y, color);
+    tft_writeAddrWindow(x, y, 1, 1);
+    tft_sendMDTColor(mdt_color(color));
   }
 #else
-  v_drawPixel1(x, y, color);
+  tft_writeAddrWindow(x, y, 1, 1);
+  tft_sendMDTColor(mdt_color(color));
 #endif
 }
 
@@ -164,17 +179,20 @@ void TFT_SCREEN::drawPixels(const int16_t x, const int16_t y, const int16_t w, c
       v_storePixels(x, y, w, h, t);
     }
     if (t->mode == 2) {   // restore background from buf
-      v_drawMDTBuffer(x, y, w, h, &t->buf[t->len]);
+      writeMDTBuffer(x, y, w, h, &t->buf[t->len]);
       t->len += w * h * MDT_SIZE;
       return;
     }
-    v_drawPixels(x, y, w, h, t->color);
+    tft_writeAddrWindow(x, y, w, h);
+    tft_sendMDTColor(mdt_color(t->color), w * h);
   }
   else {
-    v_drawPixels(x, y, w, h, color);
+    tft_writeAddrWindow(x, y, w, h);
+    tft_sendMDTColor(mdt_color(color), w * h);
   }
 #else
-  v_drawPixels(x, y, w, h, color);
+  tft_writeAddrWindow(x, y, w, h);
+  tft_sendMDTColor(mdt_color(color), w * h);
 #endif
 }
 
@@ -386,4 +404,19 @@ void v_storePixels(const int16_t x, const int16_t y, const int16_t w, const int1
   tft_endReading();
 
   tft_startWrite();
+}
+
+
+
+
+// --- the DMA ---------------------------------------------------------------
+
+void TFT_SCREEN::startUsingDMA()
+{
+  useDMA = true;
+}
+
+void TFT_SCREEN::endUsingDMA()
+{
+  useDMA = false;
 }

@@ -16,6 +16,8 @@
 
   #include "RP2040_TFT_PIO_SPI.h"
   #include "pio_spi.pio.h"
+  #include "hardware/dma.h"
+  #include "TFT_SCREEN.h"
   #include "pio_spi_mdt_block_16.pio.h"
   #include "pio_spi_mdt_block_24.pio.h"
   #include "hardware/clocks.h"
@@ -150,6 +152,18 @@ void rp2040_pio_spi_initBus()
   tft_hardReset(TFT_SPI_RST);
 }
 
+void tft_setBUSWriteMode()
+{
+  use_fifo_for_writing(*pio_spi_0.pio_sm);
+  pio_spi_0.START_SEND_8();
+}
+
+void tft_setBUSReadMode()
+{
+  use_fifo_for_reading(*pio_spi_0.pio_sm);
+  pio_spi_0.START_READ_8();
+}
+
 
 
 
@@ -174,10 +188,23 @@ void tft_write_begin()
   pio_spi_curr_clk_div = 0;
 }
 
+void tft_startWrite()
+{
+  rp2040_pio_spi_setClockDiv(TFT_PIO_SPI_WRITE_DIV);
+  PIO_CS_L;
+  tft_setBUSWriteMode();
+}
+
+void tft_endWrite()
+{
+  PIO_CS_H;
+}
+
 void tft_startWriteCmd()
 {
   rp2040_pio_spi_setClockDiv(TFT_PIO_SPI_WRITE_DIV);
   PIO_CS_L;
+  tft_setBUSWriteMode();
 }
 
 void tft_sendCmd(const uint8_t cmd)
@@ -207,11 +234,11 @@ void tft_sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t len)
 void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h)
 {
   PIO_ADDR_W;
-  PIO_TX_FIFO(TFT_CASET);
-  PIO_TX_FIFO( (x << 16) | (x + w  - 1));
-  PIO_TX_FIFO(TFT_PASET);
-  PIO_TX_FIFO( (y << 16) | (y + h - 1));
-  PIO_TX_FIFO(TFT_RAMWR);
+  PIO_TX_FIFO = TFT_CASET;
+  PIO_TX_FIFO = (x << 16) | (x + w  - 1);
+  PIO_TX_FIFO = TFT_PASET;
+  PIO_TX_FIFO = (y << 16) | (y + h - 1);
+  PIO_TX_FIFO = TFT_RAMWR;
   PIO_WAIT_FOR_STALL;
 /*
   PIO_DC_C;
@@ -250,8 +277,8 @@ void tft_sendMDTColor(const mdt_t c, int32_t len)
     pio_load_program(p.pio, pio_spi_mdt_block_16_program.instructions, pio_spi_offset_chunk, pio_spi_mdt_block_16_program.length);
     PIO_START_CHUNK;
     PIO_SM_ENABLE(p.pio, p.sm);
-    PIO_TX_FIFO(c);
-    PIO_TX_FIFO(len-1); // Decrement first as PIO sends n+1
+    PIO_TX_FIFO = c;
+    PIO_TX_FIFO = len-1; // Decrement first as PIO sends n+1
     PIO_WAIT_FOR_STALL;
     PIO_SM_DISABLE(p.pio, p.sm);
     pio_load_program(p.pio, pio_spi_program.instructions, pio_spi_offset_chunk, pio_spi_program.length);
@@ -272,8 +299,8 @@ void tft_sendMDTColor(const mdt_t c, int32_t len)
     pio_load_program(p.pio, pio_spi_mdt_block_24_program.instructions, pio_spi_offset_chunk, pio_spi_mdt_block_24_program.length);
     PIO_START_CHUNK;
     PIO_SM_ENABLE(p.pio, p.sm);
-    PIO_TX_FIFO(c);
-    PIO_TX_FIFO(len-1); // Decrement first as PIO sends n+1
+    PIO_TX_FIFO = c;
+    PIO_TX_FIFO = len-1; // Decrement first as PIO sends n+1
     PIO_WAIT_FOR_STALL;
     PIO_SM_DISABLE(p.pio, p.sm);
     pio_load_program(p.pio, pio_spi_program.instructions, pio_spi_offset_chunk, pio_spi_program.length);
@@ -302,17 +329,17 @@ void tft_sendMDTBuffer16(const uint8_t* p, int32_t len)
   while (len >= 5) {
     // 5 seems to be the optimum for maximum transfer rate
     PIO_WAIT_FOR_FIFO_FREE(5);
-    PIO_TX_FIFO(fetch_16(p)); p += 2;
-    PIO_TX_FIFO(fetch_16(p)); p += 2;
-    PIO_TX_FIFO(fetch_16(p)); p += 2;
-    PIO_TX_FIFO(fetch_16(p)); p += 2;
-    PIO_TX_FIFO(fetch_16(p)); p += 2;
+    PIO_TX_FIFO = fetch_16(p); p += 2;
+    PIO_TX_FIFO = fetch_16(p); p += 2;
+    PIO_TX_FIFO = fetch_16(p); p += 2;
+    PIO_TX_FIFO = fetch_16(p); p += 2;
+    PIO_TX_FIFO = fetch_16(p); p += 2;
     len -= 5;
   }
 
   while (--len >= 0) {
     PIO_WAIT_FOR_FIFO_FREE(1);
-    PIO_TX_FIFO(fetch_16(p)); p += 2;
+    PIO_TX_FIFO = fetch_16(p); p += 2;
   }
 }
 
@@ -330,18 +357,85 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
   while (len >= 5) {
     // 5 seems to be the optimum for maximum transfer rate
     PIO_WAIT_FOR_FIFO_FREE(5);
-    PIO_TX_FIFO(fetch_24(p)); p += 3;
-    PIO_TX_FIFO(fetch_24(p)); p += 3;
-    PIO_TX_FIFO(fetch_24(p)); p += 3;
-    PIO_TX_FIFO(fetch_24(p)); p += 3;
-    PIO_TX_FIFO(fetch_24(p)); p += 3;
+    PIO_TX_FIFO = fetch_24(p); p += 3;
+    PIO_TX_FIFO = fetch_24(p); p += 3;
+    PIO_TX_FIFO = fetch_24(p); p += 3;
+    PIO_TX_FIFO = fetch_24(p); p += 3;
+    PIO_TX_FIFO = fetch_24(p); p += 3;
     len -= 5;
   }
 
   while (--len >= 0) {
     PIO_WAIT_FOR_FIFO_FREE(1);
-    PIO_TX_FIFO(fetch_24(p)); p += 3;
+    PIO_TX_FIFO = fetch_24(p); p += 3;
   }
+}
+
+
+
+// ---- the DMA --------------------------------------------------------------
+
+void DMA_END_WRITTING() {
+}
+
+volatile void* DMA_WRITE_ADDR() {
+  return &PIO_TX_FIFO;
+}
+
+uint DMA_DREQ() {
+  return pio_get_dreq(pio_spi_0.pio, pio_spi_0.sm, true);
+}
+
+
+// ---- the DMA --------------------------------------------------------------
+
+  bool                dma_enabled;
+  int32_t             dma_tx_channel;
+  dma_channel_config  dma_tx_config;
+
+bool TFT_SCREEN::dmaBusy() {
+  if (!dma_enabled) return false;
+  if (dma_channel_is_busy(dma_tx_channel)) return true;
+  DMA_END_WRITTING();
+  return false;
+}
+
+void TFT_SCREEN::dmaWait() {
+  while (dma_channel_is_busy(dma_tx_channel));
+  DMA_END_WRITTING();
+}
+
+void TFT_SCREEN::dma_sendMDTBuffer16(const uint8_t* buff, const int32_t len)
+{
+  if (!dma_enabled) return;
+  if (len <= 0) return;
+  dmaWait(); // In case we did not wait earlier
+  channel_config_set_bswap(&dma_tx_config, true); // !_swapBytes
+  dma_channel_configure(dma_tx_channel, &dma_tx_config, DMA_WRITE_ADDR(), (uint16_t*)buff, len, true);
+}
+
+bool TFT_SCREEN::initDMA()
+{
+  if (dma_enabled) return false;
+
+  dma_tx_channel = dma_claim_unused_channel(false);
+
+  if (dma_tx_channel < 0) return false;
+
+  dma_tx_config = dma_channel_get_default_config(dma_tx_channel);
+
+  channel_config_set_transfer_data_size(&dma_tx_config, DMA_SIZE_16);
+  channel_config_set_dreq(&dma_tx_config, DMA_DREQ());
+
+  dma_enabled = true;
+  return true;
+}
+
+void TFT_SCREEN::deInitDMA()
+{
+  if (!dma_enabled) return;
+  dma_channel_unclaim(dma_tx_channel);
+  dma_enabled = false;
 }
 
 
@@ -350,18 +444,6 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
 // read
 
 #if defined(TFT_PIO_SPI_READ)
-
-void tft_setBUSReadMode()
-{
-  use_fifo_for_reading(*pio_spi_0.pio_sm);
-  pio_spi_0.START_READ_8();
-}
-
-void tft_setBUSWriteMode()
-{
-  use_fifo_for_writing(*pio_spi_0.pio_sm);
-  pio_spi_0.START_SEND_8();
-}
 
 void tft_read_begin()
 {
@@ -382,11 +464,11 @@ void tft_endReading()
 void tft_readAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h)
 {
   PIO_ADDR_W;
-  PIO_TX_FIFO(TFT_CASET);
-  PIO_TX_FIFO( (x << 16) | (x + w  - 1));
-  PIO_TX_FIFO(TFT_PASET);
-  PIO_TX_FIFO( (y << 16) | (y + h - 1));
-  PIO_TX_FIFO(TFT_RAMRD);
+  PIO_TX_FIFO = TFT_CASET;
+  PIO_TX_FIFO = (x << 16) | (x + w  - 1);
+  PIO_TX_FIFO = TFT_PASET;
+  PIO_TX_FIFO = (y << 16) | (y + h - 1);
+  PIO_TX_FIFO = TFT_RAMRD;
   PIO_WAIT_FOR_STALL;
 /*
   PIO_DC_C;

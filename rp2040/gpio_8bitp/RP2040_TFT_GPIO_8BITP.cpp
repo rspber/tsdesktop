@@ -11,6 +11,7 @@
 
   #include "RP2040_TFT_GPIO_8BITP.h"
   #include <api/Common.h>
+  #include "TFT_SCREEN.h"
 
   #define TFT_CASET       0x2A    // Column address set
   #define TFT_PASET       0x2B    // Page address set
@@ -152,6 +153,33 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
     GPIO_SEND_8(*p++);
   }
 }
+
+
+
+// ---- the DMA --------------------------------------------------------------
+
+// not implemented yet
+
+bool TFT_SCREEN::dmaBusy() {
+  return false;
+}
+
+void TFT_SCREEN::dmaWait() {
+}
+
+void TFT_SCREEN::dma_sendMDTBuffer16(const uint8_t* buff, const int32_t len)
+{
+}
+
+bool TFT_SCREEN::initDMA()
+{
+  return true;
+}
+
+void TFT_SCREEN::deInitDMA()
+{
+}
+
 
 #endif
 

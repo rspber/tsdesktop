@@ -20,6 +20,7 @@
   #include "pio_8bitp_mdt_block_24.pio.h"
   #include "hardware/clocks.h"
   #include <api/Common.h>
+  #include "TFT_SCREEN.h"
 
   #define TFT_CASET       0x2A    // Column address set
   #define TFT_PASET       0x2B    // Page address set
@@ -179,6 +180,17 @@ void tft_write_begin()
   pio_8bitp_freq_set = false;
 }
 
+void tft_startWrite()
+{
+  rp2040_pio_8bitp_setFreq();
+  PIO_CS_L;
+}
+
+void tft_endWrite()
+{
+  PIO_CS_H;
+}
+
 void tft_startWriteCmd()
 {
   rp2040_pio_8bitp_setFreq();
@@ -212,11 +224,11 @@ void tft_sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t len)
 void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h)
 {
   PIO_ADDR_W;
-  PIO_TX_FIFO(TFT_CASET);
-  PIO_TX_FIFO( (x << 16) | (x + w  - 1));
-  PIO_TX_FIFO(TFT_PASET);
-  PIO_TX_FIFO( (y << 16) | (y + h - 1));
-  PIO_TX_FIFO(TFT_RAMWR);
+  PIO_TX_FIFO = TFT_CASET;
+  PIO_TX_FIFO = (x << 16) | (x + w  - 1);
+  PIO_TX_FIFO = TFT_PASET;
+  PIO_TX_FIFO = (y << 16) | (y + h - 1);
+  PIO_TX_FIFO = TFT_RAMWR;
   PIO_WAIT_FOR_STALL;
 /*
   PIO_DC_C;
@@ -255,8 +267,8 @@ void tft_sendMDTColor(const mdt_t c, int32_t len)
     pio_load_program(p.pio, pio_8bitp_mdt_block_16_program.instructions, pio_8bitp_offset_chunk, pio_8bitp_mdt_block_16_program.length);
     PIO_START_CHUNK;
     PIO_SM_ENABLE(p.pio, p.sm);
-    PIO_TX_FIFO(c);
-    PIO_TX_FIFO(len-1); // Decrement first as PIO sends n+1
+    PIO_TX_FIFO = c;
+    PIO_TX_FIFO = len-1; // Decrement first as PIO sends n+1
     PIO_WAIT_FOR_STALL;
     PIO_SM_DISABLE(p.pio, p.sm);
     pio_load_program(p.pio, pio_8bitp_program.instructions, pio_8bitp_offset_chunk, pio_8bitp_program.length);
@@ -277,8 +289,8 @@ void tft_sendMDTColor(const mdt_t c, int32_t len)
     pio_load_program(p.pio, pio_8bitp_mdt_block_24_program.instructions, pio_8bitp_offset_chunk, pio_8bitp_mdt_block_24_program.length);
     PIO_START_CHUNK;
     PIO_SM_ENABLE(p.pio, p.sm);
-    PIO_TX_FIFO(c);
-    PIO_TX_FIFO(len-1); // Decrement first as PIO sends n+1
+    PIO_TX_FIFO = c;
+    PIO_TX_FIFO = len-1; // Decrement first as PIO sends n+1
     PIO_WAIT_FOR_STALL;
     PIO_SM_DISABLE(p.pio, p.sm);
     pio_load_program(p.pio, pio_8bitp_program.instructions, pio_8bitp_offset_chunk, pio_8bitp_program.length);
@@ -307,17 +319,17 @@ void tft_sendMDTBuffer16(const uint8_t* p, int32_t len)
   while (len >= 5) {
     // 5 seems to be the optimum for maximum transfer rate
     PIO_WAIT_FOR_FIFO_FREE(5);
-    PIO_TX_FIFO(fetch_16(p)); p += 2;
-    PIO_TX_FIFO(fetch_16(p)); p += 2;
-    PIO_TX_FIFO(fetch_16(p)); p += 2;
-    PIO_TX_FIFO(fetch_16(p)); p += 2;
-    PIO_TX_FIFO(fetch_16(p)); p += 2;
+    PIO_TX_FIFO = fetch_16(p); p += 2;
+    PIO_TX_FIFO = fetch_16(p); p += 2;
+    PIO_TX_FIFO = fetch_16(p); p += 2;
+    PIO_TX_FIFO = fetch_16(p); p += 2;
+    PIO_TX_FIFO = fetch_16(p); p += 2;
     len -= 5;
   }
 
   while (--len >= 0) {
     PIO_WAIT_FOR_FIFO_FREE(1);
-    PIO_TX_FIFO(fetch_16(p)); p += 2;
+    PIO_TX_FIFO = fetch_16(p); p += 2;
   }
 }
 
@@ -335,18 +347,44 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
   while (len >= 5) {
     // 5 seems to be the optimum for maximum transfer rate
     PIO_WAIT_FOR_FIFO_FREE(5);
-    PIO_TX_FIFO(fetch_24(p)); p += 3;
-    PIO_TX_FIFO(fetch_24(p)); p += 3;
-    PIO_TX_FIFO(fetch_24(p)); p += 3;
-    PIO_TX_FIFO(fetch_24(p)); p += 3;
-    PIO_TX_FIFO(fetch_24(p)); p += 3;
+    PIO_TX_FIFO = fetch_24(p); p += 3;
+    PIO_TX_FIFO = fetch_24(p); p += 3;
+    PIO_TX_FIFO = fetch_24(p); p += 3;
+    PIO_TX_FIFO = fetch_24(p); p += 3;
+    PIO_TX_FIFO = fetch_24(p); p += 3;
     len -= 5;
   }
 
   while (--len >= 0) {
     PIO_WAIT_FOR_FIFO_FREE(1);
-    PIO_TX_FIFO(fetch_24(p)); p += 3;
+    PIO_TX_FIFO = fetch_24(p); p += 3;
   }
+}
+
+
+
+// ---- the DMA --------------------------------------------------------------
+
+// not implemented yet
+
+bool TFT_SCREEN::dmaBusy() {
+  return false;
+}
+
+void TFT_SCREEN::dmaWait() {
+}
+
+void TFT_SCREEN::dma_sendMDTBuffer16(const uint8_t* buff, const int32_t len)
+{
+}
+
+bool TFT_SCREEN::initDMA()
+{
+  return true;
+}
+
+void TFT_SCREEN::deInitDMA()
+{
 }
 
 

@@ -71,7 +71,7 @@
   #define PIO_DC_C pio_8bitp_0.DC_C()
   #define PIO_DC_D pio_8bitp_0.DC_D()
 
-  #define PIO_TX_FIFO(d)   TX_FIFO(pio_8bitp_0.pio, pio_8bitp_0.sm, d)
+  #define PIO_TX_FIFO   TX_FIFO(pio_8bitp_0.pio, pio_8bitp_0.sm)
 
   #define PIO_ADDR_W   PIO_WAIT_FOR_STALL; pio_8bitp_0.START_CHUNK()
 
@@ -85,7 +85,7 @@
 //  #define PIO_WAIT_FOR_FIFO_1_FREE WAIT_FOR_FIFO_1_FREE(pio_8bitp_0.pio, pio_8bitp_0.sm)
 //  #define PIO_WAIT_FOR_FIFO_EMPTY  WAIT_FOR_FIFO_EMPTY(pio_8bitp_0.pio, pio_8bitp_0.sm)
 
-  #define PIO_SEND(d) PIO_WAIT_FOR_FIFO_FREE(1); PIO_TX_FIFO(d)
+  #define PIO_SEND(d) PIO_WAIT_FOR_FIFO_FREE(1); PIO_TX_FIFO = d
 
 
 // write
@@ -100,16 +100,8 @@
 
   void rp2040_pio_8bitp_setFreq();
 
-  inline void tft_startWrite()
-  {
-    rp2040_pio_8bitp_setFreq();
-    PIO_CS_L;
-  }
-
-  inline void tft_endWrite()
-  {
-    PIO_CS_H;
-  }
+  void tft_startWrite();
+  void tft_endWrite();
 
   void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h);
 
