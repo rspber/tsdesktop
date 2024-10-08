@@ -198,6 +198,7 @@ void tft_startWrite()
 void tft_endWrite()
 {
   PIO_CS_H;
+  tft_setBUSReadMode();
 }
 
 void tft_startWriteCmd()
