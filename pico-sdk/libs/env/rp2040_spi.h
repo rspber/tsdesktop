@@ -15,6 +15,8 @@
 // section 3:  spi1 gpio's: RX(MISO) 12, CS(available) 13, SCK(CLK) 14, TX(MOSI) 15
 // section 4:  spi0 gpio's: RX(MISO) 16, CS(available) 17, SCK(CLK) 18, TX(MOSI) 19    // spi0 pico-sdk default
 
+#define SPI_MODE0 0
+
 void setup_spi(const uint8_t RX, const uint8_t SCK, const uint8_t TX, const uint8_t spi_nr);
 spi_inst_t* init_spi(const uint8_t spi_nr, const uint Hz);
 void deinit_spi(spi_inst_t* spi);

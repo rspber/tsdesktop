@@ -8,5 +8,6 @@ target_sources(pio_8bitp INTERFACE
 
 target_link_libraries(pio_8bitp INTERFACE
   hardware_pio
+  hardware_dma
   tft
 )

@@ -9,5 +9,6 @@ target_sources(spi INTERFACE
 
 target_link_libraries(spi INTERFACE
   hardware_spi
+  hardware_dma
   tft
 )

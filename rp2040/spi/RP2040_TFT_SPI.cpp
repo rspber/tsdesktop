@@ -13,6 +13,7 @@
 #include <rp2040_spi.h>
 #include "hardware/spi.h"
 #include "hardware/dma.h"
+#include "hardware/gpio.h"
 #include "TFT_SCREEN.h"
 
 #define TFT_CASET       0x2A    // Column address set
