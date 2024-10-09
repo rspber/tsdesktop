@@ -191,3 +191,26 @@ i2c_inst_t* init_i2c(const uint8_t SDA, const uint8_t SCL, const uint8_t i2c_nr,
   return i2c;
 }
 
+// --------------------------------- Serial -----------------------------------
+
+bool SerialUSB::begin(const uint boudRate) {
+  return true;
+}
+
+void SerialUSB::print(const char* text) {
+
+}
+
+void SerialUSB::print(const uint number) {
+
+}
+
+void SerialUSB::println(const char* text) {
+
+}
+
+void SerialUSB::println(const uint number) {
+
+}
+
+SerialUSB Serial;

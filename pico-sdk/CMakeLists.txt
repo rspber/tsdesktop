@@ -52,3 +52,5 @@ add_subdirectory(examples/quadraball)
 add_subdirectory(examples/spider)
 add_subdirectory(examples/spider2)
 add_subdirectory(examples/idyll)
+add_subdirectory(examples/boing_ball)
+

@@ -10,5 +10,6 @@
 #pragma once
 
 #include <TFT_SCREEN.h>
+#include <Arduino.h>
 
 #define Display TFT_SCREEN

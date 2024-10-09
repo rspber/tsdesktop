@@ -10,3 +10,4 @@
 #include <api/Common.h>
 #include <api/itoa.h>
 #include <avr/dtostrf.h>
+#include "SerialUSB.h"

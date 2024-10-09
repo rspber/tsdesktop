@@ -192,20 +192,20 @@ void tft_startWrite()
 {
   rp2040_pio_spi_setClockDiv(TFT_PIO_SPI_WRITE_DIV);
   PIO_CS_L;
-  tft_setBUSWriteMode();
+//  tft_setBUSWriteMode();
 }
 
 void tft_endWrite()
 {
   PIO_CS_H;
-  tft_setBUSReadMode();
+//  tft_setBUSReadMode();
 }
 
 void tft_startWriteCmd()
 {
   rp2040_pio_spi_setClockDiv(TFT_PIO_SPI_WRITE_DIV);
   PIO_CS_L;
-  tft_setBUSWriteMode();
+//  tft_setBUSWriteMode();
 }
 
 void tft_sendCmd(const uint8_t cmd)
