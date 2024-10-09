@@ -13,6 +13,7 @@
 #include "SPI.h"
 #include "hardware/spi.h"
 #include "hardware/dma.h"
+#include "hardware/gpio.h"
 #include "TFT_SCREEN.h"
 
 #define TFT_CASET       0x2A    // Column address set
@@ -101,11 +102,11 @@ inline void spi_endSending()
   spi_get_hw(SPI_X)->icr = SPI_SSPICR_RORIC_BITS;
 }
 
-void setBUSWriteMode() {
+void tft_setBUSWriteMode() {
   spi_set_format(SPI_X,  8, (spi_cpol_t)(SPI_MODE0 >> 1), (spi_cpha_t)(SPI_MODE0 & 0x1), SPI_MSB_FIRST);
 }
 
-void setBUSReadMode() {
+void tft_setBUSReadMode() {
   spi_set_format(SPI_X,  8, (spi_cpol_t)0, (spi_cpha_t)0, SPI_MSB_FIRST);
 }
 
@@ -132,7 +133,7 @@ void tft_startWriteCmd()
 {
   rp2040_SPI->beginTransaction(settings_cmd);
   SPI_CS_L;
-  setBUSWriteMode();
+  tft_setBUSWriteMode();
 }
 
 void tft_sendCmd(const uint8_t cmd)
@@ -163,14 +164,14 @@ void tft_startWrite()
 {
   rp2040_SPI->beginTransaction(settings_write);
   SPI_CS_L;
-  setBUSWriteMode();
+  tft_setBUSWriteMode();
 }
 
 void tft_endWrite()
 {
   spi_endSending();
   SPI_CS_H;
-  setBUSReadMode();
+  tft_setBUSReadMode();
   rp2040_SPI->endTransaction();
 }
 

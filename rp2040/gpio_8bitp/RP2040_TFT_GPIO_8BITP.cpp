@@ -72,6 +72,18 @@ void tft_write_begin()
   rp2040_gpio_8bitp_initBus();
 }
 
+void tft_setBUSWriteMode()
+{
+  gpio_oe |= (0xff << TFT_8BITP_D0);
+  sio_hw->gpio_oe = gpio_oe;
+}
+
+void tft_setBUSReadMode()
+{
+  gpio_oe &= ~(0xff << TFT_8BITP_D0);
+  sio_hw->gpio_oe = gpio_oe;
+}
+
 void tft_startWriteCmd()
 {
   DATA_BUS_HIGH;

@@ -156,6 +156,7 @@ void tft_setBUSWriteMode()
 {
   use_fifo_for_writing(*pio_spi_0.pio_sm);
   pio_spi_0.START_SEND_8();
+  PIO_WAIT_FOR_STALL;
 }
 
 void tft_setBUSReadMode()
@@ -192,7 +193,7 @@ void tft_startWrite()
 {
   rp2040_pio_spi_setClockDiv(TFT_PIO_SPI_WRITE_DIV);
   PIO_CS_L;
-//  tft_setBUSWriteMode();
+  tft_setBUSWriteMode();
 }
 
 void tft_endWrite()
@@ -205,7 +206,7 @@ void tft_startWriteCmd()
 {
   rp2040_pio_spi_setClockDiv(TFT_PIO_SPI_WRITE_DIV);
   PIO_CS_L;
-//  tft_setBUSWriteMode();
+  tft_setBUSWriteMode();
 }
 
 void tft_sendCmd(const uint8_t cmd)
@@ -240,7 +241,6 @@ void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, cons
   PIO_TX_FIFO = TFT_PASET;
   PIO_TX_FIFO = (y << 16) | (y + h - 1);
   PIO_TX_FIFO = TFT_RAMWR;
-  PIO_WAIT_FOR_STALL;
 /*
   PIO_DC_C;
   PIO_SEND_8(TFT_CASET);

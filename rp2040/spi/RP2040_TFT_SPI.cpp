@@ -88,11 +88,11 @@ inline void spi_endSending()
   spi_get_hw(SPI_X)->icr = SPI_SSPICR_RORIC_BITS;
 }
 
-void setBUSWriteMode() {
+void tft_setBUSWriteMode() {
   spi_set_format(SPI_X,  8, (spi_cpol_t)(SPI_MODE0 >> 1), (spi_cpha_t)(SPI_MODE0 & 0x1), SPI_MSB_FIRST);
 }
 
-void setBUSReadMode() {
+void tft_setBUSReadMode() {
   spi_set_format(SPI_X,  8, (spi_cpol_t)0, (spi_cpha_t)0, SPI_MSB_FIRST);
 }
 
@@ -118,7 +118,7 @@ void tft_startWriteCmd()
 {
   set_spi_speed(rp2040_spi, TFT_SPI_SETUP_SPEED);
   SPI_CS_L;
-  setBUSWriteMode();
+  tft_setBUSWriteMode();
 }
 
 void tft_sendCmd(const uint8_t cmd)
@@ -149,14 +149,14 @@ void tft_startWrite()
 {
   set_spi_speed(rp2040_spi, TFT_SPI_WRITE_SPEED);
   SPI_CS_L;
-  setBUSWriteMode();
+  tft_setBUSWriteMode();
 }
 
 void tft_endWrite()
 {
   spi_endSending();
   SPI_CS_H;
-  setBUSReadMode();
+  tft_setBUSReadMode();
 }
 
 void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h)

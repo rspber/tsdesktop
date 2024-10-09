@@ -90,6 +90,9 @@
 
   const char* tft_identification();
 
+  void tft_setBUSWriteMode();
+  void tft_setBUSReadMode();
+
   void tft_startWriteCmd();
   void tft_sendCmd(const uint8_t cmd);
   void tft_sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t len);
@@ -137,18 +140,6 @@
   void tft_readAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h);
 
   extern uint32_t gpio_oe;
-
-  inline void tft_setBUSWriteMode()
-  {
-    gpio_oe |= (0xff << TFT_8BITP_D0);
-    sio_hw->gpio_oe = gpio_oe;
-  }
-
-  inline void tft_setBUSReadMode()
-  {
-    gpio_oe &= ~(0xff << TFT_8BITP_D0);
-    sio_hw->gpio_oe = gpio_oe;
-  }
 
   inline uint32_t whatsUp_gpio() { return sio_hw->gpio_in; }
 
