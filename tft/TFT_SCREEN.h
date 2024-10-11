@@ -107,7 +107,9 @@ public:
   void sendMDTBuffer16(const uint8_t* buffer, const int32_t len);
   void sendMDTBuffer24(const uint8_t* buffer, const int32_t len);
 
-  bool initDMA();
+// --- the DMA ---------------------------------------------------------------
+
+  bool initDMA(bool ctrl_cs = 0);
   void deInitDMA();
   void startUsingDMA();
   void endUsingDMA();
@@ -115,12 +117,10 @@ public:
 private:
   void writeMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer);
 
-#ifdef USE_DMA
   bool dmaBusy();
   void dmaWait();
   void dma_sendMDTBuffer16(const uint8_t* buff, const int32_t len);
 
   bool dma_enabled;
-#endif
   bool useDMA;
 };

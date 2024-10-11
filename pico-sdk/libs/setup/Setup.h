@@ -29,6 +29,8 @@
 
 // --------------------------- User Setups -----------------------------------
 
+#define USE_DMA
+
 //  #include <Setup_RP2040_GPIO_8BITP_ILI9488.h>
 //  #include <Setup_RP2040_GPIO_8BITP_ILI9488_1.h>
 //  #include <Setup_RP2040_GPIO_8BITP_RM68140.h>
