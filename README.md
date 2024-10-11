@@ -19,7 +19,7 @@ The connections should be made straight from A to B with the wires in the protec
 ### News
 
 ### Supported protocols:
-#### Write:
+#### WRITE:
 * 4 wire SPI 8x bit, 8bit parallel
 <table>
   <tr><th/><th>SPI</th><th>SPI-DMA</th><th>8BIT-GPIO</th></tr>
@@ -38,7 +38,7 @@ The connections should be made straight from A to B with the wires in the protec
 
 * 16 bit parallel - not implemented yet<br />
 
-#### Read:
+#### READ:
 
 * 4 wire SPI 8x bit, 8bit parallel
 <table>
@@ -53,7 +53,7 @@ The connections should be made straight from A to B with the wires in the protec
   <tr><td>RP2040</td><td>Yes</td><td>No</td></tr>
 </table>
 
-#### Touch:
+#### TOUCH:
 
 *4 wire SPI xpt2046, parallel ?bit attached resistive=spfd5408 ?
 
