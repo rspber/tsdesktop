@@ -28,21 +28,14 @@ WRITE:<br />
   <tr><td>PIC32</td><td>Yes</td><td>No</td><td>No</td></tr>
 </table>
 
-* 4 wire SPI 8x bit, 8bit parallel<br />
-<br />
- __________________________________________________<br />
-    PIO-SPI  PIO-SPI-DMA  8BIT-PIO  8BIT-PIO-DMA<br />
- __________________________________________________<br />
-RP2040  Yes       y? /No       Yes            No<br />
- __________________________________________________<br />
-<br />
-* 4 wire SPI 18 bit - not implemented yet<br />
-<br />
-* 16 bit parallel - not implemented yet<br />
-<br />
-------<br />
+* 4 wire SPI 8x bit, 8bit parallel
+<table>
+  <tr><th/><th>PIO-SPI</th><th>PIO-SPI-DMA</th><th>8BIT-PIO</th><th>8BIT-PIO-DMA</th></tr>
+  <tr><td>RP2040</td><td>YES</td><td>y? /No</td><td>Yes</td><td>No</td></tr>
+</table>
+* 4 wire SPI 18 bit - not implemented yet
+* 16 bit parallel - not implemented yet
 READ:<br />
-<br />
 * 4 wire SPI 8x bit, 8bit parallel<br />
  __________________________________________________<br />
          SPI   8BIT GPIO<br />
