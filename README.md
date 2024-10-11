@@ -18,18 +18,17 @@ The connections should be made straight from A to B with the wires in the protec
 
 ### News
 
-#Supported protocols:
-WRITE:
-*4 wire SPI 8x bit, 8bit parallel
+# Supported protocols:
+WRITE:<br />
+* 4 wire SPI 8x bit, 8bit parallel
 <table>
   <tr><th/><th>SPI</th><th>SPI-DMA</th><th>8BIT-GPIO</th></tr>
   <tr><td>RP2040</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
   <tr><td>ESP32</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-  <tr><td>ESP32</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
   <tr><td>PIC32</td><td>Yes</td><td>No</td><td>No</td></tr>
 </table>
 
-*4 wire SPI 8x bit, 8bit parallel<br />
+* 4 wire SPI 8x bit, 8bit parallel<br />
 <br />
  __________________________________________________<br />
     PIO-SPI  PIO-SPI-DMA  8BIT-PIO  8BIT-PIO-DMA<br />
@@ -37,14 +36,14 @@ WRITE:
 RP2040  Yes       y? /No       Yes            No<br />
  __________________________________________________<br />
 <br />
-*4 wire SPI 18 bit - not implemented yet<br />
+* 4 wire SPI 18 bit - not implemented yet<br />
 <br />
-*16 bit parallel - not implemented yet<br />
+* 16 bit parallel - not implemented yet<br />
 <br />
 ------<br />
 READ:<br />
 <br />
-*4 wire SPI 8x bit, 8bit parallel<br />
+* 4 wire SPI 8x bit, 8bit parallel<br />
  __________________________________________________<br />
          SPI   8BIT GPIO<br />
  __________________________________________________<br />
