@@ -56,6 +56,18 @@ void rp2040_gpio_8bitp_initBus()
   }
 }
 
+void tft_setBUSWriteMode()
+{
+  gpio_oe |= (0xff << TFT_8BITP_D0);
+  sio_hw->gpio_oe = gpio_oe;
+}
+
+void tft_setBUSReadMode()
+{
+  gpio_oe &= ~(0xff << TFT_8BITP_D0);
+  sio_hw->gpio_oe = gpio_oe;
+}
+
 #endif
 
 
@@ -71,16 +83,16 @@ void tft_write_begin()
   rp2040_gpio_8bitp_initBus();
 }
 
-void tft_setBUSWriteMode()
+void tft_startWrite()
 {
-  gpio_oe |= (0xff << TFT_8BITP_D0);
-  sio_hw->gpio_oe = gpio_oe;
+  DATA_BUS_HIGH;
+  GPIO_CS_L;
 }
 
-void tft_setBUSReadMode()
+void tft_endWrite()
 {
-  gpio_oe &= ~(0xff << TFT_8BITP_D0);
-  sio_hw->gpio_oe = gpio_oe;
+  DATA_BUS_HIGH;
+  GPIO_CS_H;
 }
 
 void tft_startWriteCmd()
@@ -169,27 +181,11 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
 
 // ---- the DMA --------------------------------------------------------------
 
-#if defined(RP2040_DMA)
-
   // not implemented yet
 
-  void DMA_END_WRITTING() {
-  }
-
-  volatile void* DMA_WRITE_ADDR() {
-    return 0;
-  }
-
-  uint DMA_DREQ() {
-    return 0;
-  }
-
-  #include <rp2040_dma.hh>
+  #include <TFT_NO_DMA.hh>
 
 #endif
-
-#endif
-
 
 
 

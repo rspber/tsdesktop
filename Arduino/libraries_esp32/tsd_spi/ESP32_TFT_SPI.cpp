@@ -17,8 +17,13 @@
 #include "ESP32_TFT_SPI.h"
 #include "SPI.h"
 #include "soc/spi_reg.h"
-//#include "driver/spi_master.h"
 #include <Arduino.h>
+
+#define TFT_CASET       0x2A    // Column address set
+#define TFT_PASET       0x2B    // Page address set
+#define TFT_RAMWR       0x2C    // Memory write
+#define TFT_RAMRD       0x2E    // Memory read
+#define TFT_IDXRD       0xD9    // undocumented
 
 /*
 ESP32:
@@ -61,7 +66,7 @@ SPI3_HOST = 2
 
   // Volatile for register reads:
   volatile uint32_t* _spi_cmd       = (volatile uint32_t*)(SPI_CMD_REG(SPI_PORT));
-//  volatile uint32_t* _spi_user      = (volatile uint32_t*)(SPI_USER_REG(SPI_PORT));
+  volatile uint32_t* _spi_user      = (volatile uint32_t*)(SPI_USER_REG(SPI_PORT));
   // Register writes only:
   volatile uint32_t* _spi_mosi_dlen = (volatile uint32_t*)(SPI_MOSI_DLEN_REG(SPI_PORT));
   volatile uint32_t* _spi_w         = (volatile uint32_t*)(SPI_W0_REG(SPI_PORT));
@@ -86,11 +91,21 @@ SPI3_HOST = 2
 
   SPIClass* esp32_SPI = &e_SPI_;
 
-#define TFT_CASET       0x2A    // Column address set
-#define TFT_PASET       0x2B    // Page address set
-#define TFT_RAMWR       0x2C    // Memory write
-#define TFT_RAMRD       0x2E    // Memory read
-#define TFT_IDXRD       0xD9    // undocumented
+void tft_setBUSWriteMode() {
+  #if TFT_SPI_MODE == SPI_MODE1 || TFT_SPI_MODE == SPI_MODE2
+    *_spi_user = SPI_USR_MOSI | SPI_CK_OUT_EDGE;
+  #else
+    *_spi_user = SPI_USR_MOSI;
+  #endif
+}
+
+void tft_setBUSReadMode() {
+  #if TFT_SPI_MODE == SPI_MODE1 || TFT_SPI_MODE == SPI_MODE2
+    *_spi_user = SPI_USR_MOSI | SPI_USR_MISO | SPI_DOUTDIN | SPI_CK_OUT_EDGE;
+  #else
+    *_spi_user = SPI_USR_MOSI | SPI_USR_MISO | SPI_DOUTDIN;
+  #endif
+}
 
   #if (TFT_SPI_DC >= 32)
     #define SPI_DC_C    GPIO_32_PIN_LOW(TFT_SPI_DC)
@@ -185,6 +200,7 @@ void tft_startWriteCmd()
 {
   esp32_SPI->beginTransaction(settings_cmd);
   SPI_CS_L;
+  tft_setBUSWriteMode();
 }
 
 void tft_sendCmd(const uint8_t cmd)
@@ -212,10 +228,12 @@ void tft_startWrite()
 {
   esp32_SPI->beginTransaction(settings_write);
   SPI_CS_L;
+  tft_setBUSWriteMode();
 }
 
 void tft_endWrite()
 {
+  tft_setBUSReadMode();
   SPI_CS_H;
   esp32_SPI->endTransaction();
 }
@@ -274,6 +292,17 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
   }
 }
 
+// ---- the DMA --------------------------------------------------------------
+
+#ifdef USE_DMA
+
+  #include <esp32_spi_dma.hh>
+
+#else
+
+  #include <TFT_NO_DMA.hh>
+
+#endif
 
 
 
@@ -294,6 +323,7 @@ void tft_endReading()
 {
   SPI_CS_H;
   esp32_SPI->endTransaction();
+  tft_setBUSWriteMode();
 }
 
 void tft_readAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h)

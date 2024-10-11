@@ -97,17 +97,8 @@
   void tft_sendCmd(const uint8_t cmd);
   void tft_sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t len);
 
-  inline void tft_startWrite()
-  {
-    DATA_BUS_HIGH;
-    GPIO_CS_L;
-  }
-
-  inline void tft_endWrite()
-  {
-    DATA_BUS_HIGH;
-    GPIO_CS_H;
-  }
+  void tft_startWrite();
+  void tft_endWrite();
 
   void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h);
 

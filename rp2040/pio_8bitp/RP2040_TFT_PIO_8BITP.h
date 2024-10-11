@@ -94,6 +94,9 @@
 
   const char* tft_identification();
 
+  void tft_setBUSWriteMode();
+  void tft_setBUSReadMode();
+
   void tft_startWriteCmd();
   void tft_sendCmd(const uint8_t cmd);
   void tft_sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t len);
@@ -109,12 +112,5 @@
   void tft_sendMDTColor(const mdt_t c, int32_t len);
   void tft_sendMDTBuffer16(const uint8_t* buffer, int32_t len);
   void tft_sendMDTBuffer24(const uint8_t* buffer, int32_t len);
-
-#ifndef TFT_GPIO_8BITP_READ
-
-  #define tft_setBUSWriteMode()
-  #define tft_setBUSReadMode()
-
-#endif
 
 #endif

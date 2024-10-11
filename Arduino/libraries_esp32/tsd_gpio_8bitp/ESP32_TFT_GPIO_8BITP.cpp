@@ -309,8 +309,13 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
   }
 }
 
-#endif
 
+
+// --- the DMA ---------------------------------------------------------------
+
+  #include <TFT_NO_DMA.hh>
+
+#endif
 
 
 

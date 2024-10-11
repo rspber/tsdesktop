@@ -239,7 +239,7 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
 
 // ---- the DMA --------------------------------------------------------------
 
-#if defined(RP2040_DMA)
+#ifdef USE_DMA
 
   // For SPI must also wait for FIFO to flush and reset format
   void DMA_END_WRITTING() {
@@ -257,7 +257,13 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
 
   #include <rp2040_dma.hh>
 
+#else
+
+  #include <TFT_NO_DMA.hh>
+
 #endif
+
+
 #endif
 
 

@@ -52,7 +52,7 @@ void TFT_SCREEN::setRotation(const uint8_t r, const uint8_t REV)
 
 void TFT_SCREEN::sendMDTBuffer16(const uint8_t* buffer, const int32_t len)
 {
-  if( useDMA ) {
+  if (useDMA) {
     dma_sendMDTBuffer16(buffer, len);
   }
   else {

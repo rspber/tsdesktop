@@ -1,8 +1,8 @@
 
+// ---- the DMA --------------------------------------------------------------
+
 #include "hardware/dma.h"
 #include <TFT_SCREEN.h>
-
-// ---- the DMA --------------------------------------------------------------
 
   bool                dma_enabled;
   int32_t             dma_tx_channel;
@@ -29,8 +29,10 @@ void TFT_SCREEN::dma_sendMDTBuffer16(const uint8_t* buff, const int32_t len)
   dma_channel_configure(dma_tx_channel, &dma_tx_config, DMA_WRITE_ADDR(), (uint16_t*)buff, len, true);
 }
 
-bool TFT_SCREEN::initDMA()
+bool TFT_SCREEN::initDMA(bool ctrl_cs)
 {
+  ctrl_cs = ctrl_cs;  // compiler warning value not used
+
   if (dma_enabled) return false;
 
   dma_tx_channel = dma_claim_unused_channel(false);

@@ -366,22 +366,6 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
 
 // not implemented yet
 
-#if defined(RP2040_DMA)
-
-  void DMA_END_WRITTING() {
-  }
-
-  volatile void* DMA_WRITE_ADDR() {
-    return 0;
-  }
-
-  uint DMA_DREQ() {
-    return 0;
-  }
-
-  #include <rp2040_dma.hh>
-
-
-#endif
+  #include <TFT_NO_DMA.hh>
 
 #endif

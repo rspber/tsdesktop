@@ -22,6 +22,9 @@
 
   const char* tft_identification();
 
+  void tft_setBUSWriteMode();
+  void tft_setBUSReadMode();
+
   void tft_startWriteCmd();
   void tft_sendCmd(const uint8_t cmd);
   void tft_sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size);
@@ -45,9 +48,6 @@
   void tft_endReading();
 
   void tft_readAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h);
-
-  #define tft_setBUSWriteMode()
-  #define tft_setBUSReadMode()
 
   const uint8_t tft_transfer(const uint8_t cmd);
   const uint16_t tft_transfer16(const uint8_t cmd);
