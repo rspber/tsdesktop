@@ -19,19 +19,16 @@ The connections should be made straight from A to B with the wires in the protec
 ### News
 
 #Supported protocols:
-<br />
-------<br />
-WRITE:<br />
-<br />
-*4 wire SPI 8x bit, 8bit parallel<br />
- __________________________________________________<br />
-         SPI  SPI-DMA  8BIT-GPIO<br />
- __________________________________________________<br />
-RP2040   Yes      Yes        Yes<br />
-ESP32    Yes      Yes        Yes<br />
-PIC32    Yes       No         No<br />
- __________________________________________________<br />
-<br />
+WRITE:
+*4 wire SPI 8x bit, 8bit parallel
+<table>
+  <tr><th/><th>SPI</th><th>SPI-DMA<th/><th>8BIT-GPIO<th/><tr/>
+  <tr><td>RP2040<td/><td>Yes</td><td>Yes<td/><td>Yes<td/><tr/>
+  <tr><td>ESP32<td/><td>Yes</td><td>Yes<td/><td>Yes<td/><tr/>
+  <tr><td>ESP32<td/><td>Yes</td><td>Yes<td/><td>Yes<td/><tr/>
+  <tr><td>PIC32<td/><td>Yes</td><td>No<td/><td>No<td/><tr/>
+</table>
+
 *4 wire SPI 8x bit, 8bit parallel<br />
 <br />
  __________________________________________________<br />
