@@ -31,44 +31,44 @@ WRITE:<br />
 * 4 wire SPI 8x bit, 8bit parallel
 <table>
   <tr><th/><th>PIO-SPI</th><th>PIO-SPI-DMA</th><th>8BIT-PIO</th><th>8BIT-PIO-DMA</th></tr>
-  <tr><td>RP2040</td><td>YES</td><td>y? /No</td><td>Yes</td><td>No</td></tr>
+  <tr><td>RP2040</td><td>Yes</td><td>y? /No</td><td>Yes</td><td>No</td></tr>
 </table>
-* 4 wire SPI 18 bit - not implemented yet
-* 16 bit parallel - not implemented yet
+
+* 4 wire SPI 18 bit - not implemented yet<br />
+
+* 16 bit parallel - not implemented yet<br />
+
 READ:<br />
-* 4 wire SPI 8x bit, 8bit parallel<br />
- __________________________________________________<br />
-         SPI   8BIT GPIO<br />
- __________________________________________________<br />
-RP2040   Yes         Yes<br />
-ESP32    Yes          No<br />
-PIC32    Yes          No<br />
- __________________________________________________<br />
-<br />
- __________________________________________________<br />
-      PIO-SPI  8BIT-PIO<br />
- __________________________________________________<br />
-RP2040    Yes        No<br />
- __________________________________________________<br />
-<br />
-------<br />
+
+* 4 wire SPI 8x bit, 8bit parallel
+<table>
+  <tr><th/><th>SPI</th><th>8BIT-GPIO</th></tr>
+  <tr><td>RP2040</td><td>Yes</td><td>Yes</td></tr>
+  <tr><td>ESP32</td><td>Yes</td><td>No</td></tr>
+  <tr><td>PIC32</td><td>Yes</td><td>No</td></tr>
+</table>
+
+<table>
+  <tr><th/><th>PIO-SPI</th><th>8BIT-PIO</th></tr>
+  <tr><td>RP2040</td><td>Yes</td><td>No</td></tr>
+</table>
+
 TOUCH:<br />
-<br />
-*4 wire SPI xpt2046, parallel ?bit attached resistive=spfd5408 ?<br />
- __________________________________________________<br />
-         SPI   8BIT GPIO<br />
- __________________________________________________<br />
-RP2040   Yes         Yes<br />
-ESP32    Yes         Yes<br />
-PIC32    Yes          No<br />
- __________________________________________________<br />
-<br />
- __________________________________________________<br />
-      PIO-SPI  8BIT-PIO<br />
- __________________________________________________<br />
-RP2040    Yes        No<br />
- __________________________________________________<br />
-<br />
+
+*4 wire SPI xpt2046, parallel ?bit attached resistive=spfd5408 ?
+
+<table>
+  <tr><th/><th>SPI</th><th>8BIT-GPIO</th></tr>
+  <tr><td>RP2040</td><td>Yes</td><td>Yes</td></tr>
+  <tr><td>ESP32</td><td>Yes</td><td>Yes</td></tr>
+  <tr><td>PIC32</td><td>Yes</td><td>No</td></tr>
+</table>
+
+<table>
+  <tr><th/><th>PIO-SPI</th><th>8BIT-PIO</th></tr>
+  <tr><td>RP2040</td><td>Yes</td><td>No</td></tr>
+</table>
+
 <br />
  Managed to run the "'Boing' ball demo" example in SPI from TFT_eSPI repository.<br />
  The key elements turned out to be the bus control procedures: setBUSWriteMode and setBUSReadMode.<br />
