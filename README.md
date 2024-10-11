@@ -18,77 +18,76 @@ The connections should be made straight from A to B with the wires in the protec
 
 ### News
 
-Supported protocols:
-
-.------
-.WRITE:
-.
-*4 wire SPI 8x bit, 8bit parallel
-. __________________________________________________
-.         SPI  SPI-DMA  8BIT-GPIO
-. __________________________________________________
-.RP2040   Yes      Yes        Yes
-.ESP32    Yes      Yes        Yes
-.PIC32    Yes       No         No
-. __________________________________________________
-.
-*4 wire SPI 8x bit, 8bit parallel
-.
-. __________________________________________________
-.    PIO-SPI  PIO-SPI-DMA  8BIT-PIO  8BIT-PIO-DMA
-. __________________________________________________
-.RP2040  Yes       y? /No       Yes            No
-. __________________________________________________
-.
-*4 wire SPI 18 bit - not implemented yet
-.
-*16 bit parallel - not implemented yet
-.
-.------
-.READ:
-.
-*4 wire SPI 8x bit, 8bit parallel
-. __________________________________________________
-.         SPI   8BIT GPIO
-. __________________________________________________
-.RP2040   Yes         Yes
-.ESP32    Yes          No
-.PIC32    Yes          No
-. __________________________________________________
-
-. __________________________________________________
-.      PIO-SPI  8BIT-PIO
-. __________________________________________________
-.RP2040    Yes        No
-. __________________________________________________
-.
-.------
-.TOUCH:
-.
-*4 wire SPI xpt2046, parallel ?bit attached resistive=spfd5408 ?
-. __________________________________________________
-.         SPI   8BIT GPIO
-. __________________________________________________
-.RP2040   Yes         Yes
-.ESP32    Yes         Yes
-.PIC32    Yes          No
-. __________________________________________________
-
-. __________________________________________________
-.      PIO-SPI  8BIT-PIO
-. __________________________________________________
-.RP2040    Yes        No
-. __________________________________________________
-.
-
-
-. Managed to run the "'Boing' ball demo" example in SPI from TFT_eSPI repository.
-. The key elements turned out to be the bus control procedures: setBUSWriteMode and setBUSReadMode.
-. The default Overlaid setting has been commented out so that it doesn't get in the way.
-. to be continued...
-.
-.
-.
+#Supported protocols:
+<br />
+------<br />
+WRITE:<br />
+<br />
+*4 wire SPI 8x bit, 8bit parallel<br />
+ __________________________________________________<br />
+         SPI  SPI-DMA  8BIT-GPIO<br />
+ __________________________________________________<br />
+RP2040   Yes      Yes        Yes<br />
+ESP32    Yes      Yes        Yes<br />
+PIC32    Yes       No         No<br />
+ __________________________________________________<br />
+<br />
+*4 wire SPI 8x bit, 8bit parallel<br />
+<br />
+ __________________________________________________<br />
+    PIO-SPI  PIO-SPI-DMA  8BIT-PIO  8BIT-PIO-DMA<br />
+ __________________________________________________<br />
+RP2040  Yes       y? /No       Yes            No<br />
+ __________________________________________________<br />
+<br />
+*4 wire SPI 18 bit - not implemented yet<br />
+<br />
+*16 bit parallel - not implemented yet<br />
+<br />
+------<br />
+READ:<br />
+<br />
+*4 wire SPI 8x bit, 8bit parallel<br />
+ __________________________________________________<br />
+         SPI   8BIT GPIO<br />
+ __________________________________________________<br />
+RP2040   Yes         Yes<br />
+ESP32    Yes          No<br />
+PIC32    Yes          No<br />
+ __________________________________________________<br />
+<br />
+ __________________________________________________<br />
+      PIO-SPI  8BIT-PIO<br />
+ __________________________________________________<br />
+RP2040    Yes        No<br />
+ __________________________________________________<br />
+<br />
+------<br />
+TOUCH:<br />
+<br />
+*4 wire SPI xpt2046, parallel ?bit attached resistive=spfd5408 ?<br />
+ __________________________________________________<br />
+         SPI   8BIT GPIO<br />
+ __________________________________________________<br />
+RP2040   Yes         Yes<br />
+ESP32    Yes         Yes<br />
+PIC32    Yes          No<br />
+ __________________________________________________<br />
+<br />
+ __________________________________________________<br />
+      PIO-SPI  8BIT-PIO<br />
+ __________________________________________________<br />
+RP2040    Yes        No<br />
+ __________________________________________________<br />
+<br />
+<br />
+ Managed to run the "'Boing' ball demo" example in SPI from TFT_eSPI repository.<br />
+ The key elements turned out to be the bus control procedures: setBUSWriteMode and setBUSReadMode.<br />
+ The default Overlaid setting has been commented out so that it doesn't get in the way.<br />
+ to be continued...<br />
+<br />
+<br />
+<br />
 
 * rp2350 pio compatibility
 
