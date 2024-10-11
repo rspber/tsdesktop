@@ -121,5 +121,6 @@ private:
   void dmaWait();
   void dma_sendMDTBuffer16(const uint8_t* buff, const int32_t len);
 
+  bool dma_enabled;
   bool useDMA;
 };

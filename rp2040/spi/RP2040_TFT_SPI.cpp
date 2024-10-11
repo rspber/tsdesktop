@@ -242,7 +242,6 @@ uint DMA_DREQ() {
 
 // ---- the DMA --------------------------------------------------------------
 
-  bool                dma_enabled;
   int32_t             dma_tx_channel;
   dma_channel_config  dma_tx_config;
 

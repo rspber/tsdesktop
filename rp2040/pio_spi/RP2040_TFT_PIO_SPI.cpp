@@ -16,8 +16,6 @@
 
   #include "RP2040_TFT_PIO_SPI.h"
   #include "pio_spi.pio.h"
-  #include "hardware/dma.h"
-  #include "TFT_SCREEN.h"
   #include "pio_spi_mdt_block_16.pio.h"
   #include "pio_spi_mdt_block_24.pio.h"
   #include "hardware/clocks.h"
@@ -156,7 +154,6 @@ void tft_setBUSWriteMode()
 {
   use_fifo_for_writing(*pio_spi_0.pio_sm);
   pio_spi_0.START_SEND_8();
-  PIO_WAIT_FOR_STALL;
 }
 
 void tft_setBUSReadMode()
@@ -198,8 +195,8 @@ void tft_startWrite()
 
 void tft_endWrite()
 {
-  PIO_CS_H;
 //  tft_setBUSReadMode();
+  PIO_CS_H;
 }
 
 void tft_startWriteCmd()
@@ -214,8 +211,7 @@ void tft_sendCmd(const uint8_t cmd)
   PIO_DC_C;
   PIO_CS_H;
   PIO_CS_L;
-  PIO_START_SEND_8;
-  PIO_SEND(cmd);
+  PIO_SEND_8(cmd);
   PIO_DC_D;
 }
 
@@ -376,68 +372,22 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
 
 // ---- the DMA --------------------------------------------------------------
 
-void DMA_END_WRITTING() {
-}
+#if defined(RP2040_DMA)
 
-volatile void* DMA_WRITE_ADDR() {
-  return &PIO_TX_FIFO;
-}
+  void DMA_END_WRITTING() {
+  }
 
-uint DMA_DREQ() {
-  return pio_get_dreq(pio_spi_0.pio, pio_spi_0.sm, true);
-}
+  volatile void* DMA_WRITE_ADDR() {
+    return &PIO_TX_FIFO;
+  }
 
+  uint DMA_DREQ() {
+    return pio_get_dreq(pio_spi_0.pio, pio_spi_0.sm, true);
+  }
 
-// ---- the DMA --------------------------------------------------------------
+  #include <rp2040_dma.hh>
 
-  bool                dma_enabled;
-  int32_t             dma_tx_channel;
-  dma_channel_config  dma_tx_config;
-
-bool TFT_SCREEN::dmaBusy() {
-  if (!dma_enabled) return false;
-  if (dma_channel_is_busy(dma_tx_channel)) return true;
-  DMA_END_WRITTING();
-  return false;
-}
-
-void TFT_SCREEN::dmaWait() {
-  while (dma_channel_is_busy(dma_tx_channel));
-  DMA_END_WRITTING();
-}
-
-void TFT_SCREEN::dma_sendMDTBuffer16(const uint8_t* buff, const int32_t len)
-{
-  if (!dma_enabled) return;
-  if (len <= 0) return;
-  dmaWait(); // In case we did not wait earlier
-  channel_config_set_bswap(&dma_tx_config, true); // !_swapBytes
-  dma_channel_configure(dma_tx_channel, &dma_tx_config, DMA_WRITE_ADDR(), (uint16_t*)buff, len, true);
-}
-
-bool TFT_SCREEN::initDMA()
-{
-  if (dma_enabled) return false;
-
-  dma_tx_channel = dma_claim_unused_channel(false);
-
-  if (dma_tx_channel < 0) return false;
-
-  dma_tx_config = dma_channel_get_default_config(dma_tx_channel);
-
-  channel_config_set_transfer_data_size(&dma_tx_config, DMA_SIZE_16);
-  channel_config_set_dreq(&dma_tx_config, DMA_DREQ());
-
-  dma_enabled = true;
-  return true;
-}
-
-void TFT_SCREEN::deInitDMA()
-{
-  if (!dma_enabled) return;
-  dma_channel_unclaim(dma_tx_channel);
-  dma_enabled = false;
-}
+#endif
 
 
 

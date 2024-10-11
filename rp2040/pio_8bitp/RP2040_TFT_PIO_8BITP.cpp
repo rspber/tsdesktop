@@ -20,7 +20,6 @@
   #include "pio_8bitp_mdt_block_24.pio.h"
   #include "hardware/clocks.h"
   #include <api/Common.h>
-  #include "TFT_SCREEN.h"
 
   #define TFT_CASET       0x2A    // Column address set
   #define TFT_PASET       0x2B    // Page address set
@@ -367,25 +366,22 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
 
 // not implemented yet
 
-bool TFT_SCREEN::dmaBusy() {
-  return false;
-}
+#if defined(RP2040_DMA)
 
-void TFT_SCREEN::dmaWait() {
-}
+  void DMA_END_WRITTING() {
+  }
 
-void TFT_SCREEN::dma_sendMDTBuffer16(const uint8_t* buff, const int32_t len)
-{
-}
+  volatile void* DMA_WRITE_ADDR() {
+    return 0;
+  }
 
-bool TFT_SCREEN::initDMA()
-{
-  return true;
-}
+  uint DMA_DREQ() {
+    return 0;
+  }
 
-void TFT_SCREEN::deInitDMA()
-{
-}
+  #include <rp2040_dma.hh>
 
+
+#endif
 
 #endif

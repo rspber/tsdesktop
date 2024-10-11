@@ -92,6 +92,9 @@
 
   #define PIO_SEND(d) PIO_WAIT_FOR_FIFO_FREE(1); PIO_TX_FIFO = d
 
+  #define PIO_SEND_8(d)  PIO_START_SEND_8; PIO_SEND(d)
+  #define PIO_SEND_16(d) PIO_START_SEND_16; PIO_SEND(d)
+
 // read
 
   #define PIO_RX_FIFO_IS_EMPTY RX_FIFO_IS_EMPTY(pio_spi_0.pio, pio_spi_0.sm)

@@ -15,14 +15,19 @@
 // ESP32 - 8 bit parallel    110 fps
 // ESP32 - 40MHz SPI          93     112 fps
 
+// RP2040 ?125?MHz SPI        69     ?133? fps
+// RP2040 60MHz SPI           54     96 fps     = 40MHz
+// RP2040 40MHz SPI           54     96 fps
+// RP2040 20MHz SPI           33     48 fps
+
 #define SCREENWIDTH 320
 #define SCREENHEIGHT 240
-
-#include "graphic.h"
 
 #include <Display.h> // Hardware-specific library
 
 Display display;       // Invoke custom library
+
+#include "graphic.h"
 
 #define TFT_BGCOLOR    0xAD75
 #define BGCOLOR        RGB(0xA8, 0xAC, 0xA8)
