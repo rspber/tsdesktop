@@ -308,11 +308,38 @@
   /**
    * drawMDTBuffer - from tft interface, not to use by user
    */
-  void BufferedDisplay::drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer)
+  void BufferedDisplay::drawMDTBuffer(int16_t x, int16_t y, int16_t w, int16_t h, const uint8_t* buffer)
   {
-//    if (buf) {
-      memcpy(&buf[((y - clip.y1) * clip.width() + (x - clip.x1)) * MDT_SIZE], buffer, w * h * MDT_SIZE);
-//    }
+//  if (buf) {
+      const uint8_t* p = buffer;
+      int16_t dy = y - clip.y1;
+      if (dy < 0) {
+        p += -dy * MDT_SIZE;
+        h += dy;
+        dy = 0;
+      }
+      int16_t dx = x - clip.x1;
+      if (dx < 0) {
+        w += dx;
+        for (int j = 0; j < addr_h; ++j) {
+          int32_t offs = dy * clip.width();
+          memcpy(&buf[offs * MDT_SIZE], p - dx * MDT_SIZE, w * MDT_SIZE);
+          p += addr_w * MDT_SIZE;
+        } 
+      }
+      else {
+        int32_t offs = dy * clip.width() + dx;
+        memcpy(&buf[offs * MDT_SIZE], p, w * h * MDT_SIZE);
+      }
+//  }
+  }
+
+  /**
+   * writeMDTBuffer - from tft interface, not to use by user
+   */
+  void BufferedDisplay::writeMDTBuffer(const uint8_t* buffer, const int32_t len)
+  {
+    drawMDTBuffer(addr_x + clip.x1, addr_y + clip.y1, addr_w, addr_h, buffer);
   }
 
   /**

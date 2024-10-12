@@ -26,6 +26,10 @@
 // RP2040 40MHz SPI           54     96 fps
 // RP2040 20MHz SPI           33     48 fps
 
+// RP2040 62.5MHz PIO 8BITP  103    133 fps
+
+// RP2040 ? MHz  GPIO 8BITP   36 fps
+
 // -----------------------------------------------------
 
 #define SCREENWIDTH 320
@@ -170,7 +174,12 @@ void loop() {
       bgx1++;
     }
 
-    display.sendMDTBuffer16((const uint8_t*)&renderbuf[bufIdx][0], width); // Push line to screen
+    if (MDT_SIZE == 2) {
+      display.writeMDTBuffer((const uint8_t*)&renderbuf[bufIdx][0], width); // Push line to screen
+    }
+    else {
+//      display.writeMDTBuffer16as24((const uint8_t*)&renderbuf[bufIdx][0], width); // Push line to screen
+    }
 
     // Push line to screen (swap bytes false for STM/ESP32)
     //tft.pushPixels(&renderbuf[bufIdx][0], width);

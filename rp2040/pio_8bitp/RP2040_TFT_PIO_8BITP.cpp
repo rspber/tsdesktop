@@ -155,6 +155,18 @@ void rp2040_pio_8bitp_initBus()
 #endif
 }
 
+void tft_setBUSWriteMode_x()
+{
+  use_fifo_for_writing(*pio_8bitp_0.pio_sm);
+  PIO_START_SEND_16;                    // TODO for 666 colors
+}
+
+void tft_setBUSReadMode_x()
+{
+//  use_fifo_for_reading(*pio_8bitp_0.pio_sm);
+//  PIO_START_READ_8;
+}
+
 
 
 
@@ -183,10 +195,12 @@ void tft_startWrite()
 {
   rp2040_pio_8bitp_setFreq();
   PIO_CS_L;
+  tft_setBUSWriteMode_x();
 }
 
 void tft_endWrite()
 {
+//  tft_setBUSReadMode();
   PIO_CS_H;
 }
 
@@ -194,6 +208,7 @@ void tft_startWriteCmd()
 {
   rp2040_pio_8bitp_setFreq();
   PIO_CS_L;
+  tft_setBUSWriteMode_x();
 }
 
 void tft_sendCmd(const uint8_t cmd)
@@ -201,8 +216,7 @@ void tft_sendCmd(const uint8_t cmd)
   PIO_DC_C;
   PIO_CS_H;
   PIO_CS_L;
-  PIO_START_SEND_8;
-  PIO_SEND(cmd);
+  PIO_SEND_8(cmd);
   PIO_DC_D;
 }
 
@@ -364,8 +378,26 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
 
 // ---- the DMA --------------------------------------------------------------
 
-// not implemented yet
+#ifdef USE_DMA
+
+  void DMA_END_WRITTING() {
+  }
+
+  volatile void* DMA_WRITE_ADDR() {
+    return &PIO_TX_FIFO;
+  }
+
+  uint DMA_DREQ() {
+    return pio_get_dreq(pio_8bitp_0.pio, pio_8bitp_0.sm, true);
+  }
+
+  #include <rp2040_dma.hh>
+
+#else
 
   #include <TFT_NO_DMA.hh>
+
+#endif
+
 
 #endif

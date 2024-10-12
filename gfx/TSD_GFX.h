@@ -84,6 +84,7 @@ public:
   virtual void startWrite() = 0;
   virtual void endWrite() = 0;
   virtual void writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h) = 0;
+  virtual void writeMDTBuffer(const uint8_t* buffer, const int32_t len) = 0;
   virtual void sendMDTColor1(const mdt_t c) = 0;
   virtual void sendMDTColor(const mdt_t c, const int32_t len);
   virtual void drawPixel1(const int16_t x, const int16_t y, const rgb_t color);

@@ -120,6 +120,11 @@ public:
   void writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h) override;
 
   /**
+   * writeMDTBuffer - from tft interface, not to use by user
+   */
+  void writeMDTBuffer(const uint8_t* buffer, const int32_t len) override;
+
+  /**
    *  sendMDTColor1 - from tft interface, not to use by user
    */
   void sendMDTColor1(const mdt_t c) override;

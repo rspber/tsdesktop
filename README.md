@@ -29,7 +29,7 @@ The connections should be made straight from A to B with the wires in the protec
 * 4 wire SPI 8x bit, 8bit parallel
 <table>
   <tr><th/><th>PIO-SPI</th><th>PIO-SPI-DMA</th><th>8BIT-PIO</th><th>8BIT-PIO-DMA</th></tr>
-  <tr><td>RP2040</td><td>Yes</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+  <tr><td>RP2040</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
 </table>
 
 * 4 wire SPI 18 bit - not implemented yet<br />

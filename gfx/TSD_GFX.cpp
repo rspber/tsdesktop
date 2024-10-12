@@ -636,12 +636,45 @@ void TSD_GFX::drawGrayscaleBitmap(clip_t& clip, int16_t x, int16_t y, const uint
 
 void TSD_GFX::drawRGBBitmap(clip_t& clip, int16_t x, int16_t y, const uint16_t* bitmap, int16_t w, int16_t h)
 {
+  int dx, dy, dw, dh;
+
+  if (x >= clip.x1) {dx = 0; dw = w; } else { dx = clip.x1 - x; dw = w - dx; x = clip.x1; }
+  if (y >= clip.y1) {dy = 0; dh = h; } else { dy = clip.y1 - y; dh = h - dy; y = clip.y1; }
+
+  if (x + dw > clip.x2) { dw = clip.x2 - x; }
+  if (y + dh > clip.y2) { dh = clip.y2 - y; }
+
+  if (dw < 1 || dh < 1) return;
+
   startWrite();
 
-  for (int16_t j = 0; j < h; j++, y++) {
-    for (int16_t i = 0; i < w; i++) {
-      drawPixel(clip, x + i, y, rgb(bitmap[j * w + i]));
+  writeAddrWindow(x, y, dw, dh);
+
+  if (dx != 0) {
+    const uint16_t* p = bitmap + dw * dy + dx;
+    if (MDT_SIZE == 2) {
+      for (int j = 0; j < dh; ++j) {
+        writeMDTBuffer((const uint8_t*)p, dw);
+        p += w;
+      }
     }
+    else {   // translate 565 to 666
+      const uint8_t* p = (const uint8_t*)(bitmap + dw * dy + dx);
+      const uint8_t* buff = (const uint8_t*)malloc(dw * MDT_SIZE + 3);
+      uint8_t* q = (uint8_t*)buff;
+      for (int j = 0; j < dh; ++j) {
+        for (int i = 0; i < dw; ++i) {
+          *(rgb_t*)q = rgb(*p++);
+          q += 3;
+        }
+        writeMDTBuffer((const uint8_t*)buff, dw);
+        p += w * 2;
+      }
+      free((void*)buff);
+    }
+  }
+  else {
+    writeMDTBuffer((const uint8_t*)(bitmap + w * dy), w * dh);
   }
 
   endWrite();

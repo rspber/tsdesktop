@@ -96,14 +96,12 @@ public:
   void startWrite() override;
   void endWrite() override;
   void writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h) override;
+  void writeMDTBuffer(const uint8_t* buffer, const int32_t len) override;
   void sendMDTColor1(const mdt_t c) override;
   void sendMDTColor(const mdt_t c, const int32_t len) override;
   void drawPixel1(const int16_t x, const int16_t y, const rgb_t color) override;
   void drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color) override;
   void drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) override;
-
-  void sendMDTBuffer16(const uint8_t* buffer, const int32_t len);
-  void sendMDTBuffer24(const uint8_t* buffer, const int32_t len);
 
 // --- the DMA ---------------------------------------------------------------
 
@@ -113,7 +111,8 @@ public:
   void endUsingDMA();
 
 private:
-  void writeMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer);
+  void sendMDTBuffer16(const uint8_t* buffer, const int32_t len);
+  void sendMDTBuffer24(const uint8_t* buffer, const int32_t len);
 
   bool dmaBusy();
   void dmaWait();

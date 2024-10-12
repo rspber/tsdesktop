@@ -60,18 +60,23 @@ void TFT_SCREEN::sendMDTBuffer16(const uint8_t* buffer, const int32_t len)
   }
 }
 
-void TFT_SCREEN::sendMDTBuffer24(const uint8_t* buffer, int32_t len) {
-  tft_sendMDTBuffer24(buffer, len);
-}
-
-void TFT_SCREEN::writeMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer)
+void TFT_SCREEN::sendMDTBuffer24(const uint8_t* buffer, int32_t len)
 {
-  writeAddrWindow(x, y, w, h);
-  if (MDT_SIZE > 2) {
-    sendMDTBuffer24(buffer, w * h);
+  if (useDMA) {
+//    dma_sendMDTBuffer24(buffer, len);
   }
   else {
-    sendMDTBuffer16(buffer, w * h);
+    tft_sendMDTBuffer24(buffer, len);
+  }
+}
+
+void TFT_SCREEN::writeMDTBuffer(const uint8_t* buffer, const int32_t len)
+{
+  if (MDT_SIZE > 2) {
+    sendMDTBuffer24(buffer, len);
+  }
+  else {
+    sendMDTBuffer16(buffer, len);
   }
 }
 
@@ -82,7 +87,7 @@ void TFT_SCREEN::startWrite()
 
 void TFT_SCREEN::endWrite()
 {
-  if( useDMA ) {
+  if (useDMA) {
     dmaWait();
   }
   tft_endWrite();
@@ -121,7 +126,8 @@ void TFT_SCREEN::sendMDTColor(const mdt_t c, const int32_t len)
 void TFT_SCREEN::drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer)
 {
   tft_startWrite();
-  writeMDTBuffer(x, y, w, h, buffer);
+  writeAddrWindow(x, y, w, h);
+  writeMDTBuffer(buffer, w * h);
   tft_endWrite();
 }
 
@@ -141,7 +147,8 @@ void TFT_SCREEN::drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
       v_storePixels(x, y, 1, 1, t);
     }
     if (t->mode == 2) {   // restore background from buf
-      writeMDTBuffer(x, y, 1, 1, &t->buf[t->len]);
+      writeAddrWindow(x, y, 1, 1);
+      writeMDTBuffer(&t->buf[t->len], 1 * 1);
       t->len += MDT_SIZE;
       return;
     }
@@ -172,7 +179,8 @@ void TFT_SCREEN::drawPixels(const int16_t x, const int16_t y, const int16_t w, c
       v_storePixels(x, y, w, h, t);
     }
     if (t->mode == 2) {   // restore background from buf
-      writeMDTBuffer(x, y, w, h, &t->buf[t->len]);
+      writeAddrWindow(x, y, w, h);
+      writeMDTBuffer(&t->buf[t->len], w * h);
       t->len += w * h * MDT_SIZE;
       return;
     }
