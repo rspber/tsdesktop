@@ -73,7 +73,7 @@ Managed to run the "'Boing' ball demo" example in SPI from TFT_eSPI repository.<
 
 rp2040 pio spi: https://youtube.com/shorts/ybj2CijIc5c
 
-rp2040 pio spi dma: https://youtube.com/shorts/P7c8Ng4fuoM Is it a message from display to me to put it of away immediately ?<br />
+rp2040 pio spi dma: https://youtube.com/shorts/P7c8Ng4fuoM but something is wrong here.<br />
 
 And finally, The solution was very short in code but not as easy to deduce. https://youtube.com/shorts/PkozJCYlWfs See commit129.<br />
 <br />
