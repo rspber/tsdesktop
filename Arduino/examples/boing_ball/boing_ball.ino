@@ -20,7 +20,8 @@
 
 // ESP32 - 40MHz SPI          53     103 fps   WROOM-32
 
-// RP2040 ?125?MHz SPI        69     ?133? fps
+// RP2040 ?125?MHz PIO SPI    69     ?133? ERROR's fps
+
 // RP2040 60MHz SPI           54     96 fps     = 40MHz
 // RP2040 40MHz SPI           54     96 fps
 // RP2040 20MHz SPI           33     48 fps
