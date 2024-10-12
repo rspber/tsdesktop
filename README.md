@@ -82,7 +82,7 @@ The solution was very short in code but not as easy to deduce. https://youtube.c
  Managed to run the "'Boing' ball demo" example in SPI from TFT_eSPI repository.<br />
  The key elements turned out to be the bus control procedures: setBUSWriteMode and setBUSReadMode.<br />
  The default Overlaid setting has been commented out so that it doesn't get in the way.<br />
- to be continued...<br />
+ Main changes for DMA finished for now.<br />
 <br />
 <br />
 <br />
