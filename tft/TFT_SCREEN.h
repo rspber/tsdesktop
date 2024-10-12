@@ -102,8 +102,6 @@ public:
   void drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color) override;
   void drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) override;
 
-  void setAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h);
-
   void sendMDTBuffer16(const uint8_t* buffer, const int32_t len);
   void sendMDTBuffer24(const uint8_t* buffer, const int32_t len);
 

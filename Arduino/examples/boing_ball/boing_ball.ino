@@ -139,7 +139,9 @@ void loop() {
   display.startUsingDMA();
 
   // Set window area to pour pixels into
-  display.setAddrWindow(minx, miny, width, height);
+  display.startWrite();
+  display.writeAddrWindow(minx, miny, width, height);
+  display.endWrite();
 
   display.startWrite();
   // Draw line by line loop

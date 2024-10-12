@@ -1,5 +1,6 @@
 // 'Boing' ball demo
 
+// TFT_eSPI -------------------------------------------
 //                       *no DMA*    DMA
 // STM32F767 55MHz SPI       170     227 fps
 // STM32F446 55MHz SPI       110     187 fps
@@ -14,6 +15,18 @@
 
 // ESP32 - 8 bit parallel    110 fps
 // ESP32 - 40MHz SPI          93     112 fps
+
+// tsdesktop -------------------------------------------
+
+// ESP32 - 40MHz SPI          53     103 fps   WROOM-32
+
+// RP2040  62.5MHz PIO SPI    69     129 fps
+
+// RP2040 60MHz SPI           54     96 fps     = 40MHz
+// RP2040 40MHz SPI           54     96 fps
+// RP2040 20MHz SPI           33     48 fps
+
+// -----------------------------------------------------
 
 #define SCREENWIDTH 320
 #define SCREENHEIGHT 240
@@ -126,7 +139,9 @@ void loop() {
   display.startUsingDMA();
 
   // Set window area to pour pixels into
-  display.setAddrWindow(minx, miny, width, height);
+  display.startWrite();
+  display.writeAddrWindow(minx, miny, width, height);
+  display.endWrite();
 
   display.startWrite();
   // Draw line by line loop

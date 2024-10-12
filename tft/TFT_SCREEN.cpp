@@ -108,13 +108,6 @@ void TFT_SCREEN::writeAddrWindow(const int16_t x, const int16_t y, const int16_t
   tft_writeAddrWindow(x, y, w, h);
 }
 
-void TFT_SCREEN::setAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h)
-{
-  tft_startWrite();
-  tft_writeAddrWindow(x, y, w, h);
-  tft_endWrite();
-}
-
 void TFT_SCREEN::sendMDTColor1(const mdt_t c)
 {
   tft_sendMDTColor(c);
