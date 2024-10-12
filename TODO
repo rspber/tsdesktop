@@ -1,4 +1,6 @@
-- DMA: rp2040, ...
+- drawBitmap's routines available for DMA
+- bufferedDisplay available for DMA
+- buffered button/canvas available for DMA
 - rp2350
 - ESP8266
 - ESP32 - flash not remains after reboot
