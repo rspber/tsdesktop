@@ -78,9 +78,10 @@ rp2040 pio spi dma: https://youtube.com/shorts/P7c8Ng4fuoM Is it a message from 
 And finally, The solution was very short in code but not as easy to deduce. https://youtube.com/shorts/PkozJCYlWfs See commit129.<br />
 <br />
  The key elements turned out to be the bus control procedures: setBUSWriteMode and setBUSReadMode.<br />
- The default Overlaid setting has been commented out so that it doesn't get in the way.<br />
  Main changes for DMA finished for now.<br />
 <br />
+
+* The default Overlaid setting has been commented out so that it doesn't get in the way.
 
 * rp2350 pio compatibility
 
