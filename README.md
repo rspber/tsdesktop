@@ -20,7 +20,7 @@ The connections should be made straight from A to B with the wires in the protec
 
 rp2040 pio spi: https://youtube.com/shorts/GUdRq8DvUdc
 
-rp2040 pio spi dma: https://youtube.com/shorts/P7c8Ng4fuoM Is it a message from display to me to take it of immediately ?<br />
+rp2040 pio spi dma: https://youtube.com/shorts/P7c8Ng4fuoM Is it a message from display to me to put it of away immediately ?<br />
 
 And finally, The solution was very short in code but not as easy to deduce. https://youtube.com/shorts/PkozJCYlWfs See commit129.
 
