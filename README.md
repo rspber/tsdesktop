@@ -18,6 +18,11 @@ The connections should be made straight from A to B with the wires in the protec
 
 ### News
 
+rp2040 pio spi: https://youtube.com/shorts/ybj2CijIc5c
+
+rp2040 pio spi dma: https://youtube.com/shorts/P7c8Ng4fuoM Please, someone shoot me so I don't have to solve this problem.
+
+
 ### Supported protocols:
 #### WRITE:
 * 4 wire SPI 8x bit, 8bit parallel
