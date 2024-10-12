@@ -20,11 +20,9 @@ The connections should be made straight from A to B with the wires in the protec
 
 rp2040 pio spi: https://youtube.com/shorts/GUdRq8DvUdc
 
-rp2040 pio spi dma: https://youtube.com/shorts/P7c8Ng4fuoM Please, someone shoot me so I don't have to solve this problem.<br />
+rp2040 pio spi dma: https://youtube.com/shorts/P7c8Ng4fuoM Is it a message from display to me to take it of immediately ?<br />
 
-OK, OK, and now we slowly put the guns away.<br />
-
-The solution was very short in code but not as easy to deduce. https://youtube.com/shorts/PkozJCYlWfs See commit129.
+And finally, The solution was very short in code but not as easy to deduce. https://youtube.com/shorts/PkozJCYlWfs See commit129.
 
 
 ### Supported protocols:
