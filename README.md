@@ -40,7 +40,7 @@ The solution was very short in code but not as easy to deduce. https://youtube.c
 * 4 wire SPI 8x bit, 8bit parallel
 <table>
   <tr><th/><th>PIO-SPI</th><th>PIO-SPI-DMA</th><th>8BIT-PIO</th><th>8BIT-PIO-DMA</th></tr>
-  <tr><td>RP2040</td><td>Yes</td><td>y? /No</td><td>Yes</td><td>No</td></tr>
+  <tr><td>RP2040</td><td>Yes</td><td>Yes</td><td>Yes</td><td>No</td></tr>
 </table>
 
 * 4 wire SPI 18 bit - not implemented yet<br />
