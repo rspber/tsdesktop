@@ -18,9 +18,13 @@ The connections should be made straight from A to B with the wires in the protec
 
 ### News
 
-rp2040 pio spi: https://youtube.com/shorts/ybj2CijIc5c
+rp2040 pio spi: https://youtube.com/shorts/GUdRq8DvUdc
 
-rp2040 pio spi dma: https://youtube.com/shorts/P7c8Ng4fuoM Please, someone shoot me so I don't have to solve this problem.
+rp2040 pio spi dma: https://youtube.com/shorts/P7c8Ng4fuoM Please, someone shoot me so I don't have to solve this problem.<br />
+
+OK, OK, and now we slowly put the guns away.<br />
+
+The solution was very short in code but not as easy to deduce. https://youtube.com/shorts/PkozJCYlWfs See commit129.
 
 
 ### Supported protocols:

@@ -153,7 +153,7 @@ void rp2040_pio_spi_initBus()
 void tft_setBUSWriteMode()
 {
   use_fifo_for_writing(*pio_spi_0.pio_sm);
-  pio_spi_0.START_SEND_8();
+  pio_spi_0.START_SEND_16();                    // TODO for 666 colors
 }
 
 void tft_setBUSReadMode()
