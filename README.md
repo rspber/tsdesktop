@@ -16,15 +16,6 @@ The connections should be made straight from A to B with the wires in the protec
 
 - https://www.youtube.com/watch?v=2_8hvvxUR1c
 
-### News
-
-rp2040 pio spi: https://youtube.com/shorts/GUdRq8DvUdc
-
-rp2040 pio spi dma: https://youtube.com/shorts/P7c8Ng4fuoM Is it a message from display to me to put it of away immediately ?<br />
-
-And finally, The solution was very short in code but not as easy to deduce. https://youtube.com/shorts/PkozJCYlWfs See commit129.
-
-
 ### Supported protocols:
 #### WRITE:
 * 4 wire SPI 8x bit, 8bit parallel
@@ -76,13 +67,19 @@ And finally, The solution was very short in code but not as easy to deduce. http
   <tr><td>RP2040</td><td>Yes</td><td>No</td></tr>
 </table>
 
+### News
+
+Managed to run the "'Boing' ball demo" example in SPI from TFT_eSPI repository.<br />
+
+rp2040 pio spi: https://youtube.com/shorts/GUdRq8DvUdc
+
+rp2040 pio spi dma: https://youtube.com/shorts/P7c8Ng4fuoM Is it a message from display to me to put it of away immediately ?<br />
+
+And finally, The solution was very short in code but not as easy to deduce. https://youtube.com/shorts/PkozJCYlWfs See commit129.
 <br />
- Managed to run the "'Boing' ball demo" example in SPI from TFT_eSPI repository.<br />
  The key elements turned out to be the bus control procedures: setBUSWriteMode and setBUSReadMode.<br />
  The default Overlaid setting has been commented out so that it doesn't get in the way.<br />
  Main changes for DMA finished for now.<br />
-<br />
-<br />
 <br />
 
 * rp2350 pio compatibility
