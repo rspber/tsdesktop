@@ -105,7 +105,7 @@ And finally, The solution was very short in code but not as easy to deduce. http
 
 * Touch over PIO SPI
 
-* More sensitive touch for Arduino SPI (taken from pico-sdk)
+* More sensitive touch for Arduino SPI
 
 * Touch rotation has been finally mastered.
   One of the touch_??? procedure from Touch_Rotation.hh is responsible for touch rotation.
