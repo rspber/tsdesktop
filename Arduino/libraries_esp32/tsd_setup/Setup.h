@@ -22,8 +22,6 @@
 
 // ------------------- Constants to use in examples --------------------------
 
-#define TFT_SPI_MODE SPI_MODE0
-
 #define ROTATION_VTB 2    // vertical top to bottom
 #define ROTATION_VBT 0    // vertical bottom to top
 #define ROTATION_HLR 1    // horizontal left to right

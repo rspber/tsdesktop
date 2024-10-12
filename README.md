@@ -55,7 +55,7 @@ The connections should be made straight from A to B with the wires in the protec
 
 #### TOUCH:
 
-*4 wire SPI xpt2046, parallel ?bit attached resistive=spfd5408 ?
+* 4 wire SPI xpt2046, parallel ?bit attached resistive=spfd5408 ?
 
 <table>
   <tr><th/><th>SPI</th><th>8BIT-GPIO</th></tr>

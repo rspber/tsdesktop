@@ -64,3 +64,5 @@ using std::round;
 
 #undef pgm_read_dword
 #define pgm_read_dword(addr) ({ typeof(addr) _addr = (addr); *(const unsigned long *)(_addr); })
+
+#define TFT_SPI_MODE SPI_MODE0
