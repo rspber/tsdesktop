@@ -1,3 +1,14 @@
+/*
+  esp32_spi_dma
+
+  Copyright (c) 2024, rspber (https://github.com/rspber)
+
+  source:
+
+  https://github.com/Bodmer/TFT_eSPI/Processors/TFT_eSPI_ESP32.c
+
+  Bodmer's license.txt in file /licenses/Bodmer_license.txt
+*/
 
 #include <driver/spi_master.h>
 #include <hal/gpio_ll.h>

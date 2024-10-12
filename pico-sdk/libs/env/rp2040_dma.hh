@@ -1,3 +1,14 @@
+/*
+  rp2040_dma
+
+  Copyright (c) 2024, rspber (https://github.com/rspber)
+
+  source:
+
+  https://github.com/Bodmer/TFT_eSPI/Processors/TFT_eSPI_RP2040.c
+
+  Bodmer's license.txt in file /licenses/Bodmer_license.txt
+*/
 
 // ---- the DMA --------------------------------------------------------------
 
