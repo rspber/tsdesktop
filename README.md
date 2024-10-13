@@ -69,7 +69,7 @@ The connections should be made straight from A to B with the wires in the protec
 
 ### News
 
-Managed to run the "'Boing' ball demo" example in SPI from TFT_eSPI repository.<br />
+Managed to run the "'Boing' ball demo" example from TFT_eSPI repository.<br />
 
 rp2040 pio spi: https://youtube.com/shorts/ybj2CijIc5c
 
