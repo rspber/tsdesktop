@@ -87,7 +87,7 @@ And finally, The solution was very short in code but not as easy to deduce. http
 
 * ESP32 8bit parallel
 
-* idyll example https://youtu.be/NPU_-LH7fMA
+* idyll example https://youtube.com/shorts/_ApTCePhjv4
 
 * spider example https://youtube.com/shorts/JbAyZdpuKMw
 

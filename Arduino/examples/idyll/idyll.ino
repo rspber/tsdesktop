@@ -15,7 +15,7 @@ bool screenEnabled = false;
 
 #define ROTATION ROTATION_HLR
 
-gradient_t g2{GNT_LR, GREEN, 20, CYAN};
+gradient_t g2{GNT_BT, GREEN, 20, CYAN};
 
 // ----------------------------------------------------------------
 
@@ -34,7 +34,8 @@ void setup()   {
 
   pinMode(LED_PIN, OUTPUT);
 
-//  display.fillRectGradient(0, 0, 300, 200, g2);
+//  display.fillRectGradient(5, 10, 300, 200, g2);
+
 }
 
 // ----------------------------------------------------------------
@@ -49,8 +50,8 @@ void loop() {
   window.setPos(x, y);
 
   window.clear(TEAL);
-  window.fillRectGradient(0, 0, 300, 200, g2);
-  window.drawLine(0, 0, 300, 200, YELLOW, 1);
+  window.fillRectGradient(5, 10, 300, 200, g2);
+  window.drawLine(0, 0, 320, 240, YELLOW, 1);
 
   window.setPos(0, 0);
   window.drawRect(10, 10, window.width() - 20, window.height() - 20, YELLOW);

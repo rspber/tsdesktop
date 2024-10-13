@@ -972,7 +972,16 @@ const uint16_t* TSD_GFX::drawTextLine(clip_t& clip, cursor_t& cursor, font_t& fo
 // color565toRGB14		- converts 16 bit 565 format color to 14 bit RGB (2 bits clear for math and sign)
 // returns 00rrrrr000000000,00gggggg00000000,00bbbbb000000000
 // thus not overloading sign, and allowing up to double for additions for fixed point delta
-static void RGB14fromColor(rgb_t color, int16_t &r, int16_t &g, int16_t &b)
+
+struct grec_t_ {
+  int16_t r, g, b;
+  void RGB14fromColor(const rgb_t color);
+  rgb_t RGB14toColor();
+};
+
+typedef grec_t_  grec_t;
+
+void grec_t_::RGB14fromColor(const rgb_t color)
 {
 //#ifdef COLOR_565
 //  r = (color >> 2) & 0x3E00;
@@ -986,7 +995,7 @@ static void RGB14fromColor(rgb_t color, int16_t &r, int16_t &g, int16_t &b)
 }
 
 // RGB14tocolor565		- converts 14 bit RGB back to 16 bit 565 format color
-static rgb_t RGB14toColor(int16_t r, int16_t g, int16_t b)
+rgb_t grec_t_::RGB14toColor()
 {
 //#ifdef COLOR_565
 //  return (((r & 0x3E00) << 2) | ((g & 0x3F00) >> 3) | ((b & 0x3E00) >> 9));
@@ -995,62 +1004,8 @@ static rgb_t RGB14toColor(int16_t r, int16_t g, int16_t b)
 //#endif
 }
 
-void TSD_GFX::fillRectVGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t& z)
+static void gradhue(int8_t prc, grec_t& cc, const grec_t c1, const grec_t c2, const int16_t j, const int16_t h)
 {
-  int dx1 = 0;
-  if (x < clip.x1) {
-    dx1 = clip.x1 - x;
-    x = clip.x1;
-  }
-  int dx2 = 0;
-  if (x + w - dx1 > clip.x2) {
-    dx2 = (x + w - dx1) - clip.x2;
-  }
-  int dy1 = 0;
-  if (y < clip.y1) {
-    dy1 = clip.y1 - y;
-    y = clip.y1;
-  }
-  int dy2 = 0;
-  if (y + h - dy1 > clip.y2) {
-    dy2 = (y + h - dy1) - clip.y2;
-  }
-  if (w - dx1 - dx2 > 0 && h - dy1 - dy2 > 0) {
-  }
-  else {
-    return;
-  }
-
-  startWrite();
-
-  int16_t r1, g1, b1;
-  RGB14fromColor(z.color1, r1, g1, b1);
-  int16_t r2, g2, b2;
-  RGB14fromColor(z.color2, r2, g2, b2);
-  if (z.deg == 2) {
-    writeAddrWindow(x, y, w - dx1 - dx2, h - dy1 - dy2);
-  }
-  int16_t r = r1;
-  int16_t g = g1;
-  int16_t b = b1;
-  int8_t prc = z.percent;
-  if (prc < 0) {
-    prc = 0;
-  }
-  if (prc > 100) {
-    prc = 100;
-  }
-  for (int j = 0; j < h; ++j) {
-    if (j >= clip.y1 && j < clip.y2) {
-      if (z.deg == 4) {
-        writeAddrWindow(x, y + h - 1 - j, w - dx1 - dx2, 1);
-      }
-      sendMDTColor(mdt_color(RGB14toColor(r, g, b)), w - dx1 - dx2);
-    }
-    if (z.deg == 4) {
-//      endWrite();
-    }
-
     int adj = prc - 50;
     if (adj > 45)
       adj = 45;
@@ -1059,61 +1014,44 @@ void TSD_GFX::fillRectVGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, i
       adj = -45;
 
     int16_t p = prc + (50 - prc + adj) * j * 2 / h;
-    int16_t dr = (int)(r2 - r1) * 50 / (p * h);
-    int16_t dg = (int)(g2 - g1) * 50 / (p * h);
-    int16_t db = (int)(b2 - b1) * 50 / (p * h);
+    int16_t dr = (int)(c2.r - c1.r) * 50 / (p * h);
+    int16_t dg = (int)(c2.g - c1.g) * 50 / (p * h);
+    int16_t db = (int)(c2.b - c1.b) * 50 / (p * h);
     int q;
-    q = r + dr;
-    if ((r2 >= r1 && q <= r2 && q >= r1) || (r1 >= r2 && q <= r1 && q >= r2)) r = q; else
+    q = cc.r + dr;
+    if ((c2.r >= c1.r && q <= c2.r && q >= c1.r) || (c1.r >= c2.r && q <= c1.r && q >= c2.r)) cc.r = q; else
       q = 0;
-    q = g + dg;
-    if ((g2 >= g1 && q <= g2 && q >= g1) || (g1 >= g2 && q <= g1 && q >= g2)) g = q; else
+    q = cc.g + dg;
+    if ((c2.g >= c1.g && q <= c2.g && q >= c1.g) || (c1.g >= c2.g && q <= c1.g && q >= c2.g)) cc.g = q; else
       q = 0;
-    q = b + db;
-    if ((b2 >= b1 && q <= b2 && q >= b1) || (b1 >= b2 && q <= b1 && q >= b2)) b = q; else
+    q = cc.b + db;
+    if ((c2.b >= c1.b && q <= c2.b && q >= c1.b) || (c1.b >= c2.b && q <= c1.b && q >= c2.b)) cc.b = q; else
       q = 0;
-  }
-  if (z.deg == 2) {
-//    endWrite();
-  }
-
-  endWrite();
 }
 
-void TSD_GFX::fillRectHGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t& z)
+int ixi = 0;
+
+void TSD_GFX::fillRectGradient(clip_t& clip, const int16_t x, const int16_t y, const int16_t w, const int16_t h, gradient_t& z)
 {
+  int x1 = x;
   int dx1 = 0;
-  if (x < clip.x1) {
-    dx1 = clip.x1 - x;
-    x = clip.x1;
-  }
-  int dx2 = 0;
-  if (x + w - dx1 > clip.x2) {
-    dx2 = (x + w - dx1) - clip.x2;
-  }
+  if (x1 < clip.x1) { dx1 = clip.x1 - x1; x1 = clip.x1; }
+  int dx2 = x + w - clip.x2; dx2 = dx2 >= 0 ? dx2 : 0;
+  int y1 = y;
   int dy1 = 0;
-  if (y < clip.y1) {
-    dy1 = clip.y1 - y;
-    y = clip.y1;
-  }
-  int dy2 = 0;
-  if (y + h - dy1 > clip.y2) {
-    dy2 = (y + h - dy1) - clip.y2;
-  }
-  if (w - dx1 - dx2 > 0 && h - dy1 - dy2 > 0) {
-  }
-  else {
-    return;
-  }
+  if (y1 < clip.y1) { dy1 = clip.y1 - y1; y1 = clip.y1; }
+  int dy2 = y + h - clip.y2; dy2 = dy2 >= 0 ? dy2 : 0;
+
+  int w12 = w - dx1 - dx2;
+  int h12 = h - dy1 - dy2;
+  if (w12 <= 0 || h12 <= 0) return;
 
   startWrite();
 
-  int16_t r1, g1, b1;
-  RGB14fromColor(z.color1, r1, g1, b1);
-  int16_t r2, g2, b2;
-  RGB14fromColor(z.color2, r2, g2, b2);
-
-  writeAddrWindow(x, y, w - dx1 - dx2, h - dy1 - dy2);
+  grec_t c1, c2;
+  c1.RGB14fromColor(z.color1);
+  c2.RGB14fromColor(z.color2);
+  grec_t cc = c1;
 
   int8_t prc = z.percent;
   if (prc < 0) {
@@ -1122,75 +1060,27 @@ void TSD_GFX::fillRectHGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, i
   if (prc > 100) {
     prc = 100;
   }
-
-  mdt_t* tmp;
-  if (z.deg == 3) {
-    tmp = (mdt_t*)malloc((w) * sizeof(mdt_t));
-  }
-
-  for (int j = 0; j < h; ++j) {
-    if (j >= clip.y1 && j < clip.y2) {
-      int16_t r = r1;
-      int16_t g = g1;
-      int16_t b = b1;
-      for (int i = 0; i < w; ++i) {
-        if (i >= dx1 && i < w - dx2) {
-          mdt_t c = mdt_color(RGB14toColor(r, g, b));
-          if (z.deg == 3) {
-            tmp[w - 1 - i] = c;
-          }
-          else {
-            sendMDTColor1(c);
-          }
-        }
-        int adj = prc - 50;
-        if (adj > 45)
-          adj = 45;
-        else
-        if (adj < -45)
-          adj = -45;
-
-        int16_t p = prc + (50 - prc + adj) * i * 2 / w;
-        int16_t dr = (int)(r2 - r1) * 50 / (p * w);
-        int16_t dg = (int)(g2 - g1) * 50 / (p * w);
-        int16_t db = (int)(b2 - b1) * 50 / (p * w);
-        int q;
-        q = r + dr;
-        if ((r2 >= r1 && q <= r2 && q >= r1) || (r1 >= r2 && q <= r1 && q >= r2)) r = q; else
-          q = 0;
-        q = g + dg;
-        if ((g2 >= g1 && q <= g2 && q >= g1) || (g1 >= g2 && q <= g1 && q >= g2)) g = q; else
-          q = 0;
-        q = b + db;
-        if ((b2 >= b1 && q <= b2 && q >= b1) || (b1 >= b2 && q <= b1 && q >= b2)) b = q; else
-          q = 0;
-      }
-      if (z.deg == 3) {
-        for (int i = dx1; i < w - dx2; ++i) {
-          sendMDTColor1(tmp[i]);
-        }
-      }
+  if (z.deg & 1) {
+    for (int i = 0; i < w; ++i) {
+//      if (i >= clip.x1 && i < clip.x2) {
+        writeAddrWindow(z.deg == 3 ? w - 1 - i : i, y1, 1, h12);
+        sendMDTColor(mdt_color(cc.RGB14toColor()), h12);
+//      }
+      gradhue(prc, cc, c1, c2, i, w);
     }
   }
-
-  if (z.deg == 3) {
-    free(tmp);
+  else {
+    for (int j = 0; j < h; ++j) {
+//      if (j >= clip.y1 && j < clip.y2) {
+        writeAddrWindow(x1, z.deg == 2 ? h - j - 1 : j, w12, 1);
+        sendMDTColor(mdt_color(cc.RGB14toColor()), w12);
+//      }
+      gradhue(prc, cc, c1, c2, j, h);
+    }
   }
 
   endWrite();
 }
-
-void TSD_GFX::fillRectGradient(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, gradient_t& z)
-{
-  if (z.deg == 1 || z.deg == 3) {
-    fillRectHGradient(clip, x, y, w, h, z);
-  }
-  if (z.deg == 2 || z.deg == 4) {
-    fillRectVGradient(clip, x, y, w, h, z);
-  }
-}
-
-
 
 void TSD_GFX::sendMDTColor(const mdt_t c, int32_t len)
 {
