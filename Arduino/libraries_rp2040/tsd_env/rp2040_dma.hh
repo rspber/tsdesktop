@@ -37,6 +37,7 @@ void TFT_SCREEN::dma_sendMDTBuffer16(const uint8_t* buff, const int32_t len)
   if (len <= 0) return;
   dmaWait(); // In case we did not wait earlier
   channel_config_set_bswap(&dma_tx_config, true); // !_swapBytes
+  SET_BUS_WRITE_16();
   dma_channel_configure(dma_tx_channel, &dma_tx_config, DMA_WRITE_ADDR(), (uint16_t*)buff, len, true);
 }
 

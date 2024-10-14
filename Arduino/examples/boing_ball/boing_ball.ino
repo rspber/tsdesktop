@@ -20,10 +20,10 @@
 
 // ESP32 - 40MHz SPI          53     103 fps   WROOM-32
 
-// RP2040  62.5MHz PIO SPI    69     129 fps   125MHz/2
+// RP2040  62.5MHz PIO SPI    69     128 fps   125MHz/2
 
-// RP2040 60MHz SPI           54     96 fps     = 40MHz
-// RP2040 40MHz SPI           54     96 fps
+// RP2040 60MHz SPI           53     96 fps     = 40MHz
+// RP2040 40MHz SPI           53     96 fps
 // RP2040 20MHz SPI           33     48 fps
 
 // RP2040 62.5MHz PIO 8BITP  103    133 fps
@@ -83,6 +83,9 @@ void setup() {
 
   display.drawBitmap(0, 0, (const uint8_t *)background, SCREENWIDTH, SCREENHEIGHT, GRIDCOLOR);
 
+  // Start SPI transaction and drop TFT_CS - avoids transaction overhead in loop
+  display.startUsingDMA();
+
   startTime = millis();
 }
 
@@ -139,15 +142,10 @@ void loop() {
   uint8_t  p;                       // 'packed' value of 2 ball pixels
   int8_t bufIdx = 0;
 
-  // Start SPI transaction and drop TFT_CS - avoids transaction overhead in loop
-  display.startUsingDMA();
-
   // Set window area to pour pixels into
   display.startWrite();
   display.writeAddrWindow(minx, miny, width, height);
-  display.endWrite();
 
-  display.startWrite();
   // Draw line by line loop
   for(y=0; y<height; y++) { // For each row...
     destPtr = &renderbuf[bufIdx][0];
@@ -190,7 +188,7 @@ void loop() {
   }
   //if (random(100) == 1) delay(2000);
   display.endWrite();
-  display.endUsingDMA();
+//  display.endUsingDMA();
   //delay(5);
   // Show approximate frame rate
   if(!(++frame & 255)) { // Every 256 frames...

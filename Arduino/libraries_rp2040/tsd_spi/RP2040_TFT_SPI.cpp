@@ -242,17 +242,23 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
 #ifdef USE_DMA
 
   // For SPI must also wait for FIFO to flush and reset format
-  void DMA_END_WRITTING() {
+  static void DMA_END_WRITTING() {
     while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
     hw_write_masked(&spi_get_hw(SPI_X)->cr0, (16 - 1) << SPI_SSPCR0_DSS_LSB, SPI_SSPCR0_DSS_BITS);
   }
 
-  volatile void* DMA_WRITE_ADDR() {
+  static volatile void* DMA_WRITE_ADDR() {
     return &spi_get_hw(SPI_X)->dr;
   }
 
-  uint DMA_DREQ() {
+  static uint DMA_DREQ() {
     return spi_get_index(SPI_X) ? DREQ_SPI1_TX : DREQ_SPI0_TX;
+  }
+
+  static void SET_BUS_WRITE_16() {
+  }
+
+  static void SET_BUS_WRITE_24() {
   }
 
   #include <rp2040_dma.hh>

@@ -153,13 +153,11 @@ void rp2040_pio_spi_initBus()
 void tft_setBUSWriteMode()
 {
   use_fifo_for_writing(*pio_spi_0.pio_sm);
-  PIO_START_SEND_16;                    // TODO for 666 colors
 }
 
 void tft_setBUSReadMode()
 {
   use_fifo_for_reading(*pio_spi_0.pio_sm);
-  pio_spi_0.START_READ_8();
 }
 
 
@@ -375,15 +373,23 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
 
 #ifdef USE_DMA
 
-  void DMA_END_WRITTING() {
+  static void DMA_END_WRITTING() {
   }
 
-  volatile void* DMA_WRITE_ADDR() {
+  static volatile void* DMA_WRITE_ADDR() {
     return &PIO_TX_FIFO;
   }
 
-  uint DMA_DREQ() {
+  static uint DMA_DREQ() {
     return pio_get_dreq(pio_spi_0.pio, pio_spi_0.sm, true);
+  }
+
+  static void SET_BUS_WRITE_16() {
+    PIO_START_SEND_16;
+  }
+
+  static void SET_BUS_WRITE_24() {
+    PIO_START_SEND_24;
   }
 
   #include <rp2040_dma.hh>

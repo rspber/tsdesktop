@@ -41,6 +41,7 @@ void touch_endReading()
 
 const uint16_t touch_transfer16(const uint8_t cmd)
 {
+  tft_setBUSWriteMode();
   PIO_DC_C;
   PIO_START_SEND_8;
   PIO_SEND(cmd);
