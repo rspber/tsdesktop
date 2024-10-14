@@ -153,11 +153,13 @@ void rp2040_pio_spi_initBus()
 void tft_setBUSWriteMode()
 {
   use_fifo_for_writing(*pio_spi_0.pio_sm);
+  PIO_START_SEND_8;
 }
 
 void tft_setBUSReadMode()
 {
   use_fifo_for_reading(*pio_spi_0.pio_sm);
+  pio_spi_0.START_READ_8();
 }
 
 
