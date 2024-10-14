@@ -81,6 +81,8 @@ And finally, The solution was very short in code but not as easy to deduce. http
  Main changes for DMA finished for now.<br />
 <br />
 
+* Gradient modernization finished, see idyll example.
+
 * The default Overlaid setting has been commented out so that it doesn't get in the way.
 
 * rp2350 pio compatibility
