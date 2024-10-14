@@ -77,8 +77,7 @@ rp2040 pio spi dma: https://youtube.com/shorts/P7c8Ng4fuoM but something is wron
 
 And finally, it works. https://youtube.com/shorts/PkozJCYlWfs
 <br />
- The key elements turned out to be the bus control procedures: setBUSWriteMode and setBUSReadMode and switching BUS for writing
- from 8-bits (command mode) to 16-bit (color mode).<br />
+ The key elements turned out to be the bus control procedures: setBUSWriteMode and setBUSReadMode and switching BUS (PIO machine exactly) for writing from 8-bits (command mode) to 16-bit (color mode).<br />
  Main changes for DMA finished for now.<br />
 <br />
 
