@@ -71,6 +71,7 @@ public:
   {
   }
   const char* protocol();
+  void disp_info(char buf[], const int len, const int width, const int height, const char* ext);
 
   virtual void begin();
   virtual void setRotation(const uint8_t r, const uint8_t REV = 0);

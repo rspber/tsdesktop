@@ -105,12 +105,8 @@ void setup()   {
   screenEnabled = true;
 
   char buf[80];
-  #if defined(COLOR_565)
-    const char* K = "64K";
-  #else
-    const char* K = "256K";
-  #endif
-  snprintf(buf, 80, "%s %dx%d %s OVERLAID", display.protocol(), display.width(), display.height(), K);
+  display.disp_info(buf, 80, display.width(), display.height(), "OVERLAID");
+
   overlaid.setText(buf);
 
   desktop.draw();

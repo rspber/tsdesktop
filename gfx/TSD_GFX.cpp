@@ -1004,7 +1004,7 @@ rgb_t grec_t_::RGB14toColor()
 //#endif
 }
 
-static void gradhue(int8_t prc, grec_t& cc, const grec_t c1, const grec_t c2, const int16_t j, const int16_t h)
+static void nextGradHue(int8_t prc, grec_t& cc, const grec_t c1, const grec_t c2, const int16_t j, const int16_t h)
 {
     int adj = prc - 50;
     if (adj > 45)
@@ -1066,7 +1066,7 @@ void TSD_GFX::fillRectGradient(clip_t& clip, const int16_t x, const int16_t y, c
         writeAddrWindow(z.deg == 3 ? w - 1 - i : i, y1, 1, h12);
         sendMDTColor(mdt_color(cc.RGB14toColor()), h12);
 //      }
-      gradhue(prc, cc, c1, c2, i, w);
+      nextGradHue(prc, cc, c1, c2, i, w);
     }
   }
   else {
@@ -1075,7 +1075,7 @@ void TSD_GFX::fillRectGradient(clip_t& clip, const int16_t x, const int16_t y, c
         writeAddrWindow(x1, z.deg == 2 ? h - j - 1 : j, w12, 1);
         sendMDTColor(mdt_color(cc.RGB14toColor()), w12);
 //      }
-      gradhue(prc, cc, c1, c2, j, h);
+      nextGradHue(prc, cc, c1, c2, j, h);
     }
   }
 

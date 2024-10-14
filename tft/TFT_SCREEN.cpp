@@ -6,6 +6,7 @@
 */
 
 #include "TFT_SCREEN.h"
+#include <stdio.h>
 #include <overlaid.h>
 
 #include <TFT_API.h>
@@ -22,6 +23,19 @@
 #include "TFT_Defines.hh"
 
 const char* TFT_SCREEN::protocol() { return tft_identification(); }
+
+void TFT_SCREEN::disp_info(char buf[], const int len, const int width, const int height, const char* ext)
+{
+  snprintf(buf, 80, "%s %dx%d %s %s %s", protocol(), width, height,
+  #if defined(COLOR_565)
+    "64K"
+  #else
+    "256K"
+  #endif
+  ,
+  useDMA ? "DMA" : "n/D",
+  ext);
+}
 
 void TFT_SCREEN::begin()
 {

@@ -155,12 +155,9 @@ void loop() {
   char buf[80];
   clip_t clip;
   gfxbtn.getOuterClip(clip);
-  #if defined(COLOR_565)
-    const char* K = "64K";
-  #else
-    const char* K = "256K";
-  #endif
-  snprintf(buf, 80, "%s %dx%d %s BUFFERED", display.protocol(), clip.width(), clip.height(), K);
+
+  display.disp_info(buf, 80, clip.width(), clip.height(), "BUFFERED");
+
   buffered.setText(buf);
 
   desktop.draw();
