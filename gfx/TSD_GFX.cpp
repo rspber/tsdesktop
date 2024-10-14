@@ -47,7 +47,7 @@ const int16_t clip_t::height()
 void TSD_GFX::drawPixel(clip_t& clip, int16_t x, int16_t y, rgb_t color)
 {
   if (x >= clip.x1 && y >= clip.y1 && x < clip.x2 && y < clip.y2) {
-    drawPixel1(x, y, color);
+    drawClippedPixel(x, y, color);
   }
 }
 
@@ -61,7 +61,7 @@ void TSD_GFX::drawFastHLine(clip_t& clip, int16_t x, int16_t y, int16_t w, rgb_t
     w = clip.x2 - x;
   }
   if (y >= clip.y1 && y < clip.y2 && w > 0) {
-    drawPixels(x, y, w, 1, color);
+    drawClippedPixelRec(x, y, w, 1, color);
   }
 }
 
@@ -75,7 +75,7 @@ void TSD_GFX::drawFastVLine(clip_t& clip, int16_t x, int16_t y, int16_t h, rgb_t
     h = clip.y2 - y;
   }
   if (x >= clip.x1 && x < clip.x2 && h > 0) {
-    drawPixels(x, y, 1, h, color);
+    drawClippedPixelRec(x, y, 1, h, color);
   }
 }
 
@@ -109,7 +109,7 @@ void TSD_GFX::fillRectHelper(clip_t& clip, int16_t x, int16_t y, int16_t w, int1
     h = clip.y2 - y;
   }
   if (w > 0 && h > 0) {
-    drawPixels(x, y, w, h, color);
+    drawClippedPixelRec(x, y, w, h, color);
   }
 }
 
@@ -1089,13 +1089,13 @@ void TSD_GFX::sendMDTColor(const mdt_t c, int32_t len)
   }
 }
 
-void TSD_GFX::drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
+void TSD_GFX::drawClippedPixel(const int16_t x, const int16_t y, const rgb_t color)
 {
   writeAddrWindow(x, y, 1, 1);
   sendMDTColor1(mdt_color(color));
 }
 
-void TSD_GFX::drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
+void TSD_GFX::drawClippedPixelRec(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
 {
   writeAddrWindow(x, y, w, h);
   sendMDTColor(mdt_color(color), w * h);

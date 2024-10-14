@@ -145,9 +145,9 @@ void TFT_SCREEN::drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w
   tft_endWrite();
 }
 
-void v_storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t);
+void v_storePixelRec(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t);
 
-void TFT_SCREEN::drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
+void TFT_SCREEN::drawClippedPixel(const int16_t x, const int16_t y, const rgb_t color)
 {
 #ifdef OVERLAID
   // very dubious method to detect pointer in rgb_t type
@@ -158,7 +158,7 @@ void TFT_SCREEN::drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
   if ((color & 0xFF000000) != 0xFF000000) {	// not a RGB color
     over_t* t = (over_t*)color;
     if (t->mode == 1) {   // store underlaing pixels
-      v_storePixels(x, y, 1, 1, t);
+      v_storePixelRec(x, y, 1, 1, t);
     }
     if (t->mode == 2) {   // restore background from buf
       writeAddrWindow(x, y, 1, 1);
@@ -179,7 +179,7 @@ void TFT_SCREEN::drawPixel1(const int16_t x, const int16_t y, const rgb_t color)
 #endif
 }
 
-void TFT_SCREEN::drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
+void TFT_SCREEN::drawClippedPixelRec(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
 {
 #ifdef OVERLAID
   // very dubious method to detect pointer in rgb_t type
@@ -190,7 +190,7 @@ void TFT_SCREEN::drawPixels(const int16_t x, const int16_t y, const int16_t w, c
   if ((color & 0xFF000000) != 0xFF000000) {	// not a RGB color
     over_t* t = (over_t*)color;
     if (t->mode == 1) {   // store underlaing pixels
-      v_storePixels(x, y, w, h, t);
+      v_storePixelRec(x, y, w, h, t);
     }
     if (t->mode == 2) {   // restore background from buf
       writeAddrWindow(x, y, w, h);
@@ -370,7 +370,7 @@ rgb_t TFT_SCREEN::innerReadPixel(int16_t x, int16_t y)
   return color;
 }
 
-void v_storePixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t)
+void v_storePixelRec(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t)
 {
   tft_endWrite();
 

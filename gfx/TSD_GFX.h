@@ -84,6 +84,6 @@ public:
   virtual void writeMDTBuffer(const uint8_t* buffer, const int32_t len) = 0;
   virtual void sendMDTColor1(const mdt_t c) = 0;
   virtual void sendMDTColor(const mdt_t c, const int32_t len);
-  virtual void drawPixel1(const int16_t x, const int16_t y, const rgb_t color);
-  virtual void drawPixels(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color);
+  virtual void drawClippedPixel(const int16_t x, const int16_t y, const rgb_t color);
+  virtual void drawClippedPixelRec(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color);
 };
