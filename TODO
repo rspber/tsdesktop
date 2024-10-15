@@ -1,3 +1,6 @@
+- Smooth fonts, almost done
+- Sprite
+- including all TFT_eSPI graphics and fonts functionality
 - drawBitmap's routines available for DMA
 - bufferedDisplay available for DMA
 - buffered button/canvas available for DMA
