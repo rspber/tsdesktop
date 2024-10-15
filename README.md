@@ -81,6 +81,13 @@ And finally, it works. https://youtube.com/shorts/PkozJCYlWfs
  The key elements turned out to be the bus control procedures: setBUSWriteMode and setBUSReadMode and switching BUS (PIO machine exactly) for writing from 8-bits (command mode) to 16-bit (color mode).<br />
 <br />
 
+
+* Smooth graphics
+
+* TFT_eSPI.h
+
+  With this stuff TFT_eSPI examples can be run with (almost) NO changes
+
 * Gradient modernization finished, see idyll example.
 
 * The default Overlaid setting has been commented out so that it doesn't get in the way.
