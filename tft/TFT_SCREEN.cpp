@@ -147,9 +147,9 @@ void TFT_SCREEN::drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w
 
 void v_storePixelRec(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t);
 
+#ifdef OVERLAID
 void TFT_SCREEN::drawClippedPixel(const int16_t x, const int16_t y, const rgb_t color)
 {
-#ifdef OVERLAID
   // very dubious method to detect pointer in rgb_t type
   // in rp2040 pointers are 4 byte:
   // code: 1x xx xx xx
@@ -173,15 +173,10 @@ void TFT_SCREEN::drawClippedPixel(const int16_t x, const int16_t y, const rgb_t 
     tft_writeAddrWindow(x, y, 1, 1);
     tft_sendMDTColor(mdt_color(color));
   }
-#else
-  tft_writeAddrWindow(x, y, 1, 1);
-  tft_sendMDTColor(mdt_color(color));
-#endif
 }
 
 void TFT_SCREEN::drawClippedPixelRec(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
 {
-#ifdef OVERLAID
   // very dubious method to detect pointer in rgb_t type
   // in rp2040 pointers are 4 byte:
   // code: 1x xx xx xx
@@ -205,11 +200,8 @@ void TFT_SCREEN::drawClippedPixelRec(const int16_t x, const int16_t y, const int
     tft_writeAddrWindow(x, y, w, h);
     tft_sendMDTColor(mdt_color(color), w * h);
   }
-#else
-  tft_writeAddrWindow(x, y, w, h);
-  tft_sendMDTColor(mdt_color(color), w * h);
-#endif
 }
+#endif
 
 
 

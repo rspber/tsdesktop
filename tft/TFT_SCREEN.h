@@ -100,9 +100,12 @@ public:
   void writeMDTBuffer(const uint8_t* buffer, const int32_t len) override;
   void sendMDTColor1(const mdt_t c) override;
   void sendMDTColor(const mdt_t c, const int32_t len) override;
+  void drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) override;
+
+#ifdef OVERLAID
   void drawClippedPixel(const int16_t x, const int16_t y, const rgb_t color) override;
   void drawClippedPixelRec(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color) override;
-  void drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) override;
+#endif
 
 // --- the DMA ---------------------------------------------------------------
 
