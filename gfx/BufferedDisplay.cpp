@@ -362,3 +362,8 @@
       screen->pushMDTBuffer(clip, (const uint8_t*)buf, transparent);
 //    }
   }
+
+  rgb_t BufferedDisplay::readPixel(clip_t& clip, int16_t x, int16_t y)
+  {
+    return BLACK;
+  }

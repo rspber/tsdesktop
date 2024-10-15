@@ -85,7 +85,7 @@ public:
   void scrollTo(int16_t y);
   void setScrollMargins(int16_t top, int16_t bottom);
 //
-  rgb_t readPixel(clip_t& clip, int16_t x, int16_t y);
+  rgb_t readPixel(clip_t& clip, int16_t x, int16_t y) override;
   void readRegister(uint8_t* buf, const uint8_t reg, int8_t len);
 
   void sendCmd(const uint8_t cmd);

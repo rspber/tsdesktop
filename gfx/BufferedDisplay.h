@@ -134,6 +134,8 @@ public:
    */
   void drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) override;
 
+  rgb_t readPixel(clip_t& clip, int16_t x, int16_t y) override;
+
 private:
   rgb_t bgcolor;
   int16_t addr_x, addr_y, addr_w, addr_h;   // set by writeAddrWindow

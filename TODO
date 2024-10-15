@@ -1,4 +1,3 @@
-- Smooth fonts, almost done
 - Sprite
 - including all TFT_eSPI graphics and fonts functionality
 - drawBitmap's routines available for DMA
