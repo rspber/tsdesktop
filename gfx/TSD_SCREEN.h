@@ -3,6 +3,8 @@
 
   Copyright (c) 2023, rspber (https://github.com/rspber)
 
+  Smooth graphics comes from Bodmer's TFT_eSPI
+
 */
 
 #pragma once
