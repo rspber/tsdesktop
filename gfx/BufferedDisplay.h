@@ -36,6 +36,9 @@ public:
 
   virtual ~BufferedDisplay();
 
+  void createPalette(const rgb_t aColorMap[], const int8_t aMapLen) {}
+  void setColorDepth(int8_t b) {}
+
   /**
    * set window (this BufferedDisplay object) position on absolute screen
    * @x     - x (left)

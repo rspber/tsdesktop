@@ -65,6 +65,8 @@ public:
   void drawRGBBitmap(clip_t& clip, int16_t x, int16_t y, const uint16_t* bitmap, const uint8_t *mask, int16_t w, int16_t h); // 565 color
   void drawRGBBitmap(clip_t& clip, int16_t x, int16_t y, const uint32_t* bitmap, int16_t w, int16_t h);   // 666 color
   void drawRGBBitmap(clip_t& clip, int16_t x, int16_t y, const uint32_t* bitmap, const uint8_t *mask, int16_t w, int16_t h); // 666 color
+  void pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data);
+  void pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data, uint16_t transp);
 
   // utf-8
   void drawChar(clip_t& clip, cursor_t& cursor, font_t& font, char** c, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing);

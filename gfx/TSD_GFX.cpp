@@ -42,39 +42,57 @@ const int16_t clip_t::height()
     b = t;     \
   }
 
+#define CLIP_X \
+  if (x < clip.x1) { w -= clip.x1 - x; x = clip.x1; } \
+  if (x + w > clip.x2) { w = clip.x2 - x; }
+
+#define CLIP_Y \
+  if (y < clip.y1) { h -= clip.y1 - y; y = clip.y1; } \
+  if (y + h > clip.y2) { h = clip.y2 - y; }
+
+#define IF_CLIP_X x >= clip.x1 && x < clip.x2
+
+#define IF_CLIP_Y y >= clip.y1 && y < clip.y2
+
+// Clipping macro for pushImage
+#define PI_CLIP                                        \
+  if (x >= clip.x2 || y >= clip.y2) return;            \
+                                                       \
+  int32_t dx = 0;                                      \
+  int32_t dy = 0;                                      \
+  int32_t dw = w;                                      \
+  int32_t dh = h;                                      \
+                                                       \
+  if (x < clip.x1) { dx = clip.x1 - x; dw -= dx; x = clip.x1; } \
+  if (y < clip.y1) { dy = clip.y1 - y; dh -= dy; y = clip.y1; } \
+                                                       \
+  if ((x + dw) > clip.x2 ) dw = clip.x2 - x;                 \
+  if ((y + dh) > clip.y2 ) dh = clip.y2 - y;                 \
+                                                       \
+  if (dw < 1 || dh < 1) return;
+
+
 /**************************************************************************/
 
 void TSD_GFX::drawPixel(clip_t& clip, int16_t x, int16_t y, rgb_t color)
 {
-  if (x >= clip.x1 && y >= clip.y1 && x < clip.x2 && y < clip.y2) {
+  if (IF_CLIP_X && IF_CLIP_Y) {
     drawClippedPixel(x, y, color);
   }
 }
 
 void TSD_GFX::drawFastHLine(clip_t& clip, int16_t x, int16_t y, int16_t w, rgb_t color)
 {
-  if (x < clip.x1) {
-    w -= clip.x1 - x;
-    x = clip.x1;
-  }
-  if (x + w > clip.x2) {
-    w = clip.x2 - x;
-  }
-  if (y >= clip.y1 && y < clip.y2 && w > 0) {
+  CLIP_X
+  if (IF_CLIP_Y && w > 0) {
     drawClippedPixelRec(x, y, w, 1, color);
   }
 }
 
 void TSD_GFX::drawFastVLine(clip_t& clip, int16_t x, int16_t y, int16_t h, rgb_t color)
 {
-  if (y < clip.y1) {
-    h -= clip.y1 - y;
-    y = clip.y1;
-  }
-  if (y + h > clip.y2) {
-    h = clip.y2 - y;
-  }
-  if (x >= clip.x1 && x < clip.x2 && h > 0) {
+  CLIP_Y
+  if (IF_CLIP_Y && h > 0) {
     drawClippedPixelRec(x, y, 1, h, color);
   }
 }
@@ -94,20 +112,8 @@ void TSD_GFX::drawRect(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h,
 
 void TSD_GFX::fillRectHelper(clip_t& clip, int16_t x, int16_t y, int16_t w, int16_t h, rgb_t color)
 {
-  if (x < clip.x1) {
-    w -= clip.x1 - x;
-    x = clip.x1;
-  }
-  if (x + w > clip.x2) {
-    w = clip.x2 - x;
-  }
-  if (y < clip.y1) {
-    h -= clip.y1 - y;
-    y = clip.y1;
-  }
-  if (y + h > clip.y2) {
-    h = clip.y2 - y;
-  }
+  CLIP_X
+  CLIP_Y
   if (w > 0 && h > 0) {
     drawClippedPixelRec(x, y, w, h, color);
   }
@@ -659,7 +665,7 @@ void TSD_GFX::drawRGBBitmap(clip_t& clip, int16_t x, int16_t y, const uint16_t* 
       }
     }
     else {   // translate 565 to 666
-      const uint8_t* p = (const uint8_t*)(bitmap + dw * dy + dx);
+      const uint16_t* p = bitmap + dw * dy + dx;
       const uint8_t* buff = (const uint8_t*)malloc(dw * MDT_SIZE + 3);
       uint8_t* q = (uint8_t*)buff;
       for (int j = 0; j < dh; ++j) {
@@ -668,7 +674,7 @@ void TSD_GFX::drawRGBBitmap(clip_t& clip, int16_t x, int16_t y, const uint16_t* 
           q += 3;
         }
         writeMDTBuffer((const uint8_t*)buff, dw);
-        p += w * 2;
+        p += w;
       }
       free((void*)buff);
     }
@@ -731,6 +737,101 @@ void TSD_GFX::drawRGBBitmap(clip_t& clip, int16_t x, int16_t y, const uint32_t* 
   }
   endWrite();
 }
+
+
+
+void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data)
+{
+  PI_CLIP;
+
+  startWrite();
+  writeAddrWindow(x, y, dw, dh);
+
+  data += dx + dy * w;
+
+  // Check if whole image can be pushed
+  if (dw == w) {
+    writeMDTBuffer((const uint8_t*)data, dw * dh);
+  }
+  else {
+    // Push line segments to crop image
+    while (dh--) {
+      writeMDTBuffer((const uint8_t*)data, dw);
+      data += w;
+    }
+  }
+
+  endWrite();
+}
+
+
+void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data, uint16_t transp)
+{
+  PI_CLIP;
+
+  startWrite();
+
+  data += dx + dy * w;
+
+
+  uint16_t  lineBuf[dw]; // Use buffer to minimise setWindow call count
+
+  // The little endian transp color must be byte swapped if the image is big endian
+//  if (!_swapBytes) transp = transp >> 8 | transp << 8;
+
+  while (dh--)
+  {
+    int32_t len = dw;
+    uint16_t* ptr = data;
+    int32_t px = x, sx = x;
+    bool move = true;
+    uint16_t np = 0;
+
+    while (len--)
+    {
+      if (transp != *ptr)
+      {
+        if (move) { move = false; sx = px; }
+        lineBuf[np] = *ptr;
+        np++;
+      }
+      else
+      {
+        move = true;
+        if (np)
+        {
+          writeAddrWindow(sx, y, np, 1);
+          writeMDTBuffer((const uint8_t*)lineBuf, np);
+          np = 0;
+        }
+      }
+      px++;
+      ptr++;
+    }
+    if (np) {
+      writeAddrWindow(sx, y, np, 1);
+      writeMDTBuffer((const uint8_t*)lineBuf, np);
+    }
+
+    y++;
+    data += w;
+  }
+
+  endWrite();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // TEXT- AND CHARACTER-HANDLING FUNCTIONS ----------------------------------
 

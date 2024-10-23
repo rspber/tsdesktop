@@ -11,8 +11,11 @@
 #include <stdint.h>
 
 typedef uint32_t rgb_t;
+
 inline rgb_t RGB(uint8_t R, uint8_t G, uint8_t B) { return 0xFF000000 | (((uint32_t)(R) << 16)) | ((uint16_t)(G) << 8) | B; }
+
 inline uint16_t RGB565(uint8_t R, uint8_t G, uint8_t B) { return ((uint16_t)(R >> 3) << 11) | ((uint16_t)(G >> 2) << 5) | (B >> 3); }
+
 inline rgb_t rgb(const uint16_t color)
 {
   return (rgb_t)(0xFF000000 | ((uint32_t)(color & 0xF800) << 8) | ((color & 0x07E0) << 5) | (color & 0x1F));
@@ -24,6 +27,11 @@ inline rgb_t rgb(const uint16_t color)
 #else
   #define MDT_SIZE 3
   #define mdt_t uint32_t
+
+inline rgb_t rgb(const mdt_t color)
+{
+  return (rgb_t)(0xFF000000 | ((uint32_t)(color & 0x3F000) << 6) | ((color & 0x0FC0) << 4) | (color & 0x3F));
+}
 #endif
 
 #define WHITE RGB(0xFF, 0xFF, 0xFF)
