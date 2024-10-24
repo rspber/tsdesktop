@@ -24,7 +24,7 @@ static const rgb_t default_4bit_palette[] = {
   GREEN,    //  5  |
   BLUE,     //  6  |
   PURPLE,   //  7  |
-  GRAY,     //  8  |
+  GREY,     //  8  |
   WHITE,    //  9  v
   CYAN,     // 10  Blue+green mix
   MAGENTA,  // 11  Blue+red mix
@@ -131,7 +131,7 @@ static const rgb_t default_4bit_palette[] = {
 
   uint8_t BufferedDisplay::paletteIdx(const rgb_t color) {
     for( int i = cMapLen; --i >= 0; ) {
-      if (colorMap[i] == color) {
+      if ((colorMap[i] & 0x00FCFCFC) == (color & 0x00FCFCFC)) {
         return i;
       }
     }
