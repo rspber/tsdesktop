@@ -31,9 +31,6 @@ public:
            // Push a rotated copy of Sprite to TFT with optional transparent colour
   bool     pushRotated(TSD_SCREEN& tft, int16_t angle, rgb_t transp = WHITE);
 
-           // Get the destination Sprite bounding box for a rotated copy of this Sprite
-  bool     getRotatedBounds(int16_t angle, bounds_t& bds, int16_t dist_w, int16_t disp_h);
-
   void pushSprite(TSD_SCREEN& display, const int16_t x, const int16_t y);
   void pushSprite(TSD_SCREEN& display, const int16_t x, const int16_t y, const rgb_t transp);
 

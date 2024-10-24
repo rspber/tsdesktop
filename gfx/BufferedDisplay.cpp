@@ -14,6 +14,26 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Default palette for 4-bit colour sprites
+static const rgb_t default_4bit_palette[] = {
+  BLACK,    //  0  ^
+  BROWN,    //  1  |
+  RED,      //  2  |
+  ORANGE,   //  3  |
+  YELLOW,   //  4  Colours 0-9 follow the resistor colour code!
+  GREEN,    //  5  |
+  BLUE,     //  6  |
+  PURPLE,   //  7  |
+  GRAY,     //  8  |
+  WHITE,    //  9  v
+  CYAN,     // 10  Blue+green mix
+  MAGENTA,  // 11  Blue+red mix
+  MAROON,   // 12  Darker red colour
+  DARK_GREEN,// 13  Darker green colour
+  NAVY,     // 14  Darker blue colour
+  PINK      // 15
+};
+
 //#include <Arduino.h>
 
   /**
@@ -21,11 +41,11 @@
    * @aClip - init display position & sizes,
    *       this causes the memory (internal buffer) allocation width * height * MDT_SIZE
    */
-  BufferedDisplay::BufferedDisplay(clip_t& aClip, const rgb_t aBackgroundColor)
+  BufferedDisplay::BufferedDisplay(clip_t& aClip, const rgb_t aBgColor)
     : TSD_SCREEN(aClip.width(), aClip.height())
   {
     clip = aClip;
-    initialize(aBackgroundColor);
+    initialize(aBgColor);
   }
 
   /**
@@ -36,11 +56,28 @@
    * @y2     - height = y2 - y1
    *      this causes the memory (internal buffer) allocation width * height * MDT_SIZE
    */
-  BufferedDisplay::BufferedDisplay(const int16_t x1, const int16_t y1, const int16_t x2, const int16_t y2, const rgb_t aBackgroundColor)
+  BufferedDisplay::BufferedDisplay(const int16_t x1, const int16_t y1, const int16_t x2, const int16_t y2, const rgb_t aBgColor)
     : TSD_SCREEN(x2 - x1, y2 - y1)
   {
     clip = {x1, y1, x2, y2};
-    initialize(aBackgroundColor);
+    initialize(aBgColor);
+  }
+
+  void BufferedDisplay::createPalette(const rgb_t aColorMap[], const int8_t aMapLen)
+  {
+    if (colorMap == 0) {
+      colorMap = (rgb_t*)calloc(16, sizeof(rgb_t));
+    }
+    cMapLen = aMapLen > 16 ? 16 : aMapLen;
+    memcpy((void *)colorMap, aColorMap, cMapLen * sizeof(rgb_t));
+  }
+
+  void BufferedDisplay::setColorDepth(int8_t b)
+  {
+    if (bpp != b) {
+      bpp = b;
+      adjust();
+    }
   }
 
   BufferedDisplay::~BufferedDisplay()
@@ -54,14 +91,23 @@
    */
   void BufferedDisplay::initialize(const rgb_t aBgColor)
   {
-    bgcolor = aBgColor;
     buf = (uint8_t*)malloc(clip.width() * clip.height() * MDT_SIZE);
 /*
     if (!buf) {
       Serial.println("No memory for BufferedDisplay\");
     }
 */
-    clear(bgcolor);
+    clear(aBgColor);
+  }
+
+  void BufferedDisplay::adjust()
+  {
+      buf = (uint8_t*)realloc(buf, clip.width() * clip.height() * MDT_SIZE);
+/*
+      if (!buf) {
+        Serial.println("No memory for BufferedDisplay\");
+      }
+*/
   }
 
   /**
@@ -77,13 +123,8 @@
     ) {}
     else {
       clip = aClip;
-      buf = (uint8_t*)realloc(buf, clip.width() * clip.height() * MDT_SIZE);
-/*
-      if (!buf) {
-        Serial.println("No memory for BufferedDisplay\");
-      }
-*/
-      clear(bgcolor);
+      adjust();
+//      clear(bgcolor);
     }
   }
 
@@ -363,7 +404,10 @@
 //    }
   }
 
-  rgb_t BufferedDisplay::readPixel(clip_t& clip, int16_t x, int16_t y)
+  rgb_t BufferedDisplay::readPixel(clip_t& cli, int16_t x, int16_t y)
   {
+    if (x >= clip.x1 && x < clip.x2 && y >= clip.y1 && y < clip.y2 ) {
+      return rgb(getMDTColor(x, y));
+    }
     return BLACK;
   }

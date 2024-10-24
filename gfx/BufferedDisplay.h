@@ -22,7 +22,7 @@ public:
    * @aClip - init display position & sizes,
    *       this causes the memory (internal buffer) allocation width * height * MDT_SIZE
    */
-  BufferedDisplay(clip_t& aClip, const rgb_t aBackgroundColor = BLACK);
+  BufferedDisplay(clip_t& aClip, const rgb_t aBgColor = BLACK);
 
   /**
    * BufferedDisplay constructor
@@ -32,12 +32,12 @@ public:
    * @y2     - height = y2 - y1
    *      this causes the memory (internal buffer) allocation width * height * MDT_SIZE
    */
-  BufferedDisplay(const int16_t x1, const int16_t y1, const int16_t x2, const int16_t y2, const rgb_t aBackgroundColor = BLACK);
+  BufferedDisplay(const int16_t x1, const int16_t y1, const int16_t x2, const int16_t y2, const rgb_t aBgColor = BLACK);
 
   virtual ~BufferedDisplay();
 
-  void createPalette(const rgb_t aColorMap[], const int8_t aMapLen) {}
-  void setColorDepth(int8_t b) {}
+  void createPalette(const rgb_t aColorMap[], const int8_t aMapLen);
+  void setColorDepth(int8_t b);
 
   /**
    * set window (this BufferedDisplay object) position on absolute screen
@@ -49,7 +49,7 @@ public:
   /**
    * clear - speedup function to clear entire internal buffer with color
    */
-  void clear(const rgb_t color);
+  void clear(const rgb_t aBgColor = BLACK);
 
   /**
    * adjust - can be used to resize internal buffer on the fly
@@ -140,14 +140,16 @@ public:
   rgb_t readPixel(clip_t& clip, int16_t x, int16_t y) override;
 
 private:
-  rgb_t bgcolor;
+  void adjust();
+
+  void initialize(const rgb_t aBgColor);
+
   int16_t addr_x, addr_y, addr_w, addr_h;   // set by writeAddrWindow
   int16_t ip;
   uint8_t* buf = 0;
 
-  /**
-   * called by constructor
-   */
-  void initialize(const rgb_t aBgColor);
+  const rgb_t* colorMap;
+  int8_t cMapLen;
 
+  int8_t bpp;
 };
