@@ -16,22 +16,24 @@ inline rgb_t RGB(uint8_t R, uint8_t G, uint8_t B) { return 0xFF000000 | (((uint3
 
 inline uint16_t RGB565(uint8_t R, uint8_t G, uint8_t B) { return ((uint16_t)(R >> 3) << 11) | ((uint16_t)(G >> 2) << 5) | (B >> 3); }
 
-inline rgb_t rgb(const uint16_t color)
+inline rgb_t rgb16(const uint16_t color)
 {
-  return (rgb_t)(0xFF000000 | ((uint32_t)(color & 0xF800) << 8) | ((color & 0x07E0) << 5) | (color & 0x1F));
+  return (rgb_t)(0xFF000000 | ((uint32_t)(color & 0xF800) << 8) | ((color & 0x07E0) << 5) | (color & 0x1F) << 3);
+}
+
+inline rgb_t rgb24(const uint32_t color)
+{
+  return (rgb_t)(0xFF000000 | color);
 }
 
 #ifdef COLOR_565
   #define MDT_SIZE 2
   #define mdt_t uint16_t
+  #define rgb rgb16
 #else
   #define MDT_SIZE 3
   #define mdt_t uint32_t
-
-inline rgb_t rgb(const mdt_t color)
-{
-  return (rgb_t)(0xFF000000 | ((uint32_t)(color & 0x3F000) << 6) | ((color & 0x0FC0) << 4) | (color & 0x3F));
-}
+  #define rgb rgb24
 #endif
 
 #define WHITE RGB(0xFF, 0xFF, 0xFF)

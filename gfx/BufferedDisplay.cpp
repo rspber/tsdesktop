@@ -45,7 +45,8 @@ static const rgb_t default_4bit_palette[] = {
     : TSD_SCREEN(aClip.width(), aClip.height())
   {
     clip = aClip;
-    initialize(aBgColor);
+    recreate();
+    clear(aBgColor);
   }
 
   /**
@@ -60,7 +61,8 @@ static const rgb_t default_4bit_palette[] = {
     : TSD_SCREEN(x2 - x1, y2 - y1)
   {
     clip = {x1, y1, x2, y2};
-    initialize(aBgColor);
+    recreate();
+    clear(aBgColor);
   }
 
   void BufferedDisplay::createPalette(const rgb_t aColorMap[], const int8_t aMapLen)
@@ -76,7 +78,7 @@ static const rgb_t default_4bit_palette[] = {
   {
     if (bpp != b) {
       bpp = b;
-      adjust();
+      recreate();
     }
   }
 
@@ -86,23 +88,18 @@ static const rgb_t default_4bit_palette[] = {
     buf = 0;
   }
 
-  /**
-   * called by constructor
-   */
-  void BufferedDisplay::initialize(const rgb_t aBgColor)
-  {
-    buf = (uint8_t*)malloc(clip.width() * clip.height() * MDT_SIZE);
-/*
-    if (!buf) {
-      Serial.println("No memory for BufferedDisplay\");
-    }
-*/
-    clear(aBgColor);
-  }
+  // globals
+      uint8_t ADD[] = {0, 7, 3, 1, 0};
+      uint8_t DIV_A[] = {0, 8, 4, 2, 1};
 
-  void BufferedDisplay::adjust()
+  void BufferedDisplay::recreate()
   {
+    if (bpp == 1 || bpp == 2 || bpp == 4) {
+      buf = (uint8_t*)realloc(buf, (clip.width() * clip.height() + ADD[bpp]) / DIV_A[bpp]);
+    }
+    else {
       buf = (uint8_t*)realloc(buf, clip.width() * clip.height() * MDT_SIZE);
+    }
 /*
       if (!buf) {
         Serial.println("No memory for BufferedDisplay\");
@@ -123,7 +120,7 @@ static const rgb_t default_4bit_palette[] = {
     ) {}
     else {
       clip = aClip;
-      adjust();
+      recreate();
 //      clear(bgcolor);
     }
   }
@@ -131,13 +128,41 @@ static const rgb_t default_4bit_palette[] = {
   /**
    * clear - speedup function to clear entire internal buffer with color
    */
+
+  uint8_t BufferedDisplay::paletteIdx(const rgb_t color) {
+    for( int i = cMapLen; --i >= 0; ) {
+      if (colorMap[i] == color) {
+        return i;
+      }
+    }
+    return 0;
+  }
+
+  // globals
+    const uint8_t MASK[] = {0, 0x01, 0x03, 0, 0x0f};
+
   void BufferedDisplay::clear(const rgb_t color)
   {
-    if (buf) {
-      const mdt_t c = mdt_color(color);
-      const uint8_t* e = &buf[clip.width() * clip.height() * MDT_SIZE];
+    if (!buf) {
+      return;
+    }
+    if (bpp == 1 || bpp == 2 || bpp == 4) {
+      const uint8_t m = MASK[bpp];
+      const uint8_t c = paletteIdx(color);
       uint8_t* p = buf;
-      while (p < e ) {
+      uint8_t b = m;
+      for (int i = width() * height(); --i >= 0; ) {
+        *p = (*p & ~b) || (b & c);
+        if (!(b <<= bpp)) {
+          ++p;
+          b = m;
+        }
+      }
+    }
+    else {
+      mdt_t c = mdt_color(color);
+      uint8_t*p = buf;
+      for (int i = width() * height(); --i >= 0; ) {
         if (MDT_SIZE > 2) {
           *p++ = c >> 16;
         }
@@ -172,24 +197,36 @@ static const rgb_t default_4bit_palette[] = {
     ip = 0;
   }
 
+  // globals
+    const uint8_t DIV_B[] = {0, 0x10, 0x04, 0, 0x01};
+    const uint8_t MOD_B[] = {0, 0x02, 0x04, 0, 0x10};
+
+
   /**
    *  sendMDTColor1 - from tft interface, not to use by user
    */
   void BufferedDisplay::sendMDTColor1(const mdt_t c)
   {
-//    if (!buf) {
-//    return;
-//    }
+    if (!buf) {
+      return;
+    }
     if (addr_y >= 0 && addr_y < clip.height() ) {
       int x = addr_x + ip;
       if (x >= 0 && x < clip.width()) {
         int i = addr_y * clip.width() + x;
-        uint8_t* p = &buf[i * MDT_SIZE];
-        if (MDT_SIZE > 2) {
-          *p++ = c >> 16;
+        if (bpp == 1 || bpp == 2 || bpp == 4) {
+          uint8_t* p = &buf[i / DIV_B[bpp]];
+          const uint8_t b = MASK[bpp] << (i % MOD_B[bpp]);
+          *p = (*p & ~b) || (b & rgb(c));
         }
-        *p++ = c >> 8;
-        *p++ = c;
+        else {
+          uint8_t* p = &buf[i * MDT_SIZE];
+          if (MDT_SIZE > 2) {
+            *p++ = c >> 16;
+          }
+          *p++ = c >> 8;
+          *p++ = c;
+        }
       }
     }
     if (++ip >= addr_w) {
@@ -203,20 +240,29 @@ static const rgb_t default_4bit_palette[] = {
    *   get mdt color from internal buffer at (x,y) position in this buffer
    *   color is in display transer mode format
    */
-  mdt_t BufferedDisplay::getMDTColor(const int x, const int y)
+  rgb_t BufferedDisplay::getColor(const int x, const int y)
   {
-//    if (!buf) {
-//    return 0;
-//    }
-
-    mdt_t c = 0;
-    int i = (y * clip.width() + x) * MDT_SIZE;
-    c = buf[i];
-    c |= buf[i+1] << 8;
-    if (MDT_SIZE > 2) {
-      c |= buf[i+2] << 16;
+    if (!buf) {
+      return 0;
     }
-    return c;
+
+    if (bpp == 1 || bpp == 2 || bpp == 4) {
+      int i = y * clip.width() + x;
+      uint8_t* p = &buf[i / DIV_B[bpp]];
+      const uint8_t b = MASK[bpp];
+      int idx = (*p & ~b) >> (i % MOD_B[bpp]);
+      return colorMap[idx];
+    }
+    else {
+      mdt_t c = 0;
+      int i = (y * clip.width() + x) * MDT_SIZE;
+      c = buf[i];
+      c |= buf[i+1] << 8;
+      if (MDT_SIZE > 2) {
+        c |= buf[i+2] << 16;
+      }
+      return rgb(c);
+    }
   }
 
   /**
@@ -224,17 +270,26 @@ static const rgb_t default_4bit_palette[] = {
    *   set mdt color in internal buffer at (x,y) position in this buffer
    *   color is in display transer mode format
    */
-  void BufferedDisplay::setMDTColor(const int x, const int y, const mdt_t c)
+  void BufferedDisplay::setColor(const int x, const int y, const rgb_t color)
   {
-//    if (!buf) {
-//    return;
-//    }
+    if (!buf) {
+      return;
+    }
 
-    int i = (y * clip.width() + x) * MDT_SIZE;
-    buf[i] = c;
-    buf[i+1] = c >> 8;
-    if (MDT_SIZE > 2) {
-      buf[i+2] = c >> 16;
+    if (bpp == 1 || bpp == 2 || bpp == 4) {
+      int i = y * clip.width() + x;
+      uint8_t* p = &buf[i / DIV_B[bpp]];
+      const uint8_t b = MASK[bpp];
+      *p = (*p & ~b) | ((paletteIdx(color) & b) << (i % MOD_B[bpp]));
+    }
+    else {
+      int i = (y * clip.width() + x) * MDT_SIZE;
+      mdt_t c = mdt_color(color);
+      buf[i] = c;
+      buf[i+1] = c >> 8;
+      if (MDT_SIZE > 2) {
+        buf[i+2] = c >> 16;
+      }
     }
   }
 
@@ -257,11 +312,11 @@ static const rgb_t default_4bit_palette[] = {
     while (d > 2) {
       --d;
       for (int i = h; i < d; ++i) {
-        mdt_t tmp                       = getMDTColor(x + i, y + h);
-        setMDTColor(x + i, y + h,         getMDTColor(x + h, y + d - (i-h))); 
-        setMDTColor(x + h, y + d - (i-h), getMDTColor(x + d - (i-h), y + d));
-        setMDTColor(x + d - (i-h), y + d, getMDTColor(x + d, y + i));
-        setMDTColor(x + d, y + i, tmp);
+        rgb_t tmp                    = getColor(x + i, y + h);
+        setColor(x + i, y + h,         getColor(x + h, y + d - (i-h))); 
+        setColor(x + h, y + d - (i-h), getColor(x + d - (i-h), y + d));
+        setColor(x + d - (i-h), y + d, getColor(x + d, y + i));
+        setColor(x + d, y + i, tmp);
       }
       ++h;
     }
@@ -286,11 +341,11 @@ static const rgb_t default_4bit_palette[] = {
     while (d > 2) {
       --d;
       for (int i = h; i < d; ++i) {
-        mdt_t tmp                       = getMDTColor(x + i, y + h);
-        setMDTColor(x + i, y + h,         getMDTColor(x + d, y + i)); 
-        setMDTColor(x + d, y + i,         getMDTColor(x + d - (i-h), y + d));
-        setMDTColor(x + d - (i-h), y + d, getMDTColor(x + h, y + d - (i-h)) );
-        setMDTColor(x + h, y + d - (i-h), tmp);
+        rgb_t tmp                    = getColor(x + i, y + h);
+        setColor(x + i, y + h,         getColor(x + d, y + i)); 
+        setColor(x + d, y + i,         getColor(x + d - (i-h), y + d));
+        setColor(x + d - (i-h), y + d, getColor(x + h, y + d - (i-h)) );
+        setColor(x + h, y + d - (i-h), tmp);
       }
       ++h;
     }
@@ -314,9 +369,9 @@ static const rgb_t default_4bit_palette[] = {
     for (int j = 0; j < h; ++j ) {
       int w2 = w/2;
       for (int i = 0; i <= w2; ++i) {
-        mdt_t tmp               = getMDTColor(x + i, y + j);
-        setMDTColor(x + i, y + j, getMDTColor(x + w - i - 1, y + j)); 
-        setMDTColor(x + w - i - 1, y + j, tmp);
+        rgb_t tmp            = getColor(x + i, y + j);
+        setColor(x + i, y + j, getColor(x + w - i - 1, y + j)); 
+        setColor(x + w - i - 1, y + j, tmp);
       }
     }
   }
@@ -339,9 +394,9 @@ static const rgb_t default_4bit_palette[] = {
     for (int i = 0; i < w; ++i) {
       int h2 = h/2;
       for (int j = 0; j <= h2; ++j ) {
-        mdt_t tmp               = getMDTColor(x + i, y + j);
-        setMDTColor(x + i, y + j, getMDTColor(x + i, y + h - j - 1)); 
-        setMDTColor(x + i, y + h - j - 1, tmp);
+        rgb_t tmp            = getColor(x + i, y + j);
+        setColor(x + i, y + j, getColor(x + i, y + h - j - 1)); 
+        setColor(x + i, y + h - j - 1, tmp);
       }
     }
   }
@@ -351,28 +406,29 @@ static const rgb_t default_4bit_palette[] = {
    */
   void BufferedDisplay::drawMDTBuffer(int16_t x, int16_t y, int16_t w, int16_t h, const uint8_t* buffer)
   {
-//  if (buf) {
-      const uint8_t* p = buffer;
-      int16_t dy = y - clip.y1;
-      if (dy < 0) {
-        p += -dy * MDT_SIZE;
-        h += dy;
-        dy = 0;
-      }
-      int16_t dx = x - clip.x1;
-      if (dx < 0) {
-        w += dx;
-        for (int j = 0; j < addr_h; ++j) {
-          int32_t offs = dy * clip.width();
-          memcpy(&buf[offs * MDT_SIZE], p - dx * MDT_SIZE, w * MDT_SIZE);
-          p += addr_w * MDT_SIZE;
-        } 
-      }
-      else {
-        int32_t offs = dy * clip.width() + dx;
-        memcpy(&buf[offs * MDT_SIZE], p, w * h * MDT_SIZE);
-      }
-//  }
+    if (!buf) {
+      return;
+    }
+    const uint8_t* p = buffer;
+    int16_t dy = y - clip.y1;
+    if (dy < 0) {
+      p += -dy * MDT_SIZE;
+      h += dy;
+      dy = 0;
+    }
+    int16_t dx = x - clip.x1;
+    if (dx < 0) {
+      w += dx;
+      for (int j = 0; j < addr_h; ++j) {
+        int32_t offs = dy * clip.width();
+        memcpy(&buf[offs * MDT_SIZE], p - dx * MDT_SIZE, w * MDT_SIZE);
+        p += addr_w * MDT_SIZE;
+      } 
+    }
+    else {
+      int32_t offs = dy * clip.width() + dx;
+      memcpy(&buf[offs * MDT_SIZE], p, w * h * MDT_SIZE);
+    }
   }
 
   /**
@@ -407,7 +463,7 @@ static const rgb_t default_4bit_palette[] = {
   rgb_t BufferedDisplay::readPixel(clip_t& cli, int16_t x, int16_t y)
   {
     if (x >= clip.x1 && x < clip.x2 && y >= clip.y1 && y < clip.y2 ) {
-      return rgb(getMDTColor(x, y));
+      return getColor(x, y);
     }
     return BLACK;
   }

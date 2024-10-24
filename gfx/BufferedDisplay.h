@@ -40,6 +40,11 @@ public:
   void setColorDepth(int8_t b);
 
   /**
+   * color index in palette 
+   */
+  uint8_t paletteIdx(rgb_t color);
+
+  /**
    * set window (this BufferedDisplay object) position on absolute screen
    * @x     - x (left)
    * @y     - y (top)
@@ -57,18 +62,16 @@ public:
   void adjust(clip_t& aClip);
 
   /**
-   * getMDTColor - local manipulation function
-   *   get mdt color from internal buffer at (x,y) position in this buffer
-   *   color is in display transer mode format
+   * getColor - local manipulation function
+   *   get color from internal buffer at (x,y) position in this buffer
    */
-  mdt_t getMDTColor(const int x, const int y);
+  rgb_t getColor(const int x, const int y);
 
   /**
-   * setMDTColor - local manipulation function
-   *   set mdt color in internal buffer at (x,y) position in this buffer
-   *   color is in display transer mode format
+   * setColor - local manipulation function
+   *   set color in internal buffer at (x,y) position in this buffer
    */
-  void setMDTColor(const int x, const int y, const mdt_t c);
+  void setColor(const int x, const int y, const rgb_t color);
 
   /**
    * rotateRight - simple square bit to bit rotation in internal buffer
@@ -140,9 +143,8 @@ public:
   rgb_t readPixel(clip_t& clip, int16_t x, int16_t y) override;
 
 private:
-  void adjust();
-
   void initialize(const rgb_t aBgColor);
+  void recreate();
 
   int16_t addr_x, addr_y, addr_w, addr_h;   // set by writeAddrWindow
   int16_t ip;
