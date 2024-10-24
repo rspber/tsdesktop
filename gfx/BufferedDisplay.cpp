@@ -129,11 +129,40 @@ static const rgb_t default_4bit_palette[] = {
    * clear - speedup function to clear entire internal buffer with color
    */
 
-  uint8_t BufferedDisplay::paletteIdx(const rgb_t color) {
-    for( int i = cMapLen; --i >= 0; ) {
-      if ((colorMap[i] & 0x00FCFCFC) == (color & 0x00FCFCFC)) {
+  static int palette_idx(const rgb_t* colorMap, int len, uint32_t mask, const rgb_t color) {
+    for( int i = len; --i >= 0; ) {
+      if ((colorMap[i] & mask) == (color & mask)) {
         return i;
       }
+    }
+    return -1;
+  }
+
+  uint8_t BufferedDisplay::paletteIdx(const rgb_t color) {
+    int i;
+    i = palette_idx(colorMap, cMapLen, 0x00FCFCFC, color);
+    if (i >= 0) { 
+      return i;
+    }
+    i = palette_idx(colorMap, cMapLen, 0x00F8F8F8, color);
+    if (i >= 0) { 
+      return i;
+    }
+    i = palette_idx(colorMap, cMapLen, 0x00F0F0F0, color);
+    if (i >= 0) { 
+      return i;
+    }
+    i = palette_idx(colorMap, cMapLen, 0x00E0E0E0, color);
+    if (i >= 0) { 
+      return i;
+    }
+    i = palette_idx(colorMap, cMapLen, 0x00C0C0C0, color);
+    if (i >= 0) { 
+      return i;
+    }
+    i = palette_idx(colorMap, cMapLen, 0x00808080, color);
+    if (i >= 0) { 
+      return i;
     }
     return 0;
   }
