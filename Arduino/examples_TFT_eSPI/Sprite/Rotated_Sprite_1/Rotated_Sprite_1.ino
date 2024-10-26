@@ -31,7 +31,7 @@
 
 TFT_eSPI tft;           // TFT object
 
-TFT_eSprite spr; // Sprite object
+TFT_eSprite spr = TFT_eSprite(&tft); // Sprite object
 
 // =======================================================================================
 // Setup
@@ -59,7 +59,7 @@ void loop() {
   drawX(xw, yh);            // Show where screen pivot is
 
   // Create the Sprite
-  spr.setColorDepth(8);      // Create an 8bpp Sprite of 60x30 pixels
+//  spr.setColorDepth(8);      // Create an 8bpp Sprite of 60x30 pixels
   spr.createSprite(64, 30);  // 8bpp requires 64 * 30 = 1920 bytes
   spr.setPivot(32, 55);      // Set pivot relative to top left corner of Sprite
   spr.fillSprite(BLACK); // Fill the Sprite with black
@@ -68,10 +68,10 @@ void loop() {
 //  spr.setTextDatum(MC_DATUM);         // Middle centre datum
   spr.drawText(2, 5, "Hello", 2, YELLOW); // Plot text, font 4, in Sprite at 30, 15
 
-  spr.pushRotated(tft, 0);
-  spr.pushRotated(tft, 90);
-  spr.pushRotated(tft, 180);
-  spr.pushRotated(tft, 270);
+  spr.pushRotated(0);
+  spr.pushRotated(90);
+  spr.pushRotated(180);
+  spr.pushRotated(270);
 
   delay(2000);
 
@@ -79,10 +79,10 @@ void loop() {
   showMessage("45 degree angles");
   drawX(xw, yh);            // Show where screen pivot is
 
-  spr.pushRotated(tft, 45);
-  spr.pushRotated(tft, 135);
-  spr.pushRotated(tft, 225);
-  spr.pushRotated(tft, 315);
+  spr.pushRotated(45);
+  spr.pushRotated(135);
+  spr.pushRotated(225);
+  spr.pushRotated(315);
 
   delay(2000);  // Pause so we see it
 
@@ -92,10 +92,10 @@ void loop() {
 
   spr.setPivot(-20, 15);  // Change just the Sprite pivot point
 
-  spr.pushRotated(tft, 45);
-  spr.pushRotated(tft, 135);
-  spr.pushRotated(tft, 225);
-  spr.pushRotated(tft, 315);
+  spr.pushRotated(45);
+  spr.pushRotated(135);
+  spr.pushRotated(225);
+  spr.pushRotated(315);
 
   delay(2000);  // Pause so we see it
 
@@ -104,10 +104,10 @@ void loop() {
   tft.setPivot(100, 100); // Change just the TFT pivot point
   drawX(100, 100);        // Show where pivot is
 
-  spr.pushRotated(tft, 45);
-  spr.pushRotated(tft, 135);
-  spr.pushRotated(tft, 225);
-  spr.pushRotated(tft, 315);
+  spr.pushRotated(45);
+  spr.pushRotated(135);
+  spr.pushRotated(225);
+  spr.pushRotated(315);
 
   delay(2000);  // Pause so we see it
 
@@ -120,7 +120,7 @@ void loop() {
   
   spr.deleteSprite();
 
-  spr.setColorDepth(8);         // Create a 8bpp Sprite
+//  spr.setColorDepth(8);         // Create a 8bpp Sprite
   spr.createSprite(40, 30);     // Create a new Sprite 40x30
   spr.setPivot(20, 70);         // Set Sprite pivot at 20,80
 
@@ -135,7 +135,7 @@ void loop() {
     char buf[40];
     snprintf(buf, 40, "%d", num);
     spr.drawText(10, 10, buf, 2, RED);    // Plot number, in Sprite at 20,15 and with font 4
-    spr.pushRotated(tft, angle, BLACK); // Plot rotated Sprite, black being transparent
+    spr.pushRotated(angle, BLACK); // Plot rotated Sprite, black being transparent
     num++;
   }
 
@@ -148,7 +148,7 @@ void loop() {
     char buf[40];
     snprintf(buf, 40, "%d", angle+90);
     spr.drawText(10, 10, buf, 2, WHITE); // Plot number, in Sprite at 20,15 and with font 4
-    spr.pushRotated(tft, angle, BLACK);   // Plot rotated Sprite, black being transparent
+    spr.pushRotated(angle, BLACK);   // Plot rotated Sprite, black being transparent
     num++;
   }
   

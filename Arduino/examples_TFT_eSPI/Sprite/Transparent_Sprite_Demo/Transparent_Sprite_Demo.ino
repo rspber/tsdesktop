@@ -12,27 +12,22 @@
   any position. If there is sufficient RAM then the Sprite can
   be the same size as the screen and used as a frame buffer.
 
-  A 16 bit Sprite occupies (2 * width * height) bytes in RAM.
+  A 16-bit Sprite occupies (2 * width * height) bytes in RAM.
 
   On a ESP8266 Sprite sizes up to 126 x 160 can be accommodated,
-  this size requires 40kBytes of RAM for a 16 bit colour depth.
+  this size requires 40kBytes of RAM for a 16-bit colour depth.
   
-  When 8 bit colour depth sprites are created they occupy
+  When 8-bit colour depth sprites are created they occupy
   (width * height) bytes in RAM, so larger sprites can be
   created, or the RAM required is halved.
 */
 
 #include <TFT_eSPI.h>                 // Include the graphics library (this includes the sprite functions)
 
-TFT_eSPI    tft;         // Create object "tft"
+TFT_eSPI    tft = TFT_eSPI();         // Create object "tft"
 
-TFT_eSprite img1(70, 80);  // Create Sprite object "img" with pointer to "tft" object
+TFT_eSprite img = TFT_eSprite(&tft);  // Create Sprite object "img" with pointer to "tft" object
                                       // the pointer is used by pushSprite() to push it onto the TFT
-
-  // Create a 8 bit sprite 80 pixels wide, 35 high (2800 bytes of RAM needed)
-TFT_eSprite img2(80, 35);
-//  img.setColorDepth(8);
-
 #define TRANSPARENT DARK_GREEN
 
 void setup(void) {
@@ -41,7 +36,6 @@ void setup(void) {
   tft.init();
 
   tft.setRotation(0);
-
 }
 
 void loop() {
@@ -54,7 +48,7 @@ void loop() {
     int x = random(240-70);
     int y = random(320-80);
     int c = random(0x10000); // Random colour
-    drawStar(img1, x, y, c);
+    drawStar(x, y, c);
   }
 
   delay(2000);
@@ -67,12 +61,12 @@ void loop() {
     int x = random(240-70);
     int y = random(320-80);
     int c = random(0x10000); // Random colour
-    drawStar(img1, x, y, c);
+    drawStar(x, y, c);
     yield(); // Stop watchdog reset
   }
 
   // Show time in milliseconds to draw and then push 1 sprite to TFT screen
-  numberBox(img2, 10, 10, (millis()-dt)/500.0 );
+  numberBox( 10, 10, (millis()-dt)/500.0 );
 
   delay(2000);
 
@@ -81,11 +75,11 @@ void loop() {
 // #########################################################################
 // Create sprite, plot graphics in it, plot to screen, then delete sprite
 // #########################################################################
-void drawStar(TFT_eSprite& img, int x, int y, int star_color)
+void drawStar(int x, int y, int star_color)
 {
-  // Create an 8 bit sprite 70x 80 pixels (uses 5600 bytes of RAM)
+  // Create an 8-bit sprite 70x 80 pixels (uses 5600 bytes of RAM)
 //  img.setColorDepth(8);
-//  img.createSprite(70, 80);
+  img.createSprite(70, 80);
 
   // Fill Sprite with a "transparent" colour
   // TFT_TRANSPARENT is already defined for convenience
@@ -103,18 +97,27 @@ void drawStar(TFT_eSprite& img, int x, int y, int star_color)
 
   // Push sprite to TFT screen CGRAM at coordinate x,y (top left corner)
   // Specify what colour is to be treated as transparent.
-  img.pushSprite(tft, x, y, TRANSPARENT);
+  img.pushSprite(x, y, TRANSPARENT);
 
   // Delete it to free memory
-//  img.deleteSprite();
+  img.deleteSprite();
  
 }
 
 // #########################################################################
 // Draw a number in a rounded rectangle with some transparent pixels
 // #########################################################################
-void numberBox(TFT_eSprite& img, int x, int y, float num )
+void numberBox(int x, int y, float num )
 {
+
+  // Size of sprite
+  #define IWIDTH  80
+  #define IHEIGHT 35
+
+  // Create a 8-bit sprite 80 pixels wide, 35 high (2800 bytes of RAM needed)
+//  img.setColorDepth(8);
+  img.createSprite(IWIDTH, IHEIGHT);
+
   // Fill it with black (this will be the transparent colour this time)
   img.fillSprite(BLACK);
 
@@ -136,8 +139,9 @@ void numberBox(TFT_eSprite& img, int x, int y, float num )
 
   // Push sprite to TFT screen CGRAM at coordinate x,y (top left corner)
   // All black pixels will not be drawn hence will show as "transparent"
-  img.pushSprite(tft, x, y, BLACK);
+  img.pushSprite(x, y, BLACK);
 
   // Delete sprite to free up the RAM
-//  img.deleteSprite();
+  img.deleteSprite();
 }
+

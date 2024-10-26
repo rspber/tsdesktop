@@ -157,8 +157,6 @@ public:
   using TSD_GFX::drawTextLine;
   using TSD_GFX::pushImage;
 
-  const clip_t& getClip() { return clip; }
-
   void setPivot(const int16_t x, const int16_t y) {
     xPivotx = x;
     yPivoty = y;

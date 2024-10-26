@@ -32,7 +32,7 @@
 
 
 TFT_eSPI tft = TFT_eSPI();            // Invoke custom library with default width and height
-TFT_eSprite spr;  // Declare Sprite object "spr" with pointer to "tft" object
+TFT_eSprite spr = TFT_eSprite(&tft);  // Declare Sprite object "spr" with pointer to "tft" object
 
 #ifdef DRAW_DIGITS
 OpenFontRender ofr;

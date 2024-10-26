@@ -1,12 +1,11 @@
-// Sketch to demonstrate smooth (anti-aliased) graphics funtions:
+// Sketch to demonstrate smooth (anti-aliased) graphics functions:
 // Smooth graphics result in less pixel resolution jaggedness.
 
 #include <TFT_eSPI.h> // Master copy here: https://github.com/Bodmer/TFT_eSPI
 
 TFT_eSPI tft;  // Invoke library, pins defined in User_Setup.h
 
-  // Small sprite for spot demo
-TFT_eSprite spr(23, 23);
+TFT_eSprite spr = TFT_eSprite(&tft);
 
 // =========================================================================
 // Setup
@@ -24,7 +23,8 @@ void setup() {
 
   tft.fillScreen(BLACK);
 
-//  spr.createSprite(23, 23);
+  // Small sprite for spot demo
+  spr.createSprite(23, 23);
 }
 
 // =========================================================================
@@ -35,17 +35,17 @@ void loop() {
   // drawSpot is for small anti-aliased circles, coordinates and radius are
   // floating point to allow sub-pixel positioning (large circles will
   // be slow to draw). Use fillSmoothCircle() for large circles.
-  // In this case black is the backgorund colour for the anti-aliasing
+  // In this case black is the background colour for the anti-aliasing
   tft.drawSpot(20.5, 30.5, 8.6, WHITE, OLIVE);
 
   // Fill sprite with a colour
   spr.clear(RED);
-  // Draw spot in sprite, the backgorund colour is ommitted so function
+  // Draw spot in sprite, the background colour is omitted so function
   // reads background colour for aliasing. (To use this method with direct write
   // to TFT (tft.drawSpot...) requires the capability to read data from the TFT!)
   spr.drawSpot(10.5, 10.5, 8.6, YELLOW);
   spr.setPos(50, 10);
-  spr.push(&tft);
+  spr.pushSprite(21, 0);
 
 
   // Draw a segmented ring meter type display
@@ -142,14 +142,14 @@ void getCoord(int16_t x, int16_t y, float *xp1, float *yp1, float *xp2, float *y
 }
 
 // =========================================================================
-// Return a 16 bit rainbow colour
+// Return a 16-bit rainbow colour
 // =========================================================================
 unsigned int rainbow(byte value)
 {
   // Value is expected to be in range 0-127
   // The value is converted to a spectrum colour from 0 = blue through to 127 = red
 
-  byte red = 0; // Red is the top 5 bits of a 16 bit colour value
+  byte red = 0; // Red is the top 5 bits of a 16-bit colour value
   byte green = 0;// Green is the middle 6 bits
   byte blue = 0; // Blue is the bottom 5 bits
 

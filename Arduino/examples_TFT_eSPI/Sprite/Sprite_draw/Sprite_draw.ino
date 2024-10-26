@@ -14,12 +14,12 @@
   any position. If there is sufficient RAM then the Sprite can
   be the same size as the screen and used as a frame buffer.
 
-  A 16 bit Sprite occupies (2 * width * height) bytes in RAM.
+  A 16-bit Sprite occupies (2 * width * height) bytes in RAM.
 
   On a ESP8266 Sprite sizes up to 126 x 160 can be accommodated,
-  this size requires 40kBytes of RAM for a 16 bit colour depth.
+  this size requires 40kBytes of RAM for a 16-bit colour depth.
   
-  When 8 bit colour depth sprites are created they occupy
+  When 8-bit colour depth sprites are created they occupy
   (width * height) bytes in RAM, so larger sprites can be
   created, or the RAM required is halved.
 
@@ -34,9 +34,9 @@
 
 #include <TFT_eSPI.h>                 // Include the graphics library (this includes the sprite functions)
 
-TFT_eSPI    tft;         // Declare object "tft"
+TFT_eSPI    tft = TFT_eSPI();         // Declare object "tft"
 
-TFT_eSprite spr;  // Declare Sprite object "spr" with pointer to "tft" object
+TFT_eSprite spr = TFT_eSprite(&tft);  // Declare Sprite object "spr" with pointer to "tft" object
 
 void setup()
 {
@@ -86,9 +86,9 @@ void loop(void)
   spr.drawText(WIDTH / 2, HEIGHT / 2, "Sprite", 2);
 
   // Now push the sprite to the TFT at position 0,0 on screen
-  spr.pushSprite(tft, -40, -40);
-  spr.pushSprite(tft, tft.width() / 2 - WIDTH / 2, tft.height() / 2 - HEIGHT / 2);
-  spr.pushSprite(tft, tft.width() - WIDTH + 40, tft.height() - HEIGHT + 40);
+  spr.pushSprite(-40, -40);
+  spr.pushSprite(tft.width() / 2 - WIDTH / 2, tft.height() / 2 - HEIGHT / 2);
+  spr.pushSprite(tft.width() - WIDTH + 40, tft.height() - HEIGHT + 40);
 
   delay(DELAY);
 
@@ -127,7 +127,7 @@ void loop(void)
         updateTime = millis() + wait;
 
         // Push the sprite to the TFT screen
-        spr.pushSprite(tft, x, y);
+        spr.pushSprite(x, y);
 
         // Change coord for next loop
         x += dx;
@@ -138,3 +138,4 @@ void loop(void)
     }
   } // Infinite while, will not exit!
 }
+

@@ -36,14 +36,6 @@ public:
 
   virtual ~BufferedDisplay();
 
-  void createPalette(const rgb_t aColorMap[], const int8_t aMapLen);
-  void setColorDepth(int8_t b);
-
-  /**
-   * color index in palette 
-   */
-  uint8_t paletteIdx(rgb_t color);
-
   /**
    * set window (this BufferedDisplay object) position on absolute screen
    * @x     - x (left)
@@ -149,9 +141,4 @@ private:
   int16_t addr_x, addr_y, addr_w, addr_h;   // set by writeAddrWindow
   int16_t ip;
   uint8_t* buf = 0;
-
-  const rgb_t* colorMap;
-  int8_t cMapLen;
-
-  int8_t bpp;
 };

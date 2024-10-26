@@ -37,30 +37,30 @@ void TFT_eSprite::deleteSprite() {
 ** Description:             Push rotated Sprite to TFT screen
 ***************************************************************************************/
 #define FP_SCALE 10
-bool TFT_eSprite::pushRotated(TSD_SCREEN& tft, int16_t angle, rgb_t transp)
+bool TFT_eSprite::pushRotated(TSD_SCREEN *tft, int16_t angle, rgb_t transp)
 {
   // Bounding box parameters
   bounds_t bds;
 
   // Get the bounding box of this rotated source Sprite relative to Sprite pivot
-  bds.getRotatedBounds(angle, tft.width(), tft.height(), tft.getPivotX(), tft.getPivotY());
+  bds.getRotatedBounds(angle, tft->width(), tft->height(), tft->getPivotX(), tft->getPivotY());
 
   uint8_t sline_buffer[(bds.max_x - bds.min_x + 1) * MDT_SIZE];
 
-  int32_t xt = bds.min_x - tft.getPivotX();
-  int32_t yt = bds.min_y - tft.getPivotY();
+  int32_t xt = bds.min_x - tft->getPivotX();
+  int32_t yt = bds.min_y - tft->getPivotY();
   uint32_t xe = width() << FP_SCALE;
   uint32_t ye = height() << FP_SCALE;
   rgb_t tpcolor = transp;
 
-  tft.startWrite();
+  tft->startWrite();
 
-  if( bds.max_x < tft.clip.x2 ) {
-    bds.max_x = tft.clip.x2;
+  if( bds.max_x < tft->clip.x2 ) {
+    bds.max_x = tft->clip.x2;
   }
 
-  if( bds.max_y < tft.clip.y2 ) {
-    bds.max_y = tft.clip.y2;
+  if( bds.max_y < tft->clip.y2 ) {
+    bds.max_y = tft->clip.y2;
   }
 
   // Scan destination bounding box and fetch transformed pixels from source Sprite
@@ -78,9 +78,6 @@ bool TFT_eSprite::pushRotated(TSD_SCREEN& tft, int16_t angle, rgb_t transp)
       continue;
     }
 
-//    Serial.printf("%d, %d, %d, %d\n", tft.clip.x1, tft.clip.y1, tft.clip.x2, tft.clip.y2);
-//    delay(10);
-
     int pixel_count = 0;
     do {
       int32_t xp = xs >> FP_SCALE;
@@ -90,8 +87,8 @@ bool TFT_eSprite::pushRotated(TSD_SCREEN& tft, int16_t angle, rgb_t transp)
       if (transp != WHITE && tpcolor == rp) {
         if (pixel_count) {
           // TFT window is already clipped, so this is faster than pushImage()
-          tft.writeAddrWindow(x - pixel_count, y, pixel_count, 1);
-          tft.writeMDTBuffer((const uint8_t*)sline_buffer, pixel_count);
+          tft->writeAddrWindow(x - pixel_count, y, pixel_count, 1);
+          tft->writeMDTBuffer((const uint8_t*)sline_buffer, pixel_count);
           pixel_count = 0;
         }
       }
@@ -101,14 +98,21 @@ bool TFT_eSprite::pushRotated(TSD_SCREEN& tft, int16_t angle, rgb_t transp)
     } while (++x < bds.max_x && (xs += bds.cosra) < xe && (ys += bds.sinra) < ye);
     if (pixel_count) {
       // TFT window is already clipped, so this is faster than pushImage()
-      tft.writeAddrWindow(x - pixel_count, y, pixel_count, 1);
-      tft.writeMDTBuffer((const uint8_t*)sline_buffer, pixel_count);
+      tft->writeAddrWindow(x - pixel_count, y, pixel_count, 1);
+      tft->writeMDTBuffer((const uint8_t*)sline_buffer, pixel_count);
     }
   }
 
-  tft.endWrite();
+  tft->endWrite();
 
   return true;
+}
+
+
+           // Push a rotated copy of Sprite to TFT with optional transparent colour
+bool TFT_eSprite::pushRotated(int16_t angle, rgb_t transp)
+{
+  return pushRotated(_tft, angle, transp);
 }
 
 
@@ -169,10 +173,10 @@ void bounds_t::getRotatedBounds(int16_t angle, int16_t disp_w, int16_t disp_h, i
 ** Function name:           pushSprite
 ** Description:             Push the sprite to the TFT at x, y
 ***************************************************************************************/
-void TFT_eSprite::pushSprite(TSD_SCREEN& display, const int16_t x, const int16_t y) {
+void TFT_eSprite::pushSprite(const int16_t x, const int16_t y) {
     clip_t old = clip;
     setPos(x, y);
-    push(&display);
+    push(_tft);
     clip = old;
 }
 
@@ -181,10 +185,10 @@ void TFT_eSprite::pushSprite(TSD_SCREEN& display, const int16_t x, const int16_t
 ** Function name:           pushSprite
 ** Description:             Push the sprite to the TFT at x, y with transparent colour
 ***************************************************************************************/
-void TFT_eSprite::pushSprite(TSD_SCREEN& display, const int16_t x, const int16_t y, const rgb_t transp) {
+void TFT_eSprite::pushSprite(const int16_t x, const int16_t y, const rgb_t transp) {
     clip_t old = clip;
     setPos(x, y);
-    pushTransp(&display, transp);
+    pushTransp(_tft, transp);
     clip = old;
 }
 

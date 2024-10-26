@@ -9,9 +9,9 @@
 
 #include <TFT_eSPI.h>                 // Hardware-specific library
 
-TFT_eSPI    tft;         // Invoke library
+TFT_eSPI    tft = TFT_eSPI();         // Invoke library
 
-TFT_eSprite img;  // Sprite class
+TFT_eSprite img = TFT_eSprite(&tft);  // Sprite class
 
 #define sunX tft.width()/2
 #define sunY tft.height()/2
@@ -34,7 +34,7 @@ static const astro_body_t body[] = {
   BODY_JUPITER, BODY_SATURN, BODY_URANUS, BODY_NEPTUNE
 };
 
-static const uint32_t bodyColour[] = {
+static const rgb_t bodyColour[] = {
   YELLOW, DARKGREY, ORANGE, BLUE, RED,
   GOLDEN, BROWN, DARK_CYAN, CYAN
 };
@@ -142,7 +142,7 @@ int plot_planets(void)
     img.fillCircle(9, 9, 9, BLACK);
     img.drawCircle(9 - x1, 9 - y1, i * 28, grey);
     img.fillCircle(9, 9, 5, bodyColour[i]);
-    img.pushSprite(tft, sunX + x1 - 9, sunY + y1 - 9, TRANSPARENT);
+    img.pushSprite(sunX + x1 - 9, sunY + y1 - 9, TRANSPARENT);
 
     if (body[i] == BODY_EARTH)
     {
@@ -157,7 +157,7 @@ int plot_planets(void)
       img.fillCircle(9, 9, 7, BLACK);
       img.drawCircle(9 - xm, 9 - ym, i * 28, grey);
       img.fillCircle(9, 9, 2, WHITE);
-      img.pushSprite(tft, sunX + xm - 9, sunY + ym - 9, TRANSPARENT);
+      img.pushSprite(sunX + xm - 9, sunY + ym - 9, TRANSPARENT);
     }
   }
 

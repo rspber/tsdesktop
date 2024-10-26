@@ -14,7 +14,7 @@
 
 // The rotation angle is in degrees, an angle of 0 means no Sprite rotation.
 
-// The pushRotated() function works with 1, 8 and 16 bit per pixel (bpp) Sprites.
+// The pushRotated() function works with 1, 8 and 16-bit per pixel (bpp) Sprites.
 
 // For 1 bpp Sprites the foreground and background colours are defined with the
 // member function setBitmapColor(foregroundColor, backgroundColor).
@@ -24,10 +24,10 @@
 
 #include <TFT_eSPI.h>
 
-TFT_eSPI tft;
+TFT_eSPI tft = TFT_eSPI();
 
-TFT_eSprite dial; // Sprite object for dial
-TFT_eSprite needle; // Sprite object for needle
+TFT_eSprite dial   = TFT_eSprite(&tft); // Sprite object for dial
+TFT_eSprite needle = TFT_eSprite(&tft); // Sprite object for needle
 
 #define TRANSPARENT DARK_GREEN
 
@@ -40,7 +40,7 @@ int16_t angle = 0;
 // =======================================================================================
 
 void setup()   {
-  Serial.begin(9600); // Debug only
+  Serial.begin(250000); // Debug only
 
   tft.begin();
   tft.setRotation(1);
@@ -52,11 +52,11 @@ void setup()   {
   createDialScale(-120, 120, 30);   // create scale (start angle, end angle, increment angle)
   drawEmptyDial("Label", 12345);    // draw the centre of dial in the Sprite
 
-  dial.pushSprite(tft, 110, 0);          // push a copy of the dial to the screen so we can see it
+  dial.pushSprite(110, 0);          // push a copy of the dial to the screen so we can see it
 
   // Create the needle Sprite
   createNeedle();                // draw the needle graphic
-  needle.pushSprite(tft, 95, 7);    // push a copy of the needle to the screen so we can see it
+  needle.pushSprite(95, 7);    // push a copy of the needle to the screen so we can see it
 }
 
 // =======================================================================================
@@ -89,7 +89,7 @@ void loop() {
   // it is rotated and hence it clears the swept area to black
   for (int16_t angle = 0; angle <= 360; angle += 5)
   {
-    needle.pushRotated(tft, angle); // Plot direct to TFT at specified angle
+    needle.pushRotated(angle); // Plot direct to TFT at specified angle
     yield();                   // Avoid a watchdog time-out
   }
 }
@@ -101,7 +101,7 @@ void loop() {
 void createDialScale(int16_t start_angle, int16_t end_angle, int16_t increment)
 {
   // Create the dial Sprite
-  dial.setColorDepth(8);       // Size is odd (i.e. 91) so there is a centre pixel at 45,45
+//  dial.setColorDepth(8);       // Size is odd (i.e. 91) so there is a centre pixel at 45,45
   dial.createSprite(91, 91);   // 8bpp requires 91 * 91 = 8281 bytes
   dial.setPivot(45, 45);       // set pivot in middle of dial Sprite
 
@@ -115,7 +115,7 @@ void createDialScale(int16_t start_angle, int16_t end_angle, int16_t increment)
   needle.setPivot(1, 43);        //  Set pivot point x to the Sprite centre and y to marker radius
 
   for (int16_t angle = start_angle; angle <= end_angle; angle += increment) {
-    needle.pushRotated(dial, angle); // Sprite is used to make scale markers
+    needle.pushRotated(&dial, angle); // Sprite is used to make scale markers
     yield(); // Avoid a watchdog time-out
   }
 
@@ -150,10 +150,10 @@ void plotDial(int16_t x, int16_t y, int16_t angle, const char* label, uint16_t v
   drawEmptyDial(label, val);
 
   // Push a rotated needle Sprite to the dial Sprite, with black as transparent colour
-  needle.pushRotated(dial, angle, CYAN); // dial is the destination Sprite
+  needle.pushRotated(&dial, angle, BLACK); // dial is the destination Sprite
 
   // Push the resultant dial Sprite to the screen, with transparent colour
-  dial.pushSprite(tft, x, y, TRANSPARENT);
+  dial.pushSprite(x, y, TRANSPARENT);
 }
 
 // =======================================================================================
@@ -162,10 +162,10 @@ void plotDial(int16_t x, int16_t y, int16_t angle, const char* label, uint16_t v
 
 void createNeedle(void)
 {
-  needle.setColorDepth(8);
+// needle.setColorDepth(8);
   needle.createSprite(11, 49); // create the needle Sprite 11 pixels wide by 49 high
 
-  needle.fillSprite(GREEN);          // Fill with black
+  needle.fillSprite(BLACK);          // Fill with black
 
   // Define needle pivot point
   uint16_t piv_x = needle.width() / 2;   // x pivot of Sprite (middle)

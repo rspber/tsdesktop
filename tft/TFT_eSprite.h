@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include <BufferedDisplay.h>
-#include "TFT_eSPI.h"
+#include "BufferedDisplay.h"
+#include "TSD_SCREEN.h"
 
 struct bounds_t {
   int16_t min_x, min_y, max_x, max_y;
@@ -22,18 +22,21 @@ struct bounds_t {
 
 class TFT_eSprite : public BufferedDisplay {
 public:
-  explicit TFT_eSprite() : BufferedDisplay(0, 0, 1, 1) {}
-  TFT_eSprite(int16_t w, int16_t h) : BufferedDisplay(0, 0, w, h) {}
+  explicit TFT_eSprite(TSD_SCREEN *tft) : BufferedDisplay(0,0,1,1), _tft(tft) {}
 
   void createSprite(int16_t w, int16_t h);
   void deleteSprite();
 
            // Push a rotated copy of Sprite to TFT with optional transparent colour
-  bool     pushRotated(TSD_SCREEN& tft, int16_t angle, rgb_t transp = WHITE);
+  bool     pushRotated(TSD_SCREEN *tft, int16_t angle, rgb_t transp = WHITE);
 
-  void pushSprite(TSD_SCREEN& display, const int16_t x, const int16_t y);
-  void pushSprite(TSD_SCREEN& display, const int16_t x, const int16_t y, const rgb_t transp);
+           // Push a rotated copy of Sprite to TFT with optional transparent colour
+  bool     pushRotated(int16_t angle, rgb_t transp = WHITE);
+
+  void pushSprite(const int16_t x, const int16_t y);
+  void pushSprite(const int16_t x, const int16_t y, const rgb_t transp);
 
   void fillSprite(const rgb_t color);
 
+  TSD_SCREEN *_tft;
 };
