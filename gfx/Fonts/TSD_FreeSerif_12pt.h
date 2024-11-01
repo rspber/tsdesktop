@@ -73,7 +73,7 @@ static const uint8_t FreeSerif_12pt_Glyphs_20[] {
     0x06, 0x0C, 0x08, 0x08, 0x10, 0x10, 0x00, 0x00, 0x30, 0x30, 0x30, // '?'
 0};
 
-static const GFXfont FreeSerif_12pt_20 {
+static const TSD_GFXfont FreeSerif_12pt_20 {
   FreeSerif_12pt_Glyphs_20,
   0x00, 0x00, 0, 0x20, 0x3F, 29
 };
@@ -172,7 +172,7 @@ static const uint8_t FreeSerif_12pt_Glyphs_40[] {
   0x5F, 0x00, 0, 12, 1, 12, 0x00, 0xfe, 2, 0, 0xFF, 0xF0, // '_'
 0};
 
-static const GFXfont FreeSerif_12pt_40 {
+static const TSD_GFXfont FreeSerif_12pt_40 {
   FreeSerif_12pt_Glyphs_40,
   0x00, 0x00, 0, 0x40, 0x5F, 29
 };
@@ -251,12 +251,12 @@ static const uint8_t FreeSerif_12pt_Glyphs_60[] {
     // '~'
 0};
 
-static const GFXfont FreeSerif_12pt_60 {
+static const TSD_GFXfont FreeSerif_12pt_60 {
   FreeSerif_12pt_Glyphs_60,
   0x00, 0x00, 0, 0x60, 0x7E, 29
 };
 
-static const GFXfont* FreeSerif_12pt[] {
+static const TSD_GFXfont* FreeSerif_12pt[] {
   &FreeSerif_12pt_20,
   &FreeSerif_12pt_40,
   &FreeSerif_12pt_60,

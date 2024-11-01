@@ -481,16 +481,16 @@ public:
     font.fontSizeY = 1;
   }
 
-  void setFont(const GFXfont** GFXfont, int8_t fontSizeX, int8_t fontSizeY)
+  void setFont(const TSD_GFXfont** TSD_GFXfont, int8_t fontSizeX, int8_t fontSizeY)
   {
-    font.setFont(GFXfont);
+    font.setFont(TSD_GFXfont);
     font.fontSizeX = fontSizeX;
     font.fontSizeY = fontSizeY;
   }
 
-  void setFont(const GFXfont** GFXfont, int8_t fontSize = 1)
+  void setFont(const TSD_GFXfont** TSD_GFXfont, int8_t fontSize = 1)
   {
-    setFont(GFXfont, fontSize, fontSize);
+    setFont(TSD_GFXfont, fontSize, fontSize);
   }
 
   void setFontSize(int8_t fontSizeX, int8_t fontSizeY)

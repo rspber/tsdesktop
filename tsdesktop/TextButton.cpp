@@ -18,7 +18,7 @@
 
 static const uint8_t EMPTY[] {0,0,0,0};
 
-void TextButton::setFont(const GFXfont** aFont)
+void TextButton::setFont(const TSD_GFXfont** aFont)
 {
   if (font.getFont() != aFont) {
     hide();

@@ -33,7 +33,7 @@ static const uint8_t Org_01_Glyphs_20[] {
   0x3F, 0x00, 0, 5, 5, 6, 0x00, 0x05, 4, 0, 0xF8, 0x4E, 0x02, 0x00, // '?'
 0};
 
-static const GFXfont Org_01_20 {
+static const TSD_GFXfont Org_01_20 {
   Org_01_Glyphs_20,
   0x00, 0x00, 0, 0x20, 0x3F, 7
 };
@@ -73,7 +73,7 @@ static const uint8_t Org_01_Glyphs_40[] {
   0x5F, 0x00, 0, 5, 1, 6, 0x00, 0x00, 1, 0, 0xF8, // '_'
 0};
 
-static const GFXfont Org_01_40 {
+static const TSD_GFXfont Org_01_40 {
   Org_01_Glyphs_40,
   0x00, 0x00, 0, 0x40, 0x5F, 7
 };
@@ -112,12 +112,12 @@ static const uint8_t Org_01_Glyphs_60[] {
   0x7E, 0x00, 0, 5, 3, 6, 0x00, 0x04, 2, 0, 0x0F, 0xE0, // '~'
 0};
 
-static const GFXfont Org_01_60 {
+static const TSD_GFXfont Org_01_60 {
   Org_01_Glyphs_60,
   0x00, 0x00, 0, 0x60, 0x7E, 7
 };
 
-static const GFXfont* Org_01[] {
+static const TSD_GFXfont* Org_01[] {
   &Org_01_20,
   &Org_01_40,
   &Org_01_60,

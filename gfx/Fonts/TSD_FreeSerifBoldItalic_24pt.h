@@ -188,7 +188,7 @@ static const uint8_t FreeSerifBoldItalic_24pt_Glyphs_20[] {
     0xC0, 0x0F, 0xF0, 0x01, 0xF8, 0x00, 0x3C, 0x00, 0x00, // '?'
 0};
 
-static const GFXfont FreeSerifBoldItalic_24pt_20 {
+static const TSD_GFXfont FreeSerifBoldItalic_24pt_20 {
   FreeSerifBoldItalic_24pt_Glyphs_20,
   0x00, 0x00, 0, 0x20, 0x3F, 56
 };
@@ -479,7 +479,7 @@ static const uint8_t FreeSerifBoldItalic_24pt_Glyphs_40[] {
     0xFF, 0xFF, 0xFF, // '_'
 0};
 
-static const GFXfont FreeSerifBoldItalic_24pt_40 {
+static const TSD_GFXfont FreeSerifBoldItalic_24pt_40 {
   FreeSerifBoldItalic_24pt_Glyphs_40,
   0x00, 0x00, 0, 0x40, 0x5F, 56
 };
@@ -673,12 +673,12 @@ static const uint8_t FreeSerifBoldItalic_24pt_Glyphs_60[] {
     0xFE, 0x1D, 0xFF, 0xFF, 0xFE, 0x0F, 0xFF, 0x00, 0x1F, 0xF0, 0x00, 0x1F, 0x00, // '~'
 0};
 
-static const GFXfont FreeSerifBoldItalic_24pt_60 {
+static const TSD_GFXfont FreeSerifBoldItalic_24pt_60 {
   FreeSerifBoldItalic_24pt_Glyphs_60,
   0x00, 0x00, 0, 0x60, 0x7E, 56
 };
 
-static const GFXfont* FreeSerifBoldItalic_24pt[] {
+static const TSD_GFXfont* FreeSerifBoldItalic_24pt[] {
   &FreeSerifBoldItalic_24pt_20,
   &FreeSerifBoldItalic_24pt_40,
   &FreeSerifBoldItalic_24pt_60,

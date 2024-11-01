@@ -108,7 +108,7 @@ static const uint8_t FreeMonoBold_18pt_Glyphs_20[] {
     0x7C, 0x00, 0x70, 0x00, // '?'
 0};
 
-static const GFXfont FreeMonoBold_18pt_20 {
+static const TSD_GFXfont FreeMonoBold_18pt_20 {
   FreeMonoBold_18pt_Glyphs_20,
   0x00, 0x00, 0, 0x20, 0x3F, 35
 };
@@ -262,7 +262,7 @@ static const uint8_t FreeMonoBold_18pt_Glyphs_40[] {
     0xFF, 0xFF, 0xFF, 0xFF, 0xF0, // '_'
 0};
 
-static const GFXfont FreeMonoBold_18pt_40 {
+static const TSD_GFXfont FreeMonoBold_18pt_40 {
   FreeMonoBold_18pt_Glyphs_40,
   0x00, 0x00, 0, 0x40, 0x5F, 35
 };
@@ -390,12 +390,12 @@ static const uint8_t FreeMonoBold_18pt_Glyphs_60[] {
     0xDF, 0xFC, 0xFF, 0x3F, 0xFB, 0x0F, 0xF8, 0x03, 0xF8, 0x00, 0x78, // '~'
 0};
 
-static const GFXfont FreeMonoBold_18pt_60 {
+static const TSD_GFXfont FreeMonoBold_18pt_60 {
   FreeMonoBold_18pt_Glyphs_60,
   0x00, 0x00, 0, 0x60, 0x7E, 35
 };
 
-static const GFXfont* FreeMonoBold_18pt[] {
+static const TSD_GFXfont* FreeMonoBold_18pt[] {
   &FreeMonoBold_18pt_20,
   &FreeMonoBold_18pt_40,
   &FreeMonoBold_18pt_60,

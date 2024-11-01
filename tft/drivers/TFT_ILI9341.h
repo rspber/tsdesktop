@@ -24,8 +24,8 @@
 #define ILI9341_PWCTR3      0xC2    // Power Control 3
 #define ILI9341_PWCTR4      0xC3    // Power Control 4
 #define ILI9341_PWCTR5      0xC4    // Power Control 5
-#define ILI9341_VCOMCTR1    0xC5    // Set the VCOM(H/L) voltage
-#define ILI9341_VCOMCTR2    0xC7    // Set the VCOM offset voltage
+#define ILI9341_VMCTR1    0xC5    // Set the VCOM(H/L) voltage
+#define ILI9341_VMCTR2    0xC7    // Set the VCOM offset voltage
 #define ILI9341_RDID1       0xDA    // Read ID 1
 #define ILI9341_RDID2       0xDB    // Read ID 2
 #define ILI9341_RDID3       0xDC    // Read ID 3

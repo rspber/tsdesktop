@@ -33,7 +33,7 @@ static const uint8_t Picopixel_Glyphs_20[] {
   0x3F, 0x00, 0, 3, 5, 4, 0x00, 0x05, 2, 0, 0xC5, 0x04, // '?'
 0};
 
-static const GFXfont Picopixel_20 {
+static const TSD_GFXfont Picopixel_20 {
   Picopixel_Glyphs_20,
   0x00, 0x00, 0, 0x20, 0x3F, 7
 };
@@ -73,7 +73,7 @@ static const uint8_t Picopixel_Glyphs_40[] {
   0x5F, 0x00, 0, 4, 1, 4, 0x00, 0x00, 1, 0, 0xF0, // '_'
 0};
 
-static const GFXfont Picopixel_40 {
+static const TSD_GFXfont Picopixel_40 {
   Picopixel_Glyphs_40,
   0x00, 0x00, 0, 0x40, 0x5F, 7
 };
@@ -112,12 +112,12 @@ static const uint8_t Picopixel_Glyphs_60[] {
   0x7E, 0x00, 0, 4, 2, 5, 0x00, 0x04, 1, 0, 0x5A, // '~'
 0};
 
-static const GFXfont Picopixel_60 {
+static const TSD_GFXfont Picopixel_60 {
   Picopixel_Glyphs_60,
   0x00, 0x00, 0, 0x60, 0x7E, 7
 };
 
-static const GFXfont* Picopixel[] {
+static const TSD_GFXfont* Picopixel[] {
   &Picopixel_20,
   &Picopixel_40,
   &Picopixel_60,

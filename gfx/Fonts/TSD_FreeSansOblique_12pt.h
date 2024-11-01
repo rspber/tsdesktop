@@ -81,7 +81,7 @@ static const uint8_t FreeSansOblique_12pt_Glyphs_20[] {
     0x00, 0x30, 0x06, 0x00, // '?'
 0};
 
-static const GFXfont FreeSansOblique_12pt_20 {
+static const TSD_GFXfont FreeSansOblique_12pt_20 {
   FreeSansOblique_12pt_Glyphs_20,
   0x00, 0x00, 0, 0x20, 0x3F, 29
 };
@@ -200,7 +200,7 @@ static const uint8_t FreeSansOblique_12pt_Glyphs_40[] {
   0x5F, 0x00, 0, 14, 1, 13, 0xff, 0xfd, 2, 0, 0xFF, 0xFC, // '_'
 0};
 
-static const GFXfont FreeSansOblique_12pt_40 {
+static const TSD_GFXfont FreeSansOblique_12pt_40 {
   FreeSansOblique_12pt_Glyphs_40,
   0x00, 0x00, 0, 0x40, 0x5F, 29
 };
@@ -289,12 +289,12 @@ static const uint8_t FreeSansOblique_12pt_Glyphs_60[] {
     0x38, // '~'
 0};
 
-static const GFXfont FreeSansOblique_12pt_60 {
+static const TSD_GFXfont FreeSansOblique_12pt_60 {
   FreeSansOblique_12pt_Glyphs_60,
   0x00, 0x00, 0, 0x60, 0x7E, 29
 };
 
-static const GFXfont* FreeSansOblique_12pt[] {
+static const TSD_GFXfont* FreeSansOblique_12pt[] {
   &FreeSansOblique_12pt_20,
   &FreeSansOblique_12pt_40,
   &FreeSansOblique_12pt_60,

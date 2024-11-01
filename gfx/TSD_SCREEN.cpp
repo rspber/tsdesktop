@@ -289,7 +289,7 @@ void TSD_SCREEN::drawTextLine(cursor_t& cursor, font_t& font, const char* text, 
   drawTextLine(clip, cursor, font, text, colorh, bg, colorl, spacing);
 }
 
-void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, const GFXfont** gfxFont, const int8_t fontSize, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
+void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, const TSD_GFXfont** gfxFont, const int8_t fontSize, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
   if (text) {
     cursor_t cursor{ x, y };
@@ -307,7 +307,7 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, co
 
 void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, const int8_t fontSize, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
-  drawText(x, y, text, (const GFXfont**)NULL, fontSize, colorh, bg, colorl, spacing);
+  drawText(x, y, text, (const TSD_GFXfont**)NULL, fontSize, colorh, bg, colorl, spacing);
 }
 
 // unicode
@@ -322,7 +322,7 @@ const uint16_t* TSD_SCREEN::drawTextLine(cursor_t& cursor, font_t& font, const u
   return drawTextLine(clip, cursor, font, utext, colorh, bg, colorl, spacing);
 }
 
-void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const uint16_t* utext, const GFXfont** gfxFont, const int8_t fontSize, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
+void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const uint16_t* utext, const TSD_GFXfont** gfxFont, const int8_t fontSize, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
   if (utext) {
     cursor_t cursor{ x, y };
@@ -340,7 +340,7 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const uint16_t* utex
 
 void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const uint16_t* utext, const int8_t fontSize, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
-  drawText(x, y, utext, (const GFXfont**)NULL, fontSize, colorh, bg, colorl, spacing);
+  drawText(x, y, utext, (const TSD_GFXfont**)NULL, fontSize, colorh, bg, colorl, spacing);
 }
 
 

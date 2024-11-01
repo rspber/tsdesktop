@@ -450,8 +450,8 @@ private:
   }
 
 public:
-  void setFont(const GFXfont** aFont = NULL);
-  const GFXfont** getFont() { return font.getFont(); }
+  void setFont(const TSD_GFXfont** aFont = NULL);
+  const TSD_GFXfont** getFont() { return font.getFont(); }
 
 
   /**

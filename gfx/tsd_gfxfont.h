@@ -1,5 +1,5 @@
 /*
-  GFXfont for TSD_GFX
+  TSD_GFXfont for TSD_GFX
 
   Copyright (c) 2023, rspber (https://github.com/rspber)
 
@@ -29,7 +29,7 @@ typedef struct {
   int8_t xOffset;        // X dist from cursor pos to UL corner, positive
   int8_t yOffset;        // Y dist from cursor pos to UL corner, positive
   uint8_t len0, len1;    // bitmap length
-} GFXglyph;
+} TSD_GFXglyph;
 
 /// Data stored for FONT AS A WHOLE
 typedef struct {
@@ -40,4 +40,4 @@ typedef struct {
   uint8_t first;   // last char code: from
   uint8_t last;    // last char code: to
   uint8_t yAdvance; // Newline distance (y axis)
-} GFXfont;
+} TSD_GFXfont;

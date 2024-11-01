@@ -8,23 +8,23 @@
 #pragma once
 
 #include <stdint.h>
-#include <gfxfont.h>
+#include <tsd_gfxfont.h>
 
 #ifndef uchar
 typedef unsigned char uchar;
 #endif
 
 struct t_font_t {
-  const GFXfont** gfx_fonts;  // private
+  const TSD_GFXfont** gfx_fonts;  // private
   int8_t fontSizeX, fontSizeY;
 
-  void setFont(const GFXfont** gfxFont);
-  const GFXfont** getFont();
+  void setFont(const TSD_GFXfont** gfxFont);
+  const TSD_GFXfont** getFont();
 
   // some magic code
-  void cursorAdjust(GFXfont* gfxFont, int16_t* x, int16_t* y);
+  void cursorAdjust(TSD_GFXfont* gfxFont, int16_t* x, int16_t* y);
 
-  const GFXglyph* getCharGlyph(GFXfont** g, char** c);
+  const TSD_GFXglyph* getCharGlyph(TSD_GFXfont** g, char** c);
 
   const int16_t yAdvHeight(const int16_t yAdvance);
 
@@ -72,8 +72,8 @@ struct t_font_t {
 
 // private
   void initialize();
-  uchar* seq_scan_glyph(GFXfont** g, uchar* p);
-  uchar* bin_search_glyph(GFXfont** g, uchar* p);
+  uchar* seq_scan_glyph(TSD_GFXfont** g, uchar* p);
+  uchar* bin_search_glyph(TSD_GFXfont** g, uchar* p);
   int16_t v_n;     // number of all entries
   int8_t  v_n0;    // number of ASCII entries
   uint8_t v_st_1;  // fd - bin,  fe - seq

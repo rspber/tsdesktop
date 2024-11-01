@@ -903,8 +903,8 @@ void TSD_GFX::drawChar(clip_t& clip, cursor_t& cursor, font_t& font, char** c, r
 
   int16_t lw;
   int16_t lhz;
-  GFXfont* gfxFont;
-  const GFXglyph* glyph = font.getCharGlyph(&gfxFont, c);
+  TSD_GFXfont* gfxFont;
+  const TSD_GFXglyph* glyph = font.getCharGlyph(&gfxFont, c);
   font.cursorAdjust(gfxFont, &x, &y);
 
   bool drawbg = ifdrawbgif(colorh, bg);

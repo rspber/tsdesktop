@@ -162,7 +162,7 @@ static const uint8_t FreeSerif_24pt_Glyphs_20[] {
     0x03, 0x80, // '?'
 0};
 
-static const GFXfont FreeSerif_24pt_20 {
+static const TSD_GFXfont FreeSerif_24pt_20 {
   FreeSerif_24pt_Glyphs_20,
   0x00, 0x00, 0, 0x20, 0x3F, 56
 };
@@ -429,7 +429,7 @@ static const uint8_t FreeSerif_24pt_Glyphs_40[] {
     // '_'
 0};
 
-static const GFXfont FreeSerif_24pt_40 {
+static const TSD_GFXfont FreeSerif_24pt_40 {
   FreeSerif_24pt_Glyphs_40,
   0x00, 0x00, 0, 0x40, 0x5F, 56
 };
@@ -596,12 +596,12 @@ static const uint8_t FreeSerif_24pt_Glyphs_60[] {
     0x0F, 0x87, 0xB8, 0x0F, 0xFC, 0x00, 0x07, 0xC0, // '~'
 0};
 
-static const GFXfont FreeSerif_24pt_60 {
+static const TSD_GFXfont FreeSerif_24pt_60 {
   FreeSerif_24pt_Glyphs_60,
   0x00, 0x00, 0, 0x60, 0x7E, 56
 };
 
-static const GFXfont* FreeSerif_24pt[] {
+static const TSD_GFXfont* FreeSerif_24pt[] {
   &FreeSerif_24pt_20,
   &FreeSerif_24pt_40,
   &FreeSerif_24pt_60,

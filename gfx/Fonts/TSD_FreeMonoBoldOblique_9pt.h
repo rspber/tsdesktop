@@ -60,7 +60,7 @@ static const uint8_t FreeMonoBoldOblique_9pt_Glyphs_20[] {
     0x30, 0x01, 0xC3, 0x80, // '?'
 0};
 
-static const GFXfont FreeMonoBoldOblique_9pt_20 {
+static const TSD_GFXfont FreeMonoBoldOblique_9pt_20 {
   FreeMonoBoldOblique_9pt_Glyphs_20,
   0x00, 0x00, 0, 0x20, 0x3F, 18
 };
@@ -131,7 +131,7 @@ static const uint8_t FreeMonoBoldOblique_9pt_Glyphs_40[] {
   0x5F, 0x00, 0, 11, 2, 11, 0xff, 0xfe, 3, 0, 0x7F, 0xFF, 0xFC, // '_'
 0};
 
-static const GFXfont FreeMonoBoldOblique_9pt_40 {
+static const TSD_GFXfont FreeMonoBoldOblique_9pt_40 {
   FreeMonoBoldOblique_9pt_Glyphs_40,
   0x00, 0x00, 0, 0x40, 0x5F, 18
 };
@@ -200,12 +200,12 @@ static const uint8_t FreeMonoBoldOblique_9pt_Glyphs_60[] {
     // '~'
 0};
 
-static const GFXfont FreeMonoBoldOblique_9pt_60 {
+static const TSD_GFXfont FreeMonoBoldOblique_9pt_60 {
   FreeMonoBoldOblique_9pt_Glyphs_60,
   0x00, 0x00, 0, 0x60, 0x7E, 18
 };
 
-static const GFXfont* FreeMonoBoldOblique_9pt[] {
+static const TSD_GFXfont* FreeMonoBoldOblique_9pt[] {
   &FreeMonoBoldOblique_9pt_20,
   &FreeMonoBoldOblique_9pt_40,
   &FreeMonoBoldOblique_9pt_60,

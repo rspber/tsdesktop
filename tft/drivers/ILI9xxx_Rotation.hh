@@ -1,7 +1,6 @@
 /*
   ILI9xxx rotation
 */
-
   switch (r % 4) {
   case 0:
     sendCmdByte(TFT_MADCTL, (MAD_MX ^ REV) | MAD_BGR);

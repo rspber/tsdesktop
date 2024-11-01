@@ -5,16 +5,16 @@
 
 */
 
-#include "font.h"
+#include "tsd_font.h"
 #include <string.h>
 
-void font_t::setFont(const GFXfont** gfxFont)
+void font_t::setFont(const TSD_GFXfont** gfxFont)
 {
   gfx_fonts = gfxFont;
   v_st_1 = 0;
 }
 
-const GFXfont** font_t::getFont()
+const TSD_GFXfont** font_t::getFont()
 {
   return gfx_fonts;
 }
@@ -25,7 +25,7 @@ void font_t::initialize()
   v_n0 = 0;
   int16_t u = 0;
   uchar c1 = 0, c2 = 0, c3 = 0, c = 0;
-  const GFXfont* f;
+  const TSD_GFXfont* f;
   bool ok = true;
   while ((f = gfx_fonts[u++])) {
     if (f->ch1 < c1) {
@@ -81,26 +81,26 @@ void font_t::initialize()
   }
 }
 
-const GFXglyph* get_glyph(const GFXfont* f, const uint8_t code)
+const TSD_GFXglyph* get_glyph(const TSD_GFXfont* f, const uint8_t code)
 {
   const uint8_t* q = f->glyphs;
   int16_t i = f->last + 1 - f->first;
   while (--i >= 0) {
-    if (((GFXglyph *)q)->code == code) {
-      return (const GFXglyph *)q;
+    if (((TSD_GFXglyph *)q)->code == code) {
+      return (const TSD_GFXglyph *)q;
     }
-    q += sizeof(GFXglyph) + (((GFXglyph *)q)->len0 | (((GFXglyph *)q)->len1 << 8));
+    q += sizeof(TSD_GFXglyph) + (((TSD_GFXglyph *)q)->len0 | (((TSD_GFXglyph *)q)->len1 << 8));
   }
   return 0;
 }
 
-uchar* font_t::bin_search_glyph(GFXfont** g, uchar *p)
+uchar* font_t::bin_search_glyph(TSD_GFXfont** g, uchar *p)
 {
   int16_t btm = v_n0;
   int16_t top = v_n - 1;
   while (btm <= top) {
     int16_t mid = (top + btm) / 2;
-    const GFXfont* f = gfx_fonts[mid];
+    const TSD_GFXfont* f = gfx_fonts[mid];
     int8_t i = 0;
     if (f->ch1 > p[0]) {
       top = mid - 1;
@@ -142,14 +142,14 @@ uchar* font_t::bin_search_glyph(GFXfont** g, uchar *p)
       btm = mid + 1;
       continue;
     }
-    *g = (GFXfont *)f;
+    *g = (TSD_GFXfont *)f;
     return p + i;
   }
   btm = 0;
   top = v_n0 - 1;
   while (btm <= top) {
     int16_t mid = (top + btm) / 2;
-    const GFXfont* f = gfx_fonts[mid];
+    const TSD_GFXfont* f = gfx_fonts[mid];
     uchar c = *p;
     if (f->first > c) {
       top = mid - 1;
@@ -159,17 +159,17 @@ uchar* font_t::bin_search_glyph(GFXfont** g, uchar *p)
       btm = mid + 1;
       continue;
     }
-    *g = (GFXfont *)f;
+    *g = (TSD_GFXfont *)f;
     return p;
   }
   return 0;
 }
 
-uchar* font_t::seq_scan_glyph(GFXfont** g, uchar* p)
+uchar* font_t::seq_scan_glyph(TSD_GFXfont** g, uchar* p)
 {
   int16_t u = 0;
   int8_t i = 0;
-  const GFXfont* f;
+  const TSD_GFXfont* f;
   while ((f = gfx_fonts[u++])) {
     i = 0;
     if (f->ch1 > 0) {
@@ -198,14 +198,14 @@ uchar* font_t::seq_scan_glyph(GFXfont** g, uchar* p)
     }
     uchar c = p[i];
     if (c >= f->first && c <= f->last) {
-      *g = (GFXfont *)f;
+      *g = (TSD_GFXfont *)f;
       return p + i;
     }
   }
   return 0;
 }
 
-const GFXglyph* font_t::getCharGlyph(GFXfont** g, char** c)
+const TSD_GFXglyph* font_t::getCharGlyph(TSD_GFXfont** g, char** c)
 {
   if (gfx_fonts) {
 
@@ -214,7 +214,7 @@ const GFXglyph* font_t::getCharGlyph(GFXfont** g, char** c)
     }
 
     uchar* p;
-    GFXfont* f;
+    TSD_GFXfont* f;
     if (v_st_1 == 0xfd && v_st_2 == 0xfe) {
       p = bin_search_glyph(&f, (uchar *)*c);
     }
@@ -222,13 +222,13 @@ const GFXglyph* font_t::getCharGlyph(GFXfont** g, char** c)
       p = seq_scan_glyph(&f, (uchar *)*c);
     }
     if (p) {
-      const GFXglyph* q = get_glyph(f, *p++);
+      const TSD_GFXglyph* q = get_glyph(f, *p++);
       if (q) {
         if (c) {
           *c = (char *)p;
         }
         if (g) {
-          *g = (GFXfont *)f;
+          *g = (TSD_GFXfont *)f;
         }
         return q;
       }
@@ -247,14 +247,14 @@ const int16_t font_t::defaultCharSize(int16_t* letterHeight)
     int16_t wx = 0;
     int16_t m = 0;
 #define MAX 10
-    const GFXfont* f;
+    const TSD_GFXfont* f;
     int16_t u = 0;
     int16_t yAdvance = 0;
     while ((f = gfx_fonts[u++])) {
       yAdvance = f->yAdvance;
       const uint8_t* q = f->glyphs;
-      q += sizeof(GFXglyph) + (((GFXglyph *)q)->len0 | (((GFXglyph *)q)->len1 << 8));
-      wx += ((GFXglyph *)q)->xAdvance;
+      q += sizeof(TSD_GFXglyph) + (((TSD_GFXglyph *)q)->len0 | (((TSD_GFXglyph *)q)->len1 << 8));
+      wx += ((TSD_GFXglyph *)q)->xAdvance;
       if (++m > MAX) {
         break;
       }
@@ -272,7 +272,7 @@ const int16_t font_t::defaultCharSize(int16_t* letterHeight)
   return w * fontSizeX;
 }
 
-void font_t::cursorAdjust(GFXfont* gfxFont, int16_t* x, int16_t* y)
+void font_t::cursorAdjust(TSD_GFXfont* gfxFont, int16_t* x, int16_t* y)
 {
   if (!gfxFont) {  // Default font
     ++*x;
@@ -303,8 +303,8 @@ const int16_t font_t::yAdvHeight(const int16_t yAdvance)
 const int16_t font_t::charSize(char** c, int16_t* letterHeight)  // utf-8
 {
   int16_t w, h;
-  GFXfont* f;
-  const GFXglyph* glyph = getCharGlyph(&f, c); 
+  TSD_GFXfont* f;
+  const TSD_GFXglyph* glyph = getCharGlyph(&f, c);
   if (!glyph) { // Default font
     w = 6;
     h = 8 * fontSizeY;

@@ -33,7 +33,7 @@ static const uint8_t Tiny3x3a2pt_Glyphs_20[] {
   0x3F, 0x00, 0, 2, 3, 4, 0x01, 0x03, 1, 0, 0xD8, // '?'
 0};
 
-static const GFXfont Tiny3x3a2pt_20 {
+static const TSD_GFXfont Tiny3x3a2pt_20 {
   Tiny3x3a2pt_Glyphs_20,
   0x00, 0x00, 0, 0x20, 0x3F, 4
 };
@@ -73,7 +73,7 @@ static const uint8_t Tiny3x3a2pt_Glyphs_40[] {
   0x5F, 0x00, 0, 3, 1, 4, 0x00, 0x01, 1, 0, 0xE0, // '_'
 0};
 
-static const GFXfont Tiny3x3a2pt_40 {
+static const TSD_GFXfont Tiny3x3a2pt_40 {
   Tiny3x3a2pt_Glyphs_40,
   0x00, 0x00, 0, 0x40, 0x5F, 4
 };
@@ -112,12 +112,12 @@ static const uint8_t Tiny3x3a2pt_Glyphs_60[] {
   0x7E, 0x00, 0, 3, 2, 4, 0x00, 0x03, 1, 0, 0x78, // '~'
 0};
 
-static const GFXfont Tiny3x3a2pt_60 {
+static const TSD_GFXfont Tiny3x3a2pt_60 {
   Tiny3x3a2pt_Glyphs_60,
   0x00, 0x00, 0, 0x60, 0x7E, 4
 };
 
-static const GFXfont* Tiny3x3a2pt[] {
+static const TSD_GFXfont* Tiny3x3a2pt[] {
   &Tiny3x3a2pt_20,
   &Tiny3x3a2pt_40,
   &Tiny3x3a2pt_60,

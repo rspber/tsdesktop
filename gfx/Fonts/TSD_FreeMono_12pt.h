@@ -63,7 +63,7 @@ static const uint8_t FreeMono_12pt_Glyphs_20[] {
     0x08, 0x18, 0x10, 0x08, 0x00, 0x00, 0x00, 0x01, 0xC0, 0xE0, // '?'
 0};
 
-static const GFXfont FreeMono_12pt_20 {
+static const TSD_GFXfont FreeMono_12pt_20 {
   FreeMono_12pt_Glyphs_20,
   0x00, 0x00, 0, 0x20, 0x3F, 24
 };
@@ -154,7 +154,7 @@ static const uint8_t FreeMono_12pt_Glyphs_40[] {
   0x5F, 0x00, 0, 14, 1, 14, 0x00, 0xfe, 2, 0, 0xFF, 0xFC, // '_'
 0};
 
-static const GFXfont FreeMono_12pt_40 {
+static const TSD_GFXfont FreeMono_12pt_40 {
   FreeMono_12pt_Glyphs_40,
   0x00, 0x00, 0, 0x40, 0x5F, 24
 };
@@ -229,12 +229,12 @@ static const uint8_t FreeMono_12pt_Glyphs_60[] {
   0x7E, 0x00, 0, 10, 3, 14, 0x02, 0x08, 4, 0, 0x38, 0x13, 0x38, 0x38, // '~'
 0};
 
-static const GFXfont FreeMono_12pt_60 {
+static const TSD_GFXfont FreeMono_12pt_60 {
   FreeMono_12pt_Glyphs_60,
   0x00, 0x00, 0, 0x60, 0x7E, 24
 };
 
-static const GFXfont* FreeMono_12pt[] {
+static const TSD_GFXfont* FreeMono_12pt[] {
   &FreeMono_12pt_20,
   &FreeMono_12pt_40,
   &FreeMono_12pt_60,

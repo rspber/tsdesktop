@@ -193,7 +193,7 @@ static const uint8_t FreeSansOblique_24pt_Glyphs_20[] {
     0x00, 0x01, 0xE0, 0x00, 0x3E, 0x00, 0x00, // '?'
 0};
 
-static const GFXfont FreeSansOblique_24pt_20 {
+static const TSD_GFXfont FreeSansOblique_24pt_20 {
   FreeSansOblique_24pt_Glyphs_20,
   0x00, 0x00, 0, 0x20, 0x3F, 56
 };
@@ -503,7 +503,7 @@ static const uint8_t FreeSansOblique_24pt_Glyphs_40[] {
     0xFF, 0xC0, // '_'
 0};
 
-static const GFXfont FreeSansOblique_24pt_40 {
+static const TSD_GFXfont FreeSansOblique_24pt_40 {
   FreeSansOblique_24pt_Glyphs_40,
   0x00, 0x00, 0, 0x40, 0x5F, 56
 };
@@ -714,12 +714,12 @@ static const uint8_t FreeSansOblique_24pt_Glyphs_60[] {
     0xFC, 0x0E, 0xE3, 0xF0, 0xE6, 0x07, 0xFF, 0x60, 0x0F, 0xF0, 0x00, 0x1E, 0x00, // '~'
 0};
 
-static const GFXfont FreeSansOblique_24pt_60 {
+static const TSD_GFXfont FreeSansOblique_24pt_60 {
   FreeSansOblique_24pt_Glyphs_60,
   0x00, 0x00, 0, 0x60, 0x7E, 56
 };
 
-static const GFXfont* FreeSansOblique_24pt[] {
+static const TSD_GFXfont* FreeSansOblique_24pt[] {
   &FreeSansOblique_24pt_20,
   &FreeSansOblique_24pt_40,
   &FreeSansOblique_24pt_60,

@@ -28,6 +28,7 @@
 // https://github.com/Bodmer/TFT_eSPI
 
 #include <TFT_eSPI.h>
+#include <TFT_eSprite.h>
 
 TFT_eSPI tft;           // TFT object
 

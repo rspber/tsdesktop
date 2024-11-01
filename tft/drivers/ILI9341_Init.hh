@@ -13,8 +13,8 @@
   sendCmdData(ILI9341_DTCB, (uint8_t*)"\x00\x00", 2);                  // retired in v.1.02
   sendCmdByte(ILI9341_PWCTR1, 0x23);
   sendCmdByte(ILI9341_PWCTR2,   0x10);
-  sendCmdData(ILI9341_VCOMCTR1, (uint8_t*)"\x31\x3c", 2);
-  sendCmdByte(ILI9341_VCOMCTR2, 0xC0);
+  sendCmdData(ILI9341_VMCTR1, (uint8_t*)"\x31\x3c", 2);
+  sendCmdByte(ILI9341_VMCTR2, 0xC0);
   sendCmdByte(TFT_MADCTL,   0x48);
   sendCmdByte(TFT_VSCRSADD, 0x00);
   sendCmdByte(TFT_PIXFMT, TFT_PIXFMT_VALUE);

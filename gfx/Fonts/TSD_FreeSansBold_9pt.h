@@ -60,7 +60,7 @@ static const uint8_t FreeSansBold_9pt_Glyphs_20[] {
     0x1C, 0x1C, 0x1C, 0x1C, 0x0E, 0x00, 0x03, 0x81, 0xC0, // '?'
 0};
 
-static const GFXfont FreeSansBold_9pt_20 {
+static const TSD_GFXfont FreeSansBold_9pt_20 {
   FreeSansBold_9pt_Glyphs_20,
   0x00, 0x00, 0, 0x20, 0x3F, 22
 };
@@ -143,7 +143,7 @@ static const uint8_t FreeSansBold_9pt_Glyphs_40[] {
   0x5F, 0x00, 0, 10, 1, 10, 0x00, 0xfd, 2, 0, 0xFF, 0xC0, // '_'
 0};
 
-static const GFXfont FreeSansBold_9pt_40 {
+static const TSD_GFXfont FreeSansBold_9pt_40 {
   FreeSansBold_9pt_Glyphs_40,
   0x00, 0x00, 0, 0x40, 0x5F, 22
 };
@@ -210,12 +210,12 @@ static const uint8_t FreeSansBold_9pt_Glyphs_60[] {
   0x7E, 0x00, 0, 8, 2, 9, 0x00, 0x05, 2, 0, 0x71, 0x8E, // '~'
 0};
 
-static const GFXfont FreeSansBold_9pt_60 {
+static const TSD_GFXfont FreeSansBold_9pt_60 {
   FreeSansBold_9pt_Glyphs_60,
   0x00, 0x00, 0, 0x60, 0x7E, 22
 };
 
-static const GFXfont* FreeSansBold_9pt[] {
+static const TSD_GFXfont* FreeSansBold_9pt[] {
   &FreeSansBold_9pt_20,
   &FreeSansBold_9pt_40,
   &FreeSansBold_9pt_60,
