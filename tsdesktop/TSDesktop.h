@@ -555,7 +555,7 @@ private:
   void updCompactHeight(const bool recalc) override;
 
 private:
-  font_t font{ NULL, 1, 1 };
+  tsd_font_t font{ NULL, 1, 1 };
   static const uint16_t EMPTY_0 = 0;
   const void* textp = (const void *)&EMPTY_0;
   bool unicode = 0;

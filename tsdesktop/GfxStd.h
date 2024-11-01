@@ -506,7 +506,7 @@ public:
   }
 
 protected:
-  font_t font;
+  tsd_font_t font;
 };
 
 

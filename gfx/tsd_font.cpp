@@ -8,18 +8,18 @@
 #include "tsd_font.h"
 #include <string.h>
 
-void font_t::setFont(const TSD_GFXfont** gfxFont)
+void tsd_font_t::setFont(const TSD_GFXfont** gfxFont)
 {
   gfx_fonts = gfxFont;
   v_st_1 = 0;
 }
 
-const TSD_GFXfont** font_t::getFont()
+const TSD_GFXfont** tsd_font_t::getFont()
 {
   return gfx_fonts;
 }
 
-void font_t::initialize()
+void tsd_font_t::initialize()
 {
   v_n = 0;
   v_n0 = 0;
@@ -94,7 +94,7 @@ const TSD_GFXglyph* get_glyph(const TSD_GFXfont* f, const uint8_t code)
   return 0;
 }
 
-uchar* font_t::bin_search_glyph(TSD_GFXfont** g, uchar *p)
+uchar* tsd_font_t::bin_search_glyph(TSD_GFXfont** g, uchar *p)
 {
   int16_t btm = v_n0;
   int16_t top = v_n - 1;
@@ -165,7 +165,7 @@ uchar* font_t::bin_search_glyph(TSD_GFXfont** g, uchar *p)
   return 0;
 }
 
-uchar* font_t::seq_scan_glyph(TSD_GFXfont** g, uchar* p)
+uchar* tsd_font_t::seq_scan_glyph(TSD_GFXfont** g, uchar* p)
 {
   int16_t u = 0;
   int8_t i = 0;
@@ -205,7 +205,7 @@ uchar* font_t::seq_scan_glyph(TSD_GFXfont** g, uchar* p)
   return 0;
 }
 
-const TSD_GFXglyph* font_t::getCharGlyph(TSD_GFXfont** g, char** c)
+const TSD_GFXglyph* tsd_font_t::getCharGlyph(TSD_GFXfont** g, char** c)
 {
   if (gfx_fonts) {
 
@@ -240,7 +240,7 @@ const TSD_GFXglyph* font_t::getCharGlyph(TSD_GFXfont** g, char** c)
   return 0;
 } 
 
-const int16_t font_t::defaultCharSize(int16_t* letterHeight)
+const int16_t tsd_font_t::defaultCharSize(int16_t* letterHeight)
 {
   int16_t w, h;
   if (gfx_fonts) {
@@ -272,7 +272,7 @@ const int16_t font_t::defaultCharSize(int16_t* letterHeight)
   return w * fontSizeX;
 }
 
-void font_t::cursorAdjust(TSD_GFXfont* gfxFont, int16_t* x, int16_t* y)
+void tsd_font_t::cursorAdjust(TSD_GFXfont* gfxFont, int16_t* x, int16_t* y)
 {
   if (!gfxFont) {  // Default font
     ++*x;
@@ -294,13 +294,13 @@ void font_t::cursorAdjust(TSD_GFXfont* gfxFont, int16_t* x, int16_t* y)
   }
 }
 
-const int16_t font_t::yAdvHeight(const int16_t yAdvance)
+const int16_t tsd_font_t::yAdvHeight(const int16_t yAdvance)
 {
   // some magic code
   return yAdvance * 2 * fontSizeY / 3; 
 }  
 
-const int16_t font_t::charSize(char** c, int16_t* letterHeight)  // utf-8
+const int16_t tsd_font_t::charSize(char** c, int16_t* letterHeight)  // utf-8
 {
   int16_t w, h;
   TSD_GFXfont* f;
@@ -318,7 +318,7 @@ const int16_t font_t::charSize(char** c, int16_t* letterHeight)  // utf-8
   return w * fontSizeX;
 }
 
-const int16_t font_t::charSize(const void** c, const bool unicode, int16_t* letterHeight)
+const int16_t tsd_font_t::charSize(const void** c, const bool unicode, int16_t* letterHeight)
 {
   if (unicode) {
     char buf[8];
@@ -332,7 +332,7 @@ const int16_t font_t::charSize(const void** c, const bool unicode, int16_t* lett
   }
 }
 
-const int16_t font_t::textLineSize(const void* textp, const bool unicode, int16_t* textHeight, int16_t* nOfChars)
+const int16_t tsd_font_t::textLineSize(const void* textp, const bool unicode, int16_t* textHeight, int16_t* nOfChars)
 {
   int16_t w = 0;
   int16_t h = 0;
@@ -357,7 +357,7 @@ const int16_t font_t::textLineSize(const void* textp, const bool unicode, int16_
   return w;
 }
 
-const int16_t font_t::textSize(const void* textp, const bool unicode, int16_t* textHeight)
+const int16_t tsd_font_t::textSize(const void* textp, const bool unicode, int16_t* textHeight)
 {
   int16_t w = 0;
   int16_t h = 0;
@@ -401,7 +401,7 @@ const int16_t font_t::textSize(const void* textp, const bool unicode, int16_t* t
   return w;
 }
 
-const int16_t font_t::textApproxLineWidth(const void* textp, const bool unicode, int16_t len)
+const int16_t tsd_font_t::textApproxLineWidth(const void* textp, const bool unicode, int16_t len)
 {
   int16_t h;
   int16_t nofch = 0;
@@ -409,14 +409,14 @@ const int16_t font_t::textApproxLineWidth(const void* textp, const bool unicode,
   return w * len / (nofch > 0 ? nofch : 1);
 }
 
-const int16_t font_t::textLineWidth(const void* textp, const bool unicode)
+const int16_t tsd_font_t::textLineWidth(const void* textp, const bool unicode)
 {
   int16_t h;
   int16_t nofch;
   return textLineSize(textp, unicode, &h, &nofch);
 }
 
-const int16_t font_t::textLineHeight()
+const int16_t tsd_font_t::textLineHeight()
 {
   int16_t h;
   defaultCharSize(&h);

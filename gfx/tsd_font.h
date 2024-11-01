@@ -14,7 +14,7 @@
 typedef unsigned char uchar;
 #endif
 
-struct t_font_t {
+struct tsd_font {
   const TSD_GFXfont** gfx_fonts;  // private
   int8_t fontSizeX, fontSizeY;
 
@@ -80,7 +80,7 @@ struct t_font_t {
   uint8_t v_st_2;  // fe - bin,  fd - seq
 };
 
-typedef t_font_t font_t;
+typedef tsd_font tsd_font_t;
 
 int textLength(const void* textp, const bool unicode);
 const void* textChr(const void* textp, const bool unicode, const char c);

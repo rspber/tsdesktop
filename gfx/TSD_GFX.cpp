@@ -891,7 +891,7 @@ rgb_t alphaBlend(uint8_t bpp, uint8_t bits, uint8_t b80, rgb_t colorh, rgb_t col
     @param    color
 */
 /**************************************************************************/
-void TSD_GFX::drawChar(clip_t& clip, cursor_t& cursor, font_t& font, char** c, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
+void TSD_GFX::drawChar(clip_t& clip, cursor_t& cursor, tsd_font_t& font, char** c, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
   startWrite();
 
@@ -1026,7 +1026,7 @@ void TSD_GFX::drawChar(clip_t& clip, cursor_t& cursor, font_t& font, char** c, r
   @param    spacing extra horizontal spacing for letters
 */
 /**************************************************************************/
-const char*  TSD_GFX::drawTextLine(clip_t& clip, cursor_t& cursor, font_t& font, const char* text, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
+const char*  TSD_GFX::drawTextLine(clip_t& clip, cursor_t& cursor, tsd_font_t& font, const char* text, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
   if (text) {
     char* p = (char *)text;
@@ -1041,7 +1041,7 @@ const char*  TSD_GFX::drawTextLine(clip_t& clip, cursor_t& cursor, font_t& font,
 
 // unicode
 
-void TSD_GFX::drawChar(clip_t& clip, cursor_t& cursor, font_t& font, const uint16_t uchar, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
+void TSD_GFX::drawChar(clip_t& clip, cursor_t& cursor, tsd_font_t& font, const uint16_t uchar, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
   char buf[8];
   toUtf8(buf, uchar);
@@ -1049,7 +1049,7 @@ void TSD_GFX::drawChar(clip_t& clip, cursor_t& cursor, font_t& font, const uint1
   drawChar(clip, cursor, font, &bp, colorh, bg, colorl, spacing);
 }
 
-const uint16_t* TSD_GFX::drawTextLine(clip_t& clip, cursor_t& cursor, font_t& font, const uint16_t* utext, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
+const uint16_t* TSD_GFX::drawTextLine(clip_t& clip, cursor_t& cursor, tsd_font_t& font, const uint16_t* utext, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
   if (utext) {
     const uint16_t* p = utext;

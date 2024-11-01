@@ -279,12 +279,12 @@ void TSD_SCREEN::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t 
 
 // utf-8
 
-void TSD_SCREEN::drawChar(cursor_t& cursor, font_t& font, const char* c, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
+void TSD_SCREEN::drawChar(cursor_t& cursor, tsd_font_t& font, const char* c, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
   drawChar(clip, cursor, font, (char **)&c, colorh, bg, colorl, spacing);
 }
 
-void TSD_SCREEN::drawTextLine(cursor_t& cursor, font_t& font, const char* text, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
+void TSD_SCREEN::drawTextLine(cursor_t& cursor, tsd_font_t& font, const char* text, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
   drawTextLine(clip, cursor, font, text, colorh, bg, colorl, spacing);
 }
@@ -293,7 +293,7 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, co
 {
   if (text) {
     cursor_t cursor{ x, y };
-    font_t font{gfxFont, fontSize, fontSize};
+    tsd_font_t font{gfxFont, fontSize, fontSize};
     const char* p = text;
     while (*p) {
       p = drawTextLine(clip, cursor, font, p, colorh, bg, colorl, spacing);
@@ -312,12 +312,12 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const char* text, co
 
 // unicode
 
-void TSD_SCREEN::drawChar(cursor_t& cursor, font_t& font, const uint16_t uchar, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
+void TSD_SCREEN::drawChar(cursor_t& cursor, tsd_font_t& font, const uint16_t uchar, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
   drawChar(clip, cursor, font, uchar, colorh, bg, colorl, spacing);
 }
 
-const uint16_t* TSD_SCREEN::drawTextLine(cursor_t& cursor, font_t& font, const uint16_t* utext, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
+const uint16_t* TSD_SCREEN::drawTextLine(cursor_t& cursor, tsd_font_t& font, const uint16_t* utext, rgb_t colorh, rgb_t bg, rgb_t colorl, const int8_t spacing)
 {
   return drawTextLine(clip, cursor, font, utext, colorh, bg, colorl, spacing);
 }
@@ -326,7 +326,7 @@ void TSD_SCREEN::drawText(const int16_t x, const int16_t y, const uint16_t* utex
 {
   if (utext) {
     cursor_t cursor{ x, y };
-    font_t font{gfxFont, fontSize, fontSize};
+    tsd_font_t font{gfxFont, fontSize, fontSize};
     const uint16_t* p = utext;
     while (*p) {
       p = drawTextLine(clip, cursor, font, p, colorh, bg, colorl, spacing);
