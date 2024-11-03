@@ -423,3 +423,59 @@ void TSD_SCREEN::pushMDTBuffer(clip_t& window, const uint8_t* buffer, const rgb_
 }
 
 #include "TSD_Smooth.c.hh"
+
+/***************************************************************************************
+** Function name:           alphaBlend
+** Description:             Blend 16bit foreground and background
+*************************************************************************************x*/
+uint16_t alphaBlend(uint8_t alpha, uint16_t fgc, uint16_t bgc)
+{
+  // Split out and blend 5-bit red and blue channels
+  uint32_t rxb = bgc & 0xF81F;
+  rxb += ((fgc & 0xF81F) - rxb) * (alpha >> 2) >> 6;
+  // Split out and blend 6-bit green channel
+  uint32_t xgx = bgc & 0x07E0;
+  xgx += ((fgc & 0x07E0) - xgx) * alpha >> 8;
+  // Recombine channels
+  return (rxb & 0xF81F) | (xgx & 0x07E0);
+}
+
+/***************************************************************************************
+** Function name:           alphaBlend
+** Description:             Blend 16bit foreground and background with dither
+*************************************************************************************x*/
+uint16_t alphaBlend(uint8_t alpha, uint16_t fgc, uint16_t bgc, uint8_t dither)
+{
+  if (dither) {
+    int16_t alphaDither = (int16_t)alpha - dither + random() % (2*dither+1); // +/-4 randomised
+    alpha = (uint8_t)alphaDither;
+    if (alphaDither <  0) alpha = 0;
+    if (alphaDither >255) alpha = 255;
+  }
+
+  return alphaBlend(alpha, fgc, bgc);
+}
+
+/***************************************************************************************
+** Function name:           alphaBlend
+** Description:             Blend 24bit foreground and background with optional dither
+*************************************************************************************x*/
+uint32_t alphaBlend24(uint8_t alpha, uint32_t fgc, uint32_t bgc, uint8_t dither)
+{
+
+  if (dither) {
+    int16_t alphaDither = (int16_t)alpha - dither + random() % (2*dither+1); // +/-dither randomised
+    alpha = (uint8_t)alphaDither;
+    if (alphaDither <  0) alpha = 0;
+    if (alphaDither >255) alpha = 255;
+  }
+
+  uint32_t rxx = bgc & 0xFF0000;
+  rxx += ((fgc & 0xFF0000) - rxx) * alpha >> 8;
+  uint32_t xgx = bgc & 0x00FF00;
+  xgx += ((fgc & 0x00FF00) - xgx) * alpha >> 8;
+  uint32_t xxb = bgc & 0x0000FF;
+  xxb += ((fgc & 0x0000FF) - xxb) * alpha >> 8;
+  return (rxx & 0xFF0000) | (xgx & 0x00FF00) | (xxb & 0x0000FF);
+}
+
