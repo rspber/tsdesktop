@@ -19,13 +19,13 @@ bool Touch::WhereAreYou(point_t* p)
   if (IamHere(x, y)) {
     uint8_t r = reverse ^ TOUCH_ROTATION(rotation);
 
-    if (r & MAD_YX) {
+    if (r & TFT_MAD_YX) {
       int16_t tmp = x; x = y; y = tmp;
     }
-    if ((r & MAD_SS) | (r & MAD_MX)) {
+    if ((r & TFT_MAD_SS) | (r & TFT_MAD_MX)) {
       x = 4095 - x;
     }
-    if ((r & MAD_GS) | (r & MAD_MY)) {
+    if ((r & TFT_MAD_GS) | (r & TFT_MAD_MY)) {
       y = 4095 - y;
     }
 
