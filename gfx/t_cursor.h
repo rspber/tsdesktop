@@ -4,6 +4,6 @@
 #include <inttypes.h>
 
 typedef struct {
-  int16_t x, y;
+  int32_t x, y;
 } cursor_t;
 
