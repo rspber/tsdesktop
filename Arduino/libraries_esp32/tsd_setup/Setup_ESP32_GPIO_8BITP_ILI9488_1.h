@@ -5,12 +5,12 @@
 // -------------------------------TFT driver ----------------------------------
 
 //  #define GC9A01            // -- not tested
-      // TFT_REV MAD_MX or 0
+      // TFT_REV TFT_MAD_MX or 0
 
 //  #define HX8357B           // -- not tested
 //  #define HX8357C           // -- not tested
 //  #define HX8357D           // -- not tested
-      // TFT_REV MAD_MY or 0
+      // TFT_REV TFT_MAD_MY or 0
 
 //  #define ILI9341       // 2.4" TFT SPI 240x320 no version - tested
 
