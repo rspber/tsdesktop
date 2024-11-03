@@ -318,7 +318,7 @@ void tft_readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
 
 
 
-rgb_t TFT_SCREEN::readPixel(clip_t& clip, int16_t x, int16_t y)
+rgb_t TFT_SCREEN::readPixel(clip_t& clip, int32_t x, int32_t y)
 {
   if (x >= clip.x1 && y >= clip.y1 && x < clip.x2 && y < clip.y2) {
     return innerReadPixel(x, y);

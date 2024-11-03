@@ -132,7 +132,7 @@ public:
    */
   void drawMDTBuffer(const int32_t x, const int32_t y, const int32_t w, const int32_t h, const uint8_t* buffer) override;
 
-  rgb_t readPixel(clip_t& clip, int16_t x, int16_t y) override;
+  rgb_t readPixel(clip_t& clip, int32_t x, int32_t y) override;
 
 private:
   void initialize(const rgb_t aBgColor);

@@ -28,7 +28,7 @@ public:
 
   using TSD_GFX::drawPixel;
 
-  virtual rgb_t readPixel(clip_t& clip, int16_t x, int16_t y) = 0;
+  virtual rgb_t readPixel(clip_t& clip, int32_t x, int32_t y) = 0;
 
            // Draw an anti-aliased (smooth) arc between start and end angles. Arc ends are anti-aliased.
            // By default the arc is drawn with square ends unless the "roundEnds" parameter is included and set true

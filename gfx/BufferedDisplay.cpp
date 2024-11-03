@@ -377,7 +377,7 @@ static const rgb_t default_4bit_palette[] = {
 //    }
   }
 
-  rgb_t BufferedDisplay::readPixel(clip_t& cli, int16_t x, int16_t y)
+  rgb_t BufferedDisplay::readPixel(clip_t& cli, int32_t x, int32_t y)
   {
     if (x >= clip.x1 && x < clip.x2 && y >= clip.y1 && y < clip.y2 ) {
       return getColor(x, y);
