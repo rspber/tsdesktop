@@ -112,7 +112,7 @@ void TFT_SCREEN::sendCmd(const uint8_t cmd)
   tft_sendCmd(cmd);
 }
 
-void TFT_SCREEN::sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size)
+void TFT_SCREEN::sendCmdData(const uint8_t cmd, const uint8_t* data, const int32_t size)
 {
   tft_sendCmdData(cmd, data, size);
 }
@@ -122,7 +122,7 @@ void TFT_SCREEN::sendCmdByte(const uint8_t cmd, const uint8_t b)
   tft_sendCmdData(cmd, &b, 1);
 }
 
-void TFT_SCREEN::writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h)
+void TFT_SCREEN::writeAddrWindow(const int32_t x, const int32_t y, const int32_t w, const int32_t h)
 {
   tft_writeAddrWindow(x, y, w, h);
 }
@@ -137,7 +137,7 @@ void TFT_SCREEN::sendMDTColor(const mdt_t c, const int32_t len)
   tft_sendMDTColor(c, len);
 }
 
-void TFT_SCREEN::drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer)
+void TFT_SCREEN::drawMDTBuffer(const int32_t x, const int32_t y, const int32_t w, const int32_t h, const uint8_t* buffer)
 {
   tft_startWrite();
   writeAddrWindow(x, y, w, h);
@@ -145,10 +145,10 @@ void TFT_SCREEN::drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w
   tft_endWrite();
 }
 
-void v_storePixelRec(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t);
+void v_storePixelRec(const int32_t x, const int32_t y, const int32_t w, const int32_t h, over_t* t);
 
 #ifdef OVERLAID
-void TFT_SCREEN::drawClippedPixel(const int16_t x, const int16_t y, const rgb_t color)
+void TFT_SCREEN::drawClippedPixel(const int32_t x, const int32_t y, const rgb_t color)
 {
   // very dubious method to detect pointer in rgb_t type
   // in rp2040 pointers are 4 byte:
@@ -175,7 +175,7 @@ void TFT_SCREEN::drawClippedPixel(const int16_t x, const int16_t y, const rgb_t 
   }
 }
 
-void TFT_SCREEN::drawClippedPixelRec(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
+void TFT_SCREEN::drawClippedPixelRec(const int32_t x, const int32_t y, const int32_t w, const int32_t h, const rgb_t color)
 {
   // very dubious method to detect pointer in rgb_t type
   // in rp2040 pointers are 4 byte:
@@ -261,7 +261,7 @@ void TFT_SCREEN::invertDisplay(bool invert)
 }
 
 // currently not used
-void TFT_SCREEN::scrollTo(int16_t y) {
+void TFT_SCREEN::scrollTo(int32_t y) {
   tft_startWriteCmd();
   uint16_t xbuf = swap16(y);
   tft_sendCmdData(TFT_VSCRSADD, (uint8_t*)&xbuf, 2);
@@ -269,7 +269,7 @@ void TFT_SCREEN::scrollTo(int16_t y) {
 }
 
 // currently not used
-void TFT_SCREEN::setScrollMargins(int16_t top, int16_t bottom) {
+void TFT_SCREEN::setScrollMargins(int32_t top, int32_t bottom) {
   // TFA+VSA+BFA must equal 320
   if (top + bottom <= getHEIGHT()) {
     tft_startWriteCmd();
@@ -334,7 +334,7 @@ void TFT_SCREEN::readRegister(uint8_t* buf, const uint8_t reg, int8_t len)
   tft_readRegister(buf, reg, len);
 }
 
-rgb_t TFT_SCREEN::innerReadPixel(int16_t x, int16_t y)
+rgb_t TFT_SCREEN::innerReadPixel(int32_t x, int32_t y)
 {
   tft_startReading();
   tft_readAddrWindow(x, y, 1, 1);
@@ -362,7 +362,7 @@ rgb_t TFT_SCREEN::innerReadPixel(int16_t x, int16_t y)
   return color;
 }
 
-void v_storePixelRec(const int16_t x, const int16_t y, const int16_t w, const int16_t h, over_t* t)
+void v_storePixelRec(const int32_t x, const int32_t y, const int32_t w, const int32_t h, over_t* t)
 {
   tft_endWrite();
 

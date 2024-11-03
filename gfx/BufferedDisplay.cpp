@@ -57,7 +57,7 @@ static const rgb_t default_4bit_palette[] = {
    * @y2     - height = y2 - y1
    *      this causes the memory (internal buffer) allocation width * height * MDT_SIZE
    */
-  BufferedDisplay::BufferedDisplay(const int16_t x1, const int16_t y1, const int16_t x2, const int16_t y2, const rgb_t aBgColor)
+  BufferedDisplay::BufferedDisplay(const int32_t x1, const int32_t y1, const int32_t x2, const int32_t y2, const rgb_t aBgColor)
     : TSD_SCREEN(x2 - x1, y2 - y1)
   {
     clip = {x1, y1, x2, y2};
@@ -123,7 +123,7 @@ static const rgb_t default_4bit_palette[] = {
    * x      - x (left)
    * y      - y (top)
    */
-  void BufferedDisplay::setPos(const int16_t x, const int16_t y)
+  void BufferedDisplay::setPos(const int32_t x, const int32_t y)
   {
     clip.x2 = clip.x2 - clip.x1 + x;
     clip.x1 = x;
@@ -134,7 +134,7 @@ static const rgb_t default_4bit_palette[] = {
   /**
    * writeAddrWindow - from tft interface, not to use by user
    */
-  void BufferedDisplay::writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h)
+  void BufferedDisplay::writeAddrWindow(const int32_t x, const int32_t y, const int32_t w, const int32_t h)
   {
     addr_x = x - clip.x1;
     addr_y = y - clip.y1;
@@ -214,7 +214,7 @@ static const rgb_t default_4bit_palette[] = {
    * rotateRight - simple square bit to bit rotation in internal buffer
    *  from (x,y) position, d pixels size
    */
-  void BufferedDisplay::rotateRight(const int16_t x, const int16_t y, int16_t d)
+  void BufferedDisplay::rotateRight(const int32_t x, const int32_t y, int32_t d)
   {
     if (x < 0 || y < 0) {
       return;
@@ -243,7 +243,7 @@ static const rgb_t default_4bit_palette[] = {
    *  rotateLeft - simple square bit to bit rotation in internal buffer
    *   from (x,y) position, d pixels size
    */
-  void BufferedDisplay::rotateLeft(const int16_t x, const int16_t y, int16_t d)
+  void BufferedDisplay::rotateLeft(const int32_t x, const int32_t y, int32_t d)
   {
     if (x < 0 || y < 0) {
       return;
@@ -272,7 +272,7 @@ static const rgb_t default_4bit_palette[] = {
    *  flipHorizontal - simple bit to bit flip horizontal in internal buffer
    *   from (x,y) position, (w, h) pixels size
    */
-  void BufferedDisplay::flipHorizontal(const int16_t x, const int16_t y, int16_t w, int16_t h)
+  void BufferedDisplay::flipHorizontal(const int32_t x, const int32_t y, int32_t w, int32_t h)
   {
     if (x < 0 || y < 0) {
       return;
@@ -297,7 +297,7 @@ static const rgb_t default_4bit_palette[] = {
    * flipVertical - simple bit to bit flip vertical in internal buffer
    *  from (x,y) position, (w, h) pixels size
    */
-  void BufferedDisplay::flipVertical(const int16_t x, const int16_t y, int16_t w, int16_t h)
+  void BufferedDisplay::flipVertical(const int32_t x, const int32_t y, int32_t w, int32_t h)
   {
     if (x < 0 || y < 0) {
       return;
@@ -321,7 +321,7 @@ static const rgb_t default_4bit_palette[] = {
   /**
    * drawMDTBuffer - from tft interface, not to use by user
    */
-  void BufferedDisplay::drawMDTBuffer(int16_t x, int16_t y, int16_t w, int16_t h, const uint8_t* buffer)
+  void BufferedDisplay::drawMDTBuffer(int32_t x, int32_t y, int32_t w, int32_t h, const uint8_t* buffer)
   {
     if (!buf) {
       return;

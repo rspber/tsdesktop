@@ -54,7 +54,7 @@
 
   sendCmdByte(set_gpio_value, 0x01);      // 0x01 GPIO[3:0] out 1 --- LCD display on/off control PIN
 
-  sendCmdByte(TFT_MADCTL, 0x21 | MAD_BGR);
+  sendCmdByte(TFT_MADCTL, 0x21 | TFT_MAD_BGR);
 
   sendCmdByte(set_pix_dt_intf, 0x00);
     // 0x00     //000 = 8 bit bus, 011 = 16 bit, 110 = 9 bit

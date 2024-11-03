@@ -74,7 +74,7 @@ public:
 
   void pushMDTBuffer(clip_t& window, const uint8_t* buffer);
   void pushMDTBuffer(clip_t& window, const uint8_t* buffer, const rgb_t transparent);
-  virtual void drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) = 0;
+  virtual void drawMDTBuffer(const int32_t x, const int32_t y, const int32_t w, const int32_t h, const uint8_t* buffer) = 0;
 
   void drawLine(clip_t& clip, int32_t x1, int32_t y1, int32_t x2, int32_t y2, rgb_t color, int32_t ts, uint8_t mode); // thickness, mode:1 cut
   void drawRect(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, rgb_t color, int32_t ts); // thickness

@@ -7,7 +7,7 @@
   sendCmd(TFT_SLPOUT);
   delay(120);
   sendCmd(TFT_NORON);
-  sendCmdByte(TFT_MADCTL, MAD_BGR);
+  sendCmdByte(TFT_MADCTL, TFT_MAD_BGR);
   sendCmdData(0xB6, (uint8_t*)"\x0A\x82", 2);
   sendCmdData(ST7789_RAMCTRL, (uint8_t*)"\x00\xE0", 2);
   sendCmdByte(TFT_PIXFMT, TFT_PIXFMT_VALUE);

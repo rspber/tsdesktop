@@ -1180,13 +1180,13 @@ void TSD_GFX::sendMDTColor(const mdt_t c, int32_t len)
   }
 }
 
-void TSD_GFX::drawClippedPixel(const int16_t x, const int16_t y, const rgb_t color)
+void TSD_GFX::drawClippedPixel(const int32_t x, const int32_t y, const rgb_t color)
 {
   writeAddrWindow(x, y, 1, 1);
   sendMDTColor1(mdt_color(color));
 }
 
-void TSD_GFX::drawClippedPixelRec(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color)
+void TSD_GFX::drawClippedPixelRec(const int32_t x, const int32_t y, const int32_t w, const int32_t h, const rgb_t color)
 {
   writeAddrWindow(x, y, w, h);
   sendMDTColor(mdt_color(color), w * h);

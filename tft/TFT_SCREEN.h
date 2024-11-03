@@ -55,15 +55,15 @@
   #define TFT_PIXFMT_VALUE 0x66
 #endif
 
-#define MAD_MY  0x80  // 00 top to botom, 80 bottom to top
-#define MAD_MX  0x40  // 00 left to right, 40 right to left
-#define MAD_YX  0x20  // it means that X and Y are exchanged, wrongly called MV
-#define MAD_MV  0x10  // vertical refresh direction, wrongly called ML
-#define MAD_BGR 0x08
-#define MAD_RGB 0x00
-#define MAD_MH  0x04 // horizontal refresh direction,
-#define MAD_SS  0x02 // horizontal flip
-#define MAD_GS  0x01 // vertical flip
+#define TFT_MAD_MY  0x80  // 00 top to botom, 80 bottom to top
+#define TFT_MAD_MX  0x40  // 00 left to right, 40 right to left
+#define TFT_MAD_YX  0x20  // it means that X and Y are exchanged, wrongly called MV
+#define TFT_MAD_MV  0x10  // vertical refresh direction, wrongly called ML
+#define TFT_MAD_BGR 0x08
+#define TFT_MAD_RGB 0x00
+#define TFT_MAD_MH  0x04 // horizontal refresh direction,
+#define TFT_MAD_SS  0x02 // horizontal flip
+#define TFT_MAD_GS  0x01 // vertical flip
 
 class TFT_SCREEN : public TSD_SCREEN {
 public:
@@ -82,29 +82,29 @@ public:
   void displayOn();
 
 // currently not used
-  void scrollTo(int16_t y);
-  void setScrollMargins(int16_t top, int16_t bottom);
+  void scrollTo(int32_t y);
+  void setScrollMargins(int32_t top, int32_t bottom);
 //
   rgb_t readPixel(clip_t& clip, int16_t x, int16_t y) override;
   void readRegister(uint8_t* buf, const uint8_t reg, int8_t len);
 
   void sendCmd(const uint8_t cmd);
-  void sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size);
+  void sendCmdData(const uint8_t cmd, const uint8_t* data, const int32_t size);
   void sendCmdByte(const uint8_t cmd, const uint8_t b);
 
-  rgb_t innerReadPixel(int16_t x, int16_t y);
+  rgb_t innerReadPixel(int32_t x, int32_t y);
 
   void startWrite() override;
   void endWrite() override;
-  void writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h) override;
+  void writeAddrWindow(const int32_t x, const int32_t y, const int32_t w, const int32_t h) override;
   void writeMDTBuffer(const uint8_t* buffer, const int32_t len) override;
   void sendMDTColor1(const mdt_t c) override;
   void sendMDTColor(const mdt_t c, const int32_t len) override;
-  void drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) override;
+  void drawMDTBuffer(const int32_t x, const int32_t y, const int32_t w, const int32_t h, const uint8_t* buffer) override;
 
 #ifdef OVERLAID
-  void drawClippedPixel(const int16_t x, const int16_t y, const rgb_t color) override;
-  void drawClippedPixelRec(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const rgb_t color) override;
+  void drawClippedPixel(const int32_t x, const int32_t y, const rgb_t color) override;
+  void drawClippedPixelRec(const int32_t x, const int32_t y, const int32_t w, const int32_t h, const rgb_t color) override;
 #endif
 
 // --- the DMA ---------------------------------------------------------------

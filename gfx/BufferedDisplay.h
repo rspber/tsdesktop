@@ -32,7 +32,7 @@ public:
    * @y2     - height = y2 - y1
    *      this causes the memory (internal buffer) allocation width * height * MDT_SIZE
    */
-  BufferedDisplay(const int16_t x1, const int16_t y1, const int16_t x2, const int16_t y2, const rgb_t aBgColor = BLACK);
+  BufferedDisplay(const int32_t x1, const int32_t y1, const int32_t x2, const int32_t y2, const rgb_t aBgColor = BLACK);
 
   virtual ~BufferedDisplay();
 
@@ -41,7 +41,7 @@ public:
    * @x     - x (left)
    * @y     - y (top)
    */
-  void setPos(const int16_t x, const int16_t y);
+  void setPos(const int32_t x, const int32_t y);
 
   /**
    * clear - speedup function to clear entire internal buffer with color
@@ -69,25 +69,25 @@ public:
    * rotateRight - simple square bit to bit rotation in internal buffer
    *  from (x,y) position, d pixels size
    */
-  void rotateRight(const int16_t x, const int16_t y, int16_t d);
+  void rotateRight(const int32_t x, const int32_t y, int32_t d);
 
   /**
    *  rotateLeft - simple square bit to bit rotation in internal buffer
    *   from (x,y) position, d pixels size
    */
-  void rotateLeft(const int16_t x, const int16_t y, int16_t d);
+  void rotateLeft(const int32_t x, const int32_t y, int32_t d);
 
   /**
    *  flipHorizontal - simple bit to bit flip horizontal in internal buffer
    *   from (x,y) position, (w, h) pixels size
    */
-  void flipHorizontal(const int16_t x, const int16_t y, int16_t w, int16_t h);
+  void flipHorizontal(const int32_t x, const int32_t y, int32_t w, int32_t h);
 
   /**
    * flipVertical - simple bit to bit flip vertical in internal buffer
    *  from (x,y) position, (w, h) pixels size
    */
-  void flipVertical(const int16_t x, const int16_t y, int16_t w, int16_t h);
+  void flipVertical(const int32_t x, const int32_t y, int32_t w, int32_t h);
 
   /**
    * push, draw this object (BufferedDisplay) on screen
@@ -115,7 +115,7 @@ public:
   /**
    * writeAddrWindow - from tft interface, not to use by user
    */
-  void writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, const int16_t h) override;
+  void writeAddrWindow(const int32_t x, const int32_t y, const int32_t w, const int32_t h) override;
 
   /**
    * writeMDTBuffer - from tft interface, not to use by user
@@ -130,7 +130,7 @@ public:
   /**
    * drawMDTBuffer - from tft interface, not to use by user
    */
-  void drawMDTBuffer(const int16_t x, const int16_t y, const int16_t w, const int16_t h, const uint8_t* buffer) override;
+  void drawMDTBuffer(const int32_t x, const int32_t y, const int32_t w, const int32_t h, const uint8_t* buffer) override;
 
   rgb_t readPixel(clip_t& clip, int16_t x, int16_t y) override;
 
@@ -138,7 +138,7 @@ private:
   void initialize(const rgb_t aBgColor);
   void recreate();
 
-  int16_t addr_x, addr_y, addr_w, addr_h;   // set by writeAddrWindow
-  int16_t ip;
+  int32_t addr_x, addr_y, addr_w, addr_h;   // set by writeAddrWindow
+  int32_t ip;
   uint8_t* buf = 0;
 };

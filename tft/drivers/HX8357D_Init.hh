@@ -33,7 +33,7 @@
     // 0x78 GDOFF
   sendCmdData(HX8357D_SETGAMMA, (uint8_t*)"\x02\x0A\x11\x1d\x23\x35\x41\x4b\x4b\x42\x3A\x27\x1B\x08\x09\x03\x02\x0A\x11\x1d\x23\x35\x41\x4b\x4b\x42\x3A\x27\x1B\x08\x09\x03\x00\x01", 34);
   sendCmdByte(TFT_PIXFMT, TFT_PIXFMT_VALUE);
-  sendCmdByte(TFT_MADCTL, MAD_MX | MAD_MY | MAD_BGR);
+  sendCmdByte(TFT_MADCTL, TFT_MAD_MX | TFT_MAD_MY | TFT_MAD_BGR);
   sendCmdByte(TFT_TEARON, 0x00);
   sendCmdData(TFT_TEARLINE, (uint8_t*)"\x00\x02", 2);
   sendCmd(TFT_SLPOUT);

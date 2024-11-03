@@ -50,7 +50,7 @@
     // 0x07 GPIO3=input, GPIO[2:0]=output
     // 0x01 GPIO0 normal
 
-  sendCmdByte(TFT_MADCTL, 0x21 | MAD_BGR);
+  sendCmdByte(TFT_MADCTL, 0x21 | TFT_MAD_BGR);
 
   sendCmdByte(set_pix_dt_intf, 0x00);
     // 0x00 8 bit bus
