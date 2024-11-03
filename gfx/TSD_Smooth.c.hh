@@ -81,7 +81,7 @@ constexpr float deg2rad      = 3.14159265359/180.0;
 uint16_t TSD_SCREEN::drawPixel(clip_t& clip, int32_t x, int32_t y, uint32_t color, uint8_t alpha, uint32_t bg_color)
 {
   if (bg_color == 0x00FFFFFF) bg_color = readPixel(clip, x, y);
-  color = fastBlend(alpha, color, bg_color);
+  color = alphaBlend(alpha, color, bg_color);
   drawPixel(clip, x, y, color);
   return color;
 }
@@ -326,7 +326,7 @@ void TSD_SCREEN::drawArc(int32_t x, int32_t y, int32_t r, int32_t ir,
       if (alpha < 16) continue;  // Skip low alpha pixels
 
       // If background is read it must be done in each quadrant
-      uint16_t pcol = fastBlend(alpha, fg_color, bg_color);
+      uint16_t pcol = alphaBlend(alpha, fg_color, bg_color);
       // Check if an AA pixels need to be drawn
       slope = ((r - cy)<<16)/(r - cx);
       if (slope <= startSlope[0] && slope >= endSlope[0]) // BL
@@ -500,7 +500,7 @@ void TSD_SCREEN::drawSmoothRoundRect(int32_t x, int32_t y, int32_t r, int32_t ir
       if (alpha < 16) continue;  // Skip low alpha pixels
 
       // If background is read it must be done in each quadrant - TODO
-      uint16_t pcol = fastBlend(alpha, fg_color, bg_color);
+      uint16_t pcol = alphaBlend(alpha, fg_color, bg_color);
       if (quadrants & 0x8) drawPixel(clip, x + cx - r, y - cy + r + h, pcol);     // BL
       if (quadrants & 0x1) drawPixel(clip, x + cx - r, y + cy - r, pcol);         // TL
       if (quadrants & 0x2) drawPixel(clip, x - cx + r + w, y + cy - r, pcol);     // TR
@@ -642,14 +642,14 @@ void TSD_SCREEN::drawWedgeLine(float ax, float ay, float bx, float by, float ar,
         bg = readPixel(clip, xp, yp); swin = true;
       }
       #ifdef GC9A01_DRIVER
-        uint16_t pcol = fastBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg);
+        uint16_t pcol = alphaBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg);
         drawPixel(clip, xp, yp, pcol);
         swin = swin;
       #else
 //???        if (swin) { setWindow(xp, yp, x1-xp+1, 1); swin = false; }
         if (swin) { writeAddrWindow(xp, yp, x1-xp+1, 1); swin = false; }
-//???        pushColor(fastBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg));
-        sendMDTColor1(fastBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg));
+//???        pushColor(alphaBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg));
+        sendMDTColor1(alphaBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg));
       #endif
     }
   }
@@ -684,14 +684,14 @@ void TSD_SCREEN::drawWedgeLine(float ax, float ay, float bx, float by, float ar,
         bg = readPixel(clip, xp, yp); swin = true;
       }
       #ifdef GC9A01_DRIVER
-        uint16_t pcol = fastBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg);
+        uint16_t pcol = alphaBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg);
         drawPixel(xp, yp, pcol);
         swin = swin;
       #else
 //???        if (swin) { setWindow(xp, yp, x1-xp+1, yp); swin = false; }
         if (swin) { writeAddrWindow(xp, yp, x1-xp+1, yp); swin = false; }
-//???        pushColor(fastBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg));
-        sendMDTColor1(fastBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg));
+//???        pushColor(alphaBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg));
+        sendMDTColor1(alphaBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg));
       #endif
     }
   }
