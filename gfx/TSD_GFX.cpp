@@ -17,16 +17,6 @@
 #include "overlaid.h"
 #include <stdlib.h>
 
-const int16_t clip_t::width()
-{
-  return x2 > x1 ? x2 - x1 : 0;
-}
-
-const int16_t clip_t::height()
-{
-  return y2 > y1 ? y2 - y1 : 0;
-}
-
 #ifndef abs
 #define abs(x) ((x)>=0?(x):-(x))
 #endif
