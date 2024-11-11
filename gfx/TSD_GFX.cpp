@@ -64,6 +64,766 @@
 
 /**************************************************************************/
 
+/***************************************************************************************
+** Function name:           pushImage
+** Description:             plot 16-bit colour sprite or image onto TFT
+***************************************************************************************/
+void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data)
+{
+  PI_CLIP;
+
+//  begin_tft_write();
+//  inTransaction = true;
+  startWrite();
+
+  writeAddrWindow(x, y, dw, dh);
+
+  data += dx + dy * w;
+
+  // Check if whole image can be pushed
+  // pushPixels
+  if (dw == w) writeMDTBuffer((const uint8_t*)data, dw * dh);
+  else {
+    // Push line segments to crop image
+    while (dh--)
+    {
+      // pushPixels
+      writeMDTBuffer((const uint8_t*)data, dw);
+      data += w;
+    }
+  }
+
+//  inTransaction = lockTransaction;
+//  end_tft_write();
+  endWrite();
+}
+
+/***************************************************************************************
+** Function name:           pushImage
+** Description:             plot 16-bit sprite or image with 1 colour being transparent
+***************************************************************************************/
+void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data, rgb_t transp)
+{
+  PI_CLIP;
+
+//  begin_tft_write();
+//  inTransaction = true;
+  startWrite();
+
+  data += dx + dy * w;
+
+
+  uint16_t  lineBuf[dw]; // Use buffer to minimise setWindow call count
+
+  // The little endian transp color must be byte swapped if the image is big endian
+//  if (!_swapBytes) transp = transp >> 8 | transp << 8;
+
+  while (dh--)
+  {
+    int32_t len = dw;
+    uint16_t* ptr = data;
+    int32_t px = x, sx = x;
+    bool move = true;
+    uint16_t np = 0;
+
+    while (len--)
+    {
+      if (transp != *ptr)
+      {
+        if (move) { move = false; sx = px; }
+        lineBuf[np] = *ptr;
+        np++;
+      }
+      else
+      {
+        move = true;
+        if (np)
+        {
+          writeAddrWindow(sx, y, np, 1);
+//          pushPixels((uint16_t*)lineBuf, np);
+          writeMDTBuffer((const uint8_t*)lineBuf, np);
+          np = 0;
+        }
+      }
+      px++;
+      ptr++;
+    }
+    if (np) {
+      writeAddrWindow(sx, y, np, 1);
+//      pushPixels((uint16_t*)lineBuf, np);
+      writeMDTBuffer((const uint8_t*)lineBuf, np);
+    }
+    y++;
+    data += w;
+  }
+
+//  inTransaction = lockTransaction;
+//  end_tft_write();
+  endWrite();
+}
+
+
+/***************************************************************************************
+** Function name:           pushImage - for FLASH (PROGMEM) stored images
+** Description:             plot 16-bit image
+*************************************************************************************** /
+void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data)
+{
+  // Requires 32-bit aligned access, so use PROGMEM 16-bit word functions
+  PI_CLIP;
+
+//  begin_tft_write();
+//  inTransaction = true;
+  startWrite();
+
+  data += dx + dy * w;
+
+  uint16_t  buffer[dw];
+
+  writeAddrWindow(x, y, dw, dh);
+
+  // Fill and send line buffers to TFT
+  for (int32_t i = 0; i < dh; i++) {
+    for (int32_t j = 0; j < dw; j++) {
+      buffer[j] = pgm_read_word(&data[i * w + j]);
+    }
+//    pushPixels(buffer, dw);
+    writeMDTBuffer((const uint8_t*)buffer, dw);
+  }
+
+//  inTransaction = lockTransaction;
+//  end_tft_write();
+  endWrite();
+}
+*/
+/***************************************************************************************
+** Function name:           pushImage - for FLASH (PROGMEM) stored images
+** Description:             plot 16-bit image with 1 colour being transparent
+*************************************************************************************** /
+void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data, rgb_t transp)
+{
+  // Requires 32-bit aligned access, so use PROGMEM 16-bit word functions
+  PI_CLIP;
+
+//  begin_tft_write();
+//  inTransaction = true;
+  startWrite();
+
+  data += dx + dy * w;
+
+
+  uint16_t  lineBuf[dw];
+
+  // The little endian transp color must be byte swapped if the image is big endian
+//  if (!_swapBytes) transp = transp >> 8 | transp << 8;
+
+  while (dh--) {
+    int32_t len = dw;
+    uint16_t* ptr = (uint16_t*)data;
+    int32_t px = x, sx = x;
+    bool move = true;
+
+    uint16_t np = 0;
+
+    while (len--) {
+      uint16_t color = pgm_read_word(ptr);
+      if (transp != color) {
+        if (move) { move = false; sx = px; }
+        lineBuf[np] = color;
+        np++;
+      }
+      else {
+        move = true;
+        if (np) {
+          setWindow(sx, y, sx + np - 1, y);
+          pushPixels(lineBuf, np);
+          np = 0;
+        }
+      }
+      px++;
+      ptr++;
+    }
+    if (np) { setWindow(sx, y, sx + np - 1, y); pushPixels(lineBuf, np); }
+
+    y++;
+    data += w;
+  }
+
+//  inTransaction = lockTransaction;
+//  end_tft_write();
+  endWrite();
+}
+*/
+
+/***************************************************************************************
+** Function name:           pushImage
+** Description:             plot 8-bit or 4-bit or 1 bit image or sprite using a line buffer
+*************************************************************************************** /
+void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, const uint8_t *data, bool bpp8,  uint16_t *cmap)
+{
+  PI_CLIP;
+
+//  begin_tft_write();
+//  inTransaction = true;
+  startWrite();
+
+//  bool swap = _swapBytes;
+
+  setWindow(x, y, x + dw - 1, y + dh - 1); // Sets CS low and sent RAMWR
+
+  // Line buffer makes plotting faster
+  uint16_t  lineBuf[dw];
+
+  if (bpp8)
+  {
+//    _swapBytes = false;
+
+    uint8_t  blue[] = {0, 11, 21, 31}; // blue 2 to 5-bit colour lookup table
+
+    _lastColor = -1; // Set to illegal value
+
+    // Used to store last shifted colour
+    uint8_t msbColor = 0;
+    uint8_t lsbColor = 0;
+
+    data += dx + dy * w;
+    while (dh--) {
+      uint32_t len = dw;
+      uint8_t* ptr = (uint8_t*)data;
+      uint8_t* linePtr = (uint8_t*)lineBuf;
+
+      while(len--) {
+        uint32_t color = pgm_read_byte(ptr++);
+
+        // Shifts are slow so check if colour has changed first
+        if (color != _lastColor) {
+          //          =====Green=====     ===============Red==============
+          msbColor = (color & 0x1C)>>2 | (color & 0xC0)>>3 | (color & 0xE0);
+          //          =====Green=====    =======Blue======
+          lsbColor = (color & 0x1C)<<3 | blue[color & 0x03];
+          _lastColor = color;
+        }
+
+       *linePtr++ = msbColor;
+       *linePtr++ = lsbColor;
+      }
+
+      pushPixels(lineBuf, dw);
+
+      data += w;
+    }
+//    _swapBytes = swap; // Restore old value
+  }
+  else if (cmap != nullptr) // Must be 4bpp
+  {
+//    _swapBytes = true;
+
+    w = (w+1) & 0xFFFE;   // if this is a sprite, w will already be even; this does no harm.
+    bool splitFirst = (dx & 0x01) != 0; // split first means we have to push a single px from the left of the sprite / image
+
+    if (splitFirst) {
+      data += ((dx - 1 + dy * w) >> 1);
+    }
+    else {
+      data += ((dx + dy * w) >> 1);
+    }
+
+    while (dh--) {
+      uint32_t len = dw;
+      uint8_t * ptr = (uint8_t*)data;
+      uint16_t *linePtr = lineBuf;
+      uint8_t colors; // two colors in one byte
+      uint16_t index;
+
+      if (splitFirst) {
+        colors = pgm_read_byte(ptr);
+        index = (colors & 0x0F);
+        *linePtr++ = cmap[index];
+        len--;
+        ptr++;
+      }
+
+      while (len--)
+      {
+        colors = pgm_read_byte(ptr);
+        index = ((colors & 0xF0) >> 4) & 0x0F;
+        *linePtr++ = cmap[index];
+
+        if (len--)
+        {
+          index = colors & 0x0F;
+          *linePtr++ = cmap[index];
+        } else {
+          break;  // nothing to do here
+        }
+
+        ptr++;
+      }
+
+      pushPixels(lineBuf, dw);
+      data += (w >> 1);
+    }
+//    _swapBytes = swap; // Restore old value
+  }
+  else // Must be 1bpp
+  {
+//    _swapBytes = false;
+    uint8_t * ptr = (uint8_t*)data;
+    uint32_t ww =  (w+7)>>3; // Width of source image line in bytes
+    for (int32_t yp = dy;  yp < dy + dh; yp++)
+    {
+      uint8_t* linePtr = (uint8_t*)lineBuf;
+      for (int32_t xp = dx; xp < dx + dw; xp++)
+      {
+        uint16_t col = (pgm_read_byte(ptr + (xp>>3)) & (0x80 >> (xp & 0x7)) );
+        if (col) {*linePtr++ = bitmap_fg>>8; *linePtr++ = (uint8_t) bitmap_fg;}
+        else     {*linePtr++ = bitmap_bg>>8; *linePtr++ = (uint8_t) bitmap_bg;}
+      }
+      ptr += ww;
+      pushPixels(lineBuf, dw);
+    }
+  }
+
+//  _swapBytes = swap; // Restore old value
+//  inTransaction = lockTransaction;
+//  end_tft_write();
+  endWrite();
+}
+*/
+
+/***************************************************************************************
+** Function name:           pushImage
+** Description:             plot 8-bit or 4-bit or 1 bit image or sprite using a line buffer
+***************************************************************************************/
+void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, uint8_t *data, const bool bpp8, uint16_t *cmap)
+{
+  PI_CLIP;
+
+  startWrite();
+
+  writeAddrWindow(x, y, dw, dh); // Sets CS low and sent RAMWR
+
+  // Line buffer makes plotting faster
+  uint16_t  lineBuf[dw];
+
+  if (bpp8)
+  {
+//    _swapBytes = false;
+
+    uint8_t  blue[] = {0, 11, 21, 31}; // blue 2 to 5-bit colour lookup table
+
+    rgb_t _lastColor = -1; // Set to illegal value
+
+    // Used to store last shifted colour
+    uint8_t msbColor = 0;
+    uint8_t lsbColor = 0;
+
+    data += dx + dy * w;
+    while (dh--) {
+      uint32_t len = dw;
+      const uint8_t* ptr = data;
+      uint8_t* linePtr = (uint8_t*)lineBuf;
+
+      while(len--) {
+        uint32_t color = *ptr++;
+
+        // Shifts are slow so check if colour has changed first
+        if (color != _lastColor) {
+          //          =====Green=====     ===============Red==============
+          msbColor = (color & 0x1C)>>2 | (color & 0xC0)>>3 | (color & 0xE0);
+          //          =====Green=====    =======Blue======
+          lsbColor = (color & 0x1C)<<3 | blue[color & 0x03];
+          _lastColor = color;
+        }
+
+       *linePtr++ = msbColor;
+       *linePtr++ = lsbColor;
+      }
+
+//      pushPixels(lineBuf, dw);
+      writeMDTBuffer((const uint8_t*)lineBuf, dw);
+
+      data += w;
+    }
+  }
+  else if (cmap != nullptr) // Must be 4bpp
+  {
+//    _swapBytes = true;
+
+    w = (w+1) & 0xFFFE;   // if this is a sprite, w will already be even; this does no harm.
+    bool splitFirst = (dx & 0x01) != 0; // split first means we have to push a single px from the left of the sprite / image
+
+    if (splitFirst) {
+      data += ((dx - 1 + dy * w) >> 1);
+    }
+    else {
+      data += ((dx + dy * w) >> 1);
+    }
+
+    while (dh--) {
+      uint32_t len = dw;
+      const uint8_t * ptr = data;
+      uint16_t *linePtr = lineBuf;
+      uint8_t colors; // two colors in one byte
+      uint16_t index;
+
+      if (splitFirst) {
+        colors = *ptr;
+        index = (colors & 0x0F);
+        *linePtr++ = cmap[index];
+        len--;
+        ptr++;
+      }
+
+      while (len--)
+      {
+        colors = *ptr;
+        index = ((colors & 0xF0) >> 4) & 0x0F;
+        *linePtr++ = cmap[index];
+
+        if (len--)
+        {
+          index = colors & 0x0F;
+          *linePtr++ = cmap[index];
+        } else {
+          break;  // nothing to do here
+        }
+
+        ptr++;
+      }
+
+//      pushPixels(lineBuf, dw);
+      writeMDTBuffer((const uint8_t*)lineBuf, dw);
+      data += (w >> 1);
+    }
+  }
+  else // Must be 1bpp
+  {
+//    _swapBytes = false;
+    uint32_t ww =  (w+7)>>3; // Width of source image line in bytes
+    for (int32_t yp = dy;  yp < dy + dh; yp++)
+    {
+      uint8_t* linePtr = (uint8_t*)lineBuf;
+      for (int32_t xp = dx; xp < dx + dw; xp++)
+      {
+        uint16_t col = (data[(xp>>3)] & (0x80 >> (xp & 0x7)) );
+        if (col) {*linePtr++ = _bitmap_fg>>8; *linePtr++ = (uint8_t) _bitmap_fg;}
+        else     {*linePtr++ = _bitmap_bg>>8; *linePtr++ = (uint8_t) _bitmap_bg;}
+      }
+      data += ww;
+//      pushPixels(lineBuf, dw);
+      writeMDTBuffer((const uint8_t*)lineBuf, dw);
+    }
+  }
+
+  endWrite();
+}
+
+
+/***************************************************************************************
+** Function name:           pushImage
+** Description:             plot 8 or 4 or 1 bit image or sprite with a transparent colour
+***************************************************************************************/
+void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, uint8_t *data, uint8_t transp, bool bpp8, uint16_t *cmap)
+{
+  PI_CLIP;
+
+  startWrite();
+
+  // Line buffer makes plotting faster
+  uint16_t  lineBuf[dw];
+
+  if (bpp8) { // 8 bits per pixel
+//    _swapBytes = false;
+
+    data += dx + dy * w;
+
+    uint8_t  blue[] = {0, 11, 21, 31}; // blue 2 to 5-bit colour lookup table
+
+    rgb_t _lastColor = -1; // Set to illegal value
+
+    // Used to store last shifted colour
+    uint8_t msbColor = 0;
+    uint8_t lsbColor = 0;
+
+    while (dh--) {
+      int32_t len = dw;
+      const uint8_t* ptr = data;
+      uint8_t* linePtr = (uint8_t*)lineBuf;
+
+      int32_t px = x, sx = x;
+      bool move = true;
+      uint16_t np = 0;
+
+      while (len--) {
+        if (transp != *ptr) {
+          if (move) { move = false; sx = px; }
+          uint8_t color = *ptr;
+
+          // Shifts are slow so check if colour has changed first
+          if (color != _lastColor) {
+            //          =====Green=====     ===============Red==============
+            msbColor = (color & 0x1C)>>2 | (color & 0xC0)>>3 | (color & 0xE0);
+            //          =====Green=====    =======Blue======
+            lsbColor = (color & 0x1C)<<3 | blue[color & 0x03];
+            _lastColor = color;
+          }
+          *linePtr++ = msbColor;
+          *linePtr++ = lsbColor;
+          np++;
+        }
+        else {
+          move = true;
+          if (np) {
+            writeAddrWindow(sx, y, np, 1);
+//            pushPixels(lineBuf, np);
+            writeMDTBuffer((const uint8_t*)lineBuf, np);
+            linePtr = (uint8_t*)lineBuf;
+            np = 0;
+          }
+        }
+        px++;
+        ptr++;
+      }
+
+      if (np) {
+        writeAddrWindow(sx, y, np, 1);
+//        pushPixels(lineBuf, np);
+        writeMDTBuffer((const uint8_t*)lineBuf, np);
+      }
+      y++;
+      data += w;
+    }
+  }
+  else if (cmap != nullptr) // 4bpp with color map
+  {
+//    _swapBytes = true;
+
+    w = (w+1) & 0xFFFE; // here we try to recreate iwidth from dwidth.
+    bool splitFirst = ((dx & 0x01) != 0);
+    if (splitFirst) {
+      data += ((dx - 1 + dy * w) >> 1);
+    }
+    else {
+      data += ((dx + dy * w) >> 1);
+    }
+
+    while (dh--) {
+      uint32_t len = dw;
+      const uint8_t * ptr = data;
+
+      int32_t px = x, sx = x;
+      bool move = true;
+      uint16_t np = 0;
+
+      uint8_t index;  // index into cmap.
+
+      if (splitFirst) {
+        index = (*ptr & 0x0F);  // odd = bits 3 .. 0
+        if (index != transp) {
+          move = false; sx = px;
+          lineBuf[np] = cmap[index];
+          np++;
+        }
+        px++; ptr++;
+        len--;
+      }
+
+      while (len--)
+      {
+        uint8_t color = *ptr;
+
+        // find the actual color you care about.  There will be two pixels here!
+        // but we may only want one at the end of the row
+        uint16_t index = ((color & 0xF0) >> 4) & 0x0F;  // high bits are the even numbers
+        if (index != transp) {
+          if (move) {
+            move = false; sx = px;
+          }
+          lineBuf[np] = cmap[index];
+          np++; // added a pixel
+        }
+        else {
+          move = true;
+          if (np) {
+            writeAddrWindow(sx, y, np, 1);
+//            pushPixels(lineBuf, np);
+            writeMDTBuffer((const uint8_t*)lineBuf, np);
+            np = 0;
+          }
+        }
+        px++;
+
+        if (len--)
+        {
+          index = color & 0x0F; // the odd number is 3 .. 0
+          if (index != transp) {
+            if (move) {
+              move = false; sx = px;
+             }
+            lineBuf[np] = cmap[index];
+            np++;
+          }
+          else {
+            move = true;
+            if (np) {
+              writeAddrWindow(sx, y, np, 1);
+//              pushPixels(lineBuf, np);
+              writeMDTBuffer((const uint8_t*)lineBuf, np);
+              np = 0;
+            }
+          }
+          px++;
+        }
+        else {
+          break;  // we are done with this row.
+        }
+        ptr++;  // we only increment ptr once in the loop (deliberate)
+      }
+
+      if (np) {
+        writeAddrWindow(sx, y, np, 1);
+//        pushPixels(lineBuf, np);
+        writeMDTBuffer((const uint8_t*)lineBuf, np);
+        np = 0;
+      }
+      data += (w>>1);
+      y++;
+    }
+  }
+  else { // 1 bit per pixel
+//    _swapBytes = false;
+
+    uint32_t ww =  (w+7)>>3; // Width of source image line in bytes
+    uint16_t np = 0;
+
+    for (int32_t yp = dy;  yp < dy + dh; yp++)
+    {
+      int32_t px = x, sx = x;
+      bool move = true;
+      for (int32_t xp = dx; xp < dx + dw; xp++)
+      {
+        if (data[(xp>>3)] & (0x80 >> (xp & 0x7))) {
+          if (move) {
+            move = false;
+            sx = px;
+          }
+          np++;
+        }
+        else {
+          move = true;
+          if (np) {
+            writeAddrWindow(sx, y, np, 1);
+//            pushBlock(bitmap_fg, np);
+            sendMDTColor(mdt_color(_bitmap_fg), np);
+            np = 0;
+          }
+        }
+        px++;
+      }
+      if (np) {
+        writeAddrWindow(sx, y, np, 1);
+//        pushBlock(bitmap_fg, np);
+        sendMDTColor(mdt_color(_bitmap_fg), np);
+        np = 0;
+      }
+      y++;
+      data += ww;
+    }
+  }
+  endWrite();
+}
+
+
+/***************************************************************************************
+** Function name:           pushMaskedImage
+** Description:             Render a 16-bit colour image to TFT with a 1bpp mask
+***************************************************************************************/
+// Can be used with a 16bpp sprite and a 1bpp sprite for the mask
+void TSD_GFX::pushMaskedImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *img, uint8_t *mask)
+{
+//  if (_vpOoB ) return;
+  if (w < 1 || h < 1) return;
+
+  // To simplify mask handling the window clipping is done by the pushImage function
+  // Each mask image line assumed to be padded to an integer number of bytes & padding bits are 0
+
+//  begin_tft_write();
+//  inTransaction = true;
+  startWrite();
+
+  uint8_t  *mptr = mask;
+  uint8_t  *eptr = mask + ((w + 7) >> 3);
+  uint16_t *iptr = img;
+  uint32_t setCount = 0;
+
+  // For each line in the image
+  while (h--) {
+    uint32_t xp = 0;
+    uint32_t clearCount = 0;
+    uint8_t  mbyte= *mptr++;
+    uint32_t bits  = 8;
+    // Scan through each byte of the bitmap and determine run lengths
+    do {
+      setCount = 0;
+
+      //Get run length for clear bits to determine x offset
+      while ((mbyte & 0x80) == 0x00) {
+        // Check if remaining bits in byte are clear (reduce shifts)
+        if (mbyte == 0) {
+          clearCount += bits;      // bits not always 8 here
+          if (mptr >= eptr) break; // end of line
+          mbyte = *mptr++;
+          bits  = 8;
+          continue;
+        }
+        mbyte = mbyte << 1; // 0's shifted in
+        clearCount ++;
+        if (--bits) continue;;
+        if (mptr >= eptr) break;
+        mbyte = *mptr++;
+        bits  = 8;
+      }
+
+      //Get run length for set bits to determine render width
+      while ((mbyte & 0x80) == 0x80) {
+        // Check if all bits are set (reduces shifts)
+        if (mbyte == 0xFF) {
+          setCount += bits;
+          if (mptr >= eptr) break;
+          mbyte = *mptr++;
+          //bits  = 8; // NR, bits always 8 here unless 1's shifted in
+          continue;
+        }
+        mbyte = mbyte << 1; //or mbyte += mbyte + 1 to shift in 1's
+        setCount ++;
+        if (--bits) continue;
+        if (mptr >= eptr) break;
+        mbyte = *mptr++;
+        bits  = 8;
+      }
+
+      // A mask boundary or mask end has been found, so render the pixel line
+      if (setCount) {
+        xp += clearCount;
+        clearCount = 0;
+        pushImage(clip, x + xp, y, setCount, 1, iptr + xp);      // pushImage handles clipping
+        if (mptr >= eptr) break;
+        xp += setCount;
+      }
+    } while (setCount || mptr < eptr);
+
+    y++;
+    iptr += w;
+    eptr += ((w + 7) >> 3);
+  }
+
+//  inTransaction = lockTransaction;
+//  end_tft_write();
+  endWrite();
+}
+
+
 void TSD_GFX::drawPixel(clip_t& clip, int32_t x, int32_t y, rgb_t color)
 {
   if (IF_CLIP_X && IF_CLIP_Y) {
@@ -727,94 +1487,6 @@ void TSD_GFX::drawRGBBitmap(clip_t& clip, int32_t x, int32_t y, const uint32_t* 
   }
   endWrite();
 }
-
-
-
-void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data)
-{
-  PI_CLIP;
-
-  startWrite();
-  writeAddrWindow(x, y, dw, dh);
-
-  data += dx + dy * w;
-
-  // Check if whole image can be pushed
-  if (dw == w) {
-    writeMDTBuffer((const uint8_t*)data, dw * dh);
-  }
-  else {
-    // Push line segments to crop image
-    while (dh--) {
-      writeMDTBuffer((const uint8_t*)data, dw);
-      data += w;
-    }
-  }
-
-  endWrite();
-}
-
-
-void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data, const uint16_t transp)
-{
-  PI_CLIP;
-
-  startWrite();
-
-  data += dx + dy * w;
-
-
-  uint16_t  lineBuf[dw]; // Use buffer to minimise setWindow call count
-
-  // The little endian transp color must be byte swapped if the image is big endian
-//  if (!_swapBytes) transp = transp >> 8 | transp << 8;
-
-  while (dh--)
-  {
-    int32_t len = dw;
-    const uint16_t* ptr = data;
-    int32_t px = x, sx = x;
-    bool move = true;
-    uint16_t np = 0;
-
-    while (len--)
-    {
-      if (transp != *ptr)
-      {
-        if (move) { move = false; sx = px; }
-        lineBuf[np] = *ptr;
-        np++;
-      }
-      else
-      {
-        move = true;
-        if (np)
-        {
-          writeAddrWindow(sx, y, np, 1);
-          writeMDTBuffer((const uint8_t*)lineBuf, np);
-          np = 0;
-        }
-      }
-      px++;
-      ptr++;
-    }
-    if (np) {
-      writeAddrWindow(sx, y, np, 1);
-      writeMDTBuffer((const uint8_t*)lineBuf, np);
-    }
-
-    y++;
-    data += w;
-  }
-
-  endWrite();
-}
-
-
-
-
-
-
 
 
 

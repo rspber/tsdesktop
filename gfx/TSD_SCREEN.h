@@ -173,12 +173,6 @@ public:
   clip_t clip;      ///< Display width/height as modified by rotation
 };
 
-
-
-// Swap any type
-template <typename T> static inline void
-transpose(T& a, T& b) { T t = a; a = b; b = t; }
-
            // Alpha blend 2 colours, see generic "alphaBlend_Test" example
            // alpha =   0 = 100% background colour
            // alpha = 255 = 100% foreground colour

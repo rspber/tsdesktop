@@ -102,6 +102,7 @@ static const rgb_t default_4bit_palette[] = {
   /**
    * clear - speedup function to clear entire internal buffer with color
    */
+
   void BufferedDisplay::clear(const rgb_t color)
   {
     if (!buf) {
