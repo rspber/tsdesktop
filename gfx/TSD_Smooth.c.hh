@@ -275,26 +275,26 @@ void TSD_SCREEN::drawArc(int32_t x, int32_t y, int32_t r, int32_t ir,
       // Check if an AA pixels need to be drawn
       slope = ((r - cy)<<16)/(r - cx);
       if (slope <= startSlope[0] && slope >= endSlope[0]) // BL
-        drawPixel(clip, x + cx - r, y - cy + r, pcol);
+        drawPixel(_clip, x + cx - r, y - cy + r, pcol);
       if (slope >= startSlope[1] && slope <= endSlope[1]) // TL
-        drawPixel(clip, x + cx - r, y + cy - r, pcol);
+        drawPixel(_clip, x + cx - r, y + cy - r, pcol);
       if (slope <= startSlope[2] && slope >= endSlope[2]) // TR
-        drawPixel(clip, x - cx + r, y + cy - r, pcol);
+        drawPixel(_clip, x - cx + r, y + cy - r, pcol);
       if (slope <= endSlope[3] && slope >= startSlope[3]) // BR
-        drawPixel(clip, x - cx + r, y - cy + r, pcol);
+        drawPixel(_clip, x - cx + r, y - cy + r, pcol);
     }
     // Add line in inner zone
-    if (len[0]) drawFastHLine(clip, x + xst[0] - len[0] + 1 - r, y - cy + r, len[0], fg_color); // BL
-    if (len[1]) drawFastHLine(clip, x + xst[1] - len[1] + 1 - r, y + cy - r, len[1], fg_color); // TL
-    if (len[2]) drawFastHLine(clip, x - xst[2] + r, y + cy - r, len[2], fg_color); // TR
-    if (len[3]) drawFastHLine(clip, x - xst[3] + r, y - cy + r, len[3], fg_color); // BR
+    if (len[0]) drawFastHLine(_clip, x + xst[0] - len[0] + 1 - r, y - cy + r, len[0], fg_color); // BL
+    if (len[1]) drawFastHLine(_clip, x + xst[1] - len[1] + 1 - r, y + cy - r, len[1], fg_color); // TL
+    if (len[2]) drawFastHLine(_clip, x - xst[2] + r, y + cy - r, len[2], fg_color); // TR
+    if (len[3]) drawFastHLine(_clip, x - xst[3] + r, y - cy + r, len[3], fg_color); // BR
   }
 
   // Fill in centre lines
-  if (startAngle ==   0 || endAngle == 360) drawFastVLine(clip, x, y + r - w, w, fg_color); // Bottom
-  if (startAngle <=  90 && endAngle >=  90) drawFastHLine(clip, x - r + 1, y, w, fg_color); // Left
-  if (startAngle <= 180 && endAngle >= 180) drawFastVLine(clip, x, y - r + 1, w, fg_color); // Top
-  if (startAngle <= 270 && endAngle >= 270) drawFastHLine(clip, x + r - w, y, w, fg_color); // Right
+  if (startAngle ==   0 || endAngle == 360) drawFastVLine(_clip, x, y + r - w, w, fg_color); // Bottom
+  if (startAngle <=  90 && endAngle >=  90) drawFastHLine(_clip, x - r + 1, y, w, fg_color); // Left
+  if (startAngle <= 180 && endAngle >= 180) drawFastVLine(_clip, x, y - r + 1, w, fg_color); // Top
+  if (startAngle <= 270 && endAngle >= 270) drawFastHLine(_clip, x + r - w, y, w, fg_color); // Right
 
 //???  inTransaction = lockTransaction;
 //???  end_tft_write();
@@ -322,7 +322,7 @@ void TSD_SCREEN::fillSmoothCircle(int32_t x, int32_t y, int32_t r, rgb_t color, 
 //  inTransaction = true;
   startWrite();
 
-  drawFastHLine(clip, x - r, y, 2 * r + 1, color);
+  drawFastHLine(_clip, x - r, y, 2 * r + 1, color);
   int32_t xs = 1;
   int32_t cx = 0;
 
@@ -345,20 +345,20 @@ void TSD_SCREEN::fillSmoothCircle(int32_t x, int32_t y, int32_t r, rgb_t color, 
       if (alpha < 9) continue;
 
       if (bg_color == 0x00FFFFFF) {
-        drawPixel(clip, x + cx - r, y + cy - r, color, alpha, bg_color);
-        drawPixel(clip, x - cx + r, y + cy - r, color, alpha, bg_color);
-        drawPixel(clip, x - cx + r, y - cy + r, color, alpha, bg_color);
-        drawPixel(clip, x + cx - r, y - cy + r, color, alpha, bg_color);
+        drawPixel(_clip, x + cx - r, y + cy - r, color, alpha, bg_color);
+        drawPixel(_clip, x - cx + r, y + cy - r, color, alpha, bg_color);
+        drawPixel(_clip, x - cx + r, y - cy + r, color, alpha, bg_color);
+        drawPixel(_clip, x + cx - r, y - cy + r, color, alpha, bg_color);
       }
       else {
-        uint16_t pcol = drawPixel(clip, x + cx - r, y + cy - r, color, alpha, bg_color);
-        drawPixel(clip, x - cx + r, y + cy - r, pcol);
-        drawPixel(clip, x - cx + r, y - cy + r, pcol);
-        drawPixel(clip, x + cx - r, y - cy + r, pcol);
+        uint16_t pcol = drawPixel(_clip, x + cx - r, y + cy - r, color, alpha, bg_color);
+        drawPixel(_clip, x - cx + r, y + cy - r, pcol);
+        drawPixel(_clip, x - cx + r, y - cy + r, pcol);
+        drawPixel(_clip, x + cx - r, y - cy + r, pcol);
       }
     }
-    drawFastHLine(clip, x + cx - r, y + cy - r, 2 * (r - cx) + 1, color);
-    drawFastHLine(clip, x + cx - r, y - cy + r, 2 * (r - cx) + 1, color);
+    drawFastHLine(_clip, x + cx - r, y + cy - r, 2 * (r - cx) + 1, color);
+    drawFastHLine(_clip, x + cx - r, y - cy + r, 2 * (r - cx) + 1, color);
   }
 //???  inTransaction = lockTransaction;
 //???  end_tft_write();
@@ -446,24 +446,24 @@ void TSD_SCREEN::drawSmoothRoundRect(int32_t x, int32_t y, int32_t r, int32_t ir
 
       // If background is read it must be done in each quadrant - TODO
       uint16_t pcol = alphaBlend(alpha, fg_color, bg_color);
-      if (quadrants & 0x8) drawPixel(clip, x + cx - r, y - cy + r + h, pcol);     // BL
-      if (quadrants & 0x1) drawPixel(clip, x + cx - r, y + cy - r, pcol);         // TL
-      if (quadrants & 0x2) drawPixel(clip, x - cx + r + w, y + cy - r, pcol);     // TR
-      if (quadrants & 0x4) drawPixel(clip, x - cx + r + w, y - cy + r + h, pcol); // BR
+      if (quadrants & 0x8) drawPixel(_clip, x + cx - r, y - cy + r + h, pcol);     // BL
+      if (quadrants & 0x1) drawPixel(_clip, x + cx - r, y + cy - r, pcol);         // TL
+      if (quadrants & 0x2) drawPixel(_clip, x - cx + r + w, y + cy - r, pcol);     // TR
+      if (quadrants & 0x4) drawPixel(_clip, x - cx + r + w, y - cy + r + h, pcol); // BR
     }
     // Fill arc inner zone in each quadrant
     lxst = rxst - len + 1; // Calculate line segment start for left side
-    if (quadrants & 0x8) drawFastHLine(clip, x + lxst - r, y - cy + r + h, len, fg_color);     // BL
-    if (quadrants & 0x1) drawFastHLine(clip, x + lxst - r, y + cy - r, len, fg_color);         // TL
-    if (quadrants & 0x2) drawFastHLine(clip, x - rxst + r + w, y + cy - r, len, fg_color);     // TR
-    if (quadrants & 0x4) drawFastHLine(clip, x - rxst + r + w, y - cy + r + h, len, fg_color); // BR
+    if (quadrants & 0x8) drawFastHLine(_clip, x + lxst - r, y - cy + r + h, len, fg_color);     // BL
+    if (quadrants & 0x1) drawFastHLine(_clip, x + lxst - r, y + cy - r, len, fg_color);         // TL
+    if (quadrants & 0x2) drawFastHLine(_clip, x - rxst + r + w, y + cy - r, len, fg_color);     // TR
+    if (quadrants & 0x4) drawFastHLine(_clip, x - rxst + r + w, y - cy + r + h, len, fg_color); // BR
   }
 
   // Draw sides
-  if ((quadrants & 0xC) == 0xC) fillRect(clip, x, y + r - t + h, w + 1, t, fg_color); // Bottom
-  if ((quadrants & 0x9) == 0x9) fillRect(clip, x - r + 1, y, t, h + 1, fg_color);     // Left
-  if ((quadrants & 0x3) == 0x3) fillRect(clip, x, y - r + 1, w + 1, t, fg_color);     // Top
-  if ((quadrants & 0x6) == 0x6) fillRect(clip, x + r - t + w, y, t, h + 1, fg_color); // Right
+  if ((quadrants & 0xC) == 0xC) fillRect(_clip, x, y + r - t + h, w + 1, t, fg_color); // Bottom
+  if ((quadrants & 0x9) == 0x9) fillRect(_clip, x - r + 1, y, t, h + 1, fg_color);     // Left
+  if ((quadrants & 0x3) == 0x3) fillRect(_clip, x, y - r + 1, w + 1, t, fg_color);     // Top
+  if ((quadrants & 0x6) == 0x6) fillRect(_clip, x + r - t + w, y, t, h + 1, fg_color); // Right
 
 //  inTransaction = lockTransaction;
 //  end_tft_write();
@@ -489,7 +489,7 @@ void TSD_SCREEN::fillSmoothRoundRect(int32_t x, int32_t y, int32_t w, int32_t h,
 
   y += r;
   h -= 2*r;
-  fillRect(clip, x, y, w, h, color);
+  fillRect(_clip, x, y, w, h, color);
 
   h--;
   x += r;
@@ -513,13 +513,13 @@ void TSD_SCREEN::fillSmoothRoundRect(int32_t x, int32_t y, int32_t w, int32_t h,
       xs = cx;
       if (alpha < 9) continue;
 
-      drawPixel(clip, x + cx - r, y + cy - r, color, alpha, bg_color);
-      drawPixel(clip, x - cx + r + w, y + cy - r, color, alpha, bg_color);
-      drawPixel(clip, x - cx + r + w, y - cy + r + h, color, alpha, bg_color);
-      drawPixel(clip, x + cx - r, y - cy + r + h, color, alpha, bg_color);
+      drawPixel(_clip, x + cx - r, y + cy - r, color, alpha, bg_color);
+      drawPixel(_clip, x - cx + r + w, y + cy - r, color, alpha, bg_color);
+      drawPixel(_clip, x - cx + r + w, y - cy + r + h, color, alpha, bg_color);
+      drawPixel(_clip, x + cx - r, y - cy + r + h, color, alpha, bg_color);
     }
-    drawFastHLine(clip, x + cx - r, y + cy - r, 2 * (r - cx) + 1 + w, color);
-    drawFastHLine(clip, x + cx - r, y - cy + r + h, 2 * (r - cx) + 1 + w, color);
+    drawFastHLine(_clip, x + cx - r, y + cy - r, 2 * (r - cx) + 1 + w, color);
+    drawFastHLine(_clip, x + cx - r, y - cy + r + h, 2 * (r - cx) + 1 + w, color);
   }
 //???  inTransaction = lockTransaction;
 //???  end_tft_write();
@@ -565,7 +565,7 @@ void TSD_SCREEN::drawWedgeLine(float ax, float ay, float bx, float by, float ar,
   int32_t y0 = (int32_t)floorf(fminf(ay-ar, by-br));
   int32_t y1 = (int32_t) ceilf(fmaxf(ay+ar, by+br));
 
-//???  if (!clip.clipClip(x0, y0, x1, y1)) return;
+//???  if (!_clip.clipClip(x0, y0, x1, y1)) return;
 
   // Establish x start and y start
   int32_t ys = ay;
@@ -597,7 +597,7 @@ void TSD_SCREEN::drawWedgeLine(float ax, float ay, float bx, float by, float ar,
       if (!endX) { endX = true; xs = xp; }
       if (alpha > HiAlphaTheshold) {
         #ifdef GC9A01_DRIVER
-          drawPixel(clip, xp, yp, fg_color);
+          drawPixel(_clip, xp, yp, fg_color);
         #else
           if (swin) { writeAddrWindow(xp, yp, x1-xp+1, 1); swin = false; }
           sendMDTColor1(fg_color);
@@ -606,11 +606,11 @@ void TSD_SCREEN::drawWedgeLine(float ax, float ay, float bx, float by, float ar,
       }
       //Blend color with background and plot
       if (bg_color == 0x00FFFFFF) {
-        bg = readPixel(clip, xp, yp); swin = true;
+        bg = readPixel(_clip, xp, yp); swin = true;
       }
       #ifdef GC9A01_DRIVER
         uint16_t pcol = alphaBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg);
-        drawPixel(clip, xp, yp, pcol);
+        drawPixel(_clip, xp, yp, pcol);
         swin = swin;
       #else
         if (swin) { writeAddrWindow(xp, yp, x1-xp+1, 1); swin = false; }
@@ -635,7 +635,7 @@ void TSD_SCREEN::drawWedgeLine(float ax, float ay, float bx, float by, float ar,
       if (!endX) { endX = true; xs = xp; }
       if (alpha > HiAlphaTheshold) {
         #ifdef GC9A01_DRIVER
-          drawPixel(clip, xp, yp, fg_color);
+          drawPixel(_clip, xp, yp, fg_color);
         #else
           if (swin) { writeAddrWindow(xp, yp, x1-xp+1, 1); swin = false; }
           sendMDTColor1(fg_color);
@@ -644,7 +644,7 @@ void TSD_SCREEN::drawWedgeLine(float ax, float ay, float bx, float by, float ar,
       }
       //Blend colour with background and plot
       if (bg_color == 0x00FFFFFF) {
-        bg = readPixel(clip, xp, yp); swin = true;
+        bg = readPixel(_clip, xp, yp); swin = true;
       }
       #ifdef GC9A01_DRIVER
         uint16_t pcol = alphaBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg);

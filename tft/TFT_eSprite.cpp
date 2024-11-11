@@ -55,12 +55,12 @@ bool TFT_eSprite::pushRotated(TSD_SCREEN *tft, int16_t angle, rgb_t transp)
 
   tft->startWrite();
 
-  if( bds.max_x < tft->clip.x2 ) {
-    bds.max_x = tft->clip.x2;
+  if( bds.max_x < tft->_clip.x2 ) {
+    bds.max_x = tft->_clip.x2;
   }
 
-  if( bds.max_y < tft->clip.y2 ) {
-    bds.max_y = tft->clip.y2;
+  if( bds.max_y < tft->_clip.y2 ) {
+    bds.max_y = tft->_clip.y2;
   }
 
   // Scan destination bounding box and fetch transformed pixels from source Sprite
@@ -82,7 +82,7 @@ bool TFT_eSprite::pushRotated(TSD_SCREEN *tft, int16_t angle, rgb_t transp)
     do {
       int32_t xp = xs >> FP_SCALE;
       int32_t yp = ys >> FP_SCALE;
-      rgb_t rp = readPixel(clip, xp, yp);
+      rgb_t rp = readPixel(_clip, xp, yp);
 
       if (transp != WHITE && tpcolor == rp) {
         if (pixel_count) {
@@ -174,10 +174,10 @@ void bounds_t::getRotatedBounds(int16_t angle, int16_t disp_w, int16_t disp_h, i
 ** Description:             Push the sprite to the TFT at x, y
 ***************************************************************************************/
 void TFT_eSprite::pushSprite(const int16_t x, const int16_t y) {
-    clip_t old = clip;
+    clip_t old = _clip;
     setPos(x, y);
     push(_tft);
-    clip = old;
+    _clip = old;
 }
 
 
@@ -186,10 +186,10 @@ void TFT_eSprite::pushSprite(const int16_t x, const int16_t y) {
 ** Description:             Push the sprite to the TFT at x, y with transparent colour
 ***************************************************************************************/
 void TFT_eSprite::pushSprite(const int16_t x, const int16_t y, const rgb_t transp) {
-    clip_t old = clip;
+    clip_t old = _clip;
     setPos(x, y);
     pushTransp(_tft, transp);
-    clip = old;
+    _clip = old;
 }
 
 

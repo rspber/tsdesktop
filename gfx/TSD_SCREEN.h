@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <TSD_GFX.h>
+#include <TSD_CHAR.h>
 
 //#define BLACK        RGB(    0,    0,    0)
 #define NAVY         RGB(    0,    0, 0x7B)
@@ -50,23 +50,25 @@
 #define LIGHT_YELLOW RGB( 0xFF, 0xFF, 0xE0)
 //#define WHITE        RGB( 0xFF, 0xFF, 0xFF)
 
-class TSD_SCREEN : public TSD_GFX {
+class TSD_SCREEN : public TSD_CHAR {
 public:
-  TSD_SCREEN(const int32_t w, const int32_t h): TSD_GFX(), xWIDTHx(w), yHEIGHTy(h)
+  TSD_SCREEN(const int32_t w, const int32_t h): TSD_CHAR()
   {
-    clip = {0, 0, w, h};
+    _init_width = w;
+    _init_height = h;
+    _clip = {0, 0, w, h};
   }
 
-  int32_t width() { return clip.width(); }
-  int32_t height() { return clip.height(); }
+  int32_t width() { return _clip.width(); }
+  int32_t height() { return _clip.height(); }
 
-  int32_t getWIDTH() { return xWIDTHx; }
-  int32_t getHEIGHT() { return yHEIGHTy; }
+  int32_t getWIDTH() { return _init_width; }
+  int32_t getHEIGHT() { return _init_height; }
 
   void setSize(const int32_t w, const int32_t h)
   {
-    clip.x2 = clip.x1 + w;
-    clip.y2 = clip.y1 + h;
+    _clip.x2 = _clip.x1 + w;
+    _clip.y2 = _clip.y1 + h;
   }
 
   void fillScreen(const rgb_t color = BLACK);
@@ -112,8 +114,24 @@ public:
   void drawRGBBitmap(int32_t x, int32_t y, const uint32_t* bitmap, const uint8_t *mask, int32_t w, int32_t h); // 666 color
 
 public:
-  void pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data);
-  void pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data, uint16_t transp);
+           // These are used to render images or sprites stored in RAM arrays (used by Sprite class for 16bpp Sprites)
+  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data);
+  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data, rgb_t transparent);
+
+           // These are used to render images stored in FLASH (PROGMEM)
+//  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data, rgb_t transparent);
+//  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data);
+
+           // These are used by Sprite class pushSprite() member function for 1, 4 and 8 bits per pixel (bpp) colours
+           // They are not intended to be used with user sketches (but could be)
+           // Set bpp8 true for 8bpp sprites, false otherwise. The cmap pointer must be specified for 4bpp
+  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t  *data, bool bpp8 = true, uint16_t *cmap = nullptr);
+  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t  *data, uint8_t  transparent, bool bpp8 = true, uint16_t *cmap = nullptr);
+           // FLASH version
+//  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint8_t *data, bool bpp8,  uint16_t *cmap = nullptr);
+
+           // Render a 16-bit colour image with a 1bpp mask
+  void     pushMaskedImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *img, uint8_t *mask);
 
 public:
   // utf-8
@@ -153,24 +171,29 @@ public:
   using TSD_GFX::drawBitmap;
   using TSD_GFX::drawGrayscaleBitmap;
   using TSD_GFX::drawRGBBitmap;
-  using TSD_GFX::drawChar;
-  using TSD_GFX::drawTextLine;
+  using TSD_CHAR::drawChar;
+  using TSD_CHAR::drawTextLine;
   using TSD_GFX::pushImage;
+  using TSD_GFX::pushMaskedImage;
+
 
   void setPivot(const int16_t x, const int16_t y) {
-    xPivotx = x;
-    yPivoty = y;
+    _xPivot = x;
+    _yPivot = y;
   }
 
-  const int16_t getPivotX() { return xPivotx; }
-  const int16_t getPivotY() { return yPivoty; }
-
-private:
-  int32_t xWIDTHx, yHEIGHTy;
-  int16_t xPivotx, yPivoty;
+  const int16_t getPivotX() { return _xPivot; }
+  const int16_t getPivotY() { return _yPivot; }
 
 public:
-  clip_t clip;      ///< Display width/height as modified by rotation
+  int16_t _xPivot, _yPivot;
+
+private:
+  int16_t _init_width,
+          _init_height;
+
+public:
+  clip_t _clip;      ///< Display width/height as modified by rotation
 };
 
            // Alpha blend 2 colours, see generic "alphaBlend_Test" example

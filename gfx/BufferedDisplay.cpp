@@ -44,7 +44,7 @@ static const rgb_t default_4bit_palette[] = {
   BufferedDisplay::BufferedDisplay(clip_t& aClip, const rgb_t aBgColor)
     : TSD_SCREEN(aClip.width(), aClip.height())
   {
-    clip = aClip;
+    _clip = aClip;
     recreate();
     clear(aBgColor);
   }
@@ -60,7 +60,7 @@ static const rgb_t default_4bit_palette[] = {
   BufferedDisplay::BufferedDisplay(const int32_t x1, const int32_t y1, const int32_t x2, const int32_t y2, const rgb_t aBgColor)
     : TSD_SCREEN(x2 - x1, y2 - y1)
   {
-    clip = {x1, y1, x2, y2};
+    _clip = {x1, y1, x2, y2};
     recreate();
     clear(aBgColor);
   }
@@ -73,7 +73,7 @@ static const rgb_t default_4bit_palette[] = {
 
   void BufferedDisplay::recreate()
   {
-    buf = (uint8_t*)realloc(buf, clip.width() * clip.height() * MDT_SIZE);
+    buf = (uint8_t*)realloc(buf, _clip.width() * _clip.height() * MDT_SIZE);
 /*
       if (!buf) {
         Serial.println("No memory for BufferedDisplay\");
@@ -87,13 +87,13 @@ static const rgb_t default_4bit_palette[] = {
   void BufferedDisplay::adjust(clip_t& aClip)
   {
     if (
-      clip.x1 == aClip.x1 &&
-      clip.y1 == aClip.y1 &&
-      clip.x2 == aClip.x2 &&
-      clip.y2 == aClip.y2
+      _clip.x1 == aClip.x1 &&
+      _clip.y1 == aClip.y1 &&
+      _clip.x2 == aClip.x2 &&
+      _clip.y2 == aClip.y2
     ) {}
     else {
-      clip = aClip;
+      _clip = aClip;
       recreate();
 //      clear(bgcolor);
     }
@@ -102,7 +102,6 @@ static const rgb_t default_4bit_palette[] = {
   /**
    * clear - speedup function to clear entire internal buffer with color
    */
-
   void BufferedDisplay::clear(const rgb_t color)
   {
     if (!buf) {
@@ -126,10 +125,10 @@ static const rgb_t default_4bit_palette[] = {
    */
   void BufferedDisplay::setPos(const int32_t x, const int32_t y)
   {
-    clip.x2 = clip.x2 - clip.x1 + x;
-    clip.x1 = x;
-    clip.y2 = clip.y2 - clip.y1 + y;
-    clip.y1 = y;
+    _clip.x2 = _clip.x2 - _clip.x1 + x;
+    _clip.x1 = x;
+    _clip.y2 = _clip.y2 - _clip.y1 + y;
+    _clip.y1 = y;
   }
 
   /**
@@ -137,8 +136,8 @@ static const rgb_t default_4bit_palette[] = {
    */
   void BufferedDisplay::writeAddrWindow(const int32_t x, const int32_t y, const int32_t w, const int32_t h)
   {
-    addr_x = x - clip.x1;
-    addr_y = y - clip.y1;
+    addr_x = x - _clip.x1;
+    addr_y = y - _clip.y1;
     addr_w = w;
     addr_h = h;
     ip = 0;
@@ -152,10 +151,10 @@ static const rgb_t default_4bit_palette[] = {
     if (!buf) {
       return;
     }
-    if (addr_y >= 0 && addr_y < clip.height() ) {
+    if (addr_y >= 0 && addr_y < _clip.height() ) {
       int x = addr_x + ip;
-      if (x >= 0 && x < clip.width()) {
-        int i = addr_y * clip.width() + x;
+      if (x >= 0 && x < _clip.width()) {
+        int i = addr_y * _clip.width() + x;
         uint8_t* p = &buf[i * MDT_SIZE];
         if (MDT_SIZE > 2) {
           *p++ = c >> 16;
@@ -182,7 +181,7 @@ static const rgb_t default_4bit_palette[] = {
     }
 
     mdt_t c = 0;
-    int i = (y * clip.width() + x) * MDT_SIZE;
+    int i = (y * _clip.width() + x) * MDT_SIZE;
     c = buf[i];
     c |= buf[i+1] << 8;
     if (MDT_SIZE > 2) {
@@ -202,7 +201,7 @@ static const rgb_t default_4bit_palette[] = {
       return;
     }
 
-    int i = (y * clip.width() + x) * MDT_SIZE;
+    int i = (y * _clip.width() + x) * MDT_SIZE;
     mdt_t c = mdt_color(color);
     buf[i] = c;
     buf[i+1] = c >> 8;
@@ -220,11 +219,11 @@ static const rgb_t default_4bit_palette[] = {
     if (x < 0 || y < 0) {
       return;
     }
-    if (x + d > clip.width() ) {
-      d = clip.width() - x;
+    if (x + d > _clip.width() ) {
+      d = _clip.width() - x;
     }
-    if (y + d > clip.height() ) {
-      d = clip.height() - y;
+    if (y + d > _clip.height() ) {
+      d = _clip.height() - y;
     }
     int h = 0;
     while (d > 2) {
@@ -249,11 +248,11 @@ static const rgb_t default_4bit_palette[] = {
     if (x < 0 || y < 0) {
       return;
     }
-    if (x + d > clip.width() ) {
-      d = clip.width() - x;
+    if (x + d > _clip.width() ) {
+      d = _clip.width() - x;
     }
-    if (y + d > clip.height() ) {
-      d = clip.height() - y;
+    if (y + d > _clip.height() ) {
+      d = _clip.height() - y;
     }
     int h = 0;
     while (d > 2) {
@@ -278,11 +277,11 @@ static const rgb_t default_4bit_palette[] = {
     if (x < 0 || y < 0) {
       return;
     }
-    if (x + w > clip.width() ) {
-      w = clip.width() - x;
+    if (x + w > _clip.width() ) {
+      w = _clip.width() - x;
     }
-    if (y + h > clip.height() ) {
-      h = clip.height() - y;
+    if (y + h > _clip.height() ) {
+      h = _clip.height() - y;
     }
     for (int j = 0; j < h; ++j ) {
       int w2 = w/2;
@@ -303,11 +302,11 @@ static const rgb_t default_4bit_palette[] = {
     if (x < 0 || y < 0) {
       return;
     }
-    if (x + w > clip.width() ) {
-      w = clip.width() - x;
+    if (x + w > _clip.width() ) {
+      w = _clip.width() - x;
     }
-    if (y + h > clip.height() ) {
-      h = clip.height() - y;
+    if (y + h > _clip.height() ) {
+      h = _clip.height() - y;
     }
     for (int i = 0; i < w; ++i) {
       int h2 = h/2;
@@ -328,23 +327,23 @@ static const rgb_t default_4bit_palette[] = {
       return;
     }
     const uint8_t* p = buffer;
-    int16_t dy = y - clip.y1;
+    int16_t dy = y - _clip.y1;
     if (dy < 0) {
       p += -dy * MDT_SIZE;
       h += dy;
       dy = 0;
     }
-    int16_t dx = x - clip.x1;
+    int16_t dx = x - _clip.x1;
     if (dx < 0) {
       w += dx;
       for (int j = 0; j < addr_h; ++j) {
-        int32_t offs = dy * clip.width();
+        int32_t offs = dy * _clip.width();
         memcpy(&buf[offs * MDT_SIZE], p - dx * MDT_SIZE, w * MDT_SIZE);
         p += addr_w * MDT_SIZE;
       } 
     }
     else {
-      int32_t offs = dy * clip.width() + dx;
+      int32_t offs = dy * _clip.width() + dx;
       memcpy(&buf[offs * MDT_SIZE], p, w * h * MDT_SIZE);
     }
   }
@@ -354,7 +353,7 @@ static const rgb_t default_4bit_palette[] = {
    */
   void BufferedDisplay::writeMDTBuffer(const uint8_t* buffer, const int32_t len)
   {
-    drawMDTBuffer(addr_x + clip.x1, addr_y + clip.y1, addr_w, addr_h, buffer);
+    drawMDTBuffer(addr_x + _clip.x1, addr_y + _clip.y1, addr_w, addr_h, buffer);
   }
 
   /**
@@ -364,7 +363,7 @@ static const rgb_t default_4bit_palette[] = {
   void BufferedDisplay::push(TSD_SCREEN* screen)
   {
 //    if (buf) {
-      screen->pushMDTBuffer(clip, (const uint8_t*)buf);
+      screen->pushMDTBuffer(_clip, (const uint8_t*)buf);
 //    }
   }
 
@@ -374,13 +373,13 @@ static const rgb_t default_4bit_palette[] = {
   void BufferedDisplay::pushTransp(TSD_SCREEN* screen, const rgb_t transparent)
   {
 //    if (buf) {
-      screen->pushMDTBuffer(clip, (const uint8_t*)buf, transparent);
+      screen->pushMDTBuffer(_clip, (const uint8_t*)buf, transparent);
 //    }
   }
 
   rgb_t BufferedDisplay::readPixel(clip_t& cli, int32_t x, int32_t y)
   {
-    if (x >= clip.x1 && x < clip.x2 && y >= clip.y1 && y < clip.y2 ) {
+    if (x >= _clip.x1 && x < _clip.x2 && y >= _clip.y1 && y < _clip.y2 ) {
       return getColor(x, y);
     }
     return BLACK;
