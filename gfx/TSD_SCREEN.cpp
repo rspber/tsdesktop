@@ -231,6 +231,113 @@ void TSD_SCREEN::fillTriangle(int32_t x0, int32_t y0, int32_t x1, int32_t y1, in
   fillTriangle(_clip, x0, y0, x1, y1, x2, y2, color);
 }
 
+
+
+
+
+
+/***************************************************************************************
+** Function name:           drawSmoothArc
+** Description:             Draw a smooth arc clockwise from 6 o'clock
+***************************************************************************************/
+void TSD_SCREEN::drawSmoothArc(int32_t x, int32_t y, int32_t r, int32_t ir, uint32_t startAngle, uint32_t endAngle, uint32_t fg_color, uint32_t bg_color, bool roundEnds)
+{
+  drawSmoothArc(_clip, x, y, r, ir, startAngle, endAngle, fg_color, bg_color, roundEnds);
+}
+
+
+/***************************************************************************************
+** Function name:           drawArc
+** Description:             Draw an arc clockwise from 6 o'clock position
+***************************************************************************************/
+void TSD_SCREEN::drawArc(int32_t x, int32_t y, int32_t r, int32_t ir,
+                       uint32_t startAngle, uint32_t endAngle,
+                       rgb_t fg_color, rgb_t bg_color,
+                       bool smooth)
+{
+  drawArc(_clip, x, y, r, ir, startAngle, endAngle, fg_color, bg_color, smooth);
+}
+
+
+/***************************************************************************************
+** Function name:           drawSmoothCircle
+** Description:             Draw a smooth circle
+***************************************************************************************/
+void TSD_SCREEN::drawSmoothCircle(int32_t x, int32_t y, int32_t r, rgb_t fg_color, rgb_t bg_color)
+{
+  drawSmoothRoundRect(x-r, y-r, r, r-1, 0, 0, fg_color, bg_color);
+}
+
+
+/***************************************************************************************
+** Function name:           fillSmoothCircle
+** Description:             Draw a filled anti-aliased circle
+***************************************************************************************/
+void TSD_SCREEN::fillSmoothCircle(int32_t x, int32_t y, int32_t r, rgb_t color, rgb_t bg_color)
+{
+  fillSmoothCircle(_clip, x, y, r, color, bg_color);
+}
+
+
+/***************************************************************************************
+** Function name:           drawSmoothRoundRect
+** Description:             Draw a rounded rectangle
+***************************************************************************************/
+void TSD_SCREEN::drawSmoothRoundRect(int32_t x, int32_t y, int32_t r, int32_t ir, int32_t w, int32_t h, rgb_t fg_color, rgb_t bg_color, uint8_t quadrants)
+{
+  drawSmoothRoundRect(_clip, x, y, r, ir, w, h, fg_color, bg_color, quadrants);
+}
+
+
+/***************************************************************************************
+** Function name:           fillSmoothRoundRect
+** Description:             Draw a filled anti-aliased rounded corner rectangle
+***************************************************************************************/
+void TSD_SCREEN::fillSmoothRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t r, rgb_t color, rgb_t bg_color)
+{
+  fillSmoothRoundRect(_clip, x, y, w, h, r, color, bg_color);
+}
+
+
+/***************************************************************************************
+** Function name:           drawSpot - maths intensive, so for small filled circles
+** Description:             Draw an anti-aliased filled circle at ax,ay with radius r
+***************************************************************************************/
+void TSD_SCREEN::drawSpot(float ax, float ay, float r, rgb_t fg_color, rgb_t bg_color)
+{
+  drawWedgeLine(ax, ay, ax, ay, r, r, fg_color, bg_color);
+}
+
+
+/***************************************************************************************
+** Function name:           drawWideLine - background colour specified or pixel read
+** Description:             draw an anti-aliased line with rounded ends, width wd
+***************************************************************************************/
+void TSD_SCREEN::drawWideLine(float ax, float ay, float bx, float by, float wd, rgb_t fg_color, rgb_t bg_color)
+{
+  drawWedgeLine(ax, ay, bx, by, wd/2.0, wd/2.0, fg_color, bg_color);
+}
+
+/*
+void TSD_SCREEN::drawWedgeLine(float ax, float ay, float bx, float by, float ar, float br, uint32_t fg_color, uint32_t bg_color)
+{
+  drawWedgeLine(ax, ay, bx, by, ar, br, fg_color, bg_color);
+}
+*/
+
+/***************************************************************************************
+** Function name:           drawWedgeLine - background colour specified or pixel read
+** Description:             draw an anti-aliased line with different width radiused ends
+***************************************************************************************/
+void TSD_SCREEN::drawWedgeLine(float ax, float ay, float bx, float by, float ar, float br, rgb_t fg_color, rgb_t bg_color)
+{
+  drawWedgeLine(_clip, ax, ay, bx, by, ar, br, fg_color, bg_color);
+}
+
+
+
+
+
 void TSD_SCREEN::drawBitmap(int32_t x, int32_t y, const uint8_t* bitmap, int32_t w, int32_t h, rgb_t color)
 {
   drawBitmap(_clip, x, y, bitmap, w, h, color);
@@ -441,67 +548,5 @@ void TSD_SCREEN::pushMDTBuffer(clip_t& window, const uint8_t* buffer, const rgb_
       }
     }
   }
-}
-
-
-
-#include "TSD_Smooth.c.hh"
-
-
-
-
-/***************************************************************************************
-** Function name:           alphaBlend
-** Description:             Blend 16bit foreground and background
-*************************************************************************************x*/
-uint16_t alphaBlend(uint8_t alpha, uint16_t fgc, uint16_t bgc)
-{
-  // Split out and blend 5-bit red and blue channels
-  uint32_t rxb = bgc & 0xF81F;
-  rxb += ((fgc & 0xF81F) - rxb) * (alpha >> 2) >> 6;
-  // Split out and blend 6-bit green channel
-  uint32_t xgx = bgc & 0x07E0;
-  xgx += ((fgc & 0x07E0) - xgx) * alpha >> 8;
-  // Recombine channels
-  return (rxb & 0xF81F) | (xgx & 0x07E0);
-}
-
-/***************************************************************************************
-** Function name:           alphaBlend
-** Description:             Blend 16bit foreground and background with dither
-*************************************************************************************x*/
-uint16_t alphaBlend(uint8_t alpha, uint16_t fgc, uint16_t bgc, uint8_t dither)
-{
-  if (dither) {
-    int16_t alphaDither = (int16_t)alpha - dither + random() % (2*dither+1); // +/-4 randomised
-    alpha = (uint8_t)alphaDither;
-    if (alphaDither <  0) alpha = 0;
-    if (alphaDither >255) alpha = 255;
-  }
-
-  return alphaBlend(alpha, fgc, bgc);
-}
-
-/***************************************************************************************
-** Function name:           alphaBlend
-** Description:             Blend 24bit foreground and background with optional dither
-*************************************************************************************x*/
-uint32_t alphaBlend24(uint8_t alpha, uint32_t fgc, uint32_t bgc, uint8_t dither)
-{
-
-  if (dither) {
-    int16_t alphaDither = (int16_t)alpha - dither + random() % (2*dither+1); // +/-dither randomised
-    alpha = (uint8_t)alphaDither;
-    if (alphaDither <  0) alpha = 0;
-    if (alphaDither >255) alpha = 255;
-  }
-
-  uint32_t rxx = bgc & 0xFF0000;
-  rxx += ((fgc & 0xFF0000) - rxx) * alpha >> 8;
-  uint32_t xgx = bgc & 0x00FF00;
-  xgx += ((fgc & 0x00FF00) - xgx) * alpha >> 8;
-  uint32_t xxb = bgc & 0x0000FF;
-  xxb += ((fgc & 0x0000FF) - xxb) * alpha >> 8;
-  return (rxx & 0xFF0000) | (xgx & 0x00FF00) | (xxb & 0x0000FF);
 }
 
