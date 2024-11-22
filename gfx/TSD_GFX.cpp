@@ -60,6 +60,24 @@
                                                        \
   if (dw < 1 || dh < 1) return;
 
+// Swap any type
+template <typename T> static inline void
+transpose(T& a, T& b) { T t = a; a = b; b = t; }
+
+
+
+/***************************************************************************************
+** Function name:           color24to16
+** Description:             convert 24-bit colour to a 16-bit 565 colour value
+***************************************************************************************/
+inline uint16_t color24to16(rgb_t color888)
+{
+  uint16_t r = (color888 >> 8) & 0xF800;
+  uint16_t g = (color888 >> 5) & 0x07E0;
+  uint16_t b = (color888 >> 3) & 0x001F;
+
+  return (r | g | b);
+}
 
 /**************************************************************************/
 
@@ -81,11 +99,12 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
 
   // Check if whole image can be pushed
   // pushPixels
-  if (dw == w) writeMDTBuffer((const uint8_t*)data, dw * dh);
+  if (dw == w) {
+    writeMDTBuffer((const uint8_t*)data, dw * dh);
+  }
   else {
     // Push line segments to crop image
-    while (dh--)
-    {
+    while (dh--) {
       // pushPixels
       writeMDTBuffer((const uint8_t*)data, dw);
       data += w;
@@ -2428,5 +2447,3 @@ uint32_t alphaBlend24(uint8_t alpha, uint32_t fgc, uint32_t bgc, uint8_t dither)
   xxb += ((fgc & 0x0000FF) - xxb) * alpha >> 8;
   return (rxx & 0xFF0000) | (xgx & 0x00FF00) | (xxb & 0x0000FF);
 }
-
-

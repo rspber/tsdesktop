@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 
-#include "TFT_Defines.hh"
+#include "tft_defines.hh"
 
 const char* TFT_SCREEN::protocol() { return tft_identification(); }
 
@@ -44,7 +44,7 @@ void TFT_SCREEN::begin()
 
   tft_startWriteCmd();
 
-#include "TFT_Init.hh"
+#include "tft_init.hh"
 
   tft_endWrite();
 }
@@ -53,7 +53,7 @@ void TFT_SCREEN::setRotation(const uint8_t r, const uint8_t REV)
 {
   tft_startWriteCmd();
 
-#include "TFT_Rotation.hh"
+#include "tft_rotation.hh"
 
   if (r & 1) {
     setSize(getHEIGHT(), getWIDTH());
