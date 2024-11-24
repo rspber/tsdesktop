@@ -24,52 +24,6 @@
 #define TFT_RAMRD       0x2E    // Memory read
 #define TFT_IDXRD       0xD9    // undocumented
 
-////////////////////////////////////////////////////////////////////////////////////////
-// Define the DC (TFT Data/Command or Register Select (RS))pin drive code
-////////////////////////////////////////////////////////////////////////////////////////
-#if !defined (TFT_SPI_DC) || (TFT_SPI_DC < 0)
-  #define SPI_DC_C // No macro allocated so it generates no code
-  #define SPI_DC_D // No macro allocated so it generates no code
-  #undef  TFT_SPI_DC
-#else
-  // Convert Arduino pin reference Dn or STM pin reference PXn to port and mask
-  #define DC_PORT     digitalPinToPort(TFT_SPI_DC)
-  #define DC_PIN_MASK digitalPinToBitMask(TFT_SPI_DC)
-  // Use bit set reset register
-  #define SPI_DC_C DC_DELAY; DC_PORT->BSRR = DC_PIN_MASK<<16
-  #define SPI_DC_D DC_DELAY; DC_PORT->BSRR = DC_PIN_MASK
-#endif
-
-////////////////////////////////////////////////////////////////////////////////////////
-// Define the CS (TFT chip select) pin drive code
-////////////////////////////////////////////////////////////////////////////////////////
-#if !defined (TFT_SPI_CS) || (TFT_SPI_CS < 0)
-  #define SPI_CS_L // No macro allocated so it generates no code
-  #define SPI_CS_H // No macro allocated so it generates no code
-  #undef  TFT_SPI_CS
-#else
-  // Convert Arduino pin reference Dx or STM pin reference PXn to port and mask
-  #define CS_PORT      digitalPinToPort(TFT_SPI_CS)
-  #define CS_PIN_MASK  digitalPinToBitMask(TFT_SPI_CS)
-  // Use bit set reset register
-  #define SPI_CS_L CS_PORT->BSRR = CS_PIN_MASK<<16
-  #define SPI_CS_H CS_PORT->BSRR = CS_PIN_MASK
-#endif
-
-#ifndef DC_DELAY
-  //#define DC_DELAY delayMicroseconds(1) // Premature BSY clear hardware bug?
-  #define DC_DELAY
-#endif
-
-  // Use STM32 default SPI port
-  #if !defined (TFT_SPI_MOSI) || !defined (TFT_SPI_MISO) || !defined (TFT_SPI_SCLK)
-    SPIClass& stm32_SPI = SPI;
-  #else
-    SPIClass stm32_SPI(TFT_SPI_MOSI, TFT_SPI_MISO, TFT_SPI_SCLK);
-  #endif
-  // SPI HAL peripheral handle
-  SPI_HandleTypeDef spiHal;
-
   // Use SPI1 as default if not defined
   #ifndef TFT_SPI_PORT
     #define TFT_SPI_PORT 1
@@ -132,6 +86,57 @@
     #endif
   #endif
 
+////////////////////////////////////////////////////////////////////////////////////////
+// Define the DC (TFT Data/Command or Register Select (RS))pin drive code
+////////////////////////////////////////////////////////////////////////////////////////
+#if !defined (TFT_SPI_DC) || (TFT_SPI_DC < 0)
+  #define SPI_DC_C // No macro allocated so it generates no code
+  #define SPI_DC_D // No macro allocated so it generates no code
+  #undef  TFT_SPI_DC
+#else
+  // Convert Arduino pin reference Dn or STM pin reference PXn to port and mask
+  #define DC_PORT     digitalPinToPort(TFT_SPI_DC)
+  #define DC_PIN_MASK digitalPinToBitMask(TFT_SPI_DC)
+  // Use bit set reset register
+  #define SPI_DC_C DC_DELAY; DC_PORT->BSRR = DC_PIN_MASK<<16
+  #define SPI_DC_D DC_DELAY; DC_PORT->BSRR = DC_PIN_MASK
+#endif
+
+////////////////////////////////////////////////////////////////////////////////////////
+// Define the CS (TFT chip select) pin drive code
+////////////////////////////////////////////////////////////////////////////////////////
+#if !defined (TFT_SPI_CS) || (TFT_SPI_CS < 0)
+  #define SPI_CS_L // No macro allocated so it generates no code
+  #define SPI_CS_H // No macro allocated so it generates no code
+  #undef  TFT_SPI_CS
+#else
+  // Convert Arduino pin reference Dx or STM pin reference PXn to port and mask
+  #define CS_PORT      digitalPinToPort(TFT_SPI_CS)
+  #define CS_PIN_MASK  digitalPinToBitMask(TFT_SPI_CS)
+  // Use bit set reset register
+  #define SPI_CS_L CS_PORT->BSRR = CS_PIN_MASK<<16
+  #define SPI_CS_H CS_PORT->BSRR = CS_PIN_MASK
+#endif
+
+#ifndef DC_DELAY
+  //#define DC_DELAY delayMicroseconds(1) // Premature BSY clear hardware bug?
+  #define DC_DELAY
+#endif
+
+  // Use STM32 default SPI port
+  #if !defined (TFT_SPI_MOSI) || !defined (TFT_SPI_MISO) || !defined (TFT_SPI_SCLK)
+    SPIClass& stm32_SPI = SPI;
+  #else
+    SPIClass stm32_SPI(TFT_SPI_MOSI, TFT_SPI_MISO, TFT_SPI_SCLK);
+  #endif
+  // SPI HAL peripheral handle
+  SPI_HandleTypeDef spiHal;
+
+#ifdef STM32_DMA
+  // DMA HAL handle
+  DMA_HandleTypeDef dmaHal;
+#endif
+
 #if defined(TFT_SPI_WRITE)
   SPISettings settings_cmd;
   SPISettings settings_write;
@@ -167,26 +172,24 @@ void stm32_spi_initBus()
 #endif
 }
 
+
+  #define SPI_TXE_CHECK  while(!__HAL_SPI_GET_FLAG(&spiHal, SPI_FLAG_TXE)){}
+                         //BSY check must allow for APB clock delay by checking TXE flag first
+  #define SPI_BUSY_CHECK SPI_TXE_CHECK; while( __HAL_SPI_GET_FLAG(&spiHal, SPI_FLAG_BSY)){}
+  #define TX_FIFO        SPI_TXE_CHECK; *((__IO uint8_t *)&SPI_X->DR)
+
+
 inline void spi_send(const uint8_t b)
 {
-  while(!__HAL_SPI_GET_FLAG(&spiHal, SPI_FLAG_TXE));
-  //BSY check must allow for APB clock delay by checking TXE flag first
-
-  *((__IO uint8_t *)&SPI_X->DR) = b;    // TX_FIFO
+  TX_FIFO = b;
+  SPI_BUSY_CHECK
 }
 
 inline void spi_send16(const uint16_t w)
 {
-  spi_send(w >> 8);
-  spi_send(w);
-}
-
-inline void spi_endSending()
-{
-  while(!__HAL_SPI_GET_FLAG(&spiHal, SPI_FLAG_TXE));
-  //BSY check must allow for APB clock delay by checking TXE flag first
-
-  while( __HAL_SPI_GET_FLAG(&spiHal, SPI_FLAG_BSY));
+  TX_FIFO = w >> 8;
+  TX_FIFO = w;
+  SPI_BUSY_CHECK
 }
 
 
@@ -196,6 +199,7 @@ void tft_write_begin()
 {
   stm32_spi_initBus();
   stm32_SPI.begin();
+  INIT_TFT_DATA_BUS;
 }
 
 void tft_startWriteCmd()
@@ -210,7 +214,6 @@ void tft_sendCmd(const uint8_t cmd)
   SPI_CS_L;
   SPI_DC_C;
   spi_send(cmd);
-  spi_endSending();
   SPI_DC_D;
 }
 
@@ -220,12 +223,10 @@ void tft_sendCmdData(const uint8_t cmd, const uint8_t* data, const int16_t size)
   SPI_CS_L;
   SPI_DC_C;
   spi_send(cmd);
-  spi_endSending();
   SPI_DC_D;
   for (int16_t i = 0; i < size; ++i) {
     spi_send(data[i]);
   }
-  spi_endSending();
 }
 
 void tft_startWrite()
@@ -244,21 +245,16 @@ void tft_writeAddrWindow(const int16_t x, const int16_t y, const int16_t w, cons
 {
   SPI_DC_C;
   spi_send(TFT_CASET);
-  spi_endSending();
   SPI_DC_D;
   spi_send16(x);
   spi_send16(x + w - 1);
-  spi_endSending();
   SPI_DC_C;
   spi_send(TFT_PASET);
-  spi_endSending();
   SPI_DC_D;
   spi_send16(y);
   spi_send16(y + h - 1);
-  spi_endSending();
   SPI_DC_C;
   spi_send(TFT_RAMWR);
-  spi_endSending();
   SPI_DC_D;
 }
 
@@ -269,8 +265,6 @@ void tft_sendMDTColor(const mdt_t c)
   #endif
     spi_send(c >> 8);
     spi_send(c);
-
-  spi_endSending();
 }
 
 void tft_sendMDTColor(const mdt_t c, int32_t len)
@@ -282,7 +276,6 @@ void tft_sendMDTColor(const mdt_t c, int32_t len)
     spi_send(c >> 8);
     spi_send(c);
   }
-  spi_endSending();
 }
 
 void tft_sendMDTBuffer16(const uint8_t* p, int32_t len)
@@ -291,7 +284,6 @@ void tft_sendMDTBuffer16(const uint8_t* p, int32_t len)
     spi_send(*p++);
     spi_send(*p++);
   }
-  spi_endSending();
 }
 
 void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
@@ -301,8 +293,12 @@ void tft_sendMDTBuffer24(const uint8_t* p, int32_t len)
     spi_send(*p++);
     spi_send(*p++);
   }
-  spi_endSending();
 }
+
+
+
+  #include <TFT_NO_DMA.hh>
+
 
 
 
@@ -330,21 +326,16 @@ void tft_readAddrWindow(const int16_t x, const int16_t y, const int16_t w, const
 {
   SPI_DC_C;
   spi_send(TFT_CASET);
-  spi_endSending();
   SPI_DC_D;
   spi_send16(x);
   spi_send16(x + w - 1);
-  spi_endSending();
   SPI_DC_C;
   spi_send(TFT_PASET);
-  spi_endSending();
   SPI_DC_D;
   spi_send16(y);
   spi_send16(y + h - 1);
-  spi_endSending();
   SPI_DC_C;
   spi_send(TFT_RAMRD);
-  spi_endSending();
   SPI_DC_D;
 }
 

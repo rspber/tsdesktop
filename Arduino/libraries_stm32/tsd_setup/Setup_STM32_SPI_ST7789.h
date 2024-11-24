@@ -58,17 +58,18 @@
   #define TFT_WIDTH  240
   #define TFT_HEIGHT 320
 
-// SPI 0
-  #define TFT_SPI_CLK   D13
-  #define TFT_SPI_MISO  D12
-  #define TFT_SPI_MOSI  D11
+// SPI 1
+  #define TFT_SPI_CLK   PA5
+  #define TFT_SPI_MISO  PA6
+  #define TFT_SPI_MOSI  PA7
+
   #define TFT_SPI_CS     D5    // SS - chip select control pin
   #define TFT_SPI_DC     D6    // Data Command control pin
   #define TFT_SPI_RST    D7    // Reset pin
 //  #define TFT_SPI_BL       // LED back-light
 
   #define TFT_SPI_SETUP_SPEED     2 * 1000 * 1000          //  2 MHz
-  #define TFT_SPI_WRITE_SPEED    40 * 1000 * 1000          // 40 MHz
+  #define TFT_SPI_WRITE_SPEED    53 * 1000 * 1000          // 53 MHz
   #define TFT_SPI_READ_SPEED      5 * 1000 * 1000          //  5 MHz
 
   #define TFT_REV 0

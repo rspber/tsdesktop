@@ -1,7 +1,9 @@
 
 * In Arduino:
 
-  Follow the instructions please.
+ Fllow the instructions please
+
+ 1. To compile example:
 
   - File / Preferences / Settings / Additional boards manager URLs
 
@@ -16,17 +18,18 @@
   - Tools / Board / ... Boards / `select your board`
 
 
+ 2. To upload example by USB:
 
-* It doesn't seem to be working yet
+  - https://github.com/rogerclarkmelbourne/Arduino_STM32
 
+    ** env/udev/rules.d/45-maple.rules  (very important for DFU)
+      -- for linux run tools/linux64/install.sh
 
-   !!! NOT WORKING YET !!!
+  - https://github.com/stm32duino/Arduino_Core_STM32/wiki/Upload-methods
 
+    ** follow by DFU
 
+    ** in STM32CubeProgrammer
 
-   !!! NOT WORKING YET !!!
-
-
-
-   !!! NOT WORKING YET !!!
-
+      -- connect to USB:USB1 (USB1 will be accesible if DFU is configurted correctly)
+      -- select <example>.elf to upload

@@ -9,6 +9,9 @@
 
 #if defined(TFT_SPI_WRITE)
 
+// Include processor specific header
+#include "hal/gpio_ll.h"
+
   #include <rgb.h>
 
   #define GPIO_32_PIN_LOW( PIN) GPIO.out1_w1tc.val = (1 << (PIN - 32))
