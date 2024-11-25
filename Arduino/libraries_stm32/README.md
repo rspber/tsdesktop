@@ -22,14 +22,17 @@
 
   - https://github.com/rogerclarkmelbourne/Arduino_STM32
 
-    ** env/udev/rules.d/45-maple.rules  (very important for DFU)
-      -- for linux run tools/linux64/install.sh
+      ** for linux run tools/linux64/install.sh<br/>
+          -- see env/udev/rules.d/45-maple.rules  (very important for DFU)
 
   - https://github.com/stm32duino/Arduino_Core_STM32/wiki/Upload-methods
 
-    ** follow by DFU
+    ** follow by DFU<br/>
 
-    ** in STM32CubeProgrammer
+      -- press BOOT0 or B0 and plug board via USB<br/>
 
-      -- connect to USB:USB1 (USB1 will be accesible if DFU is configurted correctly)
-      -- select <example>.elf to upload
+    ** in STM32CubeProgrammer<br/>
+
+      -- connect to USB:USB1 (USB1 will be accesible if DFU is configurted correctly)<br/>
+      -- use lsusb and dmesg to control DFU</br>
+      -- select some example.elf to upload
