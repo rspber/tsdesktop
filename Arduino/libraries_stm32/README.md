@@ -5,25 +5,25 @@ Follow the instructions please
 
   * In Arduino:
 
-  - File / Preferences / Settings / Additional boards manager URLs
+    - File / Preferences / Settings / Additional boards manager URLs
 
-    https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json
+      https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json
 
-    Hit OK to close the dialog.
+      Hit OK to close the dialog.
 
-  - Tools / Board / Boards Manager ...
+    - Tools / Board / Boards Manager ...
 
-    stm32
+      stm32
 
-  - Tools / Board / ... Boards / `select your board`
+    - Tools / Board / ... Boards / `select your board`
 
 
 2. To upload example by USB:
 
   * https://github.com/rogerclarkmelbourne/Arduino_STM32
 
-      - for linux run tools/linux64/install.sh<br/>
-          -- see env/udev/rules.d/45-maple.rules  (very important for DFU)
+    - for linux run tools/linux64/install.sh<br/>
+      -- see env/udev/rules.d/45-maple.rules  (very important for DFU)
 
   * https://github.com/stm32duino/Arduino_Core_STM32/wiki/Upload-methods
 
