@@ -58,14 +58,38 @@
   #define TFT_WIDTH  240
   #define TFT_HEIGHT 320
 
-// SPI 1
-  #define TFT_SPI_CLK   PA5
-  #define TFT_SPI_MISO  PA6
-  #define TFT_SPI_MOSI  PA7
+  // Arduino IDE - WeAct Studio
+  // Generic STM32F4 Series / F405RGTx  = STM32F405 RGT6
+  // Generic STM32F4 Series / F412RETx  = STM32F412 RET6
+  // Nucleo 64         / Nucleo F446RE  = STM32F446 RET6
 
-  #define TFT_SPI_CS     D5    // SS - chip select control pin
-  #define TFT_SPI_DC     D6    // Data Command control pin
-  #define TFT_SPI_RST    D7    // Reset pin
+  //      F405RGTx     F412RETx     F446RETx
+  // ---------------------------------------
+  //  D0       PA0          PA0          PA3
+  //  D1       PA1          PA1          PA2
+  //  D2       PA2          PA2         PA10
+  //  D3       PA3          PA3          PB3
+  //  D4       PA4          PA4          PB5
+  //  D5       PA5          PA5          PB4
+  //  D6       PA6          PA6         PB10
+  //  D7       PA7          PA7          PA8
+  //  D8       PA8          PA8          PA9
+  //  D9       PA9          PA9          PC7
+  //  D10     PA10         PA10          PB6
+  //  D11     PA11         PA11          PA7
+  //  D12     PA12         PA12          PA6
+  //  D13        -            -          PA5
+  //  D14        -            -          PB9
+  //  D15     PA15         PA15          PB8
+
+// SPI 1
+  #define TFT_SPI_CLK    PA5    //
+  #define TFT_SPI_MISO   PA6    //
+  #define TFT_SPI_MOSI   PA7    //
+
+  #define TFT_SPI_CS     PB7    //       SS - chip select control pin
+  #define TFT_SPI_DC     PB10   //       Data Command control pin
+  #define TFT_SPI_RST    PA8    //       Reset pin
 //  #define TFT_SPI_BL       // LED back-light
 
   #define TFT_SPI_SETUP_SPEED     2 * 1000 * 1000          //  2 MHz
@@ -81,7 +105,7 @@
   #define TOUCH_SPI_SPEED         2 * 1000 * 1000          //  2 MHz
 
 // don't comment it if T.CS is connected to this pin
-  #define TOUCH_SPI_CS  D4
+  #define TOUCH_SPI_CS  PB6
 
   #define TOUCH_REV 0
   #define TOUCH_ROTATION touch_7789
@@ -94,8 +118,8 @@
 
 // -------------------------------I2C params ----------------------------------
 
-  #define I2C0_SDA_PIN D14
-  #define I2C0_SCL_PIN D15
+  #define I2C0_SDA_PIN PB9
+  #define I2C0_SCL_PIN PB8
 
   #define I2C1_SDA_PIN -1
   #define I2C1_SCL_PIN -1
