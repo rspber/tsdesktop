@@ -24,6 +24,7 @@ The connections should be made straight from A to B with the wires in the protec
   <tr><td>RP2040</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
   <tr><td>ESP32</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
   <tr><td>PIC32</td><td>Yes</td><td>No</td><td>No</td></tr>
+  <tr><td>STM32</td><td>Yes</td><td>No</td><td>No</td></tr>
 </table>
 
 * 4 wire SPI 8x bit, 8bit parallel
@@ -44,6 +45,7 @@ The connections should be made straight from A to B with the wires in the protec
   <tr><td>RP2040</td><td>Yes</td><td>Yes</td></tr>
   <tr><td>ESP32</td><td>Yes</td><td>No</td></tr>
   <tr><td>PIC32</td><td>Yes</td><td>No</td></tr>
+  <tr><td>STM32</td><td>Yes</td><td>No</td></tr>
 </table>
 
 <table>
@@ -60,6 +62,7 @@ The connections should be made straight from A to B with the wires in the protec
   <tr><td>RP2040</td><td>Yes</td><td>Yes</td></tr>
   <tr><td>ESP32</td><td>Yes</td><td>Yes</td></tr>
   <tr><td>PIC32</td><td>Yes</td><td>No</td></tr>
+  <tr><td>STM32</td><td>Yes</td><td>No</td></tr>
 </table>
 
 <table>
