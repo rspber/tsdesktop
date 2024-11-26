@@ -83,6 +83,7 @@
   //  D15     PA15         PA15          PB8
 
 // SPI 1
+  #define TFT_SPI_NSS    PA4    //       high/low Master/Slave
   #define TFT_SPI_CLK    PA5    //
   #define TFT_SPI_MISO   PA6    //
   #define TFT_SPI_MOSI   PA7    //
