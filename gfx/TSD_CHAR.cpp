@@ -1,5 +1,6 @@
 
 #include "TSD_CHAR.h"
+#include "overlaid.h"
 #include "glcdfont.c.h"
 
 namespace {

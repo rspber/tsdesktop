@@ -15,6 +15,7 @@
 #include "TSD_GFX.h"
 #include "overlaid.h"
 #include <stdlib.h>
+#include <math.h>
 
 #ifndef abs
 #define abs(x) ((x)>=0?(x):-(x))
@@ -136,27 +137,22 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
   // The little endian transp color must be byte swapped if the image is big endian
 //  if (!_swapBytes) transp = transp >> 8 | transp << 8;
 
-  while (dh--)
-  {
+  while (dh--) {
     int32_t len = dw;
     uint16_t* ptr = data;
     int32_t px = x, sx = x;
     bool move = true;
     uint16_t np = 0;
 
-    while (len--)
-    {
-      if (transp != *ptr)
-      {
+    while (len--) {
+      if (transp != *ptr) {
         if (move) { move = false; sx = px; }
         lineBuf[np] = *ptr;
         np++;
       }
-      else
-      {
+      else {
         move = true;
-        if (np)
-        {
+        if (np) {
           writeAddrWindow(sx, y, np, 1);
 //          pushPixels((uint16_t*)lineBuf, np);
           writeMDTBuffer((const uint8_t*)lineBuf, np);
@@ -261,8 +257,10 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
       px++;
       ptr++;
     }
-    if (np) { setWindow(sx, y, sx + np - 1, y); pushPixels(lineBuf, np); }
-
+    if (np) {
+      setWindow(sx, y, sx + np - 1, y);
+      pushPixels(lineBuf, np);
+    }
     y++;
     data += w;
   }
@@ -277,7 +275,7 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
 ** Function name:           pushImage
 ** Description:             plot 8-bit or 4-bit or 1 bit image or sprite using a line buffer
 *************************************************************************************** /
-void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, const uint8_t *data, bool bpp8,  uint16_t *cmap)
+void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, const uint8_t *data, bool bpp8, cmap_t& cmap)
 {
   PI_CLIP;
 
@@ -292,13 +290,12 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
   // Line buffer makes plotting faster
   uint16_t  lineBuf[dw];
 
-  if (bpp8)
-  {
+  if (bpp8) {
 //    _swapBytes = false;
 
     uint8_t  blue[] = {0, 11, 21, 31}; // blue 2 to 5-bit colour lookup table
 
-    _lastColor = -1; // Set to illegal value
+    int _lastColor = -1; // Set to illegal value
 
     // Used to store last shifted colour
     uint8_t msbColor = 0;
@@ -311,15 +308,15 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
       uint8_t* linePtr = (uint8_t*)lineBuf;
 
       while(len--) {
-        uint32_t color = pgm_read_byte(ptr++);
+        uint8_t c8 = pgm_read_byte(ptr++);
 
         // Shifts are slow so check if colour has changed first
-        if (color != _lastColor) {
+        if (c8 != _lastColor) {
           //          =====Green=====     ===============Red==============
-          msbColor = (color & 0x1C)>>2 | (color & 0xC0)>>3 | (color & 0xE0);
+          msbColor = (c8 & 0x1C)>>2 | (c8 & 0xC0)>>3 | (c8 & 0xE0);
           //          =====Green=====    =======Blue======
-          lsbColor = (color & 0x1C)<<3 | blue[color & 0x03];
-          _lastColor = color;
+          lsbColor = (c8 & 0x1C)<<3 | blue[c8 & 0x03];
+          _lastColor = c8;
         }
 
        *linePtr++ = msbColor;
@@ -332,8 +329,7 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
     }
 //    _swapBytes = swap; // Restore old value
   }
-  else if (cmap != nullptr) // Must be 4bpp
-  {
+  else if (cmap.cMap != nullptr) { // Must be 4bpp
 //    _swapBytes = true;
 
     w = (w+1) & 0xFFFE;   // if this is a sprite, w will already be even; this does no harm.
@@ -355,22 +351,20 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
 
       if (splitFirst) {
         colors = pgm_read_byte(ptr);
-        index = (colors & 0x0F);
-        *linePtr++ = cmap[index];
+        index = colors & 0x0F;
+        *linePtr++ = color24to16(cmap.cMap[index]);
         len--;
         ptr++;
       }
 
-      while (len--)
-      {
+      while (len--) {
         colors = pgm_read_byte(ptr);
-        index = ((colors & 0xF0) >> 4) & 0x0F;
-        *linePtr++ = cmap[index];
+        index = (colors >> 4) & 0x0F;
+        *linePtr++ = color24to16(cmap.cMap[index]);
 
-        if (len--)
-        {
+        if (len--) {
           index = colors & 0x0F;
-          *linePtr++ = cmap[index];
+          *linePtr++ = color24to16(cmap.cMap[index]);
         } else {
           break;  // nothing to do here
         }
@@ -383,16 +377,13 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
     }
 //    _swapBytes = swap; // Restore old value
   }
-  else // Must be 1bpp
-  {
+  else { // Must be 1bpp
 //    _swapBytes = false;
     uint8_t * ptr = (uint8_t*)data;
     uint32_t ww =  (w+7)>>3; // Width of source image line in bytes
-    for (int32_t yp = dy;  yp < dy + dh; yp++)
-    {
+    for (int32_t yp = dy;  yp < dy + dh; yp++) {
       uint8_t* linePtr = (uint8_t*)lineBuf;
-      for (int32_t xp = dx; xp < dx + dw; xp++)
-      {
+      for (int32_t xp = dx; xp < dx + dw; xp++) {
         uint16_t col = (pgm_read_byte(ptr + (xp>>3)) & (0x80 >> (xp & 0x7)) );
         if (col) {*linePtr++ = bitmap_fg>>8; *linePtr++ = (uint8_t) bitmap_fg;}
         else     {*linePtr++ = bitmap_bg>>8; *linePtr++ = (uint8_t) bitmap_bg;}
@@ -413,7 +404,7 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
 ** Function name:           pushImage
 ** Description:             plot 8-bit or 4-bit or 1 bit image or sprite using a line buffer
 ***************************************************************************************/
-void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, uint8_t *data, const bool bpp8, uint16_t *cmap)
+void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, uint8_t *data, bool bpp8, cmap_t& cmap)
 {
   PI_CLIP;
 
@@ -424,13 +415,12 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
   // Line buffer makes plotting faster
   uint16_t  lineBuf[dw];
 
-  if (bpp8)
-  {
+  if (bpp8) {
 //    _swapBytes = false;
 
     uint8_t  blue[] = {0, 11, 21, 31}; // blue 2 to 5-bit colour lookup table
 
-    rgb_t _lastColor = -1; // Set to illegal value
+    int _lastColor = -1; // Set to illegal value
 
     // Used to store last shifted colour
     uint8_t msbColor = 0;
@@ -439,19 +429,19 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
     data += dx + dy * w;
     while (dh--) {
       uint32_t len = dw;
-      const uint8_t* ptr = data;
+      uint8_t* ptr = data;
       uint8_t* linePtr = (uint8_t*)lineBuf;
 
       while(len--) {
-        uint32_t color = *ptr++;
+        uint8_t c8 = *ptr++;
 
         // Shifts are slow so check if colour has changed first
-        if (color != _lastColor) {
+        if (c8 != _lastColor) {
           //          =====Green=====     ===============Red==============
-          msbColor = (color & 0x1C)>>2 | (color & 0xC0)>>3 | (color & 0xE0);
+          msbColor = (c8 & 0x1C)>>2 | (c8 & 0xC0)>>3 | (c8 & 0xE0);
           //          =====Green=====    =======Blue======
-          lsbColor = (color & 0x1C)<<3 | blue[color & 0x03];
-          _lastColor = color;
+          lsbColor = (c8 & 0x1C)<<3 | blue[c8 & 0x03];
+          _lastColor = c8;
         }
 
        *linePtr++ = msbColor;
@@ -464,8 +454,7 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
       data += w;
     }
   }
-  else if (cmap != nullptr) // Must be 4bpp
-  {
+  else if (cmap.cMap != nullptr) { // Must be 4bpp
 //    _swapBytes = true;
 
     w = (w+1) & 0xFFFE;   // if this is a sprite, w will already be even; this does no harm.
@@ -480,7 +469,7 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
 
     while (dh--) {
       uint32_t len = dw;
-      const uint8_t * ptr = data;
+      uint8_t * ptr = data;
       uint16_t *linePtr = lineBuf;
       uint8_t colors; // two colors in one byte
       uint16_t index;
@@ -488,21 +477,19 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
       if (splitFirst) {
         colors = *ptr;
         index = (colors & 0x0F);
-        *linePtr++ = cmap[index];
+        *linePtr++ = color24to16(cmap.cMap[index]);
         len--;
         ptr++;
       }
 
-      while (len--)
-      {
+      while (len--) {
         colors = *ptr;
         index = ((colors & 0xF0) >> 4) & 0x0F;
-        *linePtr++ = cmap[index];
+        *linePtr++ = color24to16(cmap.cMap[index]);
 
-        if (len--)
-        {
+        if (len--) {
           index = colors & 0x0F;
-          *linePtr++ = cmap[index];
+          *linePtr++ = color24to16(cmap.cMap[index]);
         } else {
           break;  // nothing to do here
         }
@@ -515,15 +502,12 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
       data += (w >> 1);
     }
   }
-  else // Must be 1bpp
-  {
+  else { // Must be 1bpp
 //    _swapBytes = false;
     uint32_t ww =  (w+7)>>3; // Width of source image line in bytes
-    for (int32_t yp = dy;  yp < dy + dh; yp++)
-    {
+    for (int32_t yp = dy;  yp < dy + dh; yp++) {
       uint8_t* linePtr = (uint8_t*)lineBuf;
-      for (int32_t xp = dx; xp < dx + dw; xp++)
-      {
+      for (int32_t xp = dx; xp < dx + dw; xp++) {
         uint16_t col = (data[(xp>>3)] & (0x80 >> (xp & 0x7)) );
         if (col) {*linePtr++ = _bitmap_fg>>8; *linePtr++ = (uint8_t) _bitmap_fg;}
         else     {*linePtr++ = _bitmap_bg>>8; *linePtr++ = (uint8_t) _bitmap_bg;}
@@ -542,7 +526,7 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
 ** Function name:           pushImage
 ** Description:             plot 8 or 4 or 1 bit image or sprite with a transparent colour
 ***************************************************************************************/
-void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, uint8_t *data, uint8_t transp, bool bpp8, uint16_t *cmap)
+void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h, uint8_t *data, rgb_t transp, bool bpp8, cmap_t& cmap)
 {
   PI_CLIP;
 
@@ -558,7 +542,7 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
 
     uint8_t  blue[] = {0, 11, 21, 31}; // blue 2 to 5-bit colour lookup table
 
-    rgb_t _lastColor = -1; // Set to illegal value
+    uint16_t _lastColor = -1; // Set to illegal value
 
     // Used to store last shifted colour
     uint8_t msbColor = 0;
@@ -566,7 +550,7 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
 
     while (dh--) {
       int32_t len = dw;
-      const uint8_t* ptr = data;
+      uint8_t* ptr = data;
       uint8_t* linePtr = (uint8_t*)lineBuf;
 
       int32_t px = x, sx = x;
@@ -613,8 +597,9 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
       data += w;
     }
   }
-  else if (cmap != nullptr) // 4bpp with color map
-  {
+  else if (cmap.cMap != nullptr) { // 4bpp with color map
+    uint8_t transpidx = cmap.getMapColor(transp);
+
 //    _swapBytes = true;
 
     w = (w+1) & 0xFFFE; // here we try to recreate iwidth from dwidth.
@@ -628,7 +613,7 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
 
     while (dh--) {
       uint32_t len = dw;
-      const uint8_t * ptr = data;
+      uint8_t * ptr = data;
 
       int32_t px = x, sx = x;
       bool move = true;
@@ -638,27 +623,26 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
 
       if (splitFirst) {
         index = (*ptr & 0x0F);  // odd = bits 3 .. 0
-        if (index != transp) {
+        if (index != transpidx) {
           move = false; sx = px;
-          lineBuf[np] = cmap[index];
+          lineBuf[np] = color24to16(cmap.cMap[index]);
           np++;
         }
         px++; ptr++;
         len--;
       }
 
-      while (len--)
-      {
+      while (len--) {
         uint8_t color = *ptr;
 
         // find the actual color you care about.  There will be two pixels here!
         // but we may only want one at the end of the row
         uint16_t index = ((color & 0xF0) >> 4) & 0x0F;  // high bits are the even numbers
-        if (index != transp) {
+        if (index != transpidx) {
           if (move) {
             move = false; sx = px;
           }
-          lineBuf[np] = cmap[index];
+          lineBuf[np] = color24to16(cmap.cMap[index]);
           np++; // added a pixel
         }
         else {
@@ -672,14 +656,13 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
         }
         px++;
 
-        if (len--)
-        {
+        if (len--) {
           index = color & 0x0F; // the odd number is 3 .. 0
-          if (index != transp) {
+          if (index != transpidx) {
             if (move) {
               move = false; sx = px;
-             }
-            lineBuf[np] = cmap[index];
+            }
+            lineBuf[np] = color24to16(cmap.cMap[index]);
             np++;
           }
           else {
@@ -715,12 +698,10 @@ void TSD_GFX::pushImage(clip_t& clip, int32_t x, int32_t y, int32_t w, int32_t h
     uint32_t ww =  (w+7)>>3; // Width of source image line in bytes
     uint16_t np = 0;
 
-    for (int32_t yp = dy;  yp < dy + dh; yp++)
-    {
+    for (int32_t yp = dy;  yp < dy + dh; yp++) {
       int32_t px = x, sx = x;
       bool move = true;
-      for (int32_t xp = dx; xp < dx + dw; xp++)
-      {
+      for (int32_t xp = dx; xp < dx + dw; xp++) {
         if (data[(xp>>3)] & (0x80 >> (xp & 0x7))) {
           if (move) {
             move = false;

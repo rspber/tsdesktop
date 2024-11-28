@@ -385,17 +385,20 @@ void TSD_SCREEN::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t 
 //  void TSD_SCREEN::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data, rgb_t transparent)
 //  void TSD_SCREEN::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data)
 
-void TSD_SCREEN::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t  *data, bool bpp8, uint16_t *cmap)
+void TSD_SCREEN::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t *data, bool bpp8, cmap_t& cmap)
 {
   pushImage(_clip, x, y, w, h, data, bpp8, cmap);
 }
 
-void TSD_SCREEN::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t  *data, uint8_t  transparent, bool bpp8, uint16_t *cmap)
+void TSD_SCREEN::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t *data, rgb_t transp, bool bpp8, cmap_t& cmap)
 {
-  pushImage(_clip, x, y, w, h, data, transparent, bpp8, cmap);
+  pushImage(_clip, x, y, w, h, data, transp, bpp8, cmap);
 }
 
-//  void TSD_SCREEN::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint8_t *data, bool bpp8,  uint16_t *cmap = nullptr)
+void TSD_SCREEN::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint8_t *data, bool bpp8, cmap_t& cmap)
+{
+  pushImage(_clip, x, y, w, h, data, bpp8, cmap);
+}
 
 void TSD_SCREEN::pushMaskedImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *img, uint8_t *mask)
 {

@@ -74,7 +74,7 @@ void TFT_SCREEN::sendMDTBuffer16(const uint8_t* buffer, const int32_t len)
   }
 }
 
-void TFT_SCREEN::sendMDTBuffer24(const uint8_t* buffer, int32_t len)
+void TFT_SCREEN::sendMDTBuffer24(const uint8_t* buffer, const int32_t len)
 {
   if (useDMA) {
 //    dma_sendMDTBuffer24(buffer, len);

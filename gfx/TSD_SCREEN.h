@@ -165,10 +165,10 @@ public:
            // These are used by Sprite class pushSprite() member function for 1, 4 and 8 bits per pixel (bpp) colours
            // They are not intended to be used with user sketches (but could be)
            // Set bpp8 true for 8bpp sprites, false otherwise. The cmap pointer must be specified for 4bpp
-  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t  *data, bool bpp8 = true, uint16_t *cmap = nullptr);
-  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t  *data, uint8_t  transparent, bool bpp8 = true, uint16_t *cmap = nullptr);
+  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t  *data, bool bpp8, cmap_t& cmap);
+  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t  *data, rgb_t transp, bool bpp8, cmap_t& cmap);
            // FLASH version
-//  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint8_t *data, bool bpp8,  uint16_t *cmap = nullptr);
+  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint8_t *data, bool bpp8, cmap_t& cmap);
 
            // Render a 16-bit colour image with a 1bpp mask
   void     pushMaskedImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *img, uint8_t *mask);
