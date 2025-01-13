@@ -34,5 +34,5 @@ Follow the instructions please
     - in STM32CubeProgrammer<br/>
 
       -- connect to USB:USB1 (USB1 will be accesible if DFU is configurted correctly)<br/>
-      -- use lsusb and dmesg to control DFU</br>
+      -- use lsusb and dmesg to control DFU (optionally)</br>
       -- select some example.elf to upload
