@@ -4,7 +4,6 @@
 - bufferedDisplay available for DMA
 - buffered button/canvas available for DMA
 - rp2350
-- ESP8266
 - ESP32 - flash not remains after reboot
 - PIC32 MX320F128H, I2C, Flash
 - reading by pio 8bitp
